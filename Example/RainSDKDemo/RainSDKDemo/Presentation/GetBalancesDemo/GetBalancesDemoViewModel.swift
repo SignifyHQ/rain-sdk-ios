@@ -3,10 +3,6 @@ import Foundation
 @MainActor
 class GetBalancesDemoViewModel: ObservableObject {
 
-  // MARK: - Shared Input
-
-  @Published var chainId: String = "43113"
-
   // MARK: - Native Balance
 
   @Published var nativeBalance: Double?
@@ -14,43 +10,49 @@ class GetBalancesDemoViewModel: ObservableObject {
   @Published var isLoadingNative = false
   @Published var nativeError: Error?
 
-  // MARK: - ERC-20 Balance
+  // MARK: - ERC-20 Balances (auto-discovered)
 
-  @Published var tokenAddress: String = ""
-  @Published var tokenDecimals: String = "18"
-  @Published var erc20Balance: Double?
-  @Published var erc20WalletAddress: String?
-  @Published var isLoadingERC20 = false
-  @Published var erc20Error: Error?
+  @Published var walletTokens: [DiscoveredTokenBalance] = []
+  @Published var tokensWalletAddress: String?
+  @Published var isLoadingTokens = false
+  @Published var didFetchTokens = false
+  @Published var tokensError: Error?
+
+  // MARK: - All Balances (cross-chain)
+
+  @Published var allBalances: [Int: [String: Double]]?
+  @Published var isLoadingAll = false
+  @Published var allError: Error?
 
   // MARK: - Dependencies
 
   private let sdkService = RainSDKService.shared
 
+  /// Network selected on the connection screen.
+  var chain: WalletChain { sdkService.selectedChain }
+
   // MARK: - Validation
 
   var canFetch: Bool {
-    sdkService.isInitialized && chainIdInt != nil
+    sdkService.isInitialized
   }
 
-  var canFetchERC20: Bool {
-    canFetch && !tokenAddress.trimmingCharacters(in: .whitespaces).isEmpty
+  var canFetchTokens: Bool {
+    canFetch && !chain.isSolana
   }
-
-  private var chainIdInt: Int? { Int(chainId) }
 
   // MARK: - Fetch Native Balance
 
   func fetchNativeBalance() async {
-    guard let chainId = chainIdInt, canFetch else { return }
+    guard canFetch else { return }
     isLoadingNative = true
     nativeError = nil
     nativeBalance = nil
     nativeWalletAddress = nil
 
     do {
-      nativeWalletAddress = try await sdkService.getWalletAddress()
-      nativeBalance = try await sdkService.getNativeBalance(chainId: chainId)
+      nativeWalletAddress = try await sdkService.getWalletAddress(chainId: chain.chainId)
+      nativeBalance = try await sdkService.getNativeBalance(chainId: chain.chainId)
     } catch {
       nativeError = error
     }
@@ -58,26 +60,42 @@ class GetBalancesDemoViewModel: ObservableObject {
     isLoadingNative = false
   }
 
-  // MARK: - Fetch ERC-20 Balance
+  // MARK: - Fetch ERC-20 Balances (auto-discovered)
 
-  func fetchERC20Balance() async {
-    guard let chainId = chainIdInt, canFetchERC20 else { return }
-    isLoadingERC20 = true
-    erc20Error = nil
-    erc20Balance = nil
-    erc20WalletAddress = nil
+  /// Lists every ERC-20 the wallet holds with a balance > 0 — no contract address or decimals
+  /// input. Each token's symbol / name / decimals are resolved by the SDK.
+  func fetchTokenBalances() async {
+    guard canFetchTokens else { return }
+    isLoadingTokens = true
+    tokensError = nil
+    walletTokens = []
+    tokensWalletAddress = nil
 
     do {
-      erc20WalletAddress = try await sdkService.getWalletAddress()
-      erc20Balance = try await sdkService.getERC20Balance(
-        chainId: chainId,
-        tokenAddress: tokenAddress.trimmingCharacters(in: .whitespaces),
-        decimals: Int(tokenDecimals)
-      )
+      tokensWalletAddress = try await sdkService.getWalletAddress(chainId: chain.chainId)
+      walletTokens = try await sdkService.getTokenBalances(chainId: chain.chainId)
+      didFetchTokens = true
     } catch {
-      erc20Error = error
+      tokensError = error
     }
 
-    isLoadingERC20 = false
+    isLoadingTokens = false
+  }
+
+  // MARK: - Fetch All Balances (cross-chain)
+
+  func fetchAllBalances() async {
+    guard sdkService.isInitialized else { return }
+    isLoadingAll = true
+    allError = nil
+    allBalances = nil
+
+    do {
+      allBalances = try await sdkService.getAllBalances()
+    } catch {
+      allError = error
+    }
+
+    isLoadingAll = false
   }
 }

@@ -1,9 +1,5 @@
 import Foundation
-import PortalSwift
 import Web3
-import Web3Core
-import web3swift
-import Web3ContractABI
 
 // MARK: Internal Helpers
 extension RainSDKManager {
@@ -66,7 +62,7 @@ extension RainSDKManager {
   }
   
   /// Builds withdrawal transaction params: EIP-712 message, admin signature via Portal, and calldata.
-  /// Returns wallet address and ETHTransactionParam ready for fee estimation or submission.
+  /// Returns wallet address and wallet transaction params ready for fee estimation or submission.
   func buildTransactionParamForWithdrawAsset(
     chainId: Int,
     assetAddresses: WithdrawAssetAddresses,
@@ -76,13 +72,18 @@ extension RainSDKManager {
     signature: String,
     expiresAt: String,
     nonce: BigUInt?
-  ) async throws -> (walletAddress: String, transactionParams: ETHTransactionParam) {
-    guard let walletAddress = try await portalForRequest.addresses[PortalNamespace.eip155] ?? nil
-    else {
-      throw RainSDKError.walletUnavailable
+  ) async throws -> (walletAddress: String, transactionParams: WalletTransactionParams) {
+    guard let provider = _walletProvider else {
+      throw RainSDKError.sdkNotInitialized
     }
-    
-    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+
+    guard let signerProvider = provider as? any RainTypedDataSignerProvider else {
+      throw RainSDKError.internalLogicError(
+        details: "Current wallet provider does not support EIP-712 signing"
+      )
+    }
+
+    let walletAddress = try await provider.address()
 
     guard let withdrawalSaltData = Data(base64Encoded: salt) else {
       throw RainSDKError.internalLogicError(details: "Failed to convert withdrawal salt base 64 string to Data")
@@ -108,20 +109,19 @@ extension RainSDKManager {
       decimals: decimals,
       nonce: nonce
     )
-    // Sign EIP-712 message using Portal to get admin signature
-    let response = try await portalForRequest.request(
-      chainId: chainIdString,
-      method: .eth_signTypedData_v4,
-      params: [walletAddress, eip712Message],
-      options: nil
+    // Sign EIP-712 message using the active wallet provider to get the admin signature
+    let adminSignatureString = try await signerProvider.signTypedData(
+      chainId: chainId,
+      walletAddress: walletAddress,
+      typedData: eip712Message
     )
+
     // Convert salt hex string back to Data
     guard let adminSaltData = Data.fromHex(adminSaltHex) else {
       throw RainSDKError.internalLogicError(details: "Failed to convert admin salt hex string to Data")
     }
     
-    guard let adminSignatureString = (response.result as? String),
-          let adminSignatureData = Data(hexString: adminSignatureString, length: 65)
+    guard let adminSignatureData = Data(hexString: adminSignatureString, length: 65)
     else {
       throw RainSDKError.internalLogicError(details: "Failed to convert admin signature hex string to Data or invalid length")
     }
@@ -139,67 +139,33 @@ extension RainSDKManager {
     )
     
     // Prepare transaction parameters for Portal
-    let transactionParams = composeTransactionParameters(
-      walletAddress: walletAddress,
-      contractAddress: assetAddresses.contractAddress,
-      transactionData: transactionData
+    let transactionParams = WalletTransactionParams(
+      from: walletAddress,
+      to: assetAddresses.contractAddress,
+      value: 0.ethToWei.toHexString,
+      data: transactionData
     )
     
     return (walletAddress, transactionParams)
   }
   
-  /// Estimates total transaction fee (estimated gas × gas price) in native token via Portal RPC.
-  func estimateTransactionFee(chainId: Int, address: String, params: ETHTransactionParam) async throws -> Double {
-    // Fetch estimated gas for the transaction
-    let estimateGas = try await fetchGasData(chainId: chainId, method: .eth_estimateGas, address: address, params: [params])
-    
-    // Fetch current gas price
-    let gasPrice = try await fetchGasData(chainId: chainId, method: .eth_gasPrice, address: address).weiToEth
-    
-    // Calculate the total fees
-    let txFee: Double = estimateGas * gasPrice
-    
-    return(txFee)
-  }
-  
-  /// Fetches gas-related RPC result (e.g. eth_estimateGas, eth_gasPrice) via Portal; returns numeric value as Double.
-  ///
-  /// The underlying `PortalProviderResult.result` can come back in different shapes depending on
-  /// the Portal SDK / transport. This helper supports:
-  /// - `PortalProviderRpcResponse` whose `result` is a `String` that can be parsed as `Double`
-  /// - a raw `String` that can be parsed as `Double`
-  /// - a raw numeric type (`NSNumber` / `Double`)
-  func fetchGasData(chainId: Int, method: PortalRequestMethod, address: String, params: [Any] = []) async throws -> Double {
-    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
-    
-    let response = try await portalForRequest.request(
-      chainId: chainIdString,
-      method: method,
-      params: params,
-      options: nil
-    )
-    
-    // 1) Preferred: PortalProviderRpcResponse wrapping a string result
-    if let rpcResponse = response.result as? PortalProviderRpcResponse,
-       let stringResult = rpcResponse.result,
-       let doubleValue = stringResult.asDouble {
-      return doubleValue
+  /// Estimates total transaction fee (estimated gas × gas price) in native token via the active wallet provider.
+  /// // TODO consider EIP-1559 chains
+  func estimateTransactionFee(chainId: Int, address: String, params: WalletTransactionParams) async throws -> Double {
+    guard let provider = _walletProvider else {
+      throw RainSDKError.sdkNotInitialized
     }
-    
-    // 2) Fallback: raw string result
-    if let stringResult = response.result as? String,
-       let doubleValue = stringResult.asDouble {
-      return doubleValue
+
+    guard let estimatingProvider = provider as? any RainTransactionFeeEstimatingProvider else {
+      throw RainSDKError.internalLogicError(
+        details: "Current wallet provider does not support fee estimation"
+      )
     }
-    
-    // 3) Fallback: raw numeric result
-    if let numberResult = response.result as? NSNumber {
-      return numberResult.doubleValue
-    }
-    
-    RainLogger.error("Rain SDK: Error fetching \(method) for \(address). Unexpected RPC response")
-    throw RainSDKError.internalLogicError(
-      details: "Unexpected RPC response when fetching \(method) for \(address)"
+
+    return try await estimatingProvider.estimateTransactionFee(
+      chainId: chainId,
+      walletAddress: address,
+      params: params
     )
   }
 }

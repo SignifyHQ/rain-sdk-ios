@@ -6,6 +6,8 @@ enum APIError: Error, LocalizedError {
   case invalidResponse
   case emptyResponse
   case noCreditContracts
+  case notConfigured
+  case signatureNotReady(status: String?, retryAfter: Int?)
   case decodingError(Error)
   case serverError(statusCode: Int, data: Data?)
   case networkError(Error)
@@ -20,6 +22,11 @@ enum APIError: Error, LocalizedError {
       return "Server returned no data."
     case .noCreditContracts:
       return "No credit contracts found."
+    case .notConfigured:
+      return "Rain Api-Key and User ID are required. Enter them on the Collateral Withdraw entry screen."
+    case .signatureNotReady(let status, let retryAfter):
+      let retry = retryAfter.map { " (retry after \($0)s)" } ?? ""
+      return "Signature not ready: status=\(status ?? "unknown")\(retry)"
     case .decodingError(let error):
       return "Failed to decode response: \(error.localizedDescription)"
     case .serverError(let statusCode, let data):

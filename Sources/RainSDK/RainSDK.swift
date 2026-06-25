@@ -1,12 +1,16 @@
 import Foundation
 import CoreGraphics
 import PortalSwift
+import TurnkeySwift
 import Web3
 
-// Declaration of Portal wallet instance and the init method
+// Declaration of wallet provider instances and initialization methods
 public protocol RainSDK {
   /// The initialized Portal instance
   var portal: Portal { get throws }
+
+  /// The initialized Turnkey context
+  var turnkey: TurnkeyContext { get throws }
   
   /// Initializes the SDK with a Portal token and network configurations
   /// - Parameters:
@@ -19,9 +23,25 @@ public protocol RainSDK {
     portalSessionToken: String,
     networkConfigs: [NetworkConfig]
   ) async throws
+
+  /// Initializes the SDK with an authenticated Turnkey context and network configurations.
+  /// Use the official Turnkey Swift SDK for auth flows such as passkeys / auth proxy, then pass
+  /// the live context into Rain for wallet operations.
+  ///
+  /// - Parameters:
+  ///   - turnkey: An authenticated `TurnkeyContext`.
+  ///   - networkConfigs: Array of network configurations, each containing chain ID and RPC URL.
+  ///   - walletAddress: Optional explicit EVM wallet address to use. When omitted, Rain uses the
+  ///                    first available Ethereum account from the Turnkey context.
+  /// - Throws: `RainSDKError` if initialization fails or no usable EVM wallet is available.
+  func initializeTurnkey(
+    turnkey: TurnkeyContext,
+    networkConfigs: [NetworkConfig],
+    walletAddress: String?
+  ) async throws
   
   /// Initializes the SDK with network configurations only (wallet-agnostic mode)
-  /// This allows using transaction building methods without Portal wallet integration
+  /// This allows using transaction building methods without a wallet provider integration.
   /// - Parameters:
   ///   - networkConfigs: Array of network configurations, each containing chain ID and RPC URL
   ///     Example: [NetworkConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/..."),
@@ -33,8 +53,13 @@ public protocol RainSDK {
 
   /// Sets the wallet provider used for send and other wallet operations (e.g. sendNative, sendERC20).
   /// Call after `initialize(networkConfigs:)` when using a third-party provider (e.g. Web3Auth).
-  /// Pass `nil` to clear. When using Portal, prefer `initializePortal` which sets the provider automatically.
+  /// Pass `nil` to clear. When using Portal or Turnkey, prefer `initializePortal` / `initializeTurnkey`
+  /// which set the provider automatically.
   func setWalletProvider(_ provider: (any RainWalletProvider)?)
+
+  /// Clears all SDK state. After this returns, the SDK is back to the same state as
+  /// immediately after `init()` and must be re-initialized before further use.
+  func reset()
 
   /// Builds an EIP-712 compliant message used for obtaining the admin signature
   /// required for withdrawals.
@@ -119,19 +144,20 @@ public protocol RainSDK {
   ///   - contractAddress: Target smart contract address.
   ///   - transactionData: Hex-encoded calldata.
   ///
-  /// - Returns: A fully formed `ETHTransactionParam` object.
-  func composeTransactionParameters(
+  /// - Returns: A fully formed `RainTransactionParameters` object. Rain-owned so the public
+  ///            surface does not leak Portal/Turnkey types (parity with Android).
+  func buildTransactionParameters(
     walletAddress: String,
     contractAddress: String,
     transactionData: String
-  ) -> ETHTransactionParam
+  ) -> RainTransactionParameters
   
   /// Executes a collateral withdrawal transaction on-chain.
   ///
   /// This method orchestrates the full withdrawal flow, including:
   /// - Preparing transaction calldata
   /// - Managing or fetching the correct nonce (if not provided)
-  /// - Signing the transaction using the Portal wallet
+  /// - Signing the EIP-712 payload using the active wallet provider
   /// - Submitting the transaction to the specified blockchain network
   ///
   /// - Parameters:
@@ -165,8 +191,9 @@ public protocol RainSDK {
   
   /// Estimates the total fee (gas cost) required to execute a collateral withdrawal transaction.
   ///
-  /// This method builds the withdrawal transaction parameters and uses the network to estimate
-  /// gas usage and current gas price, returning the total fee in the chain's native token (e.g., ETH).
+  /// This method builds the withdrawal transaction parameters and uses the active wallet provider
+  /// to estimate gas usage and current gas price, returning the total fee in the chain's native token
+  /// (e.g., ETH).
   ///
   /// - Parameters:
   ///   - chainId: The target blockchain network identifier.
@@ -199,6 +226,17 @@ public protocol RainSDK {
   func getWalletAddress(
   ) async throws -> String
 
+  /// Returns the wallet address for a specific chain. For Solana chains (sentinel IDs
+  /// 101–103) this resolves the wallet's Solana account (base58); for every other chain it
+  /// returns the EVM address, identical to `getWalletAddress()`.
+  ///
+  /// - Parameter chainId: The target blockchain network identifier.
+  /// - Returns: The wallet address string for that chain's family.
+  /// - Throws: RainSDKError if wallet provider is not set, or if the address is unavailable.
+  func getWalletAddress(
+    chainId: Int
+  ) async throws -> String
+
   /// Generates a square QR code image encoding the current wallet address.
   ///
   /// - Parameters:
@@ -215,53 +253,44 @@ public protocol RainSDK {
 
   // MARK: - Fetch balances
 
-  /// Fetches the native token balance (e.g. ETH) for the current wallet on the given network.
-  ///
-  /// - Parameter chainId: The target blockchain network identifier (e.g. 1 for Ethereum, 43114 for Avalanche).
-  /// - Returns: Balance in human-readable form (e.g. 1.5 for 1.5 ETH).
-  /// - Throws: RainSDKError if SDK or wallet provider is not initialized, or if the RPC request fails.
-  func getNativeBalance(
-    chainId: Int
-  ) async throws -> Double
-
-  /// Fetches the ERC-20 token balance for a single token via direct RPC `eth_call` (balanceOf).
+  /// Fetches a single balance (native or a contract token) for the current wallet.
   ///
   /// - Parameters:
-  ///   - chainId: The target blockchain network identifier (e.g. 1 for Ethereum).
-  ///   - tokenAddress: The ERC-20 token contract address.
-  ///   - decimals: Token decimal places (e.g. 6 for USDC, 18 for most tokens). Defaults to 18 when nil.
-  /// - Returns: Balance in human-readable form (e.g. 100.0 for 100 tokens).
-  /// - Throws: RainSDKError if wallet provider is not set, or if the request fails.
-  /// Fetches the decimal places for an ERC-20 token via direct RPC `eth_call` (decimals()).
-  ///
-  /// - Parameters:
-  ///   - chainId: The target blockchain network identifier.
-  ///   - tokenAddress: The ERC-20 token contract address.
-  /// - Returns: Token decimal places (e.g. 18 for WETH, 6 for USDC).
-  /// - Throws: RainSDKError if wallet provider is not set, or if the request fails.
-  func getERC20Balance(
+  ///   - chainId: The target blockchain network identifier (e.g. 1 for Ethereum, 43114 for Avalanche).
+  ///   - token: `.native` for the chain's gas currency, or `.contract(address:)` for an ERC-20.
+  /// - Returns: A `Balance` carrying the exact `rawAmount` plus resolved decimals / symbol / name.
+  /// - Throws: RainSDKError if no wallet provider is set, or if the request fails.
+  func getBalance(
     chainId: Int,
-    tokenAddress: String,
-    decimals: Int?
-  ) async throws -> Double
+    token: Token
+  ) async throws -> Balance
 
-  /// Fetches ERC-20 token balances for the current wallet on the given network.
+  /// Fetches all non-zero balances for the current wallet on the given network. The native
+  /// balance is always included; zero-balance contract tokens are omitted.
   ///
   /// - Parameter chainId: The target blockchain network identifier (e.g. 1 for Ethereum).
-  /// - Returns: Dictionary mapping token contract address to balance (human-readable). Empty if none or on error.
-  /// - Throws: RainSDKError if SDK or Portal is not initialized, or if the request fails.
-  func getERC20Balances(
+  /// - Returns: One `Balance` per non-zero token plus the native balance.
+  /// - Throws: RainSDKError if no wallet provider is set, or if the request fails.
+  func getTokenBalances(
     chainId: Int
-  ) async throws -> [String: Double]
+  ) async throws -> [Balance]
 
-  /// Fetches all balances (native + ERC-20) for the current wallet on the given network.
+  /// Fetches balances across every chain the SDK was initialized with, in parallel,
+  /// flattened into a single list. Each `Balance` carries its own `chainId`.
   ///
-  /// - Parameter chainId: The target blockchain network identifier (e.g. 1 for Ethereum).
-  /// - Returns: Dictionary mapping token contract address to balance (human-readable). Use key `""` for native token (e.g. ETH).
-  /// - Throws: RainSDKError if wallet provider is not set, or if the request fails.
-  func getBalances(
-    chainId: Int
-  ) async throws -> [String: Double]
+  /// Per-chain failures are tolerated — a chain that errors out contributes no entries
+  /// rather than failing the whole call, so a single bad RPC endpoint doesn't hide
+  /// balances on the other chains.
+  ///
+  /// - Returns: A flat list of balances spanning all healthy configured chains.
+  /// - Throws: RainSDKError if no wallet provider is set.
+  func getAllBalances() async throws -> [Balance]
+
+  /// Registers additional tokens with the SDK so their metadata (decimals / symbol) resolves
+  /// without an on-chain enrichment call. Retained across re-initialization; cleared by `reset()`.
+  ///
+  /// - Parameter tokens: Tokens to add to the SDK's token store.
+  func registerTokens(_ tokens: [TokenInfo])
 
   // MARK: - Transactions
 
@@ -289,29 +318,57 @@ public protocol RainSDK {
   ///   - chainId: The target blockchain network identifier (e.g. 1 for Ethereum, 43114 for Avalanche).
   ///   - to: Recipient address.
   ///   - amount: Human-readable amount (e.g. 1.5 for 1.5 ETH).
-  /// - Returns: The transaction hash of the submitted transaction.
+  /// - Returns: A `RainTokenTransferResult` carrying the on-chain transaction hash (EVM) or
+  ///            transaction signature (Solana).
   /// - Throws: RainSDKError if no wallet provider is set, or if transaction building or submission fails.
-  func sendNativeToken(
+  func sendNative(
     chainId: Int,
     to: String,
     amount: Double
-  ) async throws -> String
+  ) async throws -> RainTokenTransferResult
 
-  /// Sends ERC-20 tokens on the specified network.
+  /// Sends tokens on the specified network. Chain-aware:
+  /// - EVM chains: builds an ERC-20 `transfer(address,uint256)` calldata and sends via the active provider.
+  /// - Solana chains (sentinel IDs 101–103): builds an SPL `TransferChecked` instruction
+  ///   (auto-creating the recipient associated token account when needed) and signs / broadcasts
+  ///   via the Solana transfers capability on the active provider.
   ///
   /// - Parameters:
   ///   - chainId: The target blockchain network identifier.
-  ///   - contractAddress: The ERC-20 token contract address.
-  ///   - to: Recipient address.
+  ///   - contractAddress: The ERC-20 token contract address (EVM) or SPL mint address (Solana, base58).
+  ///   - to: Recipient address (EVM hex or Solana base58).
   ///   - amount: Human-readable amount (e.g. 100.0 for 100 tokens).
-  ///   - decimals: Number of decimal places for the token (e.g. 18 for WETH, 6 for USDC).
-  /// - Returns: The transaction hash of the submitted transaction.
+  ///   - decimals: Optional number of decimal places for the token (e.g. 18 for WETH, 6 for
+  ///               USDC). When `nil`, the SDK resolves the token's `decimals()` itself — from
+  ///               its token registry or, for unknown tokens, an on-chain `decimals()` read —
+  ///               so callers don't have to track it.
+  /// - Returns: A `RainTokenTransferResult` carrying the on-chain transaction hash (EVM) or
+  ///            transaction signature (Solana).
   /// - Throws: RainSDKError if SDK or wallet provider is not initialized, or if transaction building or submission fails.
-  func sendERC20Token(
+  func sendToken(
     chainId: Int,
     contractAddress: String,
     to: String,
     amount: Double,
-    decimals: Int
-  ) async throws -> String
+    decimals: Int?
+  ) async throws -> RainTokenTransferResult
+}
+
+public extension RainSDK {
+  /// Sends tokens letting the SDK resolve the token's `decimals()` itself (from its registry
+  /// or an on-chain read). Prefer this over passing `decimals` explicitly.
+  func sendToken(
+    chainId: Int,
+    contractAddress: String,
+    to: String,
+    amount: Double
+  ) async throws -> RainTokenTransferResult {
+    try await sendToken(
+      chainId: chainId,
+      contractAddress: contractAddress,
+      to: to,
+      amount: amount,
+      decimals: nil
+    )
+  }
 }

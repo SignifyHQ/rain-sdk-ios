@@ -89,13 +89,14 @@ struct GetTransactionsDemoView: View {
 
   private var inputSection: some View {
     VStack(alignment: .leading, spacing: 12) {
-      VStack(alignment: .leading, spacing: 8) {
-        Text("Chain ID")
+      HStack {
+        Text("Network")
           .font(.subheadline)
           .foregroundColor(.secondary)
-        TextField("e.g. 43113, 1", text: $viewModel.chainId)
-          .textFieldStyle(.roundedBorder)
-          .keyboardType(.numberPad)
+        Spacer()
+        Text(viewModel.chain.displayName)
+          .font(.subheadline)
+          .fontWeight(.medium)
       }
 
       VStack(alignment: .leading, spacing: 8) {
@@ -202,7 +203,7 @@ private struct TransactionCardView: View {
       HStack(alignment: .center, spacing: 10) {
         categoryIcon
         HStack(alignment: .center, spacing: 6) {
-          if let url = snowtraceURL {
+          if let url = explorerURL {
             Link(destination: url) {
               Text(shortHash(tx.hash))
                 .font(.system(.subheadline, design: .monospaced))
@@ -339,14 +340,12 @@ private struct TransactionCardView: View {
     }
   }
 
-  private var snowtraceURL: URL? {
-    let base: String
-    switch tx.chainId {
-    case 43114: base = "https://snowtrace.io/tx/"
-    case 43113: base = "https://testnet.snowtrace.io/tx/"
-    default:    return nil
+  private var explorerURL: URL? {
+    guard let chain = WalletChain.from(chainId: tx.chainId) else {
+      return DemoLocalConfig.transactionExplorerURL(hash: tx.hash, chainId: tx.chainId)
     }
-    return URL(string: base + tx.hash)
+    // Solana history hashes are Turnkey status ids, not explorer-linkable.
+    return chain.isSolana ? nil : chain.explorerTxURL(hash: tx.hash)
   }
 
   private func checksumAddress(_ raw: String) -> String {

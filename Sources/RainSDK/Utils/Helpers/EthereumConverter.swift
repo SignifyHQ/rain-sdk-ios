@@ -1,34 +1,18 @@
 import Foundation
-import PortalSwift
+import Web3
 
 /// Utility functions for Ethereum data conversion.
-/// Mirrors Android's `EthereumConverter` utility class.
 enum EthereumConverter {
 
-  // MARK: - Portal Result Extraction
+  // MARK: - Hex Normalization
 
-  /// Extracts a hex string from a `PortalProviderResult`, mirroring Android's `convertPortalResultToHexString`.
-  ///
-  /// Handles two shapes Portal can return:
-  ///   - `result` is a raw `String` (e.g. some RPC methods return the hex directly)
-  ///   - `result` is a `PortalProviderRpcResponse` whose nested `.result` holds the hex string
-  ///
-  /// - Returns: The hex string (e.g. `"0x1a2b…"`) or `"0x0"` when missing/invalid.
-  static func extractHexString(from portalResult: PortalProviderResult) -> String {
-    let hex: String?
-    switch portalResult.result {
-    case let str as String:
-      hex = str
-    case let rpcResponse as PortalProviderRpcResponse:
-      hex = rpcResponse.result
-    default:
-      hex = nil
-    }
-
+  /// Returns the input if it looks like a non-empty `0x`-prefixed hex string;
+  /// otherwise returns `"0x0"`. Used by RPC response handlers that want to keep
+  /// downstream parsers from worrying about nil / malformed payloads.
+  static func normalizedHexString(_ hex: String?) -> String {
     guard let hex, hex.hasPrefix("0x"), hex.count > 2 else {
       return "0x0"
     }
-
     return hex
   }
 
@@ -44,7 +28,7 @@ enum EthereumConverter {
   /// - Returns: Human-readable balance as `Double` (e.g. `1.0` for 1 ETH).
   /// Converts a hex-encoded uint256 string to an `Int` (e.g. for ERC-20 `decimals()` responses).
   static func parseHexToInt(_ hex: String) -> Int {
-    let cleanHex = hex.hasPrefix("0x") ? String(hex.dropFirst(2)) : hex
+    let cleanHex = hex.strippingHexPrefix
     guard !cleanHex.isEmpty else { return 0 }
     return Int(cleanHex, radix: 16) ?? 0
   }
@@ -56,7 +40,7 @@ enum EthereumConverter {
   ///   slot 1 — byte length of string
   ///   slot 2+ — UTF-8 string bytes, right-padded to 32-byte boundary
   static func parseHexToString(_ hex: String) -> String? {
-    let cleanHex = hex.hasPrefix("0x") ? String(hex.dropFirst(2)) : hex
+    let cleanHex = hex.strippingHexPrefix
     guard cleanHex.count >= 128 else { return nil }
 
     let lengthHex = String(cleanHex.dropFirst(64).prefix(64))
@@ -77,7 +61,7 @@ enum EthereumConverter {
   }
 
   static func parseHexToDouble(_ hex: String, decimals: Int) -> Double {
-    let cleanHex = hex.hasPrefix("0x") ? String(hex.dropFirst(2)) : hex
+    let cleanHex = hex.strippingHexPrefix
     guard !cleanHex.isEmpty else { return 0 }
 
     var value = NSDecimalNumber.zero
@@ -89,5 +73,39 @@ enum EthereumConverter {
 
     let divisor = NSDecimalNumber(mantissa: 1, exponent: Int16(decimals), isNegative: false)
     return value.dividing(by: divisor).doubleValue
+  }
+
+  /// Converts a hex-encoded uint256 string to an exact `BigUInt` (no precision loss).
+  ///
+  /// Used for balances read directly from chain (`eth_getBalance`, `eth_call balanceOf`),
+  /// where the raw base-unit value must be preserved.
+  static func parseHexToBigUInt(_ hex: String) -> BigUInt {
+    BigUInt(hex.strippingHexPrefix, radix: 16) ?? 0
+  }
+
+  /// Reconstructs an exact base-unit `BigUInt` from a human-readable decimal string.
+  ///
+  /// The inverse of `parseHexToDouble`: multiplies by `10^decimals` and truncates any
+  /// remaining fractional part. Used where a provider only exposes a formatted decimal
+  /// balance (e.g. Portal's `getAssets`, Turnkey's supported-chain API) rather than raw hex.
+  static func decimalStringToBigUInt(_ decimalString: String?, decimals: Int) -> BigUInt {
+    guard let decimalString, !decimalString.isEmpty else { return 0 }
+
+    let value = NSDecimalNumber(string: decimalString)
+    guard !value.doubleValue.isNaN else { return 0 }
+
+    let multiplier = NSDecimalNumber(mantissa: 1, exponent: Int16(decimals), isNegative: false)
+    let roundDown = NSDecimalNumberHandler(
+      roundingMode: .down,
+      scale: 0,
+      raiseOnExactness: false,
+      raiseOnOverflow: false,
+      raiseOnUnderflow: false,
+      raiseOnDivideByZero: false
+    )
+    let baseUnits = value.multiplying(by: multiplier, withBehavior: roundDown)
+    guard baseUnits.compare(NSDecimalNumber.zero) == .orderedDescending else { return 0 }
+
+    return BigUInt(baseUnits.stringValue) ?? 0
   }
 }

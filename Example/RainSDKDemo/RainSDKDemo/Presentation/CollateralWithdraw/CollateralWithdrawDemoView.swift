@@ -4,8 +4,8 @@ import RainSDK
 import Combine
 import Web3
 
-struct PortalWithdrawDemoView: View {
-  @StateObject private var viewModel: PortalWithdrawDemoViewModel
+struct CollateralWithdrawDemoView: View {
+  @StateObject private var viewModel: CollateralWithdrawDemoViewModel
   @StateObject private var recoverViewModel: RecoverViewModel
   @State private var hasShownRecoverOnAppear = false
 
@@ -14,7 +14,7 @@ struct PortalWithdrawDemoView: View {
 
   /// When `initialContract` is provided (e.g. from entry after token verification), assets are derived from it. Otherwise the view model may load contracts itself.
   init(initialContract: RainCollateralContractResponse? = nil, popToRoot: (() -> Void)? = nil) {
-    _viewModel = StateObject(wrappedValue: PortalWithdrawDemoViewModel(initialContract: initialContract))
+    _viewModel = StateObject(wrappedValue: CollateralWithdrawDemoViewModel(initialContract: initialContract))
     _recoverViewModel = StateObject(wrappedValue: RecoverViewModel())
     self.popToRoot = popToRoot
   }
@@ -38,7 +38,7 @@ struct PortalWithdrawDemoView: View {
         loadingOverlay(message: message)
       }
     }
-    .navigationTitle("Portal Withdraw")
+    .navigationTitle("Collateral Withdraw")
     .navigationBarTitleDisplayMode(.inline)
     .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) {
@@ -95,11 +95,11 @@ struct PortalWithdrawDemoView: View {
         .font(.system(size: 50))
         .foregroundColor(.blue)
 
-      Text("Portal Withdraw")
+      Text("Collateral Withdraw")
         .font(.title2)
         .fontWeight(.bold)
 
-      Text("Execute collateral withdrawal via Portal (build, sign, submit)")
+      Text("Execute collateral withdrawal via your wallet provider (build, sign, submit)")
         .font(.subheadline)
         .foregroundColor(.secondary)
         .multilineTextAlignment(.center)
@@ -113,15 +113,15 @@ struct PortalWithdrawDemoView: View {
     VStack(alignment: .leading, spacing: 12) {
       HStack {
         Circle()
-          .fill(viewModel.isProcessing ? Color.orange : (viewModel.txHash != nil ? Color.green : (viewModel.hasPortal ? Color.blue : Color.gray)))
+          .fill(viewModel.isProcessing ? Color.orange : (viewModel.txHash != nil ? Color.green : (viewModel.hasWalletProvider ? Color.blue : Color.gray)))
           .frame(width: 12, height: 12)
 
         Text(viewModel.statusMessage)
           .font(.body)
       }
 
-      if !viewModel.hasPortal {
-        Text("Initialize SDK with Portal (not wallet-agnostic) to use this feature.")
+      if !viewModel.hasWalletProvider {
+        Text("Initialize SDK with a wallet provider (Portal or Turnkey) to use this feature.")
           .font(.caption)
           .foregroundColor(.orange)
       }
@@ -150,14 +150,28 @@ struct PortalWithdrawDemoView: View {
 
       inputField(title: "Recipient Address", text: $viewModel.recipientAddress, placeholder: "0x...")
 
-      inputField(title: "Amount", text: $viewModel.amount, placeholder: "e.g., 100.0")
+      VStack(alignment: .leading, spacing: 4) {
+        inputField(title: "Amount", text: $viewModel.amount, placeholder: "e.g., 100.0")
+
+        if viewModel.selectedAsset != nil {
+          if viewModel.isAmountOverBalance {
+            Text("Amount exceeds available balance (\(String(format: "%.6f", viewModel.availableBalance)) \(viewModel.selectedSymbol))")
+              .font(.caption)
+              .foregroundColor(.red)
+          } else {
+            Text("Available: \(String(format: "%.6f", viewModel.availableBalance)) \(viewModel.selectedSymbol)")
+              .font(.caption)
+              .foregroundColor(.secondary)
+          }
+        }
+      }
 
       assetDropdown
     }
     .padding()
     .background(Color(.systemGray6))
     .cornerRadius(12)
-    .opacity(viewModel.hasPortal ? 1 : 0.7)
+    .opacity(viewModel.hasWalletProvider ? 1 : 0.7)
   }
 
   private var assetDropdown: some View {
@@ -264,41 +278,51 @@ struct PortalWithdrawDemoView: View {
   // MARK: - Actions Section
 
   private var actionsSection: some View {
-    Button(action: {
-      hideKeyboard()
-      Task {
-        await viewModel.withdraw()
+    // Gas estimation happens in the background as part of the withdraw, so there's no separate
+    // "Estimate Gas" step. "Withdraw Maximum" withdraws the full available balance.
+    HStack(spacing: 8) {
+      Button(action: {
+        hideKeyboard()
+        Task { await viewModel.withdrawMaximum() }
+      }) {
+        Text("Withdraw Maximum")
+          .frame(maxWidth: .infinity)
+          .padding()
+          .background(viewModel.canWithdrawMaximum && !viewModel.isProcessing
+            ? Color(.systemBackground) : Color(.systemGray5))
+          .foregroundColor(.blue)
+          .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.blue, lineWidth: 1))
+          .cornerRadius(12)
       }
-    }) {
-      HStack {
-        if viewModel.isProcessing {
-          ProgressView()
-            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-        } else {
-          Image(systemName: "arrow.down.circle.fill")
-        }
+      .disabled(!viewModel.canWithdrawMaximum || viewModel.isProcessing)
 
-        Text("Withdraw via Portal")
+      Button(action: {
+        hideKeyboard()
+        Task { await viewModel.withdraw() }
+      }) {
+        HStack {
+          if viewModel.isProcessing {
+            ProgressView()
+              .progressViewStyle(CircularProgressViewStyle(tint: .white))
+          } else {
+            Image(systemName: "arrow.down.circle.fill")
+          }
+          Text("Withdraw")
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(viewModel.canWithdraw ? Color.blue : Color.gray)
+        .foregroundColor(.white)
+        .cornerRadius(12)
       }
-      .frame(maxWidth: .infinity)
-      .padding()
-      .background(viewModel.canWithdraw ? Color.blue : Color.gray)
-      .foregroundColor(.white)
-      .cornerRadius(12)
+      .disabled(!viewModel.canWithdraw || viewModel.isProcessing)
     }
-    .disabled(!viewModel.canWithdraw || viewModel.isProcessing)
   }
 
   // MARK: - Helpers
 
   private func snowtraceURL(hash: String, chainId: Int) -> URL? {
-    let base: String
-    switch chainId {
-    case 43114: base = "https://snowtrace.io/tx/"
-    case 43113: base = "https://testnet.snowtrace.io/tx/"
-    default:    return nil
-    }
-    return URL(string: base + hash)
+    DemoLocalConfig.transactionExplorerURL(hash: hash, chainId: chainId)
   }
 
   // MARK: - Result Section
@@ -375,6 +399,6 @@ struct PortalWithdrawDemoView: View {
 
 #Preview {
   NavigationView {
-    PortalWithdrawDemoView()
+    CollateralWithdrawDemoView()
   }
 }

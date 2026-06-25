@@ -1,5 +1,5 @@
 {
-  "originHash" : "96ee3802c9e51b2c63aba3127aefdabe03a75049b7464985664038791d5ed364",
+  "originHash" : "d694a434fa00754ef6ea383df0dceb0ff0f36db142e2280a53a6aa3dbbc913d7",
   "pins" : [
     {
       "identity" : "anycodable",
@@ -26,6 +26,24 @@
       "state" : {
         "revision" : "2781038865a80e2c425a1da12cc1327bcd56501f",
         "version" : "1.7.6"
+      }
+    },
+    {
+      "identity" : "base58",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/anquii/Base58.git",
+      "state" : {
+        "revision" : "520bbd9f8800e101f93453d1429881b6b4cb7a38",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "base58check",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/anquii/Base58Check.git",
+      "state" : {
+        "revision" : "133f9d4e4f1d47002e8d6ae85152ab57f4098e92",
+        "version" : "1.0.0"
       }
     },
     {
@@ -287,6 +305,15 @@
       "state" : {
         "revision" : "2b1980b825f08a81ccc762b0c4d17fcde9d5e953",
         "version" : "2.0.2"
+      }
+    },
+    {
+      "identity" : "swift-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tkhq/swift-sdk.git",
+      "state" : {
+        "revision" : "a462f3dfc5b3e2321b0657c59b67b311fe15b87b",
+        "version" : "4.0.0"
       }
     },
     {

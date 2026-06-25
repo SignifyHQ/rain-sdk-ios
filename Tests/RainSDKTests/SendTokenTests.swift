@@ -1,189 +1,218 @@
 import Testing
 import Foundation
-import PortalSwift
+import Web3
 @testable import RainSDK
 
+/// Manager-contract tests for send APIs: validation, mode guards, error wrapping.
+/// Provider-specific success paths live in `Adapters/`.
 @Suite("Send Token Tests")
 struct SendTokenTests {
 
-  // MARK: - sendNativeToken
+  // MARK: - sendNative
 
-  @Test("sendNativeToken should throw walletUnavailable when called before initialization")
+  @Test("sendNative throws sdkNotInitialized before initialization")
   func testSendNativeTokenBeforeInitialization() async throws {
     let manager = RainSDKManager()
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.sendNativeToken(
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
+      _ = try await manager.sendNative(
         chainId: 1,
-        to: "0xrecipient0000000000000000000000000000000000",
+        to: TestFixtures.recipientAddress,
         amount: 1.0
       )
     }
   }
 
-  @Test("sendNativeToken should throw walletUnavailable after wallet-agnostic initialize")
+  @Test("sendNative throws sdkNotInitialized after wallet-agnostic initialize")
   func testSendNativeTokenAfterWalletAgnosticInit() async throws {
-    let manager = RainSDKManager()
-    let configs = [
-      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
-    ]
-    try await manager.initialize(networkConfigs: configs)
+    let manager = try await TestManagers.walletAgnosticManager()
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.sendNativeToken(
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
+      _ = try await manager.sendNative(
         chainId: 1,
-        to: "0xrecipient0000000000000000000000000000000000",
+        to: TestFixtures.recipientAddress,
         amount: 1.0
       )
     }
   }
 
-  @Test("sendNativeToken should throw walletUnavailable when no wallet address from provider")
+  @Test("sendNative throws walletUnavailable when provider has no address")
   func testSendNativeTokenNoWalletAddress() async throws {
     let mockPortal = MockPortal()
     mockPortal.mockAddresses.removeAll()
-
-    let configs = [
-      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
-    ]
-    let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
-    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
+    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
     await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.sendNativeToken(
+      _ = try await manager.sendNative(
         chainId: 1,
-        to: "0xrecipient0000000000000000000000000000000000",
+        to: TestFixtures.recipientAddress,
         amount: 1.0
       )
     }
   }
 
-  @Test("sendNativeToken success returns tx hash when provider is configured")
-  func testSendNativeTokenSuccess() async throws {
-    let mockPortal = MockPortal()
-    mockPortal.setMockAddress("0x1234567890123456789012345678901234567890", forNamespace: PortalNamespace.eip155)
+  // MARK: - sendToken
 
-    let chainIdString = "eip155:1"
-    let mockTxHash = "0x" + String(repeating: "b", count: 64)
-    mockPortal.setMockResponse(
-      chainId: chainIdString,
-      method: .eth_sendTransaction,
-      result: mockTxHash
-    )
-
-    let configs = [
-      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
-    ]
-    let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
-    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
-
-    let toAddress = "0xrecipient0000000000000000000000000000000000"
-    let txHash = try await manager.sendNativeToken(
-      chainId: 1,
-      to: toAddress,
-      amount: 1.5
-    )
-
-    #expect(!txHash.isEmpty)
-    #expect(txHash.hasPrefix("0x"))
-    #expect(txHash == mockTxHash)
-    #expect(mockPortal.requestCalls.count == 1)
-    #expect(mockPortal.requestCalls[0].method == .eth_sendTransaction)
-    #expect(mockPortal.requestCalls[0].chainId == chainIdString)
-  }
-
-  // MARK: - sendERC20Token
-
-  @Test("sendERC20Token should throw sdkNotInitialized when called before initialization")
+  @Test("sendToken throws sdkNotInitialized before initialization")
   func testSendERC20TokenBeforeInitialization() async throws {
     let manager = RainSDKManager()
 
     await #expect(throws: RainSDKError.sdkNotInitialized) {
-      _ = try await manager.sendERC20Token(
+      _ = try await manager.sendToken(
         chainId: 1,
-        contractAddress: "0xcontract000000000000000000000000000000000",
-        to: "0xrecipient0000000000000000000000000000000000",
+        contractAddress: TestFixtures.tokenAddress,
+        to: TestFixtures.recipientAddress,
         amount: 100.0,
         decimals: 18
       )
     }
   }
 
-  @Test("sendERC20Token should throw walletUnavailable after wallet-agnostic initialize")
+  @Test("sendToken throws sdkNotInitialized after wallet-agnostic initialize")
   func testSendERC20TokenAfterWalletAgnosticInit() async throws {
-    let manager = RainSDKManager()
-    let configs = [
-      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
-    ]
-    try await manager.initialize(networkConfigs: configs)
+    let manager = try await TestManagers.walletAgnosticManager()
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.sendERC20Token(
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
+      _ = try await manager.sendToken(
         chainId: 1,
-        contractAddress: "0xcontract000000000000000000000000000000000",
-        to: "0xrecipient0000000000000000000000000000000000",
+        contractAddress: TestFixtures.tokenAddress,
+        to: TestFixtures.recipientAddress,
         amount: 100.0,
         decimals: 18
       )
     }
   }
 
-  @Test("sendERC20Token should throw walletUnavailable when no wallet address from provider")
+  @Test("sendToken throws walletUnavailable when provider has no address")
   func testSendERC20TokenNoWalletAddress() async throws {
     let mockPortal = MockPortal()
     mockPortal.mockAddresses.removeAll()
-
-    let configs = [
-      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
-    ]
-    let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
-    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
+    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
     await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.sendERC20Token(
+      _ = try await manager.sendToken(
         chainId: 1,
-        contractAddress: "0xcontract000000000000000000000000000000000",
-        to: "0xrecipient0000000000000000000000000000000000",
+        contractAddress: TestFixtures.tokenAddress,
+        to: TestFixtures.recipientAddress,
         amount: 100.0,
         decimals: 18
       )
     }
   }
 
-  @Test("sendERC20Token success returns tx hash when mocks are configured")
-  func testSendERC20TokenSuccess() async throws {
-    let mockPortal = MockPortal()
-    mockPortal.setMockAddress("0x1234567890123456789012345678901234567890", forNamespace: PortalNamespace.eip155)
+  // MARK: - Happy paths via provider-agnostic stub
 
-    let chainIdString = "eip155:1"
-    let mockTxHash = "0x" + String(repeating: "c", count: 64)
-    mockPortal.setMockResponse(
-      chainId: chainIdString,
-      method: .eth_sendTransaction,
-      result: mockTxHash
+  @Test("sendNative returns provider tx hash and forwards from/to/value to the provider")
+  func testSendNativeTokenRoutesToProvider() async throws {
+    let (manager, stub) = try await TestManagers.stubProviderManager()
+    let expectedHash = "0x" + String(repeating: "a", count: 64)
+    stub.sendTransactionHashToReturn = expectedHash
+
+    let result = try await manager.sendNative(
+      chainId: 1,
+      to: TestFixtures.recipientAddress,
+      amount: 1.5
     )
 
-    let configs = [
-      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
-    ]
-    let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
-    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
+    #expect(result.transactionHash == expectedHash)
+    #expect(stub.sendTransactionCalls.count == 1)
+    #expect(stub.sendTransactionCalls[0].chainId == 1)
+    #expect(stub.sendTransactionCalls[0].params.from == TestFixtures.walletAddress)
+    #expect(stub.sendTransactionCalls[0].params.to == TestFixtures.recipientAddress)
+    // Empty data for native transfers.
+    #expect(stub.sendTransactionCalls[0].params.data == .empty)
+  }
 
-    let contractAddress = "0xcontract000000000000000000000000000000000"
-    let toAddress = "0xrecipient0000000000000000000000000000000000"
-    let txHash = try await manager.sendERC20Token(
+  @Test("sendNative encodes value as exact wei (no Double drift)")
+  func testSendNativeEncodesExactWei() async throws {
+    let (manager, stub) = try await TestManagers.stubProviderManager()
+    stub.sendTransactionHashToReturn = "0x" + String(repeating: "a", count: 64)
+
+    // 16.38 ETH. A Double multiply (16.38 * 1e18) drifts; the exact base unit is 16_380_000_000_000_000_000.
+    _ = try await manager.sendNative(
       chainId: 1,
-      contractAddress: contractAddress,
-      to: toAddress,
+      to: TestFixtures.recipientAddress,
+      amount: 16.38
+    )
+
+    let expectedWei = BigUInt("16380000000000000000", radix: 10)!
+    #expect(stub.sendTransactionCalls[0].params.value == "0x" + String(expectedWei, radix: 16))
+  }
+
+  @Test("sendToken returns provider tx hash and routes calldata to the token contract")
+  func testSendERC20TokenRoutesToProvider() async throws {
+    let (manager, stub) = try await TestManagers.stubProviderManager()
+    let expectedHash = "0x" + String(repeating: "b", count: 64)
+    stub.sendTransactionHashToReturn = expectedHash
+
+    let result = try await manager.sendToken(
+      chainId: 1,
+      contractAddress: TestFixtures.tokenAddress,
+      to: TestFixtures.recipientAddress,
       amount: 100.0,
       decimals: 6
     )
 
-    #expect(!txHash.isEmpty)
-    #expect(txHash.hasPrefix("0x"))
-    #expect(txHash == mockTxHash)
-    #expect(mockPortal.requestCalls.count == 1)
-    #expect(mockPortal.requestCalls[0].method == .eth_sendTransaction)
-    #expect(mockPortal.requestCalls[0].chainId == chainIdString)
+    #expect(result.transactionHash == expectedHash)
+    #expect(stub.sendTransactionCalls.count == 1)
+    // ERC-20 transactions target the token contract; recipient is encoded in calldata.
+    #expect(stub.sendTransactionCalls[0].params.to == TestFixtures.tokenAddress)
+    #expect(stub.sendTransactionCalls[0].params.data.hasPrefix("0x"))
+  }
+
+  @Test("sendToken resolves decimals via the token store when the caller omits them")
+  func testSendTokenResolvesDecimalsFromStore() async throws {
+    let (manager, stub) = try await TestManagers.stubProviderManager()
+    stub.sendTransactionHashToReturn = "0x" + String(repeating: "d", count: 64)
+
+    // Unknown token (not in the registry) so the store enriches via the chain reader, which
+    // resolves decimals to 6.
+    let unknownToken = "0x000000000000000000000000000000000000dEaD"
+    let reader = MockChainReader()
+    reader.stubbedDecimals = 6
+    manager.setTokenStoreForTest(TokenMetadataStore(chainReader: reader))
+
+    // No decimals supplied → SDK resolves 6 from the store.
+    _ = try await manager.sendToken(
+      chainId: 1,
+      contractAddress: unknownToken,
+      to: TestFixtures.recipientAddress,
+      amount: 2.0
+    )
+    let resolvedData = stub.sendTransactionCalls.last?.params.data
+    #expect(reader.decimalsCalls.count == 1)
+
+    // The same call with explicit decimals: 6 must produce identical calldata.
+    _ = try await manager.sendToken(
+      chainId: 1,
+      contractAddress: unknownToken,
+      to: TestFixtures.recipientAddress,
+      amount: 2.0,
+      decimals: Int?(6)
+    )
+    let explicitData = stub.sendTransactionCalls.last?.params.data
+
+    #expect(resolvedData == explicitData)
+  }
+
+  // MARK: - Deprecated alias (1.0.0 source compat)
+
+  @available(*, deprecated)
+  @Test("deprecated sendERC20Token forwards to sendToken and returns the tx hash string")
+  func testDeprecatedSendERC20TokenForwards() async throws {
+    let (manager, stub) = try await TestManagers.stubProviderManager()
+    let expectedHash = "0x" + String(repeating: "c", count: 64)
+    stub.sendTransactionHashToReturn = expectedHash
+
+    let hash: String = try await manager.sendERC20Token(
+      chainId: 1,
+      contractAddress: TestFixtures.tokenAddress,
+      to: TestFixtures.recipientAddress,
+      amount: 100.0,
+      decimals: 6
+    )
+
+    #expect(hash == expectedHash)
+    #expect(stub.sendTransactionCalls[0].params.to == TestFixtures.tokenAddress)
   }
 }

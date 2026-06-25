@@ -9,9 +9,12 @@ struct GetBalancesDemoView: View {
     ScrollView {
       VStack(spacing: 24) {
         headerSection
-        chainIdSection
+        networkSection
         nativeBalanceSection
-        erc20BalanceSection
+        if !viewModel.chain.isSolana {
+          erc20BalanceSection
+        }
+        allBalancesSection
       }
       .padding()
     }
@@ -44,17 +47,17 @@ struct GetBalancesDemoView: View {
     .padding(.vertical)
   }
 
-  // MARK: - Shared Chain ID
+  // MARK: - Network
 
-  private var chainIdSection: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text("Chain ID")
+  private var networkSection: some View {
+    HStack {
+      Text("Network")
         .font(.subheadline)
         .foregroundColor(.secondary)
-
-      TextField("e.g. 43113 (Avalanche Fuji), 1 (Ethereum)", text: $viewModel.chainId)
-        .textFieldStyle(.roundedBorder)
-        .keyboardType(.numberPad)
+      Spacer()
+      Text(viewModel.chain.displayName)
+        .font(.subheadline)
+        .fontWeight(.medium)
     }
     .padding()
     .background(Color(.systemGray6))
@@ -65,7 +68,7 @@ struct GetBalancesDemoView: View {
 
   private var nativeBalanceSection: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Label("Native Token", systemImage: "bitcoinsign.circle")
+      Label("Native Token (\(viewModel.chain.nativeSymbol))", systemImage: "bitcoinsign.circle")
         .font(.headline)
 
       FetchButton(
@@ -94,52 +97,101 @@ struct GetBalancesDemoView: View {
     .cornerRadius(12)
   }
 
-  // MARK: - ERC-20 Balance
+  // MARK: - ERC-20 Balances (auto-discovered)
 
   private var erc20BalanceSection: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Label("ERC-20 Token", systemImage: "puzzlepiece.extension")
+      Label("ERC-20 Tokens", systemImage: "puzzlepiece.extension")
         .font(.headline)
 
-      VStack(alignment: .leading, spacing: 8) {
-        Text("Token Contract Address")
-          .font(.subheadline)
-          .foregroundColor(.secondary)
-
-        TextField("0x…", text: $viewModel.tokenAddress)
-          .textFieldStyle(.roundedBorder)
-          .autocorrectionDisabled()
-          .textInputAutocapitalization(.never)
-      }
-
-      VStack(alignment: .leading, spacing: 8) {
-        Text("Decimals")
-          .font(.subheadline)
-          .foregroundColor(.secondary)
-
-        TextField("e.g. 18 (ETH), 6 (USDC)", text: $viewModel.tokenDecimals)
-          .textFieldStyle(.roundedBorder)
-          .keyboardType(.numberPad)
-      }
+      Text("Lists every ERC-20 with a balance > 0 — auto-discovered. No contract address or decimals needed; the SDK resolves each token's name, symbol, and decimals.")
+        .font(.caption)
+        .foregroundColor(.secondary)
 
       FetchButton(
-        title: "Get ERC-20 Balance",
-        isLoading: viewModel.isLoadingERC20,
-        isDisabled: !viewModel.canFetchERC20
+        title: "Get ERC-20 Balances",
+        isLoading: viewModel.isLoadingTokens,
+        isDisabled: !viewModel.canFetchTokens
       ) {
-        Task { await viewModel.fetchERC20Balance() }
+        Task { await viewModel.fetchTokenBalances() }
       }
 
-      if let balance = viewModel.erc20Balance {
-        VStack(spacing: 4) {
-          if let address = viewModel.erc20WalletAddress {
-            WalletAddressRow(address: address)
+      if let address = viewModel.tokensWalletAddress {
+        WalletAddressRow(address: address)
+      }
+
+      if !viewModel.walletTokens.isEmpty {
+        VStack(alignment: .leading, spacing: 8) {
+          ForEach(viewModel.walletTokens) { token in
+            BalanceRow(
+              label: token.displayName,
+              value: formatBalance(token.balance)
+            )
           }
-          BalanceHighlight(value: formatBalance(balance))
+        }
+      } else if viewModel.didFetchTokens && viewModel.tokensError == nil {
+        Text("No ERC-20 tokens with a balance > 0.")
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
+
+      if let error = viewModel.tokensError {
+        ErrorBanner(error: error)
+      }
+    }
+    .padding()
+    .background(Color(.systemGray6))
+    .cornerRadius(12)
+  }
+
+  // MARK: - All Balances (cross-chain)
+
+  private var allBalancesSection: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Label("All Chains", systemImage: "globe")
+        .font(.headline)
+
+      Text("Fetches balances across every configured chain in parallel. Chains outside Turnkey's allowlist read via Multicall3.")
+        .font(.caption)
+        .foregroundColor(.secondary)
+
+      FetchButton(
+        title: "Get All Balances",
+        isLoading: viewModel.isLoadingAll,
+        isDisabled: !RainSDKService.shared.isInitialized
+      ) {
+        Task { await viewModel.fetchAllBalances() }
+      }
+
+      if let all = viewModel.allBalances {
+        VStack(alignment: .leading, spacing: 8) {
+          ForEach(all.keys.sorted(), id: \.self) { chainId in
+            let entries = all[chainId] ?? [:]
+            VStack(alignment: .leading, spacing: 4) {
+              Text(WalletChain.from(chainId: chainId)?.displayName ?? "Chain \(chainId)")
+                .font(.subheadline)
+                .fontWeight(.semibold)
+              if entries.isEmpty {
+                Text("No balances (chain failed or unsupported)")
+                  .font(.caption)
+                  .foregroundColor(.secondary)
+              } else {
+                ForEach(entries.keys.sorted(), id: \.self) { token in
+                  BalanceRow(
+                    label: token.isEmpty ? "Native" : shortAddress(token),
+                    value: formatBalance(entries[token] ?? 0)
+                  )
+                }
+              }
+            }
+            .padding(8)
+            .background(Color(.systemBackground))
+            .cornerRadius(8)
+          }
         }
       }
 
-      if let error = viewModel.erc20Error {
+      if let error = viewModel.allError {
         ErrorBanner(error: error)
       }
     }
@@ -149,6 +201,13 @@ struct GetBalancesDemoView: View {
   }
 
   // MARK: - Helpers
+
+  private func shortAddress(_ address: String) -> String {
+    guard address.count > 10 else { return address }
+    let prefix = address.prefix(6)
+    let suffix = address.suffix(4)
+    return "\(prefix)…\(suffix)"
+  }
 
   private func formatBalance(_ value: Double) -> String {
     if value >= 1_000_000 { return String(format: "%.2f", value) }

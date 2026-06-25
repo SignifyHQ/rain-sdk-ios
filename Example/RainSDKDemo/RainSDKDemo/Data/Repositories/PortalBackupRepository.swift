@@ -1,24 +1,23 @@
 import Foundation
 import PortalSwift
 
-/// Repository for GET /v1/portal/backup. Fetches backup (cipher text) before Portal recover.
+/// Portal wallet recovery previously pulled the encrypted backup share from the Liquidity
+/// Financial proxy (`GET /v1/portal/backup`). The Rain dev API has no equivalent yet — backup/
+/// recovery is slated to move behind the wallet-provider endpoint
+/// (`POST /v1/issuing/users/{userId}/wallet`), which is not live.
+///
+/// This repository is kept as an inert seam: `fetchBackup` now throws a clear "unavailable"
+/// error instead of calling a dead endpoint, so callers surface the state to the user.
 final class PortalBackupRepository {
-  private let client: APIClient
+  init(client: APIClient? = nil) {}
 
-  init(client: APIClient? = nil) {
-    if let client = client {
-      self.client = client
-    } else {
-      let decoder = JSONDecoder()
-      decoder.keyDecodingStrategy = .convertFromSnakeCase
-      self.client = APIClient(decoder: decoder)
-    }
-  }
-
-  /// Fetches backup data (backupMethod + cipherText) from the API for recovery.
-  /// - Parameter backupMethod: The selected recovery method (e.g. iCloud or Password); sent as query param.
+  /// Always throws: wallet recovery is not yet available via the Rain API.
   func fetchBackup(backupMethod: String) async throws -> PortalBackupResponse {
-    let endpoint = Endpoint.restoreWallet(backupMethod: backupMethod)
-    return try await client.request(endpoint, as: PortalBackupResponse.self)
+    throw NSError(
+      domain: "Recover",
+      code: -1,
+      userInfo: [NSLocalizedDescriptionKey:
+        "Wallet recovery is not yet available via the Rain API (pending the wallet-provider endpoint)."]
+    )
   }
 }

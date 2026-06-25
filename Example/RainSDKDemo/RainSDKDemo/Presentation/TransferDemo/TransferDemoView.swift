@@ -3,14 +3,13 @@ import UIKit
 import RainSDK
 
 struct TransferDemoView: View {
-  @StateObject private var viewModel: TransferDemoViewModel
+  @StateObject private var viewModel = TransferDemoViewModel()
   @StateObject private var recoverViewModel = RecoverViewModel()
   @State private var hasShownRecoverOnAppear = false
   @Environment(\.dismiss) private var dismiss
   private let popToRoot: (() -> Void)?
 
-  init(initialContract: RainCollateralContractResponse? = nil, popToRoot: (() -> Void)? = nil) {
-    _viewModel = StateObject(wrappedValue: TransferDemoViewModel(initialContract: initialContract))
+  init(popToRoot: (() -> Void)? = nil) {
     self.popToRoot = popToRoot
   }
 
@@ -47,10 +46,10 @@ struct TransferDemoView: View {
       }
     }
     .onAppear {
-      if RainSDKService.shared.hasPortal, !hasShownRecoverOnAppear {
-        hasShownRecoverOnAppear = true
-        recoverViewModel.showRecoverSheet()
-      }
+      guard RainSDKService.shared.hasPortal, !hasShownRecoverOnAppear else { return }
+      guard RainAPICredentialsStorage.isConfigured else { return }
+      hasShownRecoverOnAppear = true
+      recoverViewModel.showRecoverSheet()
     }
     .overlay {
       if recoverViewModel.showRecoverChoiceSheet {
@@ -75,7 +74,7 @@ struct TransferDemoView: View {
         .font(.title2)
         .fontWeight(.bold)
 
-      Text("Send native or ERC-20 tokens from the current wallet")
+      Text("Send native or ERC-20 tokens via Portal or Turnkey (no Rain API access token)")
         .font(.subheadline)
         .foregroundColor(.secondary)
         .multilineTextAlignment(.center)
@@ -123,27 +122,41 @@ struct TransferDemoView: View {
       Text("Transfer")
         .font(.headline)
 
-      inputField(title: "Chain ID", text: $viewModel.chainId, placeholder: "e.g. 43113, 1")
-        .keyboardType(.numberPad)
-
-      inputField(title: "To Address", text: $viewModel.toAddress, placeholder: "0x...")
-
-      inputField(title: "Amount", text: $viewModel.amount, placeholder: "e.g. 0.01")
-        .keyboardType(.decimalPad)
-
-      VStack(alignment: .leading, spacing: 8) {
-        Text("Type")
+      HStack {
+        Text("Network")
           .font(.subheadline)
           .foregroundColor(.secondary)
-        Picker("Type", selection: $viewModel.transferType) {
-          ForEach(TransferType.allCases, id: \.self) { type in
-            Text(type.rawValue).tag(type)
-          }
-        }
-        .pickerStyle(.menu)
+        Spacer()
+        Text(viewModel.chain.displayName)
+          .font(.subheadline)
+          .fontWeight(.medium)
       }
 
-      if viewModel.transferType == .native {
+      inputField(
+        title: "To Address",
+        text: $viewModel.toAddress,
+        placeholder: viewModel.chain.isSolana ? "Solana address (Base58)" : "0x..."
+      )
+
+      inputField(title: "Amount (\(viewModel.chain.nativeSymbol))", text: $viewModel.amount, placeholder: "e.g. 0.01")
+        .keyboardType(.decimalPad)
+
+      // No ERC-20 mode on Solana (mirrors the Android sample).
+      if !viewModel.chain.isSolana {
+        VStack(alignment: .leading, spacing: 8) {
+          Text("Type")
+            .font(.subheadline)
+            .foregroundColor(.secondary)
+          Picker("Type", selection: $viewModel.transferType) {
+            ForEach(TransferType.allCases, id: \.self) { type in
+              Text(type.rawValue).tag(type)
+            }
+          }
+          .pickerStyle(.menu)
+        }
+      }
+
+      if !viewModel.isERC20 {
         balanceRow(
           balance: viewModel.nativeBalance,
           isLoading: viewModel.isLoadingNativeBalance
@@ -152,10 +165,12 @@ struct TransferDemoView: View {
         }
       }
 
-      if viewModel.transferType == .erc20 {
+      if viewModel.isERC20 {
         inputField(title: "Token Contract Address", text: $viewModel.contractAddress, placeholder: "0x...")
-        inputField(title: "Decimals", text: $viewModel.decimals, placeholder: "e.g. 18, 6")
-          .keyboardType(.numberPad)
+        Text("Decimals are resolved automatically by the SDK.")
+          .font(.caption)
+          .foregroundColor(.secondary)
+          .frame(maxWidth: .infinity, alignment: .leading)
         balanceRow(
           balance: viewModel.erc20Balance,
           isLoading: viewModel.isLoadingERC20Balance
@@ -246,18 +261,6 @@ struct TransferDemoView: View {
     .opacity(viewModel.canSend ? 1 : 0.6)
   }
 
-  // MARK: - Helpers
-
-  private func snowtraceURL(hash: String, chainId: Int) -> URL? {
-    let base: String
-    switch chainId {
-    case 43114: base = "https://snowtrace.io/tx/"
-    case 43113: base = "https://testnet.snowtrace.io/tx/"
-    default:    return nil
-    }
-    return URL(string: base + hash)
-  }
-
   // MARK: - Result
 
   private func resultSection(txHash: String) -> some View {
@@ -281,7 +284,7 @@ struct TransferDemoView: View {
       }
 
       Group {
-        if let url = snowtraceURL(hash: txHash, chainId: Int(viewModel.chainId) ?? 0) {
+        if let url = viewModel.chain.explorerTxURL(hash: txHash) {
           Link(destination: url) {
             Text(txHash)
               .font(.system(.caption, design: .monospaced))

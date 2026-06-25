@@ -9,11 +9,9 @@ enum TransferType: String, CaseIterable {
 @MainActor
 class TransferDemoViewModel: ObservableObject {
   @Published var transferType: TransferType = .native
-  @Published var chainId: String = "43113"
-  @Published var toAddress: String = "0x0C9049B5cCB1C893fc8a5c1CDa8B5cc64c3aA909"
+  @Published var toAddress: String = ""
   @Published var amount: String = ""
   @Published var contractAddress: String = ""
-  @Published var decimals: String = "18"
 
   @Published var isProcessing: Bool = false
   @Published var statusMessage: String = "Ready"
@@ -27,36 +25,31 @@ class TransferDemoViewModel: ObservableObject {
 
   private let sdkService = RainSDKService.shared
 
-  init(initialContract: RainCollateralContractResponse? = nil) {
-    if let contract = initialContract {
-      if let chain = contract.chainId {
-        chainId = "\(chain)"
-      }
-    }
-  }
+  /// Network selected on the connection screen.
+  var chain: WalletChain { sdkService.selectedChain }
+
+  /// ERC-20 mode is structurally impossible on Solana (mirrors the Android sample).
+  var isERC20: Bool { !chain.isSolana && transferType == .erc20 }
 
   var canSend: Bool {
-    guard sdkService.isInitialized,
-          !chainId.isEmpty,
-          Int(chainId) != nil,
-          !toAddress.trimmingCharacters(in: .whitespaces).isEmpty,
+    // Solana transfers are Turnkey-only (Portal's adapter has no Solana support).
+    guard sdkService.hasWalletProvider,
+          !chain.isSolana || sdkService.activeProvider == .turnkey,
+          chain.isValidAddress(toAddress.trimmingCharacters(in: .whitespaces)),
           !amount.isEmpty,
           Double(amount) != nil,
           (Double(amount) ?? 0) > 0
     else { return false }
 
-    if transferType == .erc20 {
+    if isERC20 {
       return !contractAddress.trimmingCharacters(in: .whitespaces).isEmpty
-        && !decimals.isEmpty
-        && Int(decimals) != nil
     }
-    
+
     return true
   }
 
   func send() async {
-    guard let chainIdInt = Int(chainId),
-          let amountDouble = Double(amount),
+    guard let amountDouble = Double(amount),
           amountDouble > 0,
           canSend
     else { return }
@@ -71,28 +64,24 @@ class TransferDemoViewModel: ObservableObject {
     let to = toAddress.trimmingCharacters(in: .whitespaces)
 
     do {
-      switch transferType {
-      case .native:
-        let hash = try await sdkService.sendNativeToken(
-          chainId: chainIdInt,
+      if isERC20 {
+        // Decimals are resolved by the SDK (registry or on-chain decimals()), so the caller
+        // no longer supplies them.
+        let contract = contractAddress.trimmingCharacters(in: .whitespaces)
+        let result = try await sdkService.sendToken(
+          chainId: chain.chainId,
+          contractAddress: contract,
           to: to,
           amount: amountDouble
         )
-        txHash = hash
-      case .erc20:
-        guard let decimalsInt = Int(decimals) else {
-          statusMessage = "Invalid decimals"
-          return
-        }
-        let contract = contractAddress.trimmingCharacters(in: .whitespaces)
-        let hash = try await sdkService.sendERC20Token(
-          chainId: chainIdInt,
-          contractAddress: contract,
+        txHash = result.transactionHash
+      } else {
+        let result = try await sdkService.sendNativeToken(
+          chainId: chain.chainId,
           to: to,
-          amount: amountDouble,
-          decimals: decimalsInt
+          amount: amountDouble
         )
-        txHash = hash
+        txHash = result.transactionHash
       }
       statusMessage = "Sent successfully"
       error = nil
@@ -103,22 +92,20 @@ class TransferDemoViewModel: ObservableObject {
   }
 
   func fetchNativeBalance() async {
-    guard let chainIdInt = Int(chainId), sdkService.isInitialized else { return }
+    guard sdkService.hasWalletProvider else { return }
     isLoadingNativeBalance = true
     defer { isLoadingNativeBalance = false }
-    nativeBalance = try? await sdkService.getNativeBalance(chainId: chainIdInt)
+    nativeBalance = try? await sdkService.getNativeBalance(chainId: chain.chainId)
   }
 
   func fetchERC20Balance() async {
-    guard let chainIdInt = Int(chainId),
-          !contractAddress.trimmingCharacters(in: .whitespaces).isEmpty,
-          sdkService.isInitialized else { return }
+    guard !contractAddress.trimmingCharacters(in: .whitespaces).isEmpty,
+          sdkService.hasWalletProvider else { return }
     isLoadingERC20Balance = true
     defer { isLoadingERC20Balance = false }
     erc20Balance = try? await sdkService.getERC20Balance(
-      chainId: chainIdInt,
-      tokenAddress: contractAddress.trimmingCharacters(in: .whitespaces),
-      decimals: Int(decimals)
+      chainId: chain.chainId,
+      tokenAddress: contractAddress.trimmingCharacters(in: .whitespaces)
     )
   }
 

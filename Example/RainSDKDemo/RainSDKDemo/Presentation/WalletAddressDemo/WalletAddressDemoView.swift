@@ -90,8 +90,18 @@ struct WalletAddressDemoView: View {
 
   private var getAddressSection: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text("Wallet Address")
+      Text("\(viewModel.chain.nativeSymbol) Wallet Address")
         .font(.headline)
+
+      HStack {
+        Text("Network")
+          .font(.subheadline)
+          .foregroundColor(.secondary)
+        Spacer()
+        Text(viewModel.chain.displayName)
+          .font(.subheadline)
+          .fontWeight(.medium)
+      }
 
       Button(action: {
         Task { await viewModel.fetchWalletAddress() }
@@ -154,6 +164,12 @@ struct WalletAddressDemoView: View {
     VStack(alignment: .leading, spacing: 12) {
       Text("QR Code")
         .font(.headline)
+
+      if viewModel.chain.isSolana {
+        Text("The QR code encodes the default (EVM) wallet address.")
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
 
       Button(action: {
         Task { await viewModel.generateQR() }

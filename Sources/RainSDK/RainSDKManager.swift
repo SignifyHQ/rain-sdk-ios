@@ -2,6 +2,7 @@ import Foundation
 import CoreGraphics
 import PortalSwift
 import QRCode
+import TurnkeySwift
 import Web3
 import Web3Core
 import web3swift
@@ -12,21 +13,32 @@ public final class RainSDKManager: RainSDK {
 
   // Internal storage for Portal instance (using protocol for testability)
   private var _portal: PortalRequestProtocol?
+  private var _turnkey: TurnkeyContextProtocol?
 
-  /// Wallet provider for address, balance, and signing. Set when `initializePortal` is used; nil in wallet-agnostic mode.
-  private var _walletProvider: (any RainWalletProvider)?
+  /// Wallet provider for address, balance, signing, and submission.
+  /// Set when `initializePortal` or `initializeTurnkey` is used; nil in wallet-agnostic mode.
+  var _walletProvider: (any RainWalletProvider)?
   
   // Transaction builder service
   private var _transactionBuilder: TransactionBuilderProtocol?
   
   private var _networkConfigs: [NetworkConfig] = []
-  
-  /// Computed property to safely access the Portal instance
-  /// Returns Portal (concrete type) for public API compatibility
-  /// 
-  /// - Note: This property can only be accessed when a real Portal instance is initialized.
-  ///         When using mocks (e.g., MockPortal) for testing, this property will throw an error.
-  ///         Use `portalProtocol` property for testing with mocks.
+
+  /// Token metadata store shared with the active wallet provider. Nil in wallet-agnostic mode.
+  private var _tokenStore: TokenMetadataStore?
+
+  /// Host-registered tokens, retained so they re-seed the store on each (re)initialization.
+  private var _registeredTokens: [TokenInfo] = []
+
+  /// Test seam for installing a `TokenMetadataStore` without driving a full provider init.
+  /// Used to verify that `sendToken` resolves token decimals through the store when the caller
+  /// omits them.
+  internal func setTokenStoreForTest(_ store: TokenMetadataStore?) {
+    _tokenStore = store
+  }
+
+  /// Throws `sdkNotInitialized` if Portal has not been initialized, or if the stored
+  /// `PortalRequestProtocol` is a mock (use `portalProtocol` for test contexts).
   public var portal: Portal {
     get throws {
       guard let portalProtocol = _portal
@@ -43,11 +55,31 @@ public final class RainSDKManager: RainSDK {
       return portal
     }
   }
+
+  /// Throws `sdkNotInitialized` if Turnkey has not been initialized, or if the stored
+  /// context is a mock.
+  public var turnkey: TurnkeyContext {
+    get throws {
+      guard let turnkeyProtocol = _turnkey else {
+        throw RainSDKError.sdkNotInitialized
+      }
+
+      guard let turnkey = turnkeyProtocol as? TurnkeyContext else {
+        throw RainSDKError.sdkNotInitialized
+      }
+
+      return turnkey
+    }
+  }
   
   /// Internal property for testing - returns PortalRequestProtocol which works with both Portal and MockPortal
   /// Use this property in tests when working with mocks
   internal var portalProtocol: PortalRequestProtocol? {
     return _portal
+  }
+
+  internal var turnkeyProtocol: TurnkeyContextProtocol? {
+    return _turnkey
   }
   
   /// Internal: use for all Portal requests so that both Portal and MockPortal work in production and tests.
@@ -60,27 +92,42 @@ public final class RainSDKManager: RainSDK {
   }
   
   // MARK: - Initialization
-  public init(
-  ) {}
-  
-  /// Internal initializer for testing - allows injecting a custom transaction builder
+  public init() {}
+
+  /// Designated internal initializer used by tests to inject any combination of Portal,
+  /// Turnkey, and transaction-builder mocks. Pass `portal` *or* `turnkey` (not both);
+  /// the wallet provider is built from whichever is supplied.
   internal init(
-    transactionBuilder: TransactionBuilderProtocol?
-  ) {
-    self._transactionBuilder = transactionBuilder
-  }
-  
-  /// Internal initializer for testing - allows injecting both Portal and transaction builder
-  internal init(
-    portal: PortalRequestProtocol?,
-    transactionBuilder: TransactionBuilderProtocol?
+    portal: PortalRequestProtocol? = nil,
+    turnkey: TurnkeyContextProtocol? = nil,
+    transactionBuilder: TransactionBuilderProtocol? = nil,
+    networkConfigs: [NetworkConfig] = [],
+    walletAddress: String? = nil
   ) {
     self._portal = portal
+    self._turnkey = turnkey
     self._transactionBuilder = transactionBuilder
-    self._walletProvider = portal.map {
-      PortalWalletProviderAdapter(
-        portal: $0,
-        transactionBuilder: transactionBuilder
+    self._networkConfigs = networkConfigs
+
+    let reader = EVMChainReader(networkConfigs: networkConfigs)
+    let store = TokenMetadataStore(chainReader: reader)
+
+    if let portal {
+      self._tokenStore = store
+      self._walletProvider = PortalWalletProviderAdapter(
+        portal: portal,
+        transactionBuilder: transactionBuilder,
+        tokenStore: store
+      )
+    } else if let turnkey {
+      self._tokenStore = store
+      self._walletProvider = TurnkeyWalletProviderAdapter(
+        turnkey: turnkey,
+        transactionBuilder: transactionBuilder,
+        networkConfigs: networkConfigs,
+        walletAddress: walletAddress,
+        chainReader: reader,
+        tokenStore: store
       )
     }
   }
@@ -91,10 +138,10 @@ public final class RainSDKManager: RainSDK {
   ) async throws {
     // Validate inputs
     try validateInputs(portalSessionToken: portalSessionToken, networkConfigs: networkConfigs)
-    
+
     // Store network configs
     _networkConfigs = networkConfigs
-    
+
     // Convert network configs to Portal format
     let eip155RpcEndpointsConfig = try buildRpcConfig(from: networkConfigs)
     
@@ -111,12 +158,17 @@ public final class RainSDKManager: RainSDK {
       
       // Store portal instance (Portal conforms to PortalProtocol via extension)
       _portal = portal
+      _turnkey = nil
       // Initialize transaction builder service with network configs
       let transactionBuilder = TransactionBuilderService(networkConfigs: networkConfigs)
       _transactionBuilder = transactionBuilder
+      let reader = EVMChainReader(networkConfigs: networkConfigs)
+      let store = TokenMetadataStore(chainReader: reader, seedTokens: _registeredTokens)
+      _tokenStore = store
       _walletProvider = PortalWalletProviderAdapter(
         portal: portal,
-        transactionBuilder: transactionBuilder
+        transactionBuilder: transactionBuilder,
+        tokenStore: store
       )
       
       RainLogger.info("Rain SDK: Registered Portal instance successfully with \(networkConfigs.count) network(s)")
@@ -128,17 +180,61 @@ public final class RainSDKManager: RainSDK {
       throw RainSDKError.from(underlying: error)
     }
   }
+
+  public func initializeTurnkey(
+    turnkey: TurnkeyContext,
+    networkConfigs: [NetworkConfig],
+    walletAddress: String? = nil
+  ) async throws {
+    try validateNetworkConfigs(networkConfigs)
+
+    let transactionBuilder = TransactionBuilderService(networkConfigs: networkConfigs)
+    let reader = EVMChainReader(networkConfigs: networkConfigs)
+    let store = TokenMetadataStore(chainReader: reader, seedTokens: _registeredTokens)
+    let provider = TurnkeyWalletProviderAdapter(
+      turnkey: turnkey,
+      transactionBuilder: transactionBuilder,
+      networkConfigs: networkConfigs,
+      walletAddress: walletAddress,
+      chainReader: reader,
+      tokenStore: store
+    )
+
+    do {
+      _ = try await provider.address()
+
+      _networkConfigs = networkConfigs
+      _portal = nil
+      _turnkey = turnkey
+      _transactionBuilder = transactionBuilder
+      _tokenStore = store
+      _walletProvider = provider
+
+      RainLogger.info("Rain SDK: Registered Turnkey context successfully with \(networkConfigs.count) network(s)")
+    } catch {
+      RainLogger.error("Rain SDK: Turnkey initialization error - \(error.localizedDescription)")
+      throw RainSDKError.from(underlying: error)
+    }
+  }
   
   public func initialize(
     networkConfigs: [NetworkConfig]
   ) async throws {
     // Validate network configs
     try validateNetworkConfigs(networkConfigs)
-    
+
     // Store network configs; no wallet provider in wallet-agnostic mode
     _networkConfigs = networkConfigs
+    _portal = nil
+    _turnkey = nil
     _walletProvider = nil
-    
+
+    // Still stand up a token store so metadata resolution (decimals / symbol / name,
+    // including on-chain reads for unknown tokens) works for the host-installed provider —
+    // e.g. so sendToken(decimals: nil) resolves real decimals instead of defaulting.
+    let reader = EVMChainReader(networkConfigs: networkConfigs)
+    _tokenStore = TokenMetadataStore(chainReader: reader, seedTokens: _registeredTokens)
+
     // Initialize transaction builder service with network configs
     _transactionBuilder = TransactionBuilderService(networkConfigs: networkConfigs)
     
@@ -147,6 +243,20 @@ public final class RainSDKManager: RainSDK {
 
   public func setWalletProvider(_ provider: (any RainWalletProvider)?) {
     _walletProvider = provider
+  }
+
+  /// Clears all SDK state — wallet provider, Portal/Turnkey instances, transaction
+  /// builder, and network configs. After this returns, the SDK is back to the same
+  /// state as immediately after `init()`. Idempotent.
+  public func reset() {
+    _portal = nil
+    _turnkey = nil
+    _walletProvider = nil
+    _transactionBuilder = nil
+    _networkConfigs = []
+    _tokenStore = nil
+    _registeredTokens = []
+    RainLogger.info("Rain SDK: Reset SDK state")
   }
 
   public func buildEIP712Message(
@@ -229,12 +339,14 @@ public final class RainSDKManager: RainSDK {
     // Convert the amount to base units using decimals of the token
     let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
     
-    // Convert the expiration timestamp string from Rain API to Unix Timestamp
-    // Expects ISO8601 format or Unix timestamp string
+    // Convert the expiration timestamp string from Rain API to Unix Timestamp.
+    // Accepts a Unix-seconds string or ISO8601 — with or without fractional seconds
+    // (Rain returns e.g. "2026-06-24T21:29:43.000Z", which the default ISO8601 formatter,
+    // lacking `.withFractionalSeconds`, rejects).
     let unixTimestamp: Int
     if let timestamp = Int(expiresAt) {
       unixTimestamp = timestamp
-    } else if let date = ISO8601DateFormatter().date(from: expiresAt) {
+    } else if let date = Self.parseISO8601(expiresAt) {
       unixTimestamp = Int(date.timeIntervalSince1970)
     } else {
       RainLogger.error("Rain SDK: Error building transaction parameters for withdrawal. Could not parse expiration to UNIX timestamp")
@@ -264,12 +376,12 @@ public final class RainSDKManager: RainSDK {
     )
   }
   
-  public func composeTransactionParameters(
+  public func buildTransactionParameters(
     walletAddress: String,
     contractAddress: String,
     transactionData: String
-  ) -> ETHTransactionParam {
-    return ETHTransactionParam(
+  ) -> RainTransactionParameters {
+    return RainTransactionParameters(
       from: walletAddress,
       to: contractAddress,
       value: 0.ethToWei.toHexString,
@@ -299,16 +411,15 @@ public final class RainSDKManager: RainSDK {
         nonce: nil
       )
       
-      let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
-      
-      let ethSendResponse = try await portalForRequest.request(
-        chainId: chainIdString,
-        method: .eth_sendTransaction,
-        params: [transactionParams],
-        options: nil
+      guard let provider = _walletProvider else {
+        throw RainSDKError.sdkNotInitialized
+      }
+
+      let txHash = try await provider.sendTransaction(
+        chainId: chainId,
+        params: transactionParams
       )
 
-      let txHash = ethSendResponse.result as? String ?? "-/-"
       RainLogger.info("Rain SDK: Withdrawal transaction submitted. Hash: \(txHash)")
       return txHash
     } catch {
@@ -353,10 +464,26 @@ public final class RainSDKManager: RainSDK {
   ) async throws -> String {
     do {
       guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
+        throw RainSDKError.sdkNotInitialized
       }
       
       return try await provider.address()
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  /// Returns the wallet address for `chainId`'s chain family (Solana account for Solana
+  /// sentinel chains, EVM address otherwise).
+  public func getWalletAddress(
+    chainId: Int
+  ) async throws -> String {
+    do {
+      guard let provider = _walletProvider else {
+        throw RainSDKError.sdkNotInitialized
+      }
+
+      return try await provider.getAddress(chainId: chainId)
     } catch {
       throw RainSDKError.from(underlying: error)
     }
@@ -390,72 +517,65 @@ public final class RainSDKManager: RainSDK {
 
   // MARK: - Fetch balances
 
-  /// Fetches the native token balance (e.g. ETH) for the current wallet on the given network via the wallet provider.
-  public func getNativeBalance(
-    chainId: Int
-  ) async throws -> Double {
-    do {
-      guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
-      }
-      
-      return try await provider.getNativeBalance(chainId: chainId)
-    } catch {
-      throw RainSDKError.from(underlying: error)
-    }
-  }
-
-  /// Fetches the ERC-20 balance for a single token via direct RPC `eth_call` (balanceOf).
-  public func getERC20Balance(
+  /// Fetches a single balance (native or a contract token) for the current wallet via the wallet provider.
+  public func getBalance(
     chainId: Int,
-    tokenAddress: String,
-    decimals: Int? = Constants.ERC20.defaultDecimals
-  ) async throws -> Double {
+    token: Token
+  ) async throws -> Balance {
     do {
       guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
+        throw RainSDKError.sdkNotInitialized
       }
 
-      return try await provider.getERC20Balance(
-        chainId: chainId,
-        tokenAddress: tokenAddress,
-        decimals: decimals
-      )
-    } catch {
-      throw RainSDKError.from(underlying: error)
-    }
-  }
-  
-  /// Fetches ERC-20 token balances for the current wallet on the given network via the wallet provider.
-  public func getERC20Balances(
-    chainId: Int
-  ) async throws -> [String: Double] {
-    do {
-      guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
-      }
-      
-      return try await provider.getERC20Balances(chainId: chainId)
+      return try await provider.getBalance(chainId: chainId, token: token)
     } catch {
       throw RainSDKError.from(underlying: error)
     }
   }
 
-  /// Fetches all balances (native + ERC-20) for the current wallet via the wallet provider. Native balance is stored under key `""`.
-  public func getBalances(
+  /// Fetches all non-zero balances (native always included) for the current wallet on the given network.
+  public func getTokenBalances(
     chainId: Int
-  ) async throws -> [String: Double] {
+  ) async throws -> [Balance] {
     do {
       guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
+        throw RainSDKError.sdkNotInitialized
       }
-      
-      var result = try await provider.getERC20Balances(chainId: chainId)
-      result[""] = try await provider.getNativeBalance(chainId: chainId)
-      
-      return result
+
+      return try await provider.getBalances(chainId: chainId)
     } catch {
       throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  /// Fetches balances across every configured chain in parallel, flattened into one list.
+  /// Each `Balance` carries its own `chainId`. A chain that fails contributes no entries
+  /// rather than failing the whole call, so one bad RPC endpoint doesn't hide the others.
+  public func getAllBalances() async throws -> [Balance] {
+    guard let provider = _walletProvider else {
+      throw RainSDKError.sdkNotInitialized
+    }
+    let chainIds = _networkConfigs.map(\.chainId)
+    return await withTaskGroup(of: [Balance].self) { group in
+      for chainId in chainIds {
+        group.addTask {
+          (try? await provider.getBalances(chainId: chainId)) ?? []
+        }
+      }
+      var output: [Balance] = []
+      for await balances in group {
+        output.append(contentsOf: balances)
+      }
+      return output
+    }
+  }
+
+  /// Registers additional tokens so their metadata resolves from the store without an
+  /// on-chain enrichment call. Retained across re-initialization; cleared by `reset()`.
+  public func registerTokens(_ tokens: [TokenInfo]) {
+    _registeredTokens.append(contentsOf: tokens)
+    if let store = _tokenStore {
+      Task { await store.register(tokens) }
     }
   }
 
@@ -468,7 +588,7 @@ public final class RainSDKManager: RainSDK {
   ) async throws -> [WalletTransaction] {
     do {
       guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
+        throw RainSDKError.sdkNotInitialized
       }
       
       return try await provider.getTransactions(
@@ -485,52 +605,97 @@ public final class RainSDKManager: RainSDK {
   // MARK: - Send tokens
 
   /// Sends native tokens (e.g. ETH, AVAX). Requires a wallet provider (e.g. `initializePortal` or `setWalletProvider`).
-  public func sendNativeToken(
+  public func sendNative(
     chainId: Int,
     to: String,
     amount: Double
-  ) async throws -> String {
+  ) async throws -> RainTokenTransferResult {
     do {
       guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
+        throw RainSDKError.sdkNotInitialized
       }
-      
+
+      // Solana sends use lamport scaling and a dedicated capability, not the EVM 1e18 path.
+      if SolanaChains.isSolana(chainId) {
+        guard let solanaProvider = provider as? any RainSolanaTransfersProvider else {
+          throw RainSDKError.internalLogicError(
+            details: "The active wallet provider does not support Solana transfers"
+          )
+        }
+        let signature = try await solanaProvider.sendSolanaNative(chainId: chainId, to: to, amount: amount)
+        return RainTokenTransferResult(transactionHash: signature)
+      }
+
       let from = try await provider.address()
+      // Exact base-unit scaling (matches sendToken/withdraw); amount.ethToWei is Double math and drifts.
+      let amountWei = try AmountHelpers.toBaseUnits(amount: amount, decimals: 18)
       let params = WalletTransactionParams(
         from: from,
         to: to,
-        value: amount.ethToWei.toHexString,
+        value: "0x" + String(amountWei, radix: 16),
         data: .empty
       )
-      
-      return try await provider.sendTransaction(
+
+      let hash = try await provider.sendTransaction(
         chainId: chainId,
         params: params
       )
+      return RainTokenTransferResult(transactionHash: hash)
     } catch {
       throw RainSDKError.from(underlying: error)
     }
   }
 
-  /// Sends ERC-20 tokens. Requires SDK initialized with network configs and a wallet provider.
-  public func sendERC20Token(
+  /// Sends ERC-20 (EVM) or SPL (Solana) tokens depending on `chainId`. Requires SDK initialized
+  /// with network configs and a wallet provider; Solana routing additionally requires the active
+  /// provider to conform to `RainSolanaTransfersProvider`.
+  public func sendToken(
     chainId: Int,
     contractAddress: String,
     to: String,
     amount: Double,
-    decimals: Int
-  ) async throws -> String {
+    decimals: Int?
+  ) async throws -> RainTokenTransferResult {
     do {
+      // Solana chains: SPL token transfer via the Solana transfers capability.
+      // Wallet-builder isn't required on this path; Solana scaling lives in the adapter.
+      if SolanaChains.isSolana(chainId) {
+        guard let provider = _walletProvider else {
+          throw RainSDKError.sdkNotInitialized
+        }
+        guard let solanaProvider = provider as? any RainSolanaTransfersProvider else {
+          throw RainSDKError.internalLogicError(
+            details: "The active wallet provider does not support Solana transfers"
+          )
+        }
+        let resolvedDecimals = await resolveDecimals(
+          chainId: chainId, contractAddress: contractAddress, decimals: decimals
+        )
+        let signature = try await solanaProvider.sendSolanaSPLToken(
+          chainId: chainId,
+          mintAddress: contractAddress,
+          to: to,
+          amount: amount,
+          decimals: resolvedDecimals
+        )
+        return RainTokenTransferResult(transactionHash: signature)
+      }
+
+      // EVM path requires both the wallet-agnostic transaction builder and a wallet provider.
+      // Missing either means the SDK was not set up → `sdkNotInitialized` (matches Android);
+      // `walletUnavailable` is reserved for a provider that returns no address.
       guard let transactionBuilder = _transactionBuilder else {
         throw RainSDKError.sdkNotInitialized
       }
-      
       guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
+        throw RainSDKError.sdkNotInitialized
       }
-      
+
       let from = try await provider.address()
-      let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
+      let resolvedDecimals = await resolveDecimals(
+        chainId: chainId, contractAddress: contractAddress, decimals: decimals
+      )
+      let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: resolvedDecimals)
       let data = try await transactionBuilder.buildERC20TransferData(
         chainId: chainId,
         contractAddress: contractAddress,
@@ -538,20 +703,40 @@ public final class RainSDKManager: RainSDK {
         toAddress: to,
         amount: amountBaseUnits
       )
-      
+
       let params = WalletTransactionParams(
         from: from,
         to: contractAddress,
         value: 0.ethToWei.toHexString,
         data: data
       )
-      
-      return try await provider.sendTransaction(
+
+      let hash = try await provider.sendTransaction(
         chainId: chainId,
         params: params
       )
+      return RainTokenTransferResult(transactionHash: hash)
     } catch {
       throw RainSDKError.from(underlying: error)
     }
+  }
+
+  /// Parses an ISO8601 timestamp, accepting both fractional-second ("…:43.000Z") and
+  /// plain ("…:43Z") forms. The default `ISO8601DateFormatter` rejects fractional seconds.
+  private static func parseISO8601(_ string: String) -> Date? {
+    let withFraction = ISO8601DateFormatter()
+    withFraction.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    if let date = withFraction.date(from: string) { return date }
+    return ISO8601DateFormatter().date(from: string)
+  }
+
+  /// Resolves a token's decimals: the caller's value when supplied, otherwise the token store
+  /// (registry first, then a one-time on-chain `decimals()` read), falling back to the default.
+  private func resolveDecimals(chainId: Int, contractAddress: String, decimals: Int?) async -> Int {
+    if let decimals { return decimals }
+    if let store = _tokenStore {
+      return await store.tokenInfo(chainId: chainId, address: contractAddress).decimals
+    }
+    return Constants.ERC20.defaultDecimals
   }
 }

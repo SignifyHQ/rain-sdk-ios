@@ -1,10 +1,14 @@
 import SwiftUI
 import RainSDK
+import AuthenticationServices
+import UIKit
 
 /// Demo view for connecting to Rain SDK
 /// Can be extended with more SDK functions in the future
 struct SDKConnectionView: View {
   @StateObject private var viewModel = SDKConnectionViewModel()
+  @ObservedObject private var sdkService = RainSDKService.shared
+  @ObservedObject private var rainAPI = RainAPIContext.shared
 
   var body: some View {
     NavigationStack {
@@ -18,7 +22,10 @@ struct SDKConnectionView: View {
           
           // Input Section
           inputSection
-          
+
+          // Rain API Section (Api-Key + User ID → CST + collateral contract)
+          rainAPISection
+
           // Actions Section
           actionsSection
           
@@ -44,7 +51,7 @@ struct SDKConnectionView: View {
         .font(.title2)
         .fontWeight(.bold)
       
-      Text("Connect to Portal Wallet SDK")
+      Text("Initialize with Portal, Turnkey, or wallet-agnostic mode")
         .font(.subheadline)
         .foregroundColor(.secondary)
     }
@@ -127,65 +134,323 @@ struct SDKConnectionView: View {
               .disableAutocorrection(true)
           }
         }
+
+        // Turnkey Inputs (when Turnkey is selected)
+        if viewModel.selectedProvider == .turnkey {
+          turnkeyInputs
+        }
       }
       
-      // Chain ID Input
-      VStack(alignment: .leading, spacing: 8) {
-        Text("Chain ID")
-          .font(.subheadline)
-          .foregroundColor(.secondary)
-        
-        TextField("e.g., 1 (Ethereum), 137 (Polygon)", text: $viewModel.chainId)
-          .textFieldStyle(.roundedBorder)
-          .keyboardType(.numberPad)
-      }
-      
-      // RPC URL Input
-      VStack(alignment: .leading, spacing: 8) {
-        Text("RPC URL")
-          .font(.subheadline)
-          .foregroundColor(.secondary)
-        
-        TextField("Enter RPC endpoint URL", text: $viewModel.rpcUrl)
-          .textFieldStyle(.roundedBorder)
-          .autocapitalization(.none)
-          .disableAutocorrection(true)
-      }
+      Text("The SDK is initialized with all demo networks (\(WalletChain.allCases.map(\.displayName).joined(separator: ", "))); pick the active one from the Network dropdown after initializing.")
+        .font(.caption)
+        .foregroundColor(.secondary)
     }
     .padding()
     .background(Color(.systemGray6))
     .cornerRadius(12)
   }
   
+  // MARK: - Rain API Section
+
+  /// Rain dev API credentials, independent of the wallet provider. Authenticating mints a CST
+  /// and loads the first collateral contract; the result prefills the builder/withdraw screens.
+  private var rainAPISection: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text("Rain API Credentials")
+        .font(.headline)
+
+      Text("Mints a Client Session Token and loads your collateral contract. The fetched contract prefills the Build EIP-712 / Build Withdraw and Collateral Withdraw screens.")
+        .font(.caption)
+        .foregroundColor(.secondary)
+
+      labeledField(
+        title: "Rain Api-Key",
+        placeholder: "Enter Rain Api-Key",
+        text: $rainAPI.apiKey
+      )
+
+      labeledField(
+        title: "Rain User ID",
+        placeholder: "Enter Rain User ID",
+        text: $rainAPI.userId
+      )
+
+      Button {
+        hideKeyboard()
+        Task { await rainAPI.authenticate() }
+      } label: {
+        HStack {
+          if rainAPI.isAuthenticating {
+            ProgressView()
+              .progressViewStyle(CircularProgressViewStyle(tint: .white))
+          } else {
+            Image(systemName: rainAPI.isAuthenticated ? "checkmark.seal.fill" : "key.fill")
+          }
+          Text(rainAPI.isAuthenticated ? "Re-authenticate" : "Authenticate")
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .background(rainAPI.canAuthenticate ? Color.blue : Color.gray)
+        .foregroundColor(.white)
+        .cornerRadius(10)
+      }
+      .disabled(!rainAPI.canAuthenticate)
+      .opacity(rainAPI.canAuthenticate ? 1 : 0.6)
+
+      if let contract = rainAPI.contract {
+        VStack(alignment: .leading, spacing: 4) {
+          Label("Authenticated", systemImage: "checkmark.circle.fill")
+            .font(.caption)
+            .foregroundColor(.green)
+          Text("Contract: \(contract.address ?? "—")")
+            .font(.caption2)
+            .foregroundColor(.secondary)
+            .lineLimit(1)
+            .truncationMode(.middle)
+          Text("Tokens: \(contract.tokens?.count ?? 0) · Chain: \(contract.chainId.map(String.init) ?? "—")")
+            .font(.caption2)
+            .foregroundColor(.secondary)
+        }
+        .padding(8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.green.opacity(0.1))
+        .cornerRadius(8)
+      }
+
+      if let error = rainAPI.error {
+        Text(error.localizedDescription)
+          .font(.caption)
+          .foregroundColor(.red)
+          .padding(8)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .background(Color.red.opacity(0.1))
+          .cornerRadius(8)
+      }
+    }
+    .padding()
+    .background(Color(.systemGray6))
+    .cornerRadius(12)
+  }
+
+  // MARK: - Turnkey Inputs
+
+  private var turnkeyInputs: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      labeledField(
+        title: "Organization ID",
+        placeholder: "your-turnkey-suborg-id",
+        text: $viewModel.turnkeyOrgId
+      )
+
+      labeledField(
+        title: "API URL",
+        placeholder: "https://api.turnkey.com",
+        text: $viewModel.turnkeyApiUrl
+      )
+
+      labeledField(
+        title: "Auth Proxy URL",
+        placeholder: "https://authproxy.turnkey.com",
+        text: $viewModel.turnkeyAuthProxyUrl
+      )
+
+      labeledField(
+        title: "Auth Proxy Config ID",
+        placeholder: "required for Sign Up",
+        text: $viewModel.turnkeyAuthProxyConfigId
+      )
+
+      labeledField(
+        title: "Relying Party ID (rpId)",
+        placeholder: "your.app.domain",
+        text: $viewModel.turnkeyRpId
+      )
+
+      Button {
+        hideKeyboard()
+        guard let anchor = currentPresentationAnchor() else { return }
+        Task { await viewModel.signUpWithTurnkeyPasskey(anchor: anchor) }
+      } label: {
+        HStack {
+          if viewModel.isAuthenticatingTurnkey {
+            ProgressView()
+              .progressViewStyle(CircularProgressViewStyle(tint: .white))
+          } else {
+            Image(systemName: "person.crop.circle.badge.plus")
+          }
+          Text("Sign Up with Passkey")
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .background(viewModel.canSignUpWithPasskey ? Color.blue : Color.gray)
+        .foregroundColor(.white)
+        .cornerRadius(10)
+      }
+      .disabled(!viewModel.canSignUpWithPasskey)
+      .opacity(viewModel.canSignUpWithPasskey ? 1 : 0.6)
+
+      Button {
+        hideKeyboard()
+        guard let anchor = currentPresentationAnchor() else { return }
+        Task { await viewModel.loginWithTurnkeyPasskey(anchor: anchor) }
+      } label: {
+        HStack {
+          if viewModel.isAuthenticatingTurnkey {
+            ProgressView()
+              .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+          } else {
+            Image(systemName: "person.badge.key.fill")
+          }
+          Text("Login with Passkey")
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .background(Color.clear)
+        .foregroundColor(viewModel.canAuthenticateWithPasskey ? .blue : .gray)
+        .overlay(
+          RoundedRectangle(cornerRadius: 10)
+            .stroke(viewModel.canAuthenticateWithPasskey ? Color.blue : Color.gray, lineWidth: 1)
+        )
+      }
+      .disabled(!viewModel.canAuthenticateWithPasskey)
+      .opacity(viewModel.canAuthenticateWithPasskey ? 1 : 0.6)
+
+      Text("First time? Tap Sign Up — it creates a sub-org with a wallet and registers a passkey for this device. Already signed up on this device? Tap Login.")
+        .font(.caption)
+        .foregroundColor(.secondary)
+
+      Divider()
+        .padding(.vertical, 4)
+
+      Text("Or sign in with Email OTP")
+        .font(.subheadline).bold()
+
+      labeledField(
+        title: "Email",
+        placeholder: "you@example.com",
+        text: $viewModel.turnkeyEmail
+      )
+
+      if viewModel.turnkeyOtpId == nil {
+        Button {
+          hideKeyboard()
+          Task { await viewModel.sendTurnkeyEmailOtp() }
+        } label: {
+          HStack {
+            if viewModel.isProcessingTurnkeyOtp {
+              ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+            } else {
+              Image(systemName: "envelope.fill")
+            }
+            Text("Send OTP")
+          }
+          .frame(maxWidth: .infinity)
+          .padding(.vertical, 10)
+          .background(viewModel.canSendEmailOtp ? Color.blue : Color.gray)
+          .foregroundColor(.white)
+          .cornerRadius(10)
+        }
+        .disabled(!viewModel.canSendEmailOtp)
+        .opacity(viewModel.canSendEmailOtp ? 1 : 0.6)
+      } else {
+        labeledField(
+          title: "OTP Code",
+          placeholder: "123456",
+          text: $viewModel.turnkeyOtpCode
+        )
+
+        Button {
+          hideKeyboard()
+          Task { await viewModel.verifyTurnkeyEmailOtp() }
+        } label: {
+          HStack {
+            if viewModel.isProcessingTurnkeyOtp {
+              ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+            } else {
+              Image(systemName: "checkmark.shield.fill")
+            }
+            Text("Verify OTP & Connect")
+          }
+          .frame(maxWidth: .infinity)
+          .padding(.vertical, 10)
+          .background(viewModel.canVerifyEmailOtp ? Color.green : Color.gray)
+          .foregroundColor(.white)
+          .cornerRadius(10)
+        }
+        .disabled(!viewModel.canVerifyEmailOtp)
+        .opacity(viewModel.canVerifyEmailOtp ? 1 : 0.6)
+
+        Button("Use a different email") {
+          viewModel.cancelTurnkeyEmailOtp()
+        }
+        .font(.caption)
+        .foregroundColor(.secondary)
+      }
+
+      Text("Email OTP handles login vs. sign up automatically; sign up provisions an EVM + Solana wallet.")
+        .font(.caption)
+        .foregroundColor(.secondary)
+    }
+  }
+
+  /// Get the key UIWindow to use as the ASPresentationAnchor for passkey UI.
+  private func currentPresentationAnchor() -> ASPresentationAnchor? {
+    UIApplication.shared.connectedScenes
+      .compactMap { $0 as? UIWindowScene }
+      .flatMap { $0.windows }
+      .first { $0.isKeyWindow }
+  }
+
+  private func labeledField(
+    title: String,
+    placeholder: String,
+    text: Binding<String>
+  ) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Text(title)
+        .font(.subheadline)
+        .foregroundColor(.secondary)
+
+      TextField(placeholder, text: text)
+        .textFieldStyle(.roundedBorder)
+        .autocapitalization(.none)
+        .disableAutocorrection(true)
+    }
+  }
+
   // MARK: - Actions Section
   
   private var actionsSection: some View {
     VStack(spacing: 12) {
-      // Initialize Button
-      Button(action: {
-        hideKeyboard()
-        Task {
-          await viewModel.initializeSDK()
-        }
-      }) {
-        HStack {
-          if viewModel.isInitializing {
-            ProgressView()
-              .progressViewStyle(CircularProgressViewStyle(tint: .white))
-          } else {
-            Image(systemName: viewModel.isInitialized ? "checkmark.circle.fill" : "play.circle.fill")
+      // Initialize Button — hidden when Turnkey is selected (its own passkey buttons handle init)
+      if viewModel.useWalletAgnostic || viewModel.selectedProvider != .turnkey {
+        Button(action: {
+          hideKeyboard()
+          Task {
+            await viewModel.initializeSDK()
           }
-          
-          Text(viewModel.isInitialized ? "Reinitialize" : "Initialize SDK")
+        }) {
+          HStack {
+            if viewModel.isInitializing {
+              ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+            } else {
+              Image(systemName: viewModel.isInitialized ? "checkmark.circle.fill" : "play.circle.fill")
+            }
+
+            Text(initializeButtonTitle)
+          }
+          .frame(maxWidth: .infinity)
+          .padding()
+          .background(viewModel.isInitialized ? Color.orange : Color.blue)
+          .foregroundColor(.white)
+          .cornerRadius(12)
         }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(viewModel.isInitialized ? Color.orange : Color.blue)
-        .foregroundColor(.white)
-        .cornerRadius(12)
+        .disabled(!viewModel.canInitialize)
+        .opacity(viewModel.canInitialize ? 1 : 0.6)
       }
-      .disabled(!viewModel.canInitialize)
-      .opacity(viewModel.canInitialize ? 1 : 0.6)
       
       // Reset Button
       if viewModel.isInitialized {
@@ -213,8 +478,23 @@ struct SDKConnectionView: View {
     VStack(alignment: .leading, spacing: 12) {
       Text("SDK Features")
         .font(.headline)
-      
+
       if viewModel.isInitialized {
+        // Network selector — switches which chain the feature screens use (no re-init needed).
+        HStack {
+          Text("Network")
+            .font(.subheadline)
+            .foregroundColor(.secondary)
+          Spacer()
+          Picker("Network", selection: $sdkService.selectedChain) {
+            ForEach(WalletChain.allCases) { chain in
+              Text(chain.displayName).tag(chain)
+            }
+          }
+          .pickerStyle(.menu)
+        }
+        .padding(.horizontal, 4)
+
         VStack(spacing: 8) {
           NavigationLink(destination: BuildEIP712MessageDemoView()) {
             featureButtonContent(
@@ -262,20 +542,22 @@ struct SDKConnectionView: View {
             }
             .buttonStyle(.plain)
 
-            NavigationLink(destination: PortalWithdrawEntryView(destination: .transfer)) {
+            NavigationLink(destination: TransferDemoView()) {
               featureButtonContent(
                 icon: "arrow.right.arrow.left.circle.fill",
                 title: "Transfer",
-                subtitle: "Send native or ERC-20 tokens"
+                subtitle: "Send native or ERC-20 (Portal or Turnkey)"
               )
             }
             .buttonStyle(.plain)
 
-            NavigationLink(destination: PortalWithdrawEntryView(destination: .portalWithdraw)) {
+            NavigationLink(destination: collateralWithdrawDestination) {
               featureButtonContent(
                 icon: "wallet.pass.fill",
-                title: "Portal Withdraw",
-                subtitle: "Execute withdrawal via Portal (sign & submit)"
+                title: "Collateral Withdraw",
+                subtitle: rainAPI.isAuthenticated
+                  ? "Withdraw from the authenticated contract (sign & submit)"
+                  : "Authenticate the Rain API above, or enter credentials on the next screen"
               )
             }
             .buttonStyle(.plain)
@@ -294,6 +576,21 @@ struct SDKConnectionView: View {
     .cornerRadius(12)
   }
   
+  private var initializeButtonTitle: String {
+    viewModel.isInitialized ? "Reinitialize" : "Initialize SDK"
+  }
+
+  /// When the Rain API is already authenticated on this screen, go straight into the withdraw
+  /// screen with the fetched contract; otherwise fall back to the manual credential entry.
+  @ViewBuilder
+  private var collateralWithdrawDestination: some View {
+    if let contract = rainAPI.contract {
+      CollateralWithdrawDemoView(initialContract: contract)
+    } else {
+      CollateralWithdrawEntryView()
+    }
+  }
+
   // MARK: - Helper Views
   
   private func featureButtonContent(

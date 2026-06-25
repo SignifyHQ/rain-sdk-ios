@@ -13,6 +13,15 @@ The initialized Portal instance. Use after `initializePortal`. Throws if SDK not
 
 ---
 
+## turnkey
+
+The initialized Turnkey context. Use after `initializeTurnkey`. Throws if SDK not initialized or using a mock.
+
+- **Returns:** `TurnkeyContext`
+- **Throws:** `RainSDKError.sdkNotInitialized` when not initialized or when using a mock (e.g. in tests).
+
+---
+
 ## initializePortal(portalSessionToken:networkConfigs:)
 
 Initializes the SDK with a Portal session token and network configs. Use for full wallet flow (sign + send via Portal).
@@ -27,9 +36,29 @@ Initializes the SDK with a Portal session token and network configs. Use for ful
 
 ---
 
+## initializeTurnkey(turnkey:networkConfigs:walletAddress:)
+
+Initializes the SDK with an authenticated Turnkey context and network configs. Use for full wallet flow (sign + send via Turnkey).
+
+- **Returns:** (none, async)
+- **Throws:** `RainSDKError` if initialization fails (e.g. invalid RPC URLs, no usable EVM wallet).
+
+| Parameter | Description |
+|-----------|-------------|
+| `turnkey` | Authenticated `TurnkeyContext` from the official Turnkey Swift SDK. |
+| `networkConfigs` | Array of `NetworkConfig` (chain ID + RPC URL per network). |
+| `walletAddress` | Optional explicit EVM address override. If omitted, Rain uses the first available Ethereum account in the Turnkey context. |
+
+Turnkey authentication happens outside Rain. Typical setup uses Turnkey's Swift SDK with auth proxy middleware and passkeys:
+
+- Proxy middleware: `https://docs.turnkey.com/sdks/swift/proxy-middleware`
+- Passkeys: `https://docs.turnkey.com/sdks/swift/register-passkey`
+
+---
+
 ## initialize(networkConfigs:)
 
-Initializes the SDK with network configs only (no Portal). Use for wallet-agnostic mode (transaction building only).
+Initializes the SDK with network configs only (no wallet provider). Use for wallet-agnostic mode (transaction building only).
 
 - **Returns:** (none, async)
 - **Throws:** `RainSDKError` if initialization fails (e.g. invalid RPC URLs).
@@ -46,7 +75,7 @@ Builds EIP-712 typed data for the admin signature required for withdrawals.
 
 - **Returns:** `(message: String, saltHex: String)` — serialized EIP-712 message and salt (hex string).
 - **Throws:** `RainSDKError` if message construction fails or inputs are invalid.
-- **Requires:** `initialize` or `initializePortal` first (no Portal required).
+- **Requires:** `initialize`, `initializePortal`, or `initializeTurnkey` first.
 
 | Parameter | Description |
 |-----------|-------------|
@@ -65,7 +94,7 @@ Builds ABI-encoded withdraw calldata for the collateral proxy contract.
 
 - **Returns:** Hex-encoded calldata string (e.g. `"0x..."`).
 - **Throws:** `RainSDKError` if ABI encoding or validation fails.
-- **Requires:** `initialize` or `initializePortal` first (no Portal required).
+- **Requires:** `initialize`, `initializePortal`, or `initializeTurnkey` first.
 
 | Parameter | Description |
 |-----------|-------------|
@@ -81,13 +110,13 @@ Builds ABI-encoded withdraw calldata for the collateral proxy contract.
 
 ---
 
-## composeTransactionParameters(walletAddress:contractAddress:transactionData:)
+## buildTransactionParameters(walletAddress:contractAddress:transactionData:)
 
-Composes Ethereum transaction parameters for submission (e.g. to `eth_sendTransaction`).
+Builds Rain-owned transaction parameters for submission (e.g. to `eth_sendTransaction`).
 
-- **Returns:** `ETHTransactionParam`.
+- **Returns:** `RainTransactionParameters` (Rain-owned; keeps Portal types off the public surface).
 - **Throws:** (none)
-- **Requires:** `initialize` or `initializePortal` first (no Portal required).
+- **Requires:** `initialize`, `initializePortal`, or `initializeTurnkey` first.
 
 | Parameter | Description |
 |-----------|-------------|
@@ -99,11 +128,11 @@ Composes Ethereum transaction parameters for submission (e.g. to `eth_sendTransa
 
 ## withdrawCollateral(chainId:assetAddresses:amount:decimals:salt:signature:expiresAt:nonce:)
 
-Full withdrawal flow: build tx, sign via Portal, submit. Returns the transaction hash.
+Full withdrawal flow: build tx, sign via the active wallet provider, submit. Returns the transaction hash.
 
 - **Returns:** Transaction hash string.
 - **Throws:** `RainSDKError` if construction, signing, or submission fails.
-- **Requires:** `initializePortal` first (Portal required).
+- **Requires:** A wallet provider with EIP-712 signing and transaction submission support (for example `initializePortal` or `initializeTurnkey`).
 
 | Parameter | Description |
 |-----------|-------------|
@@ -124,7 +153,7 @@ Returns the current wallet address from the wallet provider (e.g. EOA in `0x...`
 
 - **Returns:** `String` — wallet address.
 - **Throws:** `RainSDKError.walletUnavailable` when no wallet provider is set.
-- **Requires:** `initializePortal` or `setWalletProvider` first.
+- **Requires:** `initializePortal`, `initializeTurnkey`, or `setWalletProvider` first.
 
 ---
 
@@ -150,7 +179,7 @@ Fetches transaction history for the current wallet on the given network.
 
 - **Returns:** `[WalletTransaction]` — list of transaction records (hash, from, to, value, blockNum, category, metadata, chainId, etc.).
 - **Throws:** `RainSDKError.walletUnavailable` when no wallet provider is set.
-- **Requires:** Wallet provider set (e.g. `initializePortal`).
+- **Requires:** Wallet provider set (e.g. `initializePortal` or `initializeTurnkey`).
 
 | Parameter | Description |
 |-----------|-------------|
@@ -161,73 +190,75 @@ Fetches transaction history for the current wallet on the given network.
 
 ---
 
-## getNativeBalance(chainId:)
+## getBalance(chainId:token:)
 
-Fetches the native token balance (e.g. ETH) for the current wallet on the given network.
+Fetches a single balance — native or a specific contract token — for the current wallet.
 
-- **Returns:** `Double` — balance in human-readable form (e.g. 1.5 for 1.5 ETH).
+- **Parameters:** `token` is `.native` or `.contract(address:)`.
+- **Returns:** `Balance` — exact `rawAmount` (`BigUInt`) plus `decimals`, `symbol`, `name`, and `decimalAmount` / `formatted` accessors.
 - **Throws:** `RainSDKError.walletUnavailable` or RPC failure.
 - **Requires:** Wallet provider set.
 
 ---
 
-## getERC20Balance(chainId:tokenAddress:)
+## getTokenBalances(chainId:)
 
-Fetches the ERC-20 token balance for a single token for the current wallet.
+Fetches all non-zero balances for the current wallet on the given network. The native balance is always included.
 
-- **Returns:** `Double?` — balance in human-readable form, or `nil` if none.
+- **Returns:** `[Balance]` — one entry per held token plus native.
 - **Throws:** `RainSDKError` if wallet provider not set or request fails.
 - **Requires:** Wallet provider set.
 
 ---
 
-## getERC20Balances(chainId:)
+## getAllBalances()
 
-Fetches all ERC-20 token balances for the current wallet on the given network.
+Fetches balances across every configured chain in parallel, flattened into one list. Each `Balance` carries its own `chainId`. A chain that fails contributes no entries rather than failing the whole call.
 
-- **Returns:** `[String: Double]` — token contract address → balance.
-- **Throws:** `RainSDKError` if wallet provider not set or request fails.
+- **Returns:** `[Balance]` — merged across all configured chains.
+- **Throws:** `RainSDKError.walletUnavailable`.
 - **Requires:** Wallet provider set.
 
 ---
 
-## getBalances(chainId:)
+## registerTokens(_:)
 
-Fetches all balances (native + ERC-20) for the current wallet. Native balance is under key `""`.
+Registers additional `TokenInfo` so their metadata resolves from the store without an on-chain `decimals()` / `symbol()` lookup. Retained across re-initialization; cleared by `reset()`.
 
-- **Returns:** `[String: Double]` — token address → balance; use `""` for native.
-- **Throws:** `RainSDKError` if wallet provider not set or request fails.
-- **Requires:** Wallet provider set.
+- **Parameters:** `tokens` — `[TokenInfo]` to add (replaces any existing entry with the same chain + address).
+- **Returns:** `Void`.
 
 ---
 
-## sendNativeToken(chainId:to:amount:)
+## sendNative(chainId:to:amount:)
 
-Sends native tokens (e.g. ETH, AVAX) from the current wallet.
+Sends native tokens (e.g. ETH, AVAX, SOL) from the current wallet.
 
-- **Returns:** Transaction hash string.
+- **Returns:** `RainTokenTransferResult` carrying the transaction hash (EVM) or signature (Solana).
 - **Throws:** `RainSDKError` if no wallet provider or send fails.
 - **Requires:** Wallet provider set.
 
 | Parameter | Description |
 |-----------|-------------|
-| `chainId` | Target network chain ID. |
-| `to` | Recipient address. |
-| `amount` | Amount in human-readable form (e.g. 1.5 for 1.5 ETH). |
+| `chainId` | Target network chain ID. EVM chain ID or Solana sentinel (101/102/103). |
+| `to` | Recipient address (hex on EVM, base58 on Solana). |
+| `amount` | Amount in human-readable form (e.g. 1.5 for 1.5 ETH / 0.5 for 0.5 SOL). |
 
 ---
 
-## sendERC20Token(chainId:contractAddress:to:amount:decimals:)
+## sendToken(chainId:contractAddress:to:amount:decimals:)
 
-Sends ERC-20 tokens from the current wallet.
+Sends ERC-20 tokens (EVM chains) from the current wallet. Routed by `chainId`.
 
-- **Returns:** Transaction hash string.
+- **Returns:** `RainTokenTransferResult` carrying the transaction hash (EVM) or signature (Solana).
 - **Throws:** `RainSDKError` if SDK or wallet not initialized or send fails.
-- **Requires:** Wallet provider and network configs (e.g. `initializePortal`).
+- **Throws on Solana chains:** SPL token transfers are not yet implemented; calling this
+  method with a Solana `chainId` (sentinel 101–103) throws `RainSDKError.internalLogicError`.
+- **Requires:** Wallet provider and network configs (e.g. `initializePortal` or `initializeTurnkey`).
 
 | Parameter | Description |
 |-----------|-------------|
-| `chainId` | Target network chain ID. |
+| `chainId` | Target network chain ID. EVM chain ID. (Solana SPL transfers not yet implemented — see note above.) |
 | `contractAddress` | ERC-20 token contract address. |
 | `to` | Recipient address. |
 | `amount` | Amount in human-readable form. |
@@ -241,7 +272,7 @@ Estimates the total fee (gas cost) to execute a collateral withdrawal.
 
 - **Returns:** Estimated fee in the chain's native token (e.g. ETH) as `Double`.
 - **Throws:** `RainSDKError` if estimation fails (e.g. SDK not initialized, invalid response, network error).
-- **Requires:** `initializePortal` first (Portal required).
+- **Requires:** A wallet provider with EIP-712 signing and fee estimation support (for example `initializePortal` or `initializeTurnkey`).
 
 | Parameter | Description |
 |-----------|-------------|
@@ -262,9 +293,11 @@ Estimates the total fee (gas cost) to execute a collateral withdrawal.
 | **NetworkConfig** | `chainId`, `rpcUrl`, optional `networkName`. |
 | **EIP712AssetAddresses** | `proxyAddress`, `recipientAddress`, `tokenAddress`. |
 | **WithdrawAssetAddresses** | `contractAddress`, `proxyAddress`, `recipientAddress`, `tokenAddress`. |
-| **ETHTransactionParam** | Composed transaction payload for submission. |
+| **RainTransactionParameters** | Rain-owned transaction payload (`from`, `to`, `value`, `data`). Returned by `buildTransactionParameters`. |
+| **ETHTransactionParam** | Portal transaction payload. Only surfaced by the deprecated `composeTransactionParameters` shim. |
 | **WalletTransaction** | Transaction record: `hash`, `from`, `to`, `value`, `blockNum`, `category`, `metadata`, `chainId`, etc. Returned by `getTransactions`. |
 | **WalletTransactionOrder** | Sort order for transaction history: `.ASC`, `.DESC`. Used in `getTransactions(..., order:)`. |
+| **RainTokenTransferResult** | `transactionHash` (String) — on-chain hash (EVM) or signature (Solana). Returned by `sendNative` and `sendToken`. |
 
 ---
 
@@ -274,13 +307,34 @@ All async methods can throw `RainSDKError`. Use `errorCode` for programmatic han
 
 | Code | Case | Meaning |
 |------|------|--------|
-| RAIN_101 | `sdkNotInitialized` | Method called before `initialize` or `initializePortal`. |
+| RAIN_101 | `sdkNotInitialized` | Method called before `initialize`, `initializePortal`, or `initializeTurnkey`, or no wallet provider is installed. |
 | RAIN_102 | `invalidConfig(chainId:rpcUrl:)` | Invalid RPC URL or chain ID. |
-| RAIN_201 | `tokenExpired(token:)` | Portal session token expired or invalid. |
+| RAIN_103 | `invalidRpcUrl(_:)` | RPC URL could not be parsed as a valid URL. |
+| RAIN_201 | `tokenExpired` | Wallet provider session token expired or invalid. |
 | RAIN_202 | `unauthorized` | Invalid or missing token / permissions. |
 | RAIN_301 | `networkError(underlying:)` | Network/connectivity failure. |
 | RAIN_401 | `userRejected` | User cancelled the signing request in the wallet. |
 | RAIN_402 | `insufficientFunds(required:available:)` | Balance too low for amount or gas. |
-| RAIN_403 | `walletUnavailable` | No wallet address from Portal (e.g. user has not connected or created a wallet). |
-| RAIN_501 | `providerError(underlying:)` | Portal or provider error. |
-| RAIN_502 | `internalLogicError(details:)` | EIP-712 or internal processing error. |
+| RAIN_403 | `transactionSimulationFailed(underlying:)` | Transaction simulation (preflight) failed before submission, e.g. a contract revert. |
+| RAIN_404 | `walletUnavailable` | No wallet address from the wallet provider (e.g. user has not connected or created a wallet). |
+| RAIN_405 | `withdrawalRevertedByNetwork` | Withdrawal reverted on-chain (e.g. duplicate withdrawal in short window / already-used signature). |
+| RAIN_501 | `providerError(underlying:)` | Wallet provider error (Portal or Turnkey). |
+| RAIN_502 | `internalLogicError(details:)` | EIP-712, configuration, or internal processing error. |
+
+---
+
+## Deprecated (1.0.0 source-compat)
+
+These shims preserve the 1.0.0 public API so existing integrations compile with only deprecation
+warnings. Each delegates to the current API; they are lossy (collapse exact `Balance` to `Double`)
+and slated for removal in the next major version.
+
+| Deprecated | Replacement | Notes |
+|------------|-------------|-------|
+| `getNativeBalance(chainId:) -> Double` | `getBalance(chainId:, token: .native)` | Reads `.decimalAmount` as `Double`. |
+| `getERC20Balance(chainId:tokenAddress:decimals:) -> Double` | `getBalance(chainId:, token: .contract(address:))` | `decimals` is ignored; the SDK resolves it. |
+| `getERC20Balances(chainId:) -> [String: Double]` | `getTokenBalances(chainId:)` | Drops native; contracts keyed by verbatim contract address. |
+| `getBalances(chainId:) -> [String: Double]` | `getTokenBalances(chainId:)` | Native under the `""` key; contracts keyed by verbatim address. |
+| `sendNativeToken(chainId:to:amount:) -> String` | `sendNative(chainId:to:amount:)` | Returns the `.transactionHash` String. |
+| `sendERC20Token(chainId:contractAddress:to:amount:decimals:) -> String` | `sendToken(...)` | Returns the `.transactionHash` String. |
+| `composeTransactionParameters(...) -> ETHTransactionParam` | `buildTransactionParameters(...)` | Maps the Rain-owned result to Portal's `ETHTransactionParam`. |

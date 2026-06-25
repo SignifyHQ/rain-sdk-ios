@@ -14,6 +14,9 @@ class WalletAddressDemoViewModel: ObservableObject {
 
   private let sdkService = RainSDKService.shared
 
+  /// Network selected on the connection screen; drives which account is resolved.
+  var chain: WalletChain { sdkService.selectedChain }
+
   var canFetch: Bool {
     sdkService.isInitialized
   }
@@ -26,8 +29,8 @@ class WalletAddressDemoViewModel: ObservableObject {
     walletAddress = nil
 
     do {
-      let address = try await sdkService.getWalletAddress()
-      walletAddress = address
+      // Chain-aware so Solana chains (sentinel ids 101–103) show the Solana account.
+      walletAddress = try await sdkService.getWalletAddress(chainId: chain.chainId)
       statusMessage = "Address loaded"
       error = nil
     } catch {

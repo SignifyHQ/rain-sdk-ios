@@ -4,7 +4,7 @@ import Combine
 
 @MainActor
 class BuildEIP712MessageDemoViewModel: ObservableObject {
-  @Published var chainId: String = "43113"
+  @Published var chainId: String = DemoLocalConfig.chainId
   @Published var collateralProxyAddress: String = "0x5a022623280AA5E922A4D9BB3024fA7D70D7e789"
   @Published var walletAddress: String = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
   @Published var tokenAddress: String = "0x9876543210987654321098765432109876543210"
@@ -31,7 +31,39 @@ class BuildEIP712MessageDemoViewModel: ObservableObject {
   }
   
   private var cancellables = Set<AnyCancellable>()
-  
+  private var hasPrefilled = false
+
+  /// Prefills the form from the Rain API contract authenticated on the home screen (once per
+  /// screen open). Resolves token decimals on-chain and pulls the wallet address from the SDK.
+  /// Every field stays editable.
+  func prefillFromRainAPIIfNeeded() async {
+    guard !hasPrefilled, let contract = RainAPIContext.shared.contract else { return }
+    hasPrefilled = true
+
+    if let chainId = contract.chainId {
+      self.chainId = String(chainId)
+    }
+    if let proxy = contract.address, !proxy.isEmpty {
+      self.collateralProxyAddress = proxy
+    }
+
+    let resolvedChainId = contract.chainId ?? DemoLocalConfig.chainIdInt
+    if let tokenAddr = RainAPIContext.shared.contractTokenAddresses.first {
+      self.tokenAddress = tokenAddr
+      if let meta = await sdkService.resolveTokenMetadata(chainId: resolvedChainId, tokenAddress: tokenAddr) {
+        self.decimals = String(meta.decimals)
+      }
+    }
+
+    if let wallet = try? await sdkService.getWalletAddress() {
+      self.walletAddress = wallet
+    }
+
+    if let savedRecipient = AppStorage.getCollateralWithdrawRecipientAddress(), !savedRecipient.isEmpty {
+      self.recipientAddress = savedRecipient
+    }
+  }
+
   var canBuild: Bool {
     !chainId.isEmpty
     && !collateralProxyAddress.isEmpty

@@ -2,8 +2,11 @@ import Foundation
 
 /// API configuration: base URL and endpoint definitions (Moya-style enum).
 enum APIConfig {
-  /// Base URL for the service platform (dev). Change for staging/production.
-  static let baseURL = URL(string: "https://service-platform.dev.liquidity-financial.com")!
+  /// Base URL for the Rain dev API. Change for staging/production.
+  ///
+  /// Replaces the old Liquidity Financial service-platform host. Auth is now the Rain
+  /// Client Session Token (CST) flow — see `RainSessionManager`.
+  static let baseURL = URL(string: "https://api-dev.rain.xyz")!
 }
 
 // MARK: - Endpoints (Moya-style)
@@ -24,62 +27,64 @@ enum EndpointTask {
   case requestQueryAndBody(query: [String: String], body: Data)
 }
 
-/// API endpoints (Moya-style). Add a new case per API; implement path, method, task, headers, bodyData.
+/// Rain dev API endpoints (Moya-style). Add a new case per API; implement path, method, task.
+///
+/// All issuing endpoints are scoped to a Rain `userId` and authenticated with a CST
+/// (`Authorization: Bearer cst_…`) — except `createSession`, which mints the CST using the
+/// program `Api-Key` header instead. Auth headers are supplied by the caller (the session
+/// manager / repositories) via `extraHeaders`, not baked into the endpoint.
 enum Endpoint {
-  case creditContracts
-  case withdrawalSignature(request: WithdrawalSignatureRequest)
-  case restoreWallet(backupMethod: String)
+  /// `POST /v1/issuing/users/{userId}/sessions` — mints a CST. Sent with an `Api-Key` header
+  /// and an empty body.
+  case createSession(userId: String)
+  /// `GET /v1/issuing/users/{userId}/contracts` — collateral contracts (array).
+  case contracts(userId: String)
+  /// `GET /v1/issuing/users/{userId}/signatures/withdrawals` — admin withdrawal signature.
+  case withdrawalSignature(userId: String, request: WithdrawalSignatureRequest)
 
   var path: String {
     switch self {
-    case .creditContracts:
-      return "v1/rain/person/credit-contracts"
-    case .withdrawalSignature:
-      return "v1/rain/person/withdrawal/signature"
-    case .restoreWallet:
-      return "v1/portal/backup"
+    case .createSession(let userId):
+      return "v1/issuing/users/\(userId)/sessions"
+    case .contracts(let userId):
+      return "v1/issuing/users/\(userId)/contracts"
+    case .withdrawalSignature(let userId, _):
+      return "v1/issuing/users/\(userId)/signatures/withdrawals"
     }
   }
 
   var method: HTTPMethod {
     switch self {
-    case .creditContracts:
+    case .createSession:
+      return .post
+    case .contracts:
       return .get
     case .withdrawalSignature:
-      return .post
-    case .restoreWallet:
       return .get
     }
   }
 
   var task: EndpointTask {
     switch self {
-    case .creditContracts:
+    case .createSession:
+      // Rain mints the CST from an empty POST body + Api-Key header.
+      return .requestBody(Data())
+    case .contracts:
       return .requestPlain
-    case .withdrawalSignature:
-      return .requestPlain
-    case .restoreWallet(let backupMethod):
-      return .requestQuery(["backupMethod": backupMethod])
+    case .withdrawalSignature(_, let request):
+      return .requestQuery(request.queryItems)
     }
   }
 
-  /// Request body for endpoints that send an encodable object. Client encodes with the given encoder.
-  /// Withdrawal signature API expects body { "request": { ... } }.
+  /// Request body for endpoints that send an encodable object. The Rain withdrawal-signature
+  /// endpoint is now a GET with query params, so no endpoint carries an encodable body.
   func bodyData(encoder: JSONEncoder) throws -> Data? {
-    switch self {
-    case .creditContracts:
-      return nil
-    case .withdrawalSignature(let request):
-      let body = WithdrawalSignatureRequestBody(request: request)
-      return try encoder.encode(body)
-    case .restoreWallet:
-      return nil
-    }
+    return nil
   }
 
   var headers: [String: String]? {
     switch self {
-    case .creditContracts, .withdrawalSignature, .restoreWallet:
+    case .createSession, .contracts, .withdrawalSignature:
       return nil
     }
   }
