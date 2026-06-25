@@ -170,13 +170,22 @@ class PortalWithdrawDemoViewModel: ObservableObject {
   
   func withdraw() async {
     guard let amountDecimal = Decimal(string: amount) else { return }
-    // The signature request needs the amount in base units (amount × 10^decimals); withdrawCollateral takes the human amount.
-    let newAmount = (try? AmountHelpers.toBaseUnits(amount: amountDecimal, decimals: decimals)) ?? BigUInt(0)
 
     isProcessing = true
     error = nil
     txHash = nil
     withdrawalSignatureError = nil
+
+    // The signature request needs the amount in base units (amount × 10^decimals); withdrawCollateral takes the human amount.
+    let newAmount: BigUInt
+    do {
+      newAmount = try AmountHelpers.toBaseUnits(amount: amountDecimal, decimals: decimals)
+    } catch {
+      self.error = error
+      statusMessage = "Invalid amount"
+      isProcessing = false
+      return
+    }
 
     loadingMessage = "Getting withdrawal signature..."
     await loadWithdrawalSignature(

@@ -3,7 +3,7 @@ import Web3
 
 /// Utility functions for amount conversion and validation
 public enum AmountHelpers {
-  /// Rounds toward zero with no fractional digits. Given the scale guard the scaled value is
+  /// Rounds down (toward −∞) with no fractional digits. Given the scale guard the scaled value is
   /// already integral, so this only ever acts as a defensive no-op (and keeps the string output
   /// free of a decimal point or exponent).
   private static let roundDownBehavior = NSDecimalNumberHandler(
