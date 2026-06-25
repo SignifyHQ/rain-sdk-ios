@@ -143,7 +143,9 @@ struct TransactionBuildingTests {
     )
 
     let messageData = try parseJSON(message)["message"] as? [String: Any]
-    let expectedAmount = BigUInt(amount * pow(10.0, Double(decimals)))
+    // Exact base-unit value: 1_000_000_000 (10^9) * 10^18 decimals = 10^27 ("1" + 27 zeros).
+    // A Double multiply would drift (…13287555072); the SDK now scales on Decimal.
+    let expectedAmount = BigUInt("1" + String(repeating: "0", count: 27), radix: 10)!
     #expect(messageData?["amount"] as? String == expectedAmount.description)
   }
 
