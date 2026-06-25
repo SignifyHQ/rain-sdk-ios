@@ -156,8 +156,7 @@ extension RainSDKManager {
     // Fetch current gas price
     let gasPrice = try await fetchGasData(chainId: chainId, method: .eth_gasPrice, address: address).weiToEth
     
-    // Calculate the total fees. The fee is a display-only estimate (the node fills the real gas
-    // at submit), so we keep the Double math and wrap the result as Decimal at the boundary.
+    // Calculate the total fees
     let txFee: Double = estimateGas * gasPrice
 
     return txFee.asDecimal

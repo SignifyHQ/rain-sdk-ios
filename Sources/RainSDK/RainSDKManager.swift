@@ -494,11 +494,12 @@ public final class RainSDKManager: RainSDK {
       }
       
       let from = try await provider.address()
+      // Native token amount in wei (18 decimals).
+      let amountWei = try AmountHelpers.toBaseUnits(amount: amount, decimals: 18)
       let params = WalletTransactionParams(
         from: from,
         to: to,
-        // Native token uses 18 decimals (wei).
-        value: "0x" + String(try AmountHelpers.toBaseUnits(amount: amount, decimals: 18), radix: 16),
+        value: amountWei.hexString,
         data: .empty
       )
       
