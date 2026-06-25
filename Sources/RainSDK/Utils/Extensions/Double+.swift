@@ -1,4 +1,5 @@
 import Foundation
+import Web3
 
 extension Double {
   var weiToEth: Double {
@@ -9,8 +10,12 @@ extension Double {
     self * pow(10, 18)
   }
   
+  /// Hex-encodes a wei-magnitude value. Builds the integer as `BigUInt` so values above
+  /// `Int64.max` don't trap the way `Int(self)` would; truncates any sub-unit fraction toward zero.
   var toHexString: String {
-    "0x" + String(Int(self), radix: 16)
+    let integerString = String(format: "%.0f", self.rounded(.towardZero))
+    let wei = BigUInt(integerString, radix: 10) ?? BigUInt(0)
+    return "0x" + String(wei, radix: 16)
   }
 
   /// Shortest exact `Decimal` matching this value's printed form (e.g. `0.1` → `Decimal(string: "0.1")`).
