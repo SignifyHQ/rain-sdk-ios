@@ -41,8 +41,8 @@ class TransferDemoViewModel: ObservableObject {
           Int(chainId) != nil,
           !toAddress.trimmingCharacters(in: .whitespaces).isEmpty,
           !amount.isEmpty,
-          Double(amount) != nil,
-          (Double(amount) ?? 0) > 0
+          Decimal(string: amount) != nil,
+          (Decimal(string: amount) ?? 0) > 0
     else { return false }
 
     if transferType == .erc20 {
@@ -56,8 +56,8 @@ class TransferDemoViewModel: ObservableObject {
 
   func send() async {
     guard let chainIdInt = Int(chainId),
-          let amountDouble = Double(amount),
-          amountDouble > 0,
+          let amountDecimal = Decimal(string: amount),
+          amountDecimal > 0,
           canSend
     else { return }
 
@@ -76,7 +76,7 @@ class TransferDemoViewModel: ObservableObject {
         let hash = try await sdkService.sendNativeToken(
           chainId: chainIdInt,
           to: to,
-          amount: amountDouble
+          amount: amountDecimal
         )
         txHash = hash
       case .erc20:
@@ -89,7 +89,7 @@ class TransferDemoViewModel: ObservableObject {
           chainId: chainIdInt,
           contractAddress: contract,
           to: to,
-          amount: amountDouble,
+          amount: amountDecimal,
           decimals: decimalsInt
         )
         txHash = hash

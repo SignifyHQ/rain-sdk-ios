@@ -22,7 +22,7 @@ struct WithdrawCollateralTests {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         salt: validSaltBase64,
         signature: validSignatureHex,
@@ -54,7 +54,7 @@ struct WithdrawCollateralTests {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         salt: validSaltBase64,
         signature: validSignatureHex,
@@ -88,7 +88,7 @@ struct WithdrawCollateralTests {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         salt: validSaltBase64,
         signature: validSignatureHex,
@@ -120,7 +120,7 @@ struct WithdrawCollateralTests {
       _ = try await manager.withdrawCollateral(
         chainId: 999, // Not in network configs
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         salt: validSaltBase64,
         signature: validSignatureHex,
@@ -154,7 +154,7 @@ struct WithdrawCollateralTests {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         salt: validSaltBase64,
         signature: validSignatureHex,
@@ -199,7 +199,7 @@ struct WithdrawCollateralTests {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         salt: validSaltBase64,
         signature: validSignatureHex,
@@ -254,7 +254,7 @@ struct WithdrawCollateralTests {
     let txHash = try await manager.withdrawCollateral(
       chainId: 1,
       assetAddresses: assetAddresses,
-      amount: 100.0,
+      amount: 100,
       decimals: 18,
       salt: validSaltBase64,
       signature: validSignatureHex,
@@ -317,7 +317,7 @@ struct WithdrawCollateralTests {
       _ = try await manager.estimateWithdrawalFee(
         chainId: 1,
         addresses: defaultAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
         signature: validSignatureHex,
@@ -338,7 +338,7 @@ struct WithdrawCollateralTests {
       _ = try await manager.estimateWithdrawalFee(
         chainId: 1,
         addresses: defaultAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
         signature: validSignatureHex,
@@ -364,7 +364,7 @@ struct WithdrawCollateralTests {
       _ = try await manager.estimateWithdrawalFee(
         chainId: 1,
         addresses: defaultAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
         signature: validSignatureHex,
@@ -388,7 +388,7 @@ struct WithdrawCollateralTests {
       _ = try await manager.estimateWithdrawalFee(
         chainId: 1,
         addresses: defaultAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
         signature: "invalid-base64!!!",
@@ -421,7 +421,7 @@ struct WithdrawCollateralTests {
       _ = try await manager.estimateWithdrawalFee(
         chainId: 1,
         addresses: defaultAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
         signature: validSignatureHex,
@@ -464,15 +464,17 @@ struct WithdrawCollateralTests {
     let fee = try await manager.estimateWithdrawalFee(
       chainId: 1,
       addresses: defaultAddresses,
-      amount: 100.0,
+      amount: 100,
       decimals: 18,
       salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
       signature: validSignatureHex,
       expiresAt: "1735689600"
     )
 
-    // Current implementation returns 0 as placeholder; assert non-throwing and type
-    let expectedFee: Double = 20000000000 / pow(10, 18) * 21000
+    // Fee is Decimal-wrapped from the same Double gas math (gasPrice/1e18 * gasUnits),
+    // so build the expected value the identical way (in Double) and compare via .asDecimal.
+    let expectedFeeDouble: Double = 20000000000 / pow(10, 18) * 21000
+    let expectedFee = expectedFeeDouble.asDecimal
     #expect(fee == expectedFee)
   }
 }

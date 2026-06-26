@@ -16,7 +16,7 @@ struct SendTokenTests {
       _ = try await manager.sendNativeToken(
         chainId: 1,
         to: "0xrecipient0000000000000000000000000000000000",
-        amount: 1.0
+        amount: 1
       )
     }
   }
@@ -33,7 +33,7 @@ struct SendTokenTests {
       _ = try await manager.sendNativeToken(
         chainId: 1,
         to: "0xrecipient0000000000000000000000000000000000",
-        amount: 1.0
+        amount: 1
       )
     }
   }
@@ -53,7 +53,7 @@ struct SendTokenTests {
       _ = try await manager.sendNativeToken(
         chainId: 1,
         to: "0xrecipient0000000000000000000000000000000000",
-        amount: 1.0
+        amount: 1
       )
     }
   }
@@ -81,7 +81,7 @@ struct SendTokenTests {
     let txHash = try await manager.sendNativeToken(
       chainId: 1,
       to: toAddress,
-      amount: 1.5
+      amount: Decimal(string: "1.5")!
     )
 
     #expect(!txHash.isEmpty)
@@ -103,7 +103,7 @@ struct SendTokenTests {
         chainId: 1,
         contractAddress: "0xcontract000000000000000000000000000000000",
         to: "0xrecipient0000000000000000000000000000000000",
-        amount: 100.0,
+        amount: 100,
         decimals: 18
       )
     }
@@ -122,7 +122,7 @@ struct SendTokenTests {
         chainId: 1,
         contractAddress: "0xcontract000000000000000000000000000000000",
         to: "0xrecipient0000000000000000000000000000000000",
-        amount: 100.0,
+        amount: 100,
         decimals: 18
       )
     }
@@ -144,7 +144,7 @@ struct SendTokenTests {
         chainId: 1,
         contractAddress: "0xcontract000000000000000000000000000000000",
         to: "0xrecipient0000000000000000000000000000000000",
-        amount: 100.0,
+        amount: 100,
         decimals: 18
       )
     }
@@ -175,7 +175,7 @@ struct SendTokenTests {
       chainId: 1,
       contractAddress: contractAddress,
       to: toAddress,
-      amount: 100.0,
+      amount: 100,
       decimals: 6
     )
 

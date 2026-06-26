@@ -103,7 +103,7 @@ class RainSDKService: ObservableObject {
     collateralProxyAddress: String,
     walletAddress: String,
     tokenAddress: String,
-    amount: Double,
+    amount: Decimal,
     decimals: Int,
     recipientAddress: String,
     nonce: BigUInt?
@@ -129,7 +129,7 @@ class RainSDKService: ObservableObject {
     contractAddress: String,
     proxyAddress: String,
     tokenAddress: String,
-    amount: Double,
+    amount: Decimal,
     decimals: Int,
     recipientAddress: String,
     expiresAt: String,
@@ -207,7 +207,7 @@ class RainSDKService: ObservableObject {
   }
 
   /// Sends native tokens (e.g. ETH, AVAX) from the current wallet.
-  func sendNativeToken(chainId: Int, to: String, amount: Double) async throws -> String {
+  func sendNativeToken(chainId: Int, to: String, amount: Decimal) async throws -> String {
     try await sdkManager.sendNativeToken(chainId: chainId, to: to, amount: amount)
   }
 
@@ -216,7 +216,7 @@ class RainSDKService: ObservableObject {
     chainId: Int,
     contractAddress: String,
     to: String,
-    amount: Double,
+    amount: Decimal,
     decimals: Int
   ) async throws -> String {
     try await sdkManager.sendERC20Token(
@@ -237,7 +237,7 @@ class RainSDKService: ObservableObject {
     proxyAddress: String,
     tokenAddress: String,
     recipientAddress: String,
-    amount: Double,
+    amount: Decimal,
     decimals: Int,
     salt: String,
     signature: String,

@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import Web3
+import RainSDK
 
 @MainActor
 class PortalWithdrawDemoViewModel: ObservableObject {
@@ -105,7 +106,7 @@ class PortalWithdrawDemoViewModel: ObservableObject {
     && !recipientAddress.isEmpty
     && !amount.isEmpty
     && selectedAsset != nil
-    && Double(amount) != nil
+    && Decimal(string: amount) != nil
   }
 
   // MARK: - Credit contracts API → AssetModel
@@ -168,16 +169,23 @@ class PortalWithdrawDemoViewModel: ObservableObject {
   }
   
   func withdraw() async {
-    guard let amountDouble = Double(amount) else { return }
-    // The signature request needs the amount in base units (amount × 10^decimals); withdrawCollateral takes the human amount.
-    let scaled = NSDecimalNumber(decimal: Decimal(string: String(amountDouble)) ?? 0)
-      .multiplying(byPowerOf10: Int16(decimals))
-    let newAmount = BigUInt(scaled.stringValue, radix: 10) ?? BigUInt(0)
+    guard let amountDecimal = Decimal(string: amount) else { return }
 
     isProcessing = true
     error = nil
     txHash = nil
     withdrawalSignatureError = nil
+
+    // The signature request needs the amount in base units (amount × 10^decimals); withdrawCollateral takes the human amount.
+    let newAmount: BigUInt
+    do {
+      newAmount = try AmountHelpers.toBaseUnits(amount: amountDecimal, decimals: decimals)
+    } catch {
+      self.error = error
+      statusMessage = "Invalid amount"
+      isProcessing = false
+      return
+    }
 
     loadingMessage = "Getting withdrawal signature..."
     await loadWithdrawalSignature(
@@ -206,7 +214,7 @@ class PortalWithdrawDemoViewModel: ObservableObject {
         proxyAddress: proxyAddress,
         tokenAddress: tokenAddress,
         recipientAddress: recipientAddress,
-        amount: amountDouble,
+        amount: amountDecimal,
         decimals: decimals,
         salt: salt,
         signature: signature,
