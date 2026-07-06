@@ -278,15 +278,20 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
   /// background as part of the withdraw, so it isn't surfaced to the user.
   func withdrawMaximum() async {
     guard let asset = selectedAsset else { return }
-    await performWithdraw(amountOverride: asset.availableBalance)
+    // `availableBalance` is a Double from the balances API; bridge it to Decimal via its string
+    // form so we don't fold binary floating-point drift into the amount we sign and send.
+    let maxAmount = Decimal(string: String(asset.availableBalance)) ?? Decimal(asset.availableBalance)
+    await performWithdraw(amountOverride: maxAmount)
   }
 
   /// Executes a collateral withdrawal.
   /// - Parameter amountOverride: when set (e.g. "Withdraw Maximum"), withdraws this amount
   ///   instead of the value typed into the amount field.
-  private func performWithdraw(amountOverride: Double? = nil) async {
+  private func performWithdraw(amountOverride: Decimal? = nil) async {
     guard let asset = selectedAsset else { return }
-    let rawAmount = amountOverride ?? Double(amount)
+    // Parse the typed amount as a Decimal directly from its string — going through Double first
+    // (e.g. Double("16.38")) reintroduces float drift the exact base-unit scaling exists to avoid.
+    let rawAmount = amountOverride ?? Decimal(string: amount)
     guard let rawAmount, rawAmount > 0 else {
       setError("Enter a valid amount", status: "Enter a valid amount")
       return
@@ -305,7 +310,7 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
     }
 
     // UI-side guard: never request more than the available balance.
-    if normalized.value > asset.availableBalance + 1e-9 {
+    if (normalized.value as NSDecimalNumber).doubleValue > asset.availableBalance + 1e-9 {
       let message = "Amount exceeds available balance " +
         "(\(String(format: "%.6f", asset.availableBalance)) \(selectedSymbol))"
       setError(message, status: "Amount exceeds balance")
@@ -390,7 +395,7 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
   /// Normalizes a raw amount to the token's decimal precision (rounding DOWN) and returns both
   /// the normalized value and its exact base-unit representation. Returns nil when the result
   /// rounds to zero (below the token's minimum unit).
-  private func normalizedAmount(_ raw: Double, decimals: Int) -> (value: Double, baseUnits: BigUInt)? {
+  private func normalizedAmount(_ raw: Decimal, decimals: Int) -> (value: Decimal, baseUnits: BigUInt)? {
     let handler = NSDecimalNumberHandler(
       roundingMode: .down,
       scale: Int16(decimals),
@@ -399,14 +404,13 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
       raiseOnUnderflow: false,
       raiseOnDivideByZero: false
     )
-    let roundedDecimal = NSDecimalNumber(value: raw).rounding(accordingToBehavior: handler)
-    let normalized = roundedDecimal.doubleValue
-    guard normalized > 0 else { return nil }
+    let roundedDecimal = NSDecimalNumber(decimal: raw).rounding(accordingToBehavior: handler)
+    guard roundedDecimal.doubleValue > 0 else { return nil }
     // Exact base-10 scaling (matches AmountHelpers.toBaseUnits); a Double multiply truncates
     // (e.g. 16.38 * 1e6 == 16_379_999.99…), under-paying the on-chain tx.
     let scaled = roundedDecimal.multiplying(byPowerOf10: Int16(decimals))
     let baseUnits = BigUInt(scaled.stringValue, radix: 10) ?? BigUInt(0)
-    return (normalized, baseUnits)
+    return (roundedDecimal.decimalValue, baseUnits)
   }
 
   /// Maps the raw signature error to a clearer hint. The Rain API returns "active signature

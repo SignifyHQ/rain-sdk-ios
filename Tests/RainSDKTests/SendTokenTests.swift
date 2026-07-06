@@ -129,10 +129,12 @@ struct SendTokenTests {
     stub.sendTransactionHashToReturn = "0x" + String(repeating: "a", count: 64)
 
     // 16.38 ETH. A Double multiply (16.38 * 1e18) drifts; the exact base unit is 16_380_000_000_000_000_000.
+    // Build the Decimal from a string — a Decimal *float literal* (16.38) is itself constructed via
+    // Double and would reintroduce the drift before it ever reaches the exact base-unit scaling.
     _ = try await manager.sendNative(
       chainId: 1,
       to: TestFixtures.recipientAddress,
-      amount: 16.38
+      amount: Decimal(string: "16.38")!
     )
 
     let expectedWei = BigUInt("16380000000000000000", radix: 10)!

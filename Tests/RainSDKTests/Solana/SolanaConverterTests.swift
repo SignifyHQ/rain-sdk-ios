@@ -7,26 +7,28 @@ import Web3
 struct SolanaConverterTests {
   @Test("solToLamports scales by 1e9")
   func scales() throws {
-    #expect(try SolanaConverter.solToLamports(1.0) == 1_000_000_000)
-    #expect(try SolanaConverter.solToLamports(0.5) == 500_000_000)
-    #expect(try SolanaConverter.solToLamports(2.5) == 2_500_000_000)
-    #expect(try SolanaConverter.solToLamports(0.0) == 0)
+    #expect(try SolanaConverter.solToLamports(Decimal(string: "1.0")!) == 1_000_000_000)
+    #expect(try SolanaConverter.solToLamports(Decimal(string: "0.5")!) == 500_000_000)
+    #expect(try SolanaConverter.solToLamports(Decimal(string: "2.5")!) == 2_500_000_000)
+    #expect(try SolanaConverter.solToLamports(Decimal(string: "0.0")!) == 0)
   }
 
   @Test("solToLamports handles the smallest unit without float drift")
   func noDrift() throws {
-    #expect(try SolanaConverter.solToLamports(0.000000001) == 1)
-    #expect(try SolanaConverter.solToLamports(0.1) == 100_000_000)
+    // Build from strings so the input Decimal is exact — a Decimal *float literal*
+    // (0.000000001) is itself constructed via Double and would smuggle drift into the test.
+    #expect(try SolanaConverter.solToLamports(Decimal(string: "0.000000001")!) == 1)
+    #expect(try SolanaConverter.solToLamports(Decimal(string: "0.1")!) == 100_000_000)
   }
 
   @Test("solToLamports truncates below one lamport")
   func truncates() throws {
-    #expect(try SolanaConverter.solToLamports(0.0000000015) == 1)
+    #expect(try SolanaConverter.solToLamports(Decimal(string: "0.0000000015")!) == 1)
   }
 
   @Test("solToLamports rejects negative amounts")
   func rejectsNegative() {
-    #expect(throws: RainSDKError.self) { try SolanaConverter.solToLamports(-1.0) }
+    #expect(throws: RainSDKError.self) { try SolanaConverter.solToLamports(Decimal(string: "-1.0")!) }
   }
 
   @Test("lamportsToSol divides by 1e9")

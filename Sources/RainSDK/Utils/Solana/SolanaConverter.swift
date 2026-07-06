@@ -8,19 +8,16 @@ internal enum SolanaConverter {
   static let lamportsPerSol: UInt64 = 1_000_000_000
 
   /// Converts a human-readable SOL amount to whole lamports, truncating any fraction below
-  /// one lamport. Parsed via `Decimal` from the string form to avoid binary floating-point
-  /// drift (mirrors Android's `BigDecimal(sol.toString())`).
-  /// - Throws: `RainSDKError.internalLogicError` if `sol` is negative, unparseable, or the
+  /// one lamport. Uses `Decimal` arithmetic to avoid binary floating-point drift
+  /// (mirrors Android's `BigDecimal(sol.toString())`).
+  /// - Throws: `RainSDKError.internalLogicError` if `sol` is negative or the
   ///   result overflows `UInt64`.
-  static func solToLamports(_ sol: Double) throws -> UInt64 {
+  static func solToLamports(_ sol: Decimal) throws -> UInt64 {
     guard sol >= 0 else {
       throw RainSDKError.internalLogicError(details: "SOL amount must be non-negative: \(sol)")
     }
-    guard let solDecimal = Decimal(string: "\(sol)") else {
-      throw RainSDKError.internalLogicError(details: "Unparseable SOL amount: \(sol)")
-    }
 
-    let lamportsDecimal = solDecimal * Decimal(lamportsPerSol)
+    let lamportsDecimal = sol * Decimal(lamportsPerSol)
     // Round toward zero to whole lamports, matching BigDecimal.toBigInteger() truncation.
     var rounded = Decimal()
     var input = lamportsDecimal

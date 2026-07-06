@@ -533,7 +533,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   func sendSolanaNative(
     chainId: Int,
     to toAddress: String,
-    amount: Double
+    amount: Decimal
   ) async throws -> String {
     let from = try await getAddress(chainId: chainId)
     let (session, client) = try resolveSessionAndClient()
@@ -605,7 +605,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     chainId: Int,
     mintAddress: String,
     to toAddress: String,
-    amount: Double,
+    amount: Decimal,
     decimals: Int
   ) async throws -> String {
     throw RainSDKError.internalLogicError(

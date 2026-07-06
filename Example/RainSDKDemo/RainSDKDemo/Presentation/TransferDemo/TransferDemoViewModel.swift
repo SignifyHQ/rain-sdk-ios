@@ -37,8 +37,8 @@ class TransferDemoViewModel: ObservableObject {
           !chain.isSolana || sdkService.activeProvider == .turnkey,
           chain.isValidAddress(toAddress.trimmingCharacters(in: .whitespaces)),
           !amount.isEmpty,
-          Double(amount) != nil,
-          (Double(amount) ?? 0) > 0
+          Decimal(string: amount) != nil,
+          (Decimal(string: amount) ?? 0) > 0
     else { return false }
 
     if isERC20 {
@@ -49,8 +49,8 @@ class TransferDemoViewModel: ObservableObject {
   }
 
   func send() async {
-    guard let amountDouble = Double(amount),
-          amountDouble > 0,
+    guard let amountDecimal = Decimal(string: amount),
+          amountDecimal > 0,
           canSend
     else { return }
 
@@ -72,14 +72,14 @@ class TransferDemoViewModel: ObservableObject {
           chainId: chain.chainId,
           contractAddress: contract,
           to: to,
-          amount: amountDouble
+          amount: amountDecimal
         )
         txHash = result.transactionHash
       } else {
         let result = try await sdkService.sendNativeToken(
           chainId: chain.chainId,
           to: to,
-          amount: amountDouble
+          amount: amountDecimal
         )
         txHash = result.transactionHash
       }

@@ -66,7 +66,7 @@ extension RainSDKManager {
   func buildTransactionParamForWithdrawAsset(
     chainId: Int,
     assetAddresses: WithdrawAssetAddresses,
-    amount: Double,
+    amount: Decimal,
     decimals: Int,
     salt: String,
     signature: String,
@@ -151,7 +151,7 @@ extension RainSDKManager {
   
   /// Estimates total transaction fee (estimated gas × gas price) in native token via the active wallet provider.
   /// // TODO consider EIP-1559 chains
-  func estimateTransactionFee(chainId: Int, address: String, params: WalletTransactionParams) async throws -> Double {
+  func estimateTransactionFee(chainId: Int, address: String, params: WalletTransactionParams) async throws -> Decimal {
     guard let provider = _walletProvider else {
       throw RainSDKError.sdkNotInitialized
     }
@@ -162,10 +162,11 @@ extension RainSDKManager {
       )
     }
 
-    return try await estimatingProvider.estimateTransactionFee(
+    let fee = try await estimatingProvider.estimateTransactionFee(
       chainId: chainId,
       walletAddress: address,
       params: params
     )
+    return Decimal(fee)
   }
 }

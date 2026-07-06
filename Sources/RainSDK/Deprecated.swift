@@ -22,8 +22,8 @@ public extension RainSDK {
       chainId: chainId,
       contractAddress: contractAddress,
       to: to,
-      amount: amount,
-      decimals: Int?(decimals)
+      amount: Decimal(amount),
+      decimals: decimals
     ).transactionHash
   }
 
@@ -43,15 +43,15 @@ public extension RainSDK {
       chainId: chainId,
       contractAddress: contractAddress,
       to: to,
-      amount: amount,
-      decimals: Int?(decimals)
+      amount: Decimal(amount),
+      decimals: decimals
     )
   }
 
   /// Deprecated alias for ``sendNative(chainId:to:amount:)``.
   @available(*, deprecated, message: "Renamed to sendNative. It returns RainTokenTransferResult; read .transactionHash for the hash.")
   func sendNativeToken(chainId: Int, to: String, amount: Double) async throws -> String {
-    try await sendNative(chainId: chainId, to: to, amount: amount).transactionHash
+    try await sendNative(chainId: chainId, to: to, amount: Decimal(amount)).transactionHash
   }
 
   /// Deprecated alias for ``buildTransactionParameters(walletAddress:contractAddress:transactionData:)``.

@@ -263,7 +263,7 @@ public final class RainSDKManager: RainSDK {
     chainId: Int,
     walletAddress: String,
     assetAddresses: EIP712AssetAddresses,
-    amount: Double,
+    amount: Decimal,
     decimals: Int,
     nonce: BigUInt?
   ) async throws -> (String, String) {
@@ -290,8 +290,6 @@ public final class RainSDKManager: RainSDK {
       RainLogger.debug("Rain SDK: Retrieved nonce \(finalNonce) from contract")
     }
     
-    // Amount is already in smallest units (as per protocol documentation)
-    // Convert Double to BigUInt
     let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
     
     // Build EIP-712 message using service
@@ -311,7 +309,7 @@ public final class RainSDKManager: RainSDK {
   public func buildWithdrawTransactionData(
     chainId: Int,
     assetAddresses: WithdrawAssetAddresses,
-    amount: Double,
+    amount: Decimal,
     decimals: Int,
     expiresAt: String,
     salt: Data,
@@ -392,7 +390,7 @@ public final class RainSDKManager: RainSDK {
   public func withdrawCollateral(
     chainId: Int,
     assetAddresses: WithdrawAssetAddresses,
-    amount: Double,
+    amount: Decimal,
     decimals: Int,
     salt: String,
     signature: String,
@@ -430,12 +428,12 @@ public final class RainSDKManager: RainSDK {
   public func estimateWithdrawalFee(
     chainId: Int,
     addresses: WithdrawAssetAddresses,
-    amount: Double,
+    amount: Decimal,
     decimals: Int,
     salt: String,
     signature: String,
     expiresAt: String
-  ) async throws -> Double {
+  ) async throws -> Decimal {
     do {
       let (walletAddress, transactionParams) = try await buildTransactionParamForWithdrawAsset(
         chainId: chainId,
@@ -608,7 +606,7 @@ public final class RainSDKManager: RainSDK {
   public func sendNative(
     chainId: Int,
     to: String,
-    amount: Double
+    amount: Decimal
   ) async throws -> RainTokenTransferResult {
     do {
       guard let provider = _walletProvider else {
@@ -627,7 +625,7 @@ public final class RainSDKManager: RainSDK {
       }
 
       let from = try await provider.address()
-      // Exact base-unit scaling (matches sendToken/withdraw); amount.ethToWei is Double math and drifts.
+      // Exact base-unit scaling (matches sendToken/withdraw) on the Decimal money amount.
       let amountWei = try AmountHelpers.toBaseUnits(amount: amount, decimals: 18)
       let params = WalletTransactionParams(
         from: from,
@@ -653,7 +651,7 @@ public final class RainSDKManager: RainSDK {
     chainId: Int,
     contractAddress: String,
     to: String,
-    amount: Double,
+    amount: Decimal,
     decimals: Int?
   ) async throws -> RainTokenTransferResult {
     do {

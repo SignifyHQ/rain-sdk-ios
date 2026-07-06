@@ -89,7 +89,7 @@ public protocol RainSDK {
     chainId: Int,
     walletAddress: String,
     assetAddresses: EIP712AssetAddresses,
-    amount: Double,
+    amount: Decimal,
     decimals: Int,
     nonce: BigUInt?
   ) async throws -> (String, String)
@@ -123,7 +123,7 @@ public protocol RainSDK {
   func buildWithdrawTransactionData(
     chainId: Int,
     assetAddresses: WithdrawAssetAddresses,
-    amount: Double,
+    amount: Decimal,
     decimals: Int,
     expiresAt: String,
     salt: Data,
@@ -181,7 +181,7 @@ public protocol RainSDK {
   func withdrawCollateral(
     chainId: Int,
     assetAddresses: WithdrawAssetAddresses,
-    amount: Double,
+    amount: Decimal,
     decimals: Int,
     salt: String,
     signature: String,
@@ -210,12 +210,12 @@ public protocol RainSDK {
   func estimateWithdrawalFee(
     chainId: Int,
     addresses: WithdrawAssetAddresses,
-    amount: Double,
+    amount: Decimal,
     decimals: Int,
     salt: String,
     signature: String,
     expiresAt: String
-  ) async throws -> Double
+  ) async throws -> Decimal
 
   // MARK: - Wallet information
 
@@ -324,7 +324,7 @@ public protocol RainSDK {
   func sendNative(
     chainId: Int,
     to: String,
-    amount: Double
+    amount: Decimal
   ) async throws -> RainTokenTransferResult
 
   /// Sends tokens on the specified network. Chain-aware:
@@ -349,7 +349,7 @@ public protocol RainSDK {
     chainId: Int,
     contractAddress: String,
     to: String,
-    amount: Double,
+    amount: Decimal,
     decimals: Int?
   ) async throws -> RainTokenTransferResult
 }
@@ -361,7 +361,7 @@ public extension RainSDK {
     chainId: Int,
     contractAddress: String,
     to: String,
-    amount: Double
+    amount: Decimal
   ) async throws -> RainTokenTransferResult {
     try await sendToken(
       chainId: chainId,

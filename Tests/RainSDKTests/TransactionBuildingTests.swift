@@ -15,7 +15,7 @@ struct TransactionBuildingTests {
 
     let chainId = 1
     let nonce = BigUInt(42)
-    let amount: Double = 100.0
+    let amount: Decimal = 100.0
     let decimals = 18
 
     let (message, _) = try await manager.buildEIP712Message(
@@ -43,7 +43,7 @@ struct TransactionBuildingTests {
     #expect(messageData?["recipient"] as? String == TestFixtures.recipientAddress)
     #expect(messageData?["nonce"] as? String == nonce.description)
 
-    let expectedAmount = BigUInt(amount * pow(10.0, Double(decimals)))
+    let expectedAmount = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
     #expect(messageData?["amount"] as? String == expectedAmount.description)
   }
 
@@ -130,7 +130,7 @@ struct TransactionBuildingTests {
   @Test("buildEIP712Message handles very large amounts")
   func testBuildEIP712MessageLargeAmount() async throws {
     let manager = try await TestManagers.walletAgnosticManager()
-    let amount: Double = 1_000_000_000.0
+    let amount: Decimal = 1_000_000_000.0
     let decimals = 18
 
     let (message, _) = try await manager.buildEIP712Message(
