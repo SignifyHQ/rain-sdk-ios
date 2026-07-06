@@ -511,7 +511,7 @@ struct TurnkeyAdapterTests {
       expiresAt: "1735689600"
     )
 
-    let expectedFee = 20_000_000_000.0 / pow(10.0, 18.0) * 21_000.0
+    let expectedFee = Decimal(20_000_000_000.0 / pow(10.0, 18.0) * 21_000.0)
     #expect(fee == expectedFee)
   }
 

@@ -33,7 +33,7 @@ internal protocol RainSolanaTransfersProvider: Sendable {
   func sendSolanaNative(
     chainId: Int,
     to toAddress: String,
-    amount: Double
+    amount: Decimal
   ) async throws -> String
 
   /// Signs and broadcasts an SPL token transfer (TransferChecked instruction, auto-creating
@@ -50,7 +50,7 @@ internal protocol RainSolanaTransfersProvider: Sendable {
     chainId: Int,
     mintAddress: String,
     to toAddress: String,
-    amount: Double,
+    amount: Decimal,
     decimals: Int
   ) async throws -> String
 }
