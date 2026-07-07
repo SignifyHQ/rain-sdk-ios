@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1940E11B2F37B1A4003B6718 /* RainSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6718 /* RainSDK */; };
+		1940E11B2F37B1A4003B6730 /* RainCore in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6720 /* RainCore */; };
+		1940E11B2F37B1A4003B6731 /* RainPortal in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6721 /* RainPortal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,7 +41,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1940E11B2F37B1A4003B6718 /* RainSDK in Frameworks */,
+				1940E11B2F37B1A4003B6730 /* RainCore in Frameworks */,
+				1940E11B2F37B1A4003B6731 /* RainPortal in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,7 +85,8 @@
 			);
 			name = RainSDKDemo;
 			packageProductDependencies = (
-				1940E11A2F37B1A4003B6718 /* RainSDK */,
+				1940E11A2F37B1A4003B6720 /* RainCore */,
+				1940E11A2F37B1A4003B6721 /* RainPortal */,
 			);
 			productName = RainSDKDemo;
 			productReference = 191A07FE2F1A1EF90026656C /* RainSDKDemo.app */;
@@ -114,7 +117,8 @@
 			mainGroup = 191A07F52F1A1EF80026656C;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				1940E1192F37B1A4003B6718 /* XCLocalSwiftPackageReference "../../../rain-sdk-ios" */,
+				1940E1192F37B1A4003B6740 /* XCLocalSwiftPackageReference "../../rain-core" */,
+				1940E1192F37B1A4003B6741 /* XCLocalSwiftPackageReference "../../rain-portal" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 191A07FF2F1A1EF90026656C /* Products */;
@@ -373,16 +377,26 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		1940E1192F37B1A4003B6718 /* XCLocalSwiftPackageReference "../../../rain-sdk-ios" */ = {
+		1940E1192F37B1A4003B6740 /* XCLocalSwiftPackageReference "../../rain-core" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../../rain-sdk-ios";
+			relativePath = "../../rain-core";
+		};
+		1940E1192F37B1A4003B6741 /* XCLocalSwiftPackageReference "../../rain-portal" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../rain-portal";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		1940E11A2F37B1A4003B6718 /* RainSDK */ = {
+		1940E11A2F37B1A4003B6720 /* RainCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = RainSDK;
+			package = 1940E1192F37B1A4003B6740 /* XCLocalSwiftPackageReference "../../rain-core" */;
+			productName = RainCore;
+		};
+		1940E11A2F37B1A4003B6721 /* RainPortal */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1940E1192F37B1A4003B6741 /* XCLocalSwiftPackageReference "../../rain-portal" */;
+			productName = RainPortal;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

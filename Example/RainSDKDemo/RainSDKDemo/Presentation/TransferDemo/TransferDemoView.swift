@@ -1,6 +1,6 @@
 import SwiftUI
 import UIKit
-import RainSDK
+import RainCore
 
 struct TransferDemoView: View {
   @StateObject private var viewModel = TransferDemoViewModel()

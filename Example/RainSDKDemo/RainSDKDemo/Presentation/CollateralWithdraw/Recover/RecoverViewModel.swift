@@ -1,5 +1,5 @@
 import Foundation
-import RainSDK
+import RainCore
 import PortalSwift
 
 /// ViewModel for the recover wallet popup. Portal-only. Wallet recovery is currently

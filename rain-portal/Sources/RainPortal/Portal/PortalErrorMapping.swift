@@ -1,0 +1,60 @@
+import Foundation
+import PortalSwift
+import RainCore
+
+/// Registers Portal vendor-error mapping with `RainCore`'s extensible error mapper, so Portal
+/// errors classify into `RainSDKError` cases without RainCore importing PortalSwift.
+enum PortalErrorMapping {
+  nonisolated(unsafe) private static var registered = false
+  private static let lock = NSLock()
+
+  /// Registers the mapper exactly once per process.
+  static func registerOnce() {
+    lock.lock(); defer { lock.unlock() }
+    guard !registered else { return }
+    registered = true
+    RainSDKError.registerErrorMapper(map)
+  }
+
+  private static func map(_ error: Error) -> RainSDKError? {
+    if let requestError = error as? PortalRequestsError {
+      return mapPortalRequestsError(requestError)
+    }
+    if let mpcError = error as? PortalMpcError {
+      return mapPortalMpcError(mpcError)
+    }
+    if let rpcError = error as? PortalRpcError {
+      return mapPortalRpcError(rpcError)
+    }
+    return nil
+  }
+
+  private static func mapPortalRequestsError(_ error: PortalRequestsError) -> RainSDKError {
+    switch error {
+    case .unauthorized:
+      // Portal routes HTTP 401 to .unauthorized upstream, so this is the only path token-expired
+      // errors reach the SDK through.
+      return .tokenExpired
+    case .clientError, .internalServerError, .redirectError:
+      return .providerError(underlying: error)
+    default:
+      return .providerError(underlying: error)
+    }
+  }
+
+  private static func mapPortalMpcError(_ error: PortalMpcError) -> RainSDKError {
+    let code = error.id.flatMap { Int($0) }
+    if code == 320 || code == PortalErrorCodes.INVALID_API_KEY.rawValue {
+      return .tokenExpired
+    }
+    return .providerError(underlying: error)
+  }
+
+  private static func mapPortalRpcError(_ error: PortalRpcError) -> RainSDKError {
+    // Code `3` is returned for "execution reverted" — not declared by PortalSwift.
+    if error.code == 3 {
+      return .withdrawalRevertedByNetwork
+    }
+    return .providerError(underlying: error)
+  }
+}

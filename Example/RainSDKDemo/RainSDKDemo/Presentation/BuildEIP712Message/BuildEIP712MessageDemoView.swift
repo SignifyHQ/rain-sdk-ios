@@ -1,6 +1,6 @@
 import SwiftUI
 import UIKit
-import RainSDK
+import RainCore
 import Web3
 import Combine
 

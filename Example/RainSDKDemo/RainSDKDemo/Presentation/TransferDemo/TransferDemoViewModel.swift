@@ -1,5 +1,5 @@
 import Foundation
-import RainSDK
+import RainCore
 
 enum TransferType: String, CaseIterable {
   case native = "Native (e.g. ETH, AVAX)"
