@@ -1,5 +1,5 @@
 import Foundation
-import RainSDK
+import RainCore
 
 @MainActor
 class GetTransactionsDemoViewModel: ObservableObject {

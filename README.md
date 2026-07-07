@@ -4,16 +4,28 @@
 [![CocoaPods](https://img.shields.io/badge/CocoaPods-not--supported-lightgrey)](#installation)
 [![Carthage](https://img.shields.io/badge/Carthage-not--supported-lightgrey)](#installation)
 
-iOS SDK with first-class [Portal](https://portalhq.io) and [Turnkey](https://www.turnkey.com) wallet support: build EIP-712 messages, compose withdrawal transactions, sign and submit through the active wallet provider, and estimate fees.
+iOS SDK with first-class [Portal](https://portalhq.io) and [Turnkey](https://www.turnkey.com) wallet support: build EIP-712 messages, compose withdrawal transactions, sign and submit through a registered wallet provider, and estimate fees.
+
+The SDK is **modular** (ports & adapters): a vendor-free **`RainCore`** plus one adapter module per
+wallet provider. Link only the providers you use — an unselected provider's vendor SDK never enters
+your dependency graph.
+
+| Module        | Contains                                                                 |
+|---------------|--------------------------------------------------------------------------|
+| `RainCore`    | The `RainWalletProvider` port, capability model, provider registry (`RainSdk`), all Rain domain logic, **and the Turnkey adapter** (`TurnkeyProvider`, for now). |
+| `RainPortal`  | The Portal MPC adapter (`PortalProvider`); depends on `RainCore` + `PortalSwift`. |
+| `RainPrivy`   | The Privy embedded-key adapter (`PrivyProvider`) — **skeleton**; proves a net-new provider costs existing clients nothing. Operations throw until the Privy SDK is wired. |
+| `RainSDK`     | Backward-compat umbrella that re-exports `RainCore` + `RainPortal` (migration only; prefer the specific modules). |
 
 ## Features
 
-- **Portal wallet integration** — Initialize with a Portal session token and network configs; use the connected wallet for signing and sending transactions.
-- **Turnkey wallet integration** — Initialize with an authenticated Turnkey context and network configs; use the selected Turnkey wallet for signing and sending transactions.
-- **Wallet-agnostic mode** — Initialize with network configs only (no wallet provider) to use transaction-building APIs (EIP-712 message, withdraw calldata, composed params) with your own wallet or backend.
+- **Portal wallet integration** — Register a `PortalProvider` with a Portal session token; resolve a `RainClient` and use the connected MPC wallet for signing and sending transactions.
+- **Turnkey wallet integration** — Register a `TurnkeyProvider` with an authenticated `TurnkeyContext` (passkeys / auth proxy / OAuth / OTP handled outside Rain by the Turnkey Swift SDK).
+- **Pluggable providers** — Bring your own `RainWalletProvider` behind a `RainProvider` descriptor and register it; resolve providers by id or by `Capability`.
+- **Wallet-agnostic utilities** — EIP-712 message + withdraw calldata building are available straight off `RainSdk` with no provider resolved — use them with your own wallet or backend.
 - **EIP-712 message building** — Build typed data for admin signature required by the collateral contract.
-- **Withdrawal transaction building** — Build ABI-encoded withdraw calldata and compose `ETHTransactionParam` for submission.
-- **Full withdrawal flow** — builds the transaction, signs via the active wallet provider, and submits; returns the transaction hash.
+- **Withdrawal transaction building** — Build ABI-encoded withdraw calldata for submission.
+- **Full withdrawal flow** — builds the transaction, signs via the backing provider, and submits; returns the transaction hash.
 - **Fee estimation** — returns the estimated gas cost in the chain’s native token (e.g. ETH).
 - **Wallet information** — get current wallet address and generate a QR code image (PNG) for it.
 - **Balances** — get native and ERC-20 token balances for the current wallet.
@@ -24,21 +36,57 @@ iOS SDK with first-class [Portal](https://portalhq.io) and [Turnkey](https://www
 
 ### Swift Package Manager
 
-Add the package to your project (Xcode: **File → Add Package Dependencies**):
+Add the package in Xcode (**File → Add Package Dependencies**) with:
 
 ```
 https://github.com/SignifyHQ/rain-sdk-ios
 ```
 
-Or in `Package.swift`:
+Or in a `Package.swift`:
 
 ```swift
 dependencies: [
     .package(url: "https://github.com/SignifyHQ/rain-sdk-ios", from: "1.0.0")
+],
+targets: [
+    .target(name: "YourApp", dependencies: [
+        .product(name: "RainSDK", package: "rain-sdk-ios")
+    ])
 ]
 ```
 
-Then add the **RainSDK** product to your target.
+Today the repo vends the **`RainSDK`** umbrella product (re-exports `RainCore` + `RainPortal`) — use
+it and `import RainCore` / `import RainPortal` as needed. The per-provider modules (`RainCore`,
+`RainPortal`, `RainPrivy`) are published as standalone packages so you can depend on **only the
+providers you use** — an unselected provider's vendor SDK never enters your dependency graph:
+
+```swift
+// Portal-only app: RainCore comes transitively; Privy/Turnkey vendor SDKs are never resolved.
+.package(url: "https://github.com/SignifyHQ/rain-portal-ios", from: "1.0.0"),
+// Or for Turnkey (the adapter ships inside RainCore for now):
+// .package(url: "https://github.com/SignifyHQ/rain-core-ios", from: "1.0.0"),
+```
+
+New code should depend on the specific modules; `RainSDK` exists for migration only.
+
+## Migrating from 1.x
+
+v2 is a **source-breaking** release. The `RainSDK` umbrella keeps `import RainSDK` resolving
+(module-level compatibility), but the 1.x entry point was replaced — there are no shims for it:
+
+| 1.x | v2 |
+|---|---|
+| `RainSDKManager()` | `RainSdk.builder().rpcEndpoints(…).register(…).build()` |
+| `initializePortal(portalSessionToken:networkConfigs:)` | `.register(PortalProvider(PortalConfig(sessionToken:)))` + `rain.provider(.portal)` |
+| `initializeTurnkey(turnkey:networkConfigs:walletAddress:)` | `.register(TurnkeyProvider(TurnkeyConfig(turnkey:)))` + `rain.provider(.turnkey)` |
+| `initialize(networkConfigs:)` (wallet-agnostic) | `RainSdk.builder().rpcEndpoints(…).build()` — building methods live on `RainSdk` |
+| `manager.portal` accessor | `PortalProvider(_, onPortalCreated:)` hook |
+| `manager.turnkey` accessor | none — the host already owns its `TurnkeyContext` |
+| `setWalletProvider` / `reset()` | none — a resolved `RainClient` is immutable; build a new `RainSdk` instead |
+
+Business methods (`sendToken`, `withdrawCollateral`, balances, …) kept their names on
+`RainClient`; renamed/retyped 1.x variants remain as deprecated shims (see `Deprecated.swift`
+in `RainCore` and `RainPortal`).
 
 ## Requirements
 
@@ -48,71 +96,85 @@ Then add the **RainSDK** product to your target.
 
 ## Usage
 
-### 1. Initialize with Portal (full wallet flow)
+### 1. Portal (full wallet flow)
 
-Use this when you want the SDK to use Portal for signing and sending transactions.
+Register a `PortalProvider` and resolve a `RainClient`.
 
 ```swift
-import RainSDK
+import RainCore
+import RainPortal
 
-let manager = RainSDKManager()
+let rain = try RainSdk.builder()
+    .rpcEndpoints([
+        1: "https://mainnet.infura.io/v3/YOUR_KEY",
+        137: "https://polygon-rpc.com",
+    ])
+    .register(PortalProvider(PortalConfig(sessionToken: "<your-portal-session-token>")))
+    .build()
 
-let networkConfigs = [
-    NetworkConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/YOUR_KEY"),
-    NetworkConfig(chainId: 137, rpcUrl: "https://polygon-rpc.com")
-]
-
-try await manager.initializePortal(
-    portalSessionToken: "<your-portal-session-token>",
-    networkConfigs: networkConfigs
-)
-
-// Access the Portal instance when needed (e.g. for UI)
-let portal = try manager.portal
+// Resolve the Portal-backed client (suspends — materializes the wallet on first access).
+let client = try await rain.provider(.portal)
 ```
 
-### 2. Initialize with Turnkey (full wallet flow)
+### 2. Turnkey (full wallet flow)
 
-Use this when you want the SDK to use Turnkey for signing and sending transactions.
-
-Authenticate with the official Turnkey Swift SDK first, for example using auth proxy middleware and
-passkeys:
+Turnkey authentication happens **outside** Rain — drive Turnkey's Swift SDK (auth proxy / passkeys /
+OAuth / OTP), then hand the authenticated `TurnkeyContext` to Rain:
 
 - Proxy middleware: `https://docs.turnkey.com/sdks/swift/proxy-middleware`
 - Passkeys: `https://docs.turnkey.com/sdks/swift/register-passkey`
 
-Then pass the authenticated `TurnkeyContext` into Rain:
-
 ```swift
-import RainSDK
+import RainCore
 import TurnkeySwift
 
-let manager = RainSDKManager()
+let rain = try RainSdk.builder()
+    .rpcEndpoints([43114: "https://avalanche-c-chain-rpc.publicnode.com"])
+    .register(
+        TurnkeyProvider(
+            TurnkeyConfig(
+                turnkey: turnkeyContext,
+                walletAddress: nil // omit to use the first Ethereum account from the context
+            )
+        )
+    )
+    .build()
 
-try await manager.initializeTurnkey(
-    turnkey: turnkeyContext,
-    networkConfigs: networkConfigs,
-    walletAddress: nil // optional explicit EVM address override
-)
-
-let turnkey = try manager.turnkey
+let client = try await rain.provider(.turnkey)
 ```
 
-### 3. Initialize without a wallet provider (wallet-agnostic)
+### 3. Bring your own provider, or resolve by capability
 
-Use this when you only need transaction building (EIP-712 message, calldata, composed params) and will sign or submit elsewhere.
+The registry is designed for the multi-provider case; a single-provider app is just the trivial
+`N = 1` instance of it. Register your own `RainWalletProvider` behind a `RainProvider` descriptor,
+then resolve by id or by capability:
 
 ```swift
-let manager = RainSDKManager()
-
-try await manager.initialize(networkConfigs: networkConfigs)
-
-// buildEIP712Message, buildWithdrawTransactionData, composeTransactionParameters
-// are available; withdrawCollateral requires a wallet provider that supports
-// EIP-712 signing, transaction submission, and fee estimation.
+// …or resolve the first registered provider with a given capability
+let exporter = try await rain.first { $0.capabilities.contains(.export) }
 ```
 
-### 4. Read balances
+### 4. Wallet-agnostic building (no provider resolved)
+
+EIP-712 message and withdraw calldata building are available directly off `RainSdk`:
+
+```swift
+let (message, salt) = try await rain.buildEIP712Message(
+    chainId: 1, walletAddress: "0x…", assetAddresses: addresses,
+    amount: 100, decimals: 6, nonce: nil
+)
+```
+
+### 5. Get wallet address
+
+```swift
+let address = try await client.getWalletAddress()
+
+// Per-chain family — returns the Solana account for Solana sentinel chains, the EVM address otherwise:
+let solAddress = try await client.getWalletAddress(chainId: solanaChainId)
+```
+
+### 6. Read balances
 
 Balances are returned as rich `Balance` values that carry the exact base-unit `rawAmount`
 (a `BigUInt`, never lossy) alongside resolved `decimals`/`symbol`/`name` and convenience
@@ -120,8 +182,8 @@ Balances are returned as rich `Balance` values that carry the exact base-unit `r
 
 ```swift
 // A single balance (native or a specific token):
-let eth = try await manager.getBalance(chainId: 1, token: .native)
-let usdc = try await manager.getBalance(
+let eth = try await client.getBalance(chainId: 1, token: .native)
+let usdc = try await client.getBalance(
     chainId: 1,
     token: .contract(address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
 )
@@ -129,23 +191,111 @@ print(usdc.formatted)       // e.g. "1.5"
 print(usdc.rawAmount)       // exact base units, e.g. 1500000
 
 // Every non-zero balance on a chain (native is always included):
-let balances = try await manager.getBalances(chainId: 1)
+let balances = try await client.getTokenBalances(chainId: 1)
 
 // Every balance across all configured chains, flattened (each Balance carries its chainId):
-let all = try await manager.getAllBalances()
+let all = try await client.getAllBalances()
 ```
 
 Token metadata for well-known tokens is built in. To resolve a token the SDK doesn't know
-about without an on-chain `decimals()` / `symbol()` lookup, register it up front:
+about without an on-chain `decimals()` / `symbol()` lookup, register it up front on the builder:
 
 ```swift
-manager.registerTokens([
-    TokenInfo(chainId: 1, address: "0x…", symbol: "FOO", decimals: 18, name: "Foo Token")
-])
+RainSdk.builder()
+    .registerTokens([
+        TokenInfo(chainId: 1, address: "0x…", symbol: "FOO", decimals: 18, name: "Foo Token")
+    ])
+    // …
 ```
 
 Unregistered contract tokens are still resolved automatically by reading `decimals()` /
 `symbol()` on-chain once, then cached.
+
+### 7. Send tokens
+
+Both return a `RainTokenTransferResult` carrying the `transactionHash`.
+
+```swift
+// Native token (e.g. ETH, AVAX):
+let native = try await client.sendNative(chainId: 1, to: "0x…", amount: 0.1)
+print(native.transactionHash)
+
+// ERC-20 (EVM) / SPL (Solana) — omit `decimals` to let the SDK resolve them:
+let erc20 = try await client.sendToken(
+    chainId: 1, contractAddress: "0x…", to: "0x…", amount: 100
+)
+```
+
+### 8. Withdraw collateral
+
+Signs the admin EIP-712 message via the backing provider, submits, and returns the tx hash.
+
+```swift
+let addresses = WithdrawAssetAddresses(
+    contractAddress: "0x…",
+    proxyAddress: "0x…",
+    recipientAddress: "0x…",
+    tokenAddress: "0x…"
+)
+
+let txHash = try await client.withdrawCollateral(
+    chainId: 1,
+    assetAddresses: addresses,
+    amount: 100,
+    decimals: 6,
+    salt: "…",
+    signature: "…",
+    expiresAt: "2024-12-31T23:59:59Z",
+    nonce: nil // omit to read the latest nonce on-chain
+)
+```
+
+For manual submission (build the calldata yourself, no provider resolved), use the wallet-agnostic
+`rain.buildWithdrawTransactionData(...)` from section 4.
+
+### 9. Estimate withdrawal fee
+
+Returns the estimated total fee in the chain's native token (e.g. ETH).
+
+```swift
+let fee = try await client.estimateWithdrawalFee(
+    chainId: 1,
+    addresses: addresses,
+    amount: 100,
+    decimals: 6,
+    salt: "…",
+    signature: "…",
+    expiresAt: "2024-12-31T23:59:59Z"
+)
+print("Estimated fee: \(fee)")
+```
+
+### 10. Transaction history
+
+```swift
+let txs = try await client.getTransactions(
+    chainId: 1,
+    limit: 20,
+    offset: 0,
+    order: .DESC
+)
+for tx in txs {
+    print("\(tx.hash) — \(tx.from) → \(tx.to ?? "—")")
+}
+```
+
+### 11. QR code generation
+
+Returns PNG `Data` encoding the current wallet address.
+
+```swift
+let png = try await client.generateWalletAddressQRCode(
+    dimension: 500,
+    backgroundColor: nil, // defaults applied when nil
+    foregroundColor: nil
+)
+let image = UIImage(data: png)
+```
 
 For a short overview of all public methods, see [Method overview](docs/METHODS.md).
 

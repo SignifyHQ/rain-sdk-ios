@@ -3,43 +3,41 @@
 
 import PackageDescription
 
+// MARK: - Rain SDK (modular)
+//
+// The SDK is split into separate packages so a client links only the providers it uses:
+//   • rain-core   — vendor-free port + registry + Rain domain logic + the Turnkey adapter
+//   • rain-portal — the Portal MPC adapter (depends on rain-core + PortalSwift)
+//   • rain-privy  — the Privy embedded-key adapter (skeleton)
+//
+// New integrations should depend on the specific provider package(s) they need — see each
+// package's own Package.swift. This root package is a **migration umbrella**: it vends a
+// `RainSDK` library that re-exports `RainCore` + `RainPortal`, so `import RainSDK` keeps
+// resolving. Module-level compatibility only — v2 replaces the 1.x `RainSDKManager` entry point
+// with `RainSdk.builder()` (source-breaking; see README "Migrating from 1.x"). It will be
+// deprecated once clients have moved to the per-provider modules.
+
 let package = Package(
   name: "RainSDK",
   platforms: [
     .iOS(.v17)
   ],
   products: [
-    // Products define the executables and libraries a package produces, making them visible to other packages.
     .library(
       name: "RainSDK",
       targets: ["RainSDK"]
     ),
   ],
   dependencies: [
-    .package(url: "https://github.com/portal-hq/PortalSwift.git", exact: "7.1.0"),
-    .package(url: "https://github.com/tkhq/swift-sdk.git", exact: "4.0.0"),
-    .package(url: "https://github.com/Boilertalk/Web3.swift.git", exact: "0.8.8"),
-    .package(url: "https://github.com/web3swift-team/web3swift.git", from: "3.3.2"),
-    .package(url: "https://github.com/dagronf/QRCode", exact: "28.0.2")
+    .package(path: "rain-core"),
+    .package(path: "rain-portal"),
   ],
   targets: [
-    // Targets are the basic building blocks of a package, defining a module or a test suite.
-    // Targets can depend on other targets in this package and products from dependencies.
     .target(
       name: "RainSDK",
       dependencies: [
-        .product(name: "PortalSwift", package: "PortalSwift"),
-        .product(name: "TurnkeySwift", package: "swift-sdk"),
-        .product(name: "TurnkeyHttp", package: "swift-sdk"),
-        .product(name: "TurnkeyTypes", package: "swift-sdk"),
-        .product(name: "QRCode", package: "QRCode"),
-        .product(name: "Web3", package: "Web3.swift"),
-        .product(name: "Web3PromiseKit", package: "Web3.swift"),
-        .product(name: "Web3ContractABI", package: "Web3.swift"),
-        .product(name: "web3swift", package: "web3swift")
-      ],
-      resources: [
-        .process("Resources")
+        .product(name: "RainCore", package: "rain-core"),
+        .product(name: "RainPortal", package: "rain-portal"),
       ]
     ),
     .testTarget(

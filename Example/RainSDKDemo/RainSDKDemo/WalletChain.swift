@@ -1,5 +1,5 @@
 import Foundation
-import RainSDK
+import RainCore
 
 /// The network the demo app operates on, selected via the dropdown on the connection screen.
 /// Mirrors the Android sample's WalletChain enum; the SDK is initialized with every entry's

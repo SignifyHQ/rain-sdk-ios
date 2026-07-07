@@ -1,5 +1,5 @@
 import Foundation
-import RainSDK
+import RainCore
 import Combine
 import AuthenticationServices
 import TurnkeySwift

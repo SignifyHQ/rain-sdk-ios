@@ -1,5 +1,5 @@
 import SwiftUI
-import RainSDK
+import RainCore
 import AuthenticationServices
 import UIKit
 

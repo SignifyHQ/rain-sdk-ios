@@ -1,5 +1,5 @@
 import SwiftUI
-import RainSDK
+import RainCore
 
 struct GetBalancesDemoView: View {
   @StateObject private var viewModel = GetBalancesDemoViewModel()
