@@ -14,13 +14,14 @@ your dependency graph.
 |---------------|--------------------------------------------------------------------------|
 | `RainCore`    | The `RainWalletProvider` port, capability model, provider registry (`RainSdk`), all Rain domain logic, **and the Turnkey adapter** (`TurnkeyProvider`, for now). |
 | `RainPortal`  | The Portal MPC adapter (`PortalProvider`); depends on `RainCore` + `PortalSwift`. |
-| `RainPrivy`   | The Privy embedded-key adapter (`PrivyProvider`) — **skeleton**; proves a net-new provider costs existing clients nothing. Operations throw until the Privy SDK is wired. |
+| `RainPrivy`   | The Privy embedded-key adapter (`PrivyProvider`); depends on `RainCore` + the Privy iOS SDK (`Privy`). Custody (sign/send) routes through Privy's EIP-1193 embedded wallet; balance/fee reads use Rain's configured RPC. |
 | `RainSDK`     | Backward-compat umbrella that re-exports `RainCore` + `RainPortal` (migration only; prefer the specific modules). |
 
 ## Features
 
 - **Portal wallet integration** — Register a `PortalProvider` with a Portal session token; resolve a `RainClient` and use the connected MPC wallet for signing and sending transactions.
 - **Turnkey wallet integration** — Register a `TurnkeyProvider` with an authenticated `TurnkeyContext` (passkeys / auth proxy / OAuth / OTP handled outside Rain by the Turnkey Swift SDK).
+- **Privy wallet integration** — Register a `PrivyProvider` with an authenticated `Privy` singleton (auth + embedded-wallet provisioning handled outside Rain by the Privy iOS SDK); custody routes through Privy's EIP-1193 embedded wallet.
 - **Pluggable providers** — Bring your own `RainWalletProvider` behind a `RainProvider` descriptor and register it; resolve providers by id or by `Capability`.
 - **Wallet-agnostic utilities** — EIP-712 message + withdraw calldata building are available straight off `RainSdk` with no provider resolved — use them with your own wallet or backend.
 - **EIP-712 message building** — Build typed data for admin signature required by the collateral contract.
@@ -63,6 +64,8 @@ providers you use** — an unselected provider's vendor SDK never enters your de
 ```swift
 // Portal-only app: RainCore comes transitively; Privy/Turnkey vendor SDKs are never resolved.
 .package(url: "https://github.com/SignifyHQ/rain-portal-ios", from: "1.0.0"),
+// Or for Privy (pulls the Privy iOS SDK; Portal's vendor SDK is never resolved):
+// .package(url: "https://github.com/SignifyHQ/rain-privy-ios", from: "1.0.0"),
 // Or for Turnkey (the adapter ships inside RainCore for now):
 // .package(url: "https://github.com/SignifyHQ/rain-core-ios", from: "1.0.0"),
 ```

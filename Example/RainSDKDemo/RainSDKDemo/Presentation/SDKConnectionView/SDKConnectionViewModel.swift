@@ -8,6 +8,7 @@ import TurnkeySwift
 enum WalletProviderOption: String, CaseIterable {
   case portal = "Portal"
   case turnkey = "Turnkey"
+  case privy = "Privy"
 
   var displayName: String { rawValue }
 }
@@ -68,6 +69,19 @@ class SDKConnectionViewModel: ObservableObject {
   /// Encryption target bundle returned by `initOtp`, needed by `completeOtp`.
   private var turnkeyOtpEncryptionTargetBundle: String?
 
+  // MARK: - Privy Inputs
+
+  @Published var privyAppId: String = ""
+  @Published var privyAppClientId: String = ""
+  /// Email the Privy OTP is sent to.
+  @Published var privyEmail: String = ""
+  /// The code the user types in after receiving the Privy OTP email.
+  @Published var privyOtpCode: String = ""
+  /// Set once a Privy OTP has been sent; drives the UI from "send" to "verify".
+  @Published var privyOtpSent: Bool = false
+  /// True while a Privy OTP send/verify request is in flight.
+  @Published var isProcessingPrivyOtp: Bool = false
+
   /// One-time Turnkey configuration. `TurnkeyContext.configure(...)` must be called before
   /// the first `.shared` access; we defer it until the user taps a passkey button so the
   /// user has a chance to enter org id / rpId / etc. first.
@@ -93,7 +107,24 @@ class SDKConnectionViewModel: ObservableObject {
       // Turnkey has its own auth buttons (Login/Sign up with Passkey); the main
       // Initialize button is hidden in that flow.
       return false
+    case .privy:
+      // Privy has its own email-OTP buttons; the main Initialize button is hidden in that flow.
+      return false
     }
+  }
+
+  /// Whether the Privy Send OTP button should be enabled.
+  var canSendPrivyOtp: Bool {
+    !isProcessingPrivyOtp
+      && !privyOtpSent
+      && !isTrimmedEmpty(privyEmail)
+      && !isTrimmedEmpty(privyAppId)
+      && !isTrimmedEmpty(privyAppClientId)
+  }
+
+  /// Whether the Privy Verify OTP button should be enabled.
+  var canVerifyPrivyOtp: Bool {
+    !isProcessingPrivyOtp && privyOtpSent && !isTrimmedEmpty(privyOtpCode)
   }
 
   /// Whether the Login with Passkey button should be enabled.
@@ -140,6 +171,9 @@ class SDKConnectionViewModel: ObservableObject {
     self.turnkeyAuthProxyUrl = TurnkeyConfigStorage.authProxyUrl
     self.turnkeyAuthProxyConfigId = TurnkeyConfigStorage.authProxyConfigId
     self.turnkeyRpId = TurnkeyConfigStorage.rpId
+    self.privyAppId = PrivyConfigStorage.appId
+    self.privyAppClientId = PrivyConfigStorage.appClientId
+    self.privyEmail = PrivyConfigStorage.email
 
     // Observe service state changes
     observeServiceState()
@@ -334,6 +368,117 @@ class SDKConnectionViewModel: ObservableObject {
     turnkeyOtpId = nil
     turnkeyOtpCode = ""
     turnkeyOtpEncryptionTargetBundle = nil
+  }
+
+  // MARK: - Privy Email OTP
+
+  /// Start the Privy email-OTP flow: initialize the Privy singleton, then `sendCode`. On success the
+  /// UI switches to the verify step (an OTP code field appears).
+  func sendPrivyEmailOtp() async {
+    guard canSendPrivyOtp else { return }
+
+    persistPrivyConfig()
+    isProcessingPrivyOtp = true
+    sdkService.statusMessage = "Sending OTP..."
+    sdkService.error = nil
+
+    do {
+      PrivyAuthSample.shared.initialize(
+        appId: privyAppId.trimmingCharacters(in: .whitespacesAndNewlines),
+        appClientId: privyAppClientId.trimmingCharacters(in: .whitespacesAndNewlines)
+      )
+      try await PrivyAuthSample.shared.sendEmailOtp(
+        email: privyEmail.trimmingCharacters(in: .whitespacesAndNewlines)
+      )
+      privyOtpSent = true
+      sdkService.statusMessage = "OTP sent — check your email"
+    } catch {
+      sdkService.error = .providerError(underlying: error)
+      sdkService.statusMessage = "Failed to send OTP"
+    }
+
+    isProcessingPrivyOtp = false
+  }
+
+  /// Verify the OTP code, create a Privy session, ensure an embedded Ethereum wallet exists, then
+  /// initialize Rain with the authenticated Privy singleton.
+  func verifyPrivyEmailOtp() async {
+    guard canVerifyPrivyOtp else { return }
+
+    isProcessingPrivyOtp = true
+    sdkService.statusMessage = "Verifying OTP..."
+    sdkService.error = nil
+
+    do {
+      try await PrivyAuthSample.shared.verifyEmailOtp(
+        code: privyOtpCode.trimmingCharacters(in: .whitespacesAndNewlines),
+        email: privyEmail.trimmingCharacters(in: .whitespacesAndNewlines)
+      )
+
+      await sdkService.initializePrivy(
+        privy: PrivyAuthSample.shared.privy,
+        networkConfigs: WalletChain.networkConfigs
+      )
+
+      // Reset the OTP step on success.
+      privyOtpSent = false
+      privyOtpCode = ""
+    } catch {
+      sdkService.error = .providerError(underlying: error)
+      sdkService.statusMessage = "OTP verification failed"
+    }
+
+    isProcessingPrivyOtp = false
+  }
+
+  /// Discard an in-progress Privy OTP so the user can restart (e.g. wrong email).
+  func cancelPrivyEmailOtp() {
+    privyOtpSent = false
+    privyOtpCode = ""
+  }
+
+  /// Whether the "Connect with existing session" button should be enabled.
+  var canRestorePrivySession: Bool {
+    !isProcessingPrivyOtp && !isTrimmedEmpty(privyAppId) && !isTrimmedEmpty(privyAppClientId)
+  }
+
+  /// Reconnect with a Privy session restored from a prior run — skips the OTP round-trip.
+  func connectWithExistingPrivySession() async {
+    guard canRestorePrivySession else { return }
+
+    persistPrivyConfig()
+    isProcessingPrivyOtp = true
+    sdkService.statusMessage = "Restoring Privy session..."
+    sdkService.error = nil
+
+    do {
+      PrivyAuthSample.shared.initialize(
+        appId: privyAppId.trimmingCharacters(in: .whitespacesAndNewlines),
+        appClientId: privyAppClientId.trimmingCharacters(in: .whitespacesAndNewlines)
+      )
+      guard await PrivyAuthSample.shared.hasActiveSession() else {
+        sdkService.statusMessage = "No active Privy session — sign in with Email OTP"
+        isProcessingPrivyOtp = false
+        return
+      }
+      try await PrivyAuthSample.shared.ensureEthereumWallet()
+
+      await sdkService.initializePrivy(
+        privy: PrivyAuthSample.shared.privy,
+        networkConfigs: WalletChain.networkConfigs
+      )
+    } catch {
+      sdkService.error = .providerError(underlying: error)
+      sdkService.statusMessage = "Privy session restore failed"
+    }
+
+    isProcessingPrivyOtp = false
+  }
+
+  private func persistPrivyConfig() {
+    PrivyConfigStorage.appId = privyAppId
+    PrivyConfigStorage.appClientId = privyAppClientId
+    PrivyConfigStorage.email = privyEmail
   }
 
   // MARK: - Turnkey Configuration
