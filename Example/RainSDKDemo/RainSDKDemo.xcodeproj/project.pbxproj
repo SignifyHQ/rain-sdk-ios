@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1940E11B2F37B1A4003B6730 /* RainCore in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6720 /* RainCore */; };
 		1940E11B2F37B1A4003B6731 /* RainPortal in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6721 /* RainPortal */; };
+		1940E11B2F37B1A4003B6732 /* RainPrivy in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6722 /* RainPrivy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 			files = (
 				1940E11B2F37B1A4003B6730 /* RainCore in Frameworks */,
 				1940E11B2F37B1A4003B6731 /* RainPortal in Frameworks */,
+				1940E11B2F37B1A4003B6732 /* RainPrivy in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +89,7 @@
 			packageProductDependencies = (
 				1940E11A2F37B1A4003B6720 /* RainCore */,
 				1940E11A2F37B1A4003B6721 /* RainPortal */,
+				1940E11A2F37B1A4003B6722 /* RainPrivy */,
 			);
 			productName = RainSDKDemo;
 			productReference = 191A07FE2F1A1EF90026656C /* RainSDKDemo.app */;
@@ -119,6 +122,7 @@
 			packageReferences = (
 				1940E1192F37B1A4003B6740 /* XCLocalSwiftPackageReference "../../rain-core" */,
 				1940E1192F37B1A4003B6741 /* XCLocalSwiftPackageReference "../../rain-portal" */,
+				1940E1192F37B1A4003B6742 /* XCLocalSwiftPackageReference "../../rain-privy" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 191A07FF2F1A1EF90026656C /* Products */;
@@ -385,6 +389,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../rain-portal";
 		};
+		1940E1192F37B1A4003B6742 /* XCLocalSwiftPackageReference "../../rain-privy" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../rain-privy";
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -397,6 +405,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1940E1192F37B1A4003B6741 /* XCLocalSwiftPackageReference "../../rain-portal" */;
 			productName = RainPortal;
+		};
+		1940E11A2F37B1A4003B6722 /* RainPrivy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1940E1192F37B1A4003B6742 /* XCLocalSwiftPackageReference "../../rain-privy" */;
+			productName = RainPrivy;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -18,6 +18,12 @@ enum DemoLocalConfig {
   /// Must match the `webcredentials:<host>` entry in RainSDKDemo.entitlements.
   static let turnkeyRpId = "bea6-86-187-162-5.ngrok-free.app"
 
+  /// Privy app id (from the Privy dashboard). Prefills the SDK Connection screen's Privy fields.
+  static let privyAppId = ""
+
+  /// Privy app client id (from the Privy dashboard → app settings → clients).
+  static let privyAppClientId = ""
+
   static let chainId = "84532"
 
   static var chainIdInt: Int { Int(chainId)! }

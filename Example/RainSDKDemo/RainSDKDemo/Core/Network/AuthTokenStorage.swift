@@ -125,6 +125,40 @@ enum TurnkeyConfigStorage {
   }
 }
 
+/// Persists Privy configuration (app id, app client id, contact email) in UserDefaults.
+/// `PrivySdk.initialize(...)` is called once with these values before the first use.
+enum PrivyConfigStorage {
+  private enum Keys {
+    static let appId = "RainSDKDemo.privy.appId"
+    static let appClientId = "RainSDKDemo.privy.appClientId"
+    static let email = "RainSDKDemo.privy.email"
+  }
+
+  static var appId: String {
+    get { UserDefaults.standard.string(forKey: Keys.appId) ?? DemoLocalConfig.privyAppId }
+    set { saveString(newValue, forKey: Keys.appId) }
+  }
+
+  static var appClientId: String {
+    get { UserDefaults.standard.string(forKey: Keys.appClientId) ?? DemoLocalConfig.privyAppClientId }
+    set { saveString(newValue, forKey: Keys.appClientId) }
+  }
+
+  static var email: String {
+    get { UserDefaults.standard.string(forKey: Keys.email) ?? "" }
+    set { saveString(newValue, forKey: Keys.email) }
+  }
+
+  private static func saveString(_ value: String, forKey key: String) {
+    let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+    if trimmed.isEmpty {
+      UserDefaults.standard.removeObject(forKey: key)
+    } else {
+      UserDefaults.standard.set(trimmed, forKey: key)
+    }
+  }
+}
+
 // MARK: - Rain Client Session Token (CST)
 
 /// Decodable response for `POST /v1/issuing/users/{userId}/sessions`.

@@ -139,6 +139,11 @@ struct SDKConnectionView: View {
         if viewModel.selectedProvider == .turnkey {
           turnkeyInputs
         }
+
+        // Privy Inputs (when Privy is selected)
+        if viewModel.selectedProvider == .privy {
+          privyInputs
+        }
       }
       
       Text("The SDK is initialized with all demo networks (\(WalletChain.allCases.map(\.displayName).joined(separator: ", "))); pick the active one from the Network dropdown after initializing.")
@@ -395,6 +400,127 @@ struct SDKConnectionView: View {
     }
   }
 
+  // MARK: - Privy Inputs
+
+  private var privyInputs: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      labeledField(
+        title: "App ID",
+        placeholder: "your-privy-app-id",
+        text: $viewModel.privyAppId
+      )
+
+      labeledField(
+        title: "App Client ID",
+        placeholder: "your-privy-app-client-id",
+        text: $viewModel.privyAppClientId
+      )
+
+      Button {
+        hideKeyboard()
+        Task { await viewModel.connectWithExistingPrivySession() }
+      } label: {
+        HStack {
+          if viewModel.isProcessingPrivyOtp {
+            ProgressView()
+              .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+          } else {
+            Image(systemName: "person.crop.circle.badge.checkmark")
+          }
+          Text("Connect with existing session")
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .background(Color.clear)
+        .foregroundColor(viewModel.canRestorePrivySession ? .blue : .gray)
+        .overlay(
+          RoundedRectangle(cornerRadius: 10)
+            .stroke(viewModel.canRestorePrivySession ? Color.blue : Color.gray, lineWidth: 1)
+        )
+      }
+      .disabled(!viewModel.canRestorePrivySession)
+      .opacity(viewModel.canRestorePrivySession ? 1 : 0.6)
+
+      Text("Signed in on a previous run? Privy restores the session — no OTP needed.")
+        .font(.caption)
+        .foregroundColor(.secondary)
+
+      Divider()
+        .padding(.vertical, 4)
+
+      Text("Or sign in with Email OTP")
+        .font(.subheadline).bold()
+
+      labeledField(
+        title: "Email",
+        placeholder: "you@example.com",
+        text: $viewModel.privyEmail
+      )
+
+      if !viewModel.privyOtpSent {
+        Button {
+          hideKeyboard()
+          Task { await viewModel.sendPrivyEmailOtp() }
+        } label: {
+          HStack {
+            if viewModel.isProcessingPrivyOtp {
+              ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+            } else {
+              Image(systemName: "envelope.fill")
+            }
+            Text("Send OTP")
+          }
+          .frame(maxWidth: .infinity)
+          .padding(.vertical, 10)
+          .background(viewModel.canSendPrivyOtp ? Color.blue : Color.gray)
+          .foregroundColor(.white)
+          .cornerRadius(10)
+        }
+        .disabled(!viewModel.canSendPrivyOtp)
+        .opacity(viewModel.canSendPrivyOtp ? 1 : 0.6)
+      } else {
+        labeledField(
+          title: "OTP Code",
+          placeholder: "123456",
+          text: $viewModel.privyOtpCode
+        )
+
+        Button {
+          hideKeyboard()
+          Task { await viewModel.verifyPrivyEmailOtp() }
+        } label: {
+          HStack {
+            if viewModel.isProcessingPrivyOtp {
+              ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+            } else {
+              Image(systemName: "checkmark.shield.fill")
+            }
+            Text("Verify OTP & Connect")
+          }
+          .frame(maxWidth: .infinity)
+          .padding(.vertical, 10)
+          .background(viewModel.canVerifyPrivyOtp ? Color.green : Color.gray)
+          .foregroundColor(.white)
+          .cornerRadius(10)
+        }
+        .disabled(!viewModel.canVerifyPrivyOtp)
+        .opacity(viewModel.canVerifyPrivyOtp ? 1 : 0.6)
+
+        Button("Use a different email") {
+          viewModel.cancelPrivyEmailOtp()
+        }
+        .font(.caption)
+        .foregroundColor(.secondary)
+      }
+
+      Text("Email OTP handles login vs. sign up automatically; on first sign-in an embedded Ethereum wallet is provisioned.")
+        .font(.caption)
+        .foregroundColor(.secondary)
+    }
+  }
+
   /// Get the key UIWindow to use as the ASPresentationAnchor for passkey UI.
   private func currentPresentationAnchor() -> ASPresentationAnchor? {
     UIApplication.shared.connectedScenes
@@ -424,8 +550,9 @@ struct SDKConnectionView: View {
   
   private var actionsSection: some View {
     VStack(spacing: 12) {
-      // Initialize Button — hidden when Turnkey is selected (its own passkey buttons handle init)
-      if viewModel.useWalletAgnostic || viewModel.selectedProvider != .turnkey {
+      // Initialize Button — hidden when Turnkey / Privy is selected (their own auth buttons handle init)
+      if viewModel.useWalletAgnostic
+        || (viewModel.selectedProvider != .turnkey && viewModel.selectedProvider != .privy) {
         Button(action: {
           hideKeyboard()
           Task {

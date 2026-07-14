@@ -14,14 +14,17 @@ let package = Package(
   ],
   dependencies: [
     // RainCore comes via local path in-repo; published clients resolve it from its git tag.
-    // The Privy vendor SDK will be added here (as a target dependency) when the adapter is built.
     .package(path: "../rain-core"),
+    // Privy vendor SDK (binary xcframework, product "Privy", target "PrivySDK"). Owned here so
+    // core never imports Privy — linking this module is what pulls it onto a client's graph.
+    .package(url: "https://github.com/privy-io/privy-ios", from: "2.12.0"),
   ],
   targets: [
     .target(
       name: "RainPrivy",
       dependencies: [
         .product(name: "RainCore", package: "rain-core"),
+        .product(name: "Privy", package: "privy-ios"),
       ]
     ),
     .testTarget(

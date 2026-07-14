@@ -2,6 +2,8 @@ import Foundation
 import UIKit
 import RainCore
 import RainPortal
+import RainPrivy
+import PrivySDK
 import Web3
 import Web3Core
 import web3swift
@@ -39,6 +41,7 @@ class RainSDKService: ObservableObject {
     case none
     case portal
     case turnkey
+    case privy
   }
 
   /// Current initialization state
@@ -139,6 +142,51 @@ class RainSDKService: ObservableObject {
       isInitialized = true
       activeProvider = .turnkey
       statusMessage = "Initialized successfully (Turnkey) with \(networkConfigs.count) network(s)"
+      error = nil
+    } catch let sdkError as RainSDKError {
+      resetState()
+      error = sdkError
+      statusMessage = "Initialization failed: \(sdkError.errorCode)"
+    } catch {
+      resetState()
+      self.error = RainSDKError.providerError(underlying: error)
+      statusMessage = "Initialization failed: Unknown error"
+    }
+  }
+
+  /// Initialize the SDK with an authenticated Privy singleton and network configurations.
+  /// Builds a `RainSdk` with a `PrivyProvider` and resolves the Privy-backed client.
+  /// - Parameters:
+  ///   - privy: An authenticated `Privy` singleton (its user must have an embedded Ethereum
+  ///     wallet). Auth (email OTP, etc.) is the host app's responsibility — see `PrivyAuthSample`.
+  ///   - networkConfigs: Array of network configurations.
+  ///   - walletAddress: Optional override; otherwise the user's first embedded Ethereum wallet.
+  func initializePrivy(
+    privy: any Privy,
+    networkConfigs: [NetworkConfig],
+    walletAddress: String? = nil
+  ) async {
+    statusMessage = "Initializing (Privy)..."
+    error = nil
+
+    do {
+      RainLogger.isEnabled = true
+
+      let sdk = try RainSdk.builder()
+        .rpcEndpoints(networkConfigs)
+        .register(PrivyProvider(PrivyConfig(privy: privy, walletAddress: walletAddress)))
+        .build()
+
+      let resolvedClient = try await sdk.provider(.privy)
+
+      print("Rain SDK: wallet address \(try await resolvedClient.getWalletAddress())")
+
+      rain = sdk
+      client = resolvedClient
+      portalInstance = nil
+      isInitialized = true
+      activeProvider = .privy
+      statusMessage = "Initialized successfully (Privy) with \(networkConfigs.count) network(s)"
       error = nil
     } catch let sdkError as RainSDKError {
       resetState()
