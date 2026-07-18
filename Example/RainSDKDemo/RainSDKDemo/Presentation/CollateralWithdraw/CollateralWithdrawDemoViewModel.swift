@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import RainCore
 import Web3
 
 @MainActor
@@ -47,14 +48,12 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
   @Published var isLoadingAssets: Bool = false
   @Published var assetsError: Error?
 
-  // Withdrawal signature API
-  @Published var withdrawalSignature: RainWithdrawalSignatureEntity?
+  // Withdrawal signature API (fetched through the SDK)
+  @Published var withdrawalSignature: RainAdminSignature?
   @Published var isLoadingWithdrawalSignature: Bool = false
   @Published var withdrawalSignatureError: Error?
 
   private let sdkService = RainSDKService.shared
-  private let creditContractsRepository = CreditContractsRepository()
-  private let withdrawalSignatureRepository = WithdrawalSignatureRepository()
   private let initialContract: RainCollateralContractResponse?
 
   init(initialContract: RainCollateralContractResponse? = nil) {
@@ -68,10 +67,9 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
     
     if let contract = initialContract {
       applyContractMetadata(contract)
-      // Rain's /contracts response omits token symbol/decimals, so the assets need on-chain
-      // enrichment before they pass `isValidAsset` (which requires a resolved type). Kick that
-      // off asynchronously; until it lands the list is empty rather than wrongly populated.
-      Task { [weak self] in await self?.refreshAssets(from: contract) }
+      // Tokens arrive already enriched (the SDK resolves symbol/decimals), so the asset list
+      // can be built synchronously.
+      refreshAssets(from: contract)
     }
 
     sdkService.$isInitialized
@@ -179,41 +177,16 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
     self.adminAddress = contract.adminAddresses?.first ?? ""
   }
 
-  /// Builds asset models from a contract, enriching each token's symbol/decimals on-chain via
-  /// the SDK (the Rain `/contracts` endpoint omits them). Falls back to whatever the contract
-  /// provided when the on-chain read fails.
-  private func buildAssets(from contract: RainCollateralContractResponse) async -> [AssetModel] {
-    let resolvedChainId = contract.chainId ?? chainId
-    var result: [AssetModel] = []
-    for token in contract.tokens ?? [] {
-      guard let address = token.address, !address.isEmpty else { continue }
-      let meta = await sdkService.resolveTokenMetadata(chainId: resolvedChainId, tokenAddress: address)
-      let enriched = RainTokenResponse(
-        address: token.address,
-        name: meta?.name ?? token.name,
-        symbol: meta?.symbol ?? token.symbol,
-        decimals: meta.map { Double($0.decimals) } ?? token.decimals,
-        logo: token.logo,
-        balance: token.balance,
-        exchangeRate: token.exchangeRate,
-        advanceRate: token.advanceRate,
-        availableUsdBalance: token.availableUsdBalance
-      )
-      result.append(AssetModel(rainCollateralAsset: enriched))
-    }
-    return result.filter { Self.isValidAsset($0) }
-  }
-
-  /// Rebuilds `assets` (enriched) from a contract and preserves the current selection.
-  private func refreshAssets(from contract: RainCollateralContractResponse) async {
-    let built = await buildAssets(from: contract)
-    assets = built
+  /// Rebuilds `assets` from a contract (tokens already enriched by the SDK) and preserves
+  /// the current selection.
+  private func refreshAssets(from contract: RainCollateralContractResponse) {
+    assets = contract.toAssetModels().filter { Self.isValidAsset($0) }
     if let current = selectedAsset {
       selectedAsset = assets.first { $0.id == current.id }
     }
   }
 
-  /// Fetches collateral contracts from the Rain API and converts them to asset models.
+  /// Fetches collateral contracts through the SDK and converts them to asset models.
   func loadCreditContracts() async {
     isLoadingAssets = true
     defer {
@@ -221,9 +194,11 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
     }
 
     do {
-      let contract = try await creditContractsRepository.getCreditContracts()
+      let contract = RainCollateralContractResponse(
+        contract: try await sdkService.fetchCollateralContract()
+      )
       applyContractMetadata(contract)
-      await refreshAssets(from: contract)
+      refreshAssets(from: contract)
     } catch {
       print("Load credit contracts failed: \(error.localizedDescription)")
     }
@@ -231,7 +206,7 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
 
   // MARK: - Withdrawal signature API
 
-  /// Fetches the admin withdrawal signature from the Rain dev API (CST auth).
+  /// Fetches the admin withdrawal signature through the SDK.
   /// Use the returned signature (data + salt) and expiresAt for the wallet-provider withdraw.
   func loadWithdrawalSignature(
     chainId: Int,
@@ -246,21 +221,19 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
     withdrawalSignature = nil
 
     do {
-      let result = try await withdrawalSignatureRepository.getWithdrawalSignature(
+      let result = try await sdkService.fetchAdminSignature(
         chainId: chainId,
-        token: token,
-        amount: amount,
+        tokenAddress: token,
+        amountBaseUnits: BigUInt(amount, radix: 10) ?? BigUInt(0),
         adminAddress: adminAddress,
         recipientAddress: recipientAddress,
         isAmountNative: isAmountNative
       )
       withdrawalSignature = result
       withdrawalSignatureError = nil
-      if let sig = result.signatureEntity {
-        signature = sig.data ?? ""
-        salt = sig.salt ?? ""
-        if let exp = result.expiresAt { expiresAt = exp }
-      }
+      signature = result.signature
+      salt = result.salt
+      if !result.expiresAt.isEmpty { expiresAt = result.expiresAt }
     } catch {
       withdrawalSignature = nil
       withdrawalSignatureError = error
@@ -416,6 +389,14 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
   /// Maps the raw signature error to a clearer hint. The Rain API returns "active signature
   /// already exists" when a previous withdrawal signature for this user is still pending.
   private func friendlySignatureError(_ error: Error?) -> Error {
+    if case RainSDKError.signatureNotReady(_, let retryAfter) = error ?? RainSDKError.unauthorized {
+      let hint = retryAfter.map { " Retry in \($0)s." } ?? ""
+      return NSError(
+        domain: "CollateralWithdraw",
+        code: -3,
+        userInfo: [NSLocalizedDescriptionKey: "Withdrawal signature is not ready yet.\(hint)"]
+      )
+    }
     let raw = error?.localizedDescription ?? "Failed to get withdrawal signature"
     if raw.range(of: "active signature", options: .caseInsensitive) != nil {
       return NSError(

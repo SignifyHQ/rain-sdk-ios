@@ -18,18 +18,30 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// RAIN_103: An RPC URL could not be parsed as a valid URL (no chain ID context)
   case invalidRpcUrl(String)
 
+  /// RAIN_104: A Rain API method was called before an Api-Key and userId were supplied
+  case rainApiNotConfigured
+
   // MARK: - 2xx: Authentication Errors
-  
+
   /// RAIN_201: The wallet provider session token has expired or is no longer valid
   case tokenExpired
-  
+
   /// RAIN_202: Invalid Rain API Key or insufficient permissions for the requested operation
   case unauthorized
-  
+
   // MARK: - 3xx: Network Errors
-  
+
   /// RAIN_301: Connectivity issues preventing communication with APIs or Blockchain nodes
   case networkError(underlying: Error)
+
+  /// RAIN_302: The Rain API returned a non-success HTTP status (other than 401/403 → `.unauthorized`)
+  case apiError(statusCode: Int, message: String?)
+
+  /// RAIN_303: The withdrawal admin signature is not ready yet; retry after `retryAfter` seconds
+  case signatureNotReady(status: String, retryAfter: Int?)
+
+  /// RAIN_304: The contracts endpoint returned no collateral contracts for the configured user
+  case noCollateralContracts
   
   // MARK: - 4xx: User Action Errors
   
@@ -70,12 +82,20 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "RAIN_102"
     case .invalidRpcUrl:
       return "RAIN_103"
+    case .rainApiNotConfigured:
+      return "RAIN_104"
     case .tokenExpired:
       return "RAIN_201"
     case .unauthorized:
       return "RAIN_202"
     case .networkError:
       return "RAIN_301"
+    case .apiError:
+      return "RAIN_302"
+    case .signatureNotReady:
+      return "RAIN_303"
+    case .noCollateralContracts:
+      return "RAIN_304"
     case .userRejected:
       return "RAIN_401"
     case .insufficientFunds:
@@ -107,12 +127,20 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "[\(errorCode)] \(details)"
     case .invalidRpcUrl(let rpcUrl):
       return "[\(errorCode)] The provided RPC URL could not be parsed. RPC URL: \(rpcUrl)."
+    case .rainApiNotConfigured:
+      return "[\(errorCode)] Rain API is not configured — call configureRainApi(apiKey:userId:) first."
     case .tokenExpired:
       return "[\(errorCode)] The wallet provider session token has expired or is no longer valid."
     case .unauthorized:
       return "[\(errorCode)] Invalid Rain API Key or insufficient permissions for the requested operation."
     case .networkError(let underlying):
       return "[\(errorCode)] Connectivity issues preventing communication with APIs or Blockchain nodes. \(underlying.localizedDescription)"
+    case .apiError(let statusCode, let message):
+      return "[\(errorCode)] Rain API error \(statusCode)\(message.map { ": \($0)" } ?? "")."
+    case .signatureNotReady(let status, let retryAfter):
+      return "[\(errorCode)] Withdrawal signature not ready: status=\(status)\(retryAfter.map { " (retry after \($0)s)" } ?? "")."
+    case .noCollateralContracts:
+      return "[\(errorCode)] No collateral contracts returned for user."
     case .userRejected:
       return "[\(errorCode)] The user manually cancelled the signature request within the wallet UI."
     case .insufficientFunds(let required, let available):

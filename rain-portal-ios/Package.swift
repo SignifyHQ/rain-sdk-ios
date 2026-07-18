@@ -14,14 +14,14 @@ let package = Package(
   ],
   dependencies: [
     // RainCore comes via local path in-repo; published clients resolve it from its git tag.
-    .package(path: "../rain-core"),
+    .package(path: "../rain-core-ios"),
     .package(url: "https://github.com/portal-hq/PortalSwift.git", exact: "7.1.0"),
   ],
   targets: [
     .target(
       name: "RainPortal",
       dependencies: [
-        .product(name: "RainCore", package: "rain-core"),
+        .product(name: "RainCore", package: "rain-core-ios"),
         .product(name: "PortalSwift", package: "PortalSwift"),
       ]
     ),

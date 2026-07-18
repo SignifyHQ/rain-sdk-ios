@@ -9,7 +9,7 @@ import PortalSwift
 /// This repository is kept as an inert seam: `fetchBackup` now throws a clear "unavailable"
 /// error instead of calling a dead endpoint, so callers surface the state to the user.
 final class PortalBackupRepository {
-  init(client: APIClient? = nil) {}
+  init() {}
 
   /// Always throws: wallet recovery is not yet available via the Rain API.
   func fetchBackup(backupMethod: String) async throws -> PortalBackupResponse {

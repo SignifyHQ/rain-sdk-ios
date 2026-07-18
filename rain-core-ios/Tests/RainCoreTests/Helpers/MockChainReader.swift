@@ -41,6 +41,8 @@ final class MockChainReader: ChainReader, @unchecked Sendable {
   var stubbedDecimals: Int = 18
   var stubbedSymbol: String? = nil
   var stubbedName: String? = nil
+  /// When set, every metadata read (decimals/symbol/name) throws it — drives failed-read paths.
+  var stubbedMetadataError: Error? = nil
 
   private(set) var balancesCalls: [BalancesCall] = []
   private(set) var getBalanceCalls: [SingleBalanceCall] = []
@@ -111,16 +113,19 @@ final class MockChainReader: ChainReader, @unchecked Sendable {
 
   func getDecimals(chainId: Int, tokenAddress: String) async throws -> Int {
     decimalsCalls.append(MetadataCall(chainId: chainId, tokenAddress: tokenAddress))
+    if let stubbedMetadataError { throw stubbedMetadataError }
     return stubbedDecimals
   }
 
   func getSymbol(chainId: Int, tokenAddress: String) async throws -> String? {
     symbolCalls.append(MetadataCall(chainId: chainId, tokenAddress: tokenAddress))
+    if let stubbedMetadataError { throw stubbedMetadataError }
     return stubbedSymbol
   }
 
   func getName(chainId: Int, tokenAddress: String) async throws -> String? {
     nameCalls.append(MetadataCall(chainId: chainId, tokenAddress: tokenAddress))
+    if let stubbedMetadataError { throw stubbedMetadataError }
     return stubbedName
   }
 }

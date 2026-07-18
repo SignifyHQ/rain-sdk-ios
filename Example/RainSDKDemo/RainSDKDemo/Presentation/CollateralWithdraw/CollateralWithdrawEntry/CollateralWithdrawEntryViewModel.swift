@@ -37,11 +37,14 @@ class CollateralWithdrawEntryViewModel: ObservableObject {
     }
 
     RainAPICredentialsStorage.save(apiKey: apiKey, userId: user)
-
-    let repository = CreditContractsRepository()
+    // save() pushes the credentials into the SDK on the main actor via a Task; configure
+    // directly as well so this fetch can't race ahead of it.
+    RainSDKService.shared.configureRainApi(apiKey: apiKey, userId: user)
 
     do {
-      pendingContract = try await repository.getCreditContracts()
+      pendingContract = RainCollateralContractResponse(
+        contract: try await RainSDKService.shared.fetchCollateralContract()
+      )
     } catch {
       self.error = error
     }

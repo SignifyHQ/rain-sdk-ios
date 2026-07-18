@@ -92,6 +92,7 @@ class RainSDKService: ObservableObject {
       // Fetch the wallet address to ensure the session token is valid
       print("Rain SDK: wallet address \(try await resolvedClient.getWalletAddress())")
 
+      applyRainApiCredentials(to: sdk)
       rain = sdk
       client = resolvedClient
       portalInstance = capturedPortal.value
@@ -136,6 +137,7 @@ class RainSDKService: ObservableObject {
 
       print("Rain SDK: wallet address \(try await resolvedClient.getWalletAddress())")
 
+      applyRainApiCredentials(to: sdk)
       rain = sdk
       client = resolvedClient
       portalInstance = nil
@@ -175,12 +177,25 @@ class RainSDKService: ObservableObject {
       let sdk = try RainSdk.builder()
         .rpcEndpoints(networkConfigs)
         .register(PrivyProvider(PrivyConfig(privy: privy, walletAddress: walletAddress)))
+        // Privy exposes no token-discovery endpoint, so its balance reads only see tokens the
+        // SDK already knows about. The built-in registry is mainnet-only, so seed Base Sepolia
+        // USDC here for testing — otherwise Privy reports no ERC-20 tokens despite a balance.
+        .registerTokens([
+          TokenInfo(
+            chainId: 84532,
+            address: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+            symbol: "USDC",
+            decimals: 6,
+            name: "USDC"
+          )
+        ])
         .build()
 
       let resolvedClient = try await sdk.provider(.privy)
 
       print("Rain SDK: wallet address \(try await resolvedClient.getWalletAddress())")
 
+      applyRainApiCredentials(to: sdk)
       rain = sdk
       client = resolvedClient
       portalInstance = nil
@@ -216,6 +231,7 @@ class RainSDKService: ObservableObject {
         .rpcEndpoints(networkConfigs)
         .build()
 
+      applyRainApiCredentials(to: sdk)
       rain = sdk
       client = nil
       portalInstance = nil
@@ -232,6 +248,69 @@ class RainSDKService: ObservableObject {
       self.error = RainSDKError.providerError(underlying: error)
       statusMessage = "Initialization failed: Unknown error"
     }
+  }
+
+  // MARK: - Rain API (issuing)
+
+  /// Lazily-built wallet-agnostic SDK used for Rain issuing API calls before any
+  /// `initialize*` has run (the collateral-withdraw entry screen verifies credentials
+  /// before a wallet is connected). Configured with every demo chain's RPC so the SDK
+  /// can enrich contract tokens on-chain.
+  private var apiOnlySdk: RainSdk?
+
+  /// The SDK to route Rain issuing API calls through: the active registry when
+  /// initialized, else the lazily-built wallet-agnostic one.
+  private func rainApiSdk() throws -> RainSdk {
+    if let rain { return rain }
+    if let apiOnlySdk { return apiOnlySdk }
+    let configs = WalletChain.allCases.map { NetworkConfig(chainId: $0.chainId, rpcUrl: $0.rpcUrl) }
+    let sdk = try RainSdk.builder()
+      .rpcEndpoints(configs)
+      .build()
+    applyRainApiCredentials(to: sdk)
+    apiOnlySdk = sdk
+    return sdk
+  }
+
+  /// Pushes the Rain Api-Key + userId into every SDK instance this service holds. The SDK
+  /// re-mints its client session token lazily on the next API call.
+  func configureRainApi(apiKey: String, userId: String) {
+    rain?.configureRainApi(apiKey: apiKey, userId: userId)
+    apiOnlySdk?.configureRainApi(apiKey: apiKey, userId: userId)
+  }
+
+  /// Applies the persisted demo credentials (UserDefaults) to a freshly built SDK.
+  private func applyRainApiCredentials(to sdk: RainSdk) {
+    guard
+      let apiKey = RainAPICredentialsStorage.apiKey, !apiKey.isEmpty,
+      let userId = RainAPICredentialsStorage.userId, !userId.isEmpty
+    else { return }
+    sdk.configureRainApi(apiKey: apiKey, userId: userId)
+  }
+
+  /// Fetches the first collateral contract via the SDK (tokens enriched by the SDK's token
+  /// store / on-chain reads).
+  func fetchCollateralContract() async throws -> RainCollateralContract {
+    try await rainApiSdk().fetchCollateralContract()
+  }
+
+  /// Fetches the admin withdrawal signature via the SDK.
+  func fetchAdminSignature(
+    chainId: Int,
+    tokenAddress: String,
+    amountBaseUnits: BigUInt,
+    adminAddress: String,
+    recipientAddress: String,
+    isAmountNative: Bool = true
+  ) async throws -> RainAdminSignature {
+    try await rainApiSdk().fetchAdminSignature(
+      chainId: chainId,
+      tokenAddress: tokenAddress,
+      amountBaseUnits: amountBaseUnits,
+      adminAddress: adminAddress,
+      recipientAddress: recipientAddress,
+      isAmountNative: isAmountNative
+    )
   }
 
   /// The built registry, or throws `sdkNotInitialized` if no `initialize*` has run.

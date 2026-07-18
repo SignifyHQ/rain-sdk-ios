@@ -6,9 +6,9 @@ import PackageDescription
 // MARK: - Rain SDK (modular)
 //
 // The SDK is split into separate packages so a client links only the providers it uses:
-//   • rain-core   — vendor-free port + registry + Rain domain logic + the Turnkey adapter
-//   • rain-portal — the Portal MPC adapter (depends on rain-core + PortalSwift)
-//   • rain-privy  — the Privy embedded-key adapter (skeleton)
+//   • rain-core-ios   — vendor-free port + registry + Rain domain logic + the Turnkey adapter
+//   • rain-portal-ios — the Portal MPC adapter (depends on rain-core-ios + PortalSwift)
+//   • rain-privy-ios  — the Privy embedded-key adapter (skeleton)
 //
 // New integrations should depend on the specific provider package(s) they need — see each
 // package's own Package.swift. This root package is a **migration umbrella**: it vends a
@@ -29,15 +29,15 @@ let package = Package(
     ),
   ],
   dependencies: [
-    .package(path: "rain-core"),
-    .package(path: "rain-portal"),
+    .package(path: "rain-core-ios"),
+    .package(path: "rain-portal-ios"),
   ],
   targets: [
     .target(
       name: "RainSDK",
       dependencies: [
-        .product(name: "RainCore", package: "rain-core"),
-        .product(name: "RainPortal", package: "rain-portal"),
+        .product(name: "RainCore", package: "rain-core-ios"),
+        .product(name: "RainPortal", package: "rain-portal-ios"),
       ]
     ),
     .testTarget(

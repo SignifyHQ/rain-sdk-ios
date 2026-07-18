@@ -1,10 +1,14 @@
 import Foundation
+import RainCore
 
-// MARK: - Demo model (Decodable)
-// All properties optional (exclude id if any) so decoding succeeds when API omits keys.
+// MARK: - Demo models
+// The Rain REST API now lives inside the SDK (`RainSdk.fetchCollateralContract*`), which
+// returns `RainCore.RainCollateralContract` with tokens already enriched (name / symbol /
+// decimals from the SDK token store or an on-chain read). These structs remain the demo's
+// canonical view models; they are built from the core model instead of decoded off the wire.
 
-/// Decodable response for a token; conforms to RainTokenEntity.
-struct RainTokenResponse: Decodable, RainTokenEntity, Hashable {
+/// Demo model for a token; conforms to RainTokenEntity.
+struct RainTokenResponse: RainTokenEntity, Hashable {
   let address: String?
   let name: String?
   let symbol: String?
@@ -14,11 +18,22 @@ struct RainTokenResponse: Decodable, RainTokenEntity, Hashable {
   let exchangeRate: Double?
   let advanceRate: Double?
   let availableUsdBalance: Double?
+
+  init(token: RainCollateralToken) {
+    address = token.address
+    name = token.name
+    symbol = token.symbol
+    decimals = token.decimals.map(Double.init)
+    logo = nil
+    balance = token.balanceAmount.map { NSDecimalNumber(decimal: $0).doubleValue } ?? 0
+    exchangeRate = token.exchangeRate
+    advanceRate = token.advanceRate
+    availableUsdBalance = nil
+  }
 }
 
 /// Canonical demo model for a collateral contract; conforms to RainCollateralContractEntity.
-/// Built from the Rain dev API DTO (`RainContractDto`) — see `toCollateralContractResponse()`.
-struct RainCollateralContractResponse: Decodable, Hashable {
+struct RainCollateralContractResponse: Hashable {
   let contractId: String?
   let network: String?
   let chainId: Int?
@@ -30,66 +45,21 @@ struct RainCollateralContractResponse: Decodable, Hashable {
 
   var tokensEntity: [RainTokenEntity]? { tokens }
 
+  /// Maps the SDK's contract model onto the demo's view model. `address` is the proxy
+  /// address (what the demo treats as the collateral contract address);
+  /// `controllerAddress` is kept separate.
+  init(contract: RainCollateralContract) {
+    contractId = contract.id
+    network = nil
+    chainId = contract.chainId
+    address = contract.proxyAddress
+    controllerAddress = contract.controllerAddress
+    adminAddresses = contract.adminAddresses
+    creditLimit = nil
+    tokens = contract.tokens.map(RainTokenResponse.init(token:))
+  }
+
   func toAssetModels() -> [AssetModel] {
     (tokens ?? []).map { AssetModel(rainCollateralAsset: $0) }
-  }
-}
-
-// MARK: - Wire DTOs (Rain dev API)
-
-/// Decodable wire model for `GET /v1/issuing/users/{userId}/contracts`. Rain returns an array
-/// of these; the demo uses the first.
-///
-/// Note the Rain contracts endpoint returns only token `address`/`balance`/`exchangeRate`/
-/// `advanceRate` — no symbol/decimals/logo metadata (unlike the old LF endpoint). Those are
-/// left nil here for the repository to resolve on-chain via the SDK.
-struct RainContractDto: Decodable {
-  let id: String?
-  let chainId: Int?
-  let controllerAddress: String?
-  let proxyAddress: String?
-  let depositAddress: String?
-  let adminAddresses: [String]?
-  let contractVersion: Int?
-  let tokens: [RainContractTokenDto]?
-
-  /// Maps the Rain DTO onto the demo's canonical model. `address` is the proxy address (what
-  /// the demo treats as the collateral contract address); `controllerAddress` is kept separate.
-  func toCollateralContractResponse() -> RainCollateralContractResponse {
-    RainCollateralContractResponse(
-      contractId: id,
-      network: nil,
-      chainId: chainId,
-      address: proxyAddress,
-      controllerAddress: controllerAddress,
-      adminAddresses: adminAddresses,
-      creditLimit: nil,
-      tokens: (tokens ?? []).map { $0.toTokenResponse() }
-    )
-  }
-}
-
-/// Decodable wire model for a token inside a Rain contract.
-struct RainContractTokenDto: Decodable {
-  let address: String?
-  // Rain returns balance as a string (e.g. "0.0"); the demo model keeps it as a Double.
-  let balance: String?
-  let exchangeRate: Double?
-  let advanceRate: Double?
-
-  func toTokenResponse() -> RainTokenResponse {
-    RainTokenResponse(
-      address: address,
-      // Rain's contracts endpoint omits token name/symbol/decimals/logo; left nil for the
-      // repository to resolve on-chain via the SDK token registry / chain reader.
-      name: nil,
-      symbol: nil,
-      decimals: nil,
-      logo: nil,
-      balance: balance.flatMap { Double($0) } ?? 0,
-      exchangeRate: exchangeRate,
-      advanceRate: advanceRate,
-      availableUsdBalance: nil
-    )
   }
 }

@@ -229,7 +229,41 @@ let erc20 = try await client.sendToken(
 )
 ```
 
-### 8. Withdraw collateral
+### 8. Rain API: collateral contracts & admin signature
+
+The SDK talks to the Rain issuing API directly — supply your program **Api-Key** and Rain
+**userId** and it handles session (CST) minting, caching, and refresh internally. Credentials
+are never persisted by the SDK. In production, prefer minting server-to-server and keeping the
+Api-Key off the device.
+
+```swift
+let rain = try RainSdk.builder()
+    .rpcEndpoints([84532: "https://sepolia.base.org"])
+    .rainApiEnvironment(.dev) // default; .production / .custom(URL) available
+    .rainApiCredentials(apiKey: "…", userId: "…") // or configureRainApi(...) at runtime
+    .build()
+
+// Or set / replace credentials later (e.g. entered in your UI):
+rain.configureRainApi(apiKey: "…", userId: "…")
+
+// GET /v1/issuing/users/{userId}/contracts — token name/symbol/decimals are enriched from
+// the SDK token store or an on-chain read (best-effort; nil when unresolvable)
+let contract = try await rain.fetchCollateralContract()   // first, or RainSDKError.noCollateralContracts
+let contracts = try await rain.fetchCollateralContracts() // full list
+
+// GET /v1/issuing/users/{userId}/signatures/withdrawals
+// Throws RainSDKError.signatureNotReady(status:retryAfter:) while Rain prepares the signature.
+let adminSignature = try await rain.fetchAdminSignature(
+    chainId: contract.chainId,
+    tokenAddress: contract.tokens[0].address,
+    amountBaseUnits: BigUInt(100_000_000), // base units
+    adminAddress: contract.adminAddresses[0],
+    recipientAddress: "0x…"
+)
+// adminSignature.salt / .signature / .expiresAt feed withdrawCollateral below
+```
+
+### 9. Withdraw collateral
 
 Signs the admin EIP-712 message via the backing provider, submits, and returns the tx hash.
 
@@ -256,7 +290,7 @@ let txHash = try await client.withdrawCollateral(
 For manual submission (build the calldata yourself, no provider resolved), use the wallet-agnostic
 `rain.buildWithdrawTransactionData(...)` from section 4.
 
-### 9. Estimate withdrawal fee
+### 10. Estimate withdrawal fee
 
 Returns the estimated total fee in the chain's native token (e.g. ETH).
 
@@ -273,7 +307,7 @@ let fee = try await client.estimateWithdrawalFee(
 print("Estimated fee: \(fee)")
 ```
 
-### 10. Transaction history
+### 11. Transaction history
 
 ```swift
 let txs = try await client.getTransactions(
@@ -287,7 +321,7 @@ for tx in txs {
 }
 ```
 
-### 11. QR code generation
+### 12. QR code generation
 
 Returns PNG `Data` encoding the current wallet address.
 

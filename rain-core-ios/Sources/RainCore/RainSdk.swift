@@ -23,6 +23,10 @@ public final class RainSdk: @unchecked Sendable {
   private let evmChainReader: EVMChainReader
   private let providerContext: ProviderContext
 
+  // Rain issuing API (sessions, contracts, withdrawal signatures).
+  private let rainApiConfig: RainApiConfigStore
+  private let rainApiService: RainApiService
+
   // Resolved clients are cached by provider id (lazy, resolved-once). We cache the *in-flight
   // resolution Task*, not the finished client, so concurrent first-resolutions of the same id
   // share one Task and `create(context:)` runs exactly once. Boxed in a class so we can identity-
@@ -38,7 +42,9 @@ public final class RainSdk: @unchecked Sendable {
     networkConfigs: [NetworkConfig],
     descriptors: [ProviderId: RainProvider],
     registrationOrder: [ProviderId],
-    registeredTokens: [TokenInfo]
+    registeredTokens: [TokenInfo],
+    rainApiEnvironment: RainApiEnvironment,
+    initialRainApiCredentials: (apiKey: String, userId: String)?
   ) {
     self.networkConfigs = networkConfigs
     self.descriptors = descriptors
@@ -61,6 +67,13 @@ public final class RainSdk: @unchecked Sendable {
       transactionBuilder: builder,
       evmChainReader: reader
     )
+
+    let apiConfig = RainApiConfigStore(baseURL: rainApiEnvironment.baseURL)
+    if let credentials = initialRainApiCredentials {
+      apiConfig.setCredentials(apiKey: credentials.apiKey, userId: credentials.userId)
+    }
+    self.rainApiConfig = apiConfig
+    self.rainApiService = RainApiService(configStore: apiConfig, tokenStore: store, chainReader: reader)
   }
 
   // MARK: - Registry introspection
@@ -245,6 +258,66 @@ public final class RainSdk: @unchecked Sendable {
     Task { await tokenStore.register(tokens) }
   }
 
+  // MARK: - Rain API (issuing)
+
+  /// True once an Api-Key and userId have been supplied (builder or ``configureRainApi(apiKey:userId:)``).
+  public var isRainApiConfigured: Bool { rainApiConfig.isConfigured }
+
+  /// Sets or replaces the Rain program Api-Key and userId at runtime. The cached client
+  /// session token is discarded lazily — the next API call re-mints against the new pair.
+  /// The SDK never persists these values.
+  public func configureRainApi(apiKey: String, userId: String) {
+    rainApiConfig.setCredentials(apiKey: apiKey, userId: userId)
+  }
+
+  /// Fetches the user's collateral contracts (`GET /v1/issuing/users/{userId}/contracts`).
+  ///
+  /// Token `name`/`symbol`/`decimals` are enriched from the SDK token store (registry,
+  /// host-registered tokens, or an on-chain read) — best-effort, a failed lookup leaves them
+  /// nil. Needs no wallet provider, only the configured Api-Key/userId and RPC endpoints.
+  ///
+  /// - Throws: `RainSDKError.rainApiNotConfigured` when no credentials were supplied.
+  public func fetchCollateralContracts() async throws -> [RainCollateralContract] {
+    try await rainApiService.fetchCollateralContracts()
+  }
+
+  /// Convenience for the common single-contract case: the first collateral contract.
+  ///
+  /// - Throws: `RainSDKError.noCollateralContracts` when the user has none.
+  public func fetchCollateralContract() async throws -> RainCollateralContract {
+    guard let first = try await fetchCollateralContracts().first else {
+      throw RainSDKError.noCollateralContracts
+    }
+    return first
+  }
+
+  /// Fetches the admin withdrawal signature
+  /// (`GET /v1/issuing/users/{userId}/signatures/withdrawals`) that authorizes a
+  /// ``RainClient/withdrawCollateral(chainId:assetAddresses:amount:decimals:salt:signature:expiresAt:nonce:)`` call.
+  ///
+  /// - Parameters:
+  ///   - amountBaseUnits: Withdrawal amount in the token's base units.
+  ///   - adminAddress: One of the contract's ``RainCollateralContract/adminAddresses``.
+  /// - Throws: `RainSDKError.signatureNotReady` when Rain has not produced the signature yet —
+  ///   retry after the carried `retryAfter` seconds.
+  public func fetchAdminSignature(
+    chainId: Int,
+    tokenAddress: String,
+    amountBaseUnits: BigUInt,
+    adminAddress: String,
+    recipientAddress: String,
+    isAmountNative: Bool = true
+  ) async throws -> RainAdminSignature {
+    try await rainApiService.fetchAdminSignature(
+      chainId: chainId,
+      tokenAddress: tokenAddress,
+      amountBaseUnits: String(amountBaseUnits),
+      adminAddress: adminAddress,
+      recipientAddress: recipientAddress,
+      isAmountNative: isAmountNative
+    )
+  }
+
   static func parseISO8601(_ string: String) -> Date? {
     let withFraction = ISO8601DateFormatter()
     withFraction.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -263,6 +336,8 @@ public final class RainSdk: @unchecked Sendable {
     private var descriptors: [ProviderId: RainProvider] = [:]
     private var registrationOrder: [ProviderId] = []
     private var registeredTokens: [TokenInfo] = []
+    private var rainApiEnvironment: RainApiEnvironment = .dev
+    private var rainApiCredentials: (apiKey: String, userId: String)?
 
     public init() {}
 
@@ -297,6 +372,21 @@ public final class RainSdk: @unchecked Sendable {
       return self
     }
 
+    /// Selects the Rain issuing API environment. Defaults to ``RainApiEnvironment/dev``.
+    @discardableResult
+    public func rainApiEnvironment(_ environment: RainApiEnvironment) -> Builder {
+      rainApiEnvironment = environment
+      return self
+    }
+
+    /// Optionally supplies the Rain program Api-Key and userId at build time — same effect
+    /// as calling ``RainSdk/configureRainApi(apiKey:userId:)`` on the built instance.
+    @discardableResult
+    public func rainApiCredentials(apiKey: String, userId: String) -> Builder {
+      rainApiCredentials = (apiKey: apiKey, userId: userId)
+      return self
+    }
+
     /// Validates configuration and builds the `RainSdk`.
     ///
     /// At least one RPC endpoint is required. Providers are optional: building with none yields a
@@ -313,11 +403,16 @@ public final class RainSdk: @unchecked Sendable {
           throw RainSDKError.invalidConfig(chainId: config.chainId, rpcUrl: config.rpcUrl)
         }
       }
+      guard rainApiEnvironment.baseURL.absoluteString.isValidHTTPURL() else {
+        throw RainSDKError.invalidConfig(chainId: 0, rpcUrl: rainApiEnvironment.baseURL.absoluteString)
+      }
       return RainSdk(
         networkConfigs: networkConfigs,
         descriptors: descriptors,
         registrationOrder: registrationOrder,
-        registeredTokens: registeredTokens
+        registeredTokens: registeredTokens,
+        rainApiEnvironment: rainApiEnvironment,
+        initialRainApiCredentials: rainApiCredentials
       )
     }
   }
