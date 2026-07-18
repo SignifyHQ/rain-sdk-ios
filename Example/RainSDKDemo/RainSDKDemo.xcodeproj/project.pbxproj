@@ -120,9 +120,9 @@
 			mainGroup = 191A07F52F1A1EF80026656C;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				1940E1192F37B1A4003B6740 /* XCLocalSwiftPackageReference "../../rain-core" */,
-				1940E1192F37B1A4003B6741 /* XCLocalSwiftPackageReference "../../rain-portal" */,
-				1940E1192F37B1A4003B6742 /* XCLocalSwiftPackageReference "../../rain-privy" */,
+				1940E1192F37B1A4003B6740 /* XCLocalSwiftPackageReference "../../rain-core-ios" */,
+				1940E1192F37B1A4003B6741 /* XCLocalSwiftPackageReference "../../rain-portal-ios" */,
+				1940E1192F37B1A4003B6742 /* XCLocalSwiftPackageReference "../../rain-privy-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 191A07FF2F1A1EF90026656C /* Products */;
@@ -381,34 +381,34 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		1940E1192F37B1A4003B6740 /* XCLocalSwiftPackageReference "../../rain-core" */ = {
+		1940E1192F37B1A4003B6740 /* XCLocalSwiftPackageReference "../../rain-core-ios" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../rain-core";
+			relativePath = "../../rain-core-ios";
 		};
-		1940E1192F37B1A4003B6741 /* XCLocalSwiftPackageReference "../../rain-portal" */ = {
+		1940E1192F37B1A4003B6741 /* XCLocalSwiftPackageReference "../../rain-portal-ios" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../rain-portal";
+			relativePath = "../../rain-portal-ios";
 		};
-		1940E1192F37B1A4003B6742 /* XCLocalSwiftPackageReference "../../rain-privy" */ = {
+		1940E1192F37B1A4003B6742 /* XCLocalSwiftPackageReference "../../rain-privy-ios" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../rain-privy";
+			relativePath = "../../rain-privy-ios";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		1940E11A2F37B1A4003B6720 /* RainCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 1940E1192F37B1A4003B6740 /* XCLocalSwiftPackageReference "../../rain-core" */;
+			package = 1940E1192F37B1A4003B6740 /* XCLocalSwiftPackageReference "../../rain-core-ios" */;
 			productName = RainCore;
 		};
 		1940E11A2F37B1A4003B6721 /* RainPortal */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 1940E1192F37B1A4003B6741 /* XCLocalSwiftPackageReference "../../rain-portal" */;
+			package = 1940E1192F37B1A4003B6741 /* XCLocalSwiftPackageReference "../../rain-portal-ios" */;
 			productName = RainPortal;
 		};
 		1940E11A2F37B1A4003B6722 /* RainPrivy */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 1940E1192F37B1A4003B6742 /* XCLocalSwiftPackageReference "../../rain-privy" */;
+			package = 1940E1192F37B1A4003B6742 /* XCLocalSwiftPackageReference "../../rain-privy-ios" */;
 			productName = RainPrivy;
 		};
 /* End XCSwiftPackageProductDependency section */
