@@ -13,6 +13,7 @@ protocol PrivyEthereumSigner: Sendable {
   var address: String { get }
   func request(_ request: EthereumRpcRequest) async throws -> String
   func switchChain(chainId: Int, rpcUrl: String?) async
+  func getTransactions(_ params: GetTransactionsParams) async throws -> PrivyTransactionsPage
 }
 
 /// Production `PrivyWalletSource` backed by the real Privy singleton.
@@ -37,5 +38,9 @@ struct LivePrivyEthereumSigner: PrivyEthereumSigner {
 
   func switchChain(chainId: Int, rpcUrl: String?) async {
     await wallet.provider.switchChain(chainId: chainId, rpcUrl: rpcUrl)
+  }
+
+  func getTransactions(_ params: GetTransactionsParams) async throws -> PrivyTransactionsPage {
+    PrivyTransactionsPage(page: try await wallet.getTransactions(params))
   }
 }

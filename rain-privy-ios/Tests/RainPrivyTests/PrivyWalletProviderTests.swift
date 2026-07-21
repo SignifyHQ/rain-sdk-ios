@@ -184,12 +184,265 @@ struct PrivyWalletProviderTests {
 
   // MARK: - History / config
 
-  @Test("getTransactions returns empty as privy exposes no history")
-  func historyEmpty() async throws {
-    let provider = try await Self.makeProvider(host: "history.rpc")
+  /// A chain id Privy's transaction indexer supports. Sepolia specifically: it has no entries in
+  /// RainCore's default token registry, so `registeredTokens` is exactly what a test seeds.
+  private static let indexedChainId = 11_155_111
+
+  /// Builds a provider around `signer` for transaction-history tests, with `tokens` seeded into
+  /// the token store (each registered token adds a token-filter history query). History never
+  /// touches the RPC client, so it is inert.
+  private static func makeHistoryProvider(
+    signer: FakeSigner,
+    tokens: [TokenInfo] = []
+  ) async throws -> PrivyWalletProvider {
+    let rpcUrl = "https://history-unused.rpc/"
+    let store = try await TestTokenStore.make(chainId: indexedChainId, rpcUrl: rpcUrl, tokens: tokens)
+    return PrivyWalletProvider(
+      manager: PrivyManager(source: FakeWalletSource(wallets: [signer])),
+      rpcEndpoints: [indexedChainId: rpcUrl],
+      tokenStore: store,
+      rpcClient: PrivyRpcClient(session: StubURLProtocol.makeSession())
+    )
+  }
+
+  // privyTransactionId defaults to nil so fixtures dedupe by their distinct hashes.
+  private static func indexedTransaction(
+    hash: String? = "0xHASH",
+    createdAt: Int = 1_700_000_000_000,
+    status: String = "confirmed",
+    privyTransactionId: String? = nil,
+    details: PrivyIndexedTransaction.Details? = indexedDetails()
+  ) -> PrivyIndexedTransaction {
+    PrivyIndexedTransaction(
+      caip2: "eip155:1",
+      transactionHash: hash,
+      userOperationHash: nil,
+      status: status,
+      createdAt: createdAt,
+      sponsored: false,
+      privyTransactionId: privyTransactionId,
+      walletId: "wallet-id",
+      details: details
+    )
+  }
+
+  private static func indexedDetails(
+    asset: String = "eth",
+    rawValue: String = "1500000000000000000",
+    rawValueDecimals: Int = 18
+  ) -> PrivyIndexedTransaction.Details {
+    PrivyIndexedTransaction.Details(
+      type: "transferSent",
+      sender: wallet,
+      recipient: "0x1111111111111111111111111111111111111111",
+      asset: asset,
+      rawValue: rawValue,
+      rawValueDecimals: rawValueDecimals,
+      displayValues: [:]
+    )
+  }
+
+  @Test("getTransactions returns empty for a chain Privy does not index without calling Privy")
+  func historyUnsupportedChainEmpty() async throws {
+    let signer = FakeSigner(address: Self.wallet)
+    let provider = try await Self.makeProvider(
+      host: "history-unsupported.rpc",
+      manager: PrivyManager(source: FakeWalletSource(wallets: [signer]))
+    )
+    // 31337 is not a chain Privy indexes.
     let transactions = try await provider.getTransactions(
       chainId: Self.chainId, limit: nil, offset: nil, order: nil)
     #expect(transactions.isEmpty)
+    #expect(signer.events.isEmpty)
+  }
+
+  @Test("getTransactions maps Privy transactions onto the Rain model")
+  func historyMapsFields() async throws {
+    let signer = FakeSigner(address: Self.wallet)
+    signer.transactionsResults = [
+      .success(PrivyTransactionsPage(
+        transactions: [Self.indexedTransaction(privyTransactionId: "privy-tx-id")],
+        nextCursor: nil
+      ))
+    ]
+
+    let provider = try await Self.makeHistoryProvider(signer: signer)
+    let transactions = try await provider.getTransactions(
+      chainId: Self.indexedChainId, limit: nil, offset: nil, order: nil)
+
+    let tx = try #require(transactions.first)
+    #expect(transactions.count == 1)
+    #expect(tx.hash == "0xHASH")
+    #expect(tx.uniqueId == "privy-tx-id")
+    #expect(tx.from == Self.wallet)
+    #expect(tx.to == "0x1111111111111111111111111111111111111111")
+    #expect(tx.value == 1.5)
+    #expect(tx.asset == "eth")
+    #expect(tx.category == "external")
+    #expect(tx.rawContract == nil)
+    #expect(tx.chainId == Self.indexedChainId)
+    #expect(tx.metadata?.blockTimestamp == "2023-11-14T22:13:20Z")
+  }
+
+  @Test("getTransactions routes a contract-address asset into rawContract as erc20")
+  func historyTokenTransfer() async throws {
+    let contract = "0x2222222222222222222222222222222222222222"
+    let signer = FakeSigner(address: Self.wallet)
+    signer.transactionsResults = [
+      .success(PrivyTransactionsPage(
+        transactions: [
+          Self.indexedTransaction(
+            details: Self.indexedDetails(asset: contract, rawValue: "1500000", rawValueDecimals: 6))
+        ],
+        nextCursor: nil
+      ))
+    ]
+
+    let provider = try await Self.makeHistoryProvider(signer: signer)
+    let transactions = try await provider.getTransactions(
+      chainId: Self.indexedChainId, limit: nil, offset: nil, order: nil)
+
+    let tx = try #require(transactions.first)
+    #expect(tx.asset == nil)
+    #expect(tx.category == "erc20")
+    #expect(tx.rawContract == RainCore.WalletTransaction.RawContract(
+      value: "1500000", address: contract, decimal: "6"))
+    #expect(tx.value == 1.5)
+  }
+
+  @Test("getTransactions falls back through userOperationHash and privyTransactionId for pending rows")
+  func historyPendingHashFallback() async throws {
+    let signer = FakeSigner(address: Self.wallet)
+    signer.transactionsResults = [
+      .success(PrivyTransactionsPage(
+        transactions: [
+          Self.indexedTransaction(hash: nil, status: "pending", privyTransactionId: "privy-tx-9")
+        ],
+        nextCursor: nil
+      ))
+    ]
+
+    let provider = try await Self.makeHistoryProvider(signer: signer)
+    let transactions = try await provider.getTransactions(
+      chainId: Self.indexedChainId, limit: nil, offset: nil, order: nil)
+
+    let tx = try #require(transactions.first)
+    #expect(tx.hash == "privy-tx-9")
+  }
+
+  @Test("getTransactions follows the cursor until offset plus limit rows are collected, then slices")
+  func historyCursorPaging() async throws {
+    let signer = FakeSigner(address: Self.wallet)
+    signer.transactionsResults = [
+      .success(PrivyTransactionsPage(
+        transactions: (0..<3).map { Self.indexedTransaction(hash: "0xA\($0)", createdAt: 5_000 - $0) },
+        nextCursor: "cursor-1"
+      )),
+      .success(PrivyTransactionsPage(
+        transactions: (0..<2).map { Self.indexedTransaction(hash: "0xB\($0)", createdAt: 2_000 - $0) },
+        nextCursor: "cursor-2"
+      )),
+    ]
+
+    let provider = try await Self.makeHistoryProvider(signer: signer)
+    let transactions = try await provider.getTransactions(
+      chainId: Self.indexedChainId, limit: 3, offset: 2, order: nil)
+
+    // Needs 5 rows: page one (3 rows, limit 5) then page two via cursor (2 rows, limit 2).
+    #expect(signer.events == [
+      "getTransactions:chain=sepolia,assets=eth,tokens=nil,limit=5,cursor=nil",
+      "getTransactions:chain=sepolia,assets=eth,tokens=nil,limit=2,cursor=cursor-1",
+    ])
+    // Newest-first by default; offset 2 drops the two newest, limit 3 keeps the rest.
+    #expect(transactions.map(\.hash) == ["0xA2", "0xB0", "0xB1"])
+  }
+
+  @Test("getTransactions stops paging when history is exhausted and honors ASC order")
+  func historyAscOrder() async throws {
+    let signer = FakeSigner(address: Self.wallet)
+    signer.transactionsResults = [
+      .success(PrivyTransactionsPage(
+        transactions: [
+          Self.indexedTransaction(hash: "0xNEW", createdAt: 2_000),
+          Self.indexedTransaction(hash: "0xOLD", createdAt: 1_000),
+        ],
+        nextCursor: nil
+      ))
+    ]
+
+    let provider = try await Self.makeHistoryProvider(signer: signer)
+    let transactions = try await provider.getTransactions(
+      chainId: Self.indexedChainId, limit: 10, offset: nil, order: .ASC)
+
+    #expect(signer.events.count == 1)
+    #expect(transactions.map(\.hash) == ["0xOLD", "0xNEW"])
+  }
+
+  @Test("getTransactions propagates Privy failures")
+  func historyErrorPropagates() async throws {
+    struct IndexerDown: Error {}
+    let signer = FakeSigner(address: Self.wallet)
+    signer.transactionsResults = [.failure(IndexerDown())]
+
+    let provider = try await Self.makeHistoryProvider(signer: signer)
+    await #expect(throws: IndexerDown.self) {
+      _ = try await provider.getTransactions(
+        chainId: Self.indexedChainId, limit: nil, offset: nil, order: nil)
+    }
+  }
+
+  @Test("getTransactions merges native and registered-token history and dedupes overlapping rows")
+  func historyMergesTokenQueries() async throws {
+    let contract = "0x2222222222222222222222222222222222222222"
+    let signer = FakeSigner(address: Self.wallet)
+    signer.transactionsResults = [
+      .success(PrivyTransactionsPage(
+        transactions: [Self.indexedTransaction(hash: "0xNATIVE", createdAt: 3_000)],
+        nextCursor: nil
+      )),
+      .success(PrivyTransactionsPage(
+        transactions: [
+          Self.indexedTransaction(hash: "0xTOKEN", createdAt: 2_000),
+          Self.indexedTransaction(hash: "0xNATIVE", createdAt: 3_000),
+        ],
+        nextCursor: nil
+      )),
+    ]
+
+    let usdc = TokenInfo(
+      chainId: Self.indexedChainId, address: contract, symbol: "USDC", decimals: 6, name: "USD Coin")
+    let provider = try await Self.makeHistoryProvider(signer: signer, tokens: [usdc])
+    let transactions = try await provider.getTransactions(
+      chainId: Self.indexedChainId, limit: nil, offset: nil, order: nil)
+
+    // One native-asset query plus one token-address query; the duplicate row appears once.
+    #expect(signer.events == [
+      "getTransactions:chain=sepolia,assets=eth,tokens=nil,limit=10,cursor=nil",
+      "getTransactions:chain=sepolia,assets=nil,tokens=\(contract),limit=10,cursor=nil",
+    ])
+    #expect(transactions.map(\.hash) == ["0xNATIVE", "0xTOKEN"])
+  }
+
+  @Test("getTransactions keeps native history when a token query fails")
+  func historyTokenQueryFailureTolerated() async throws {
+    struct TokenFilterRejected: Error {}
+    let contract = "0x2222222222222222222222222222222222222222"
+    let signer = FakeSigner(address: Self.wallet)
+    signer.transactionsResults = [
+      .success(PrivyTransactionsPage(
+        transactions: [Self.indexedTransaction(hash: "0xNATIVE")],
+        nextCursor: nil
+      )),
+      .failure(TokenFilterRejected()),
+    ]
+
+    let usdc = TokenInfo(
+      chainId: Self.indexedChainId, address: contract, symbol: "USDC", decimals: 6, name: "USD Coin")
+    let provider = try await Self.makeHistoryProvider(signer: signer, tokens: [usdc])
+    let transactions = try await provider.getTransactions(
+      chainId: Self.indexedChainId, limit: nil, offset: nil, order: nil)
+
+    #expect(transactions.map(\.hash) == ["0xNATIVE"])
   }
 
   @Test("an unconfigured chain id surfaces invalidConfig")
