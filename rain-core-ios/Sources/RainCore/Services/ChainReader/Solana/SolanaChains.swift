@@ -7,9 +7,9 @@ import Foundation
 /// Solana APIs (`sol_send_transaction`, balances) expect. These sentinel IDs are reserved:
 /// configuring an EVM chain at 101–103 would be misrouted to the Solana path.
 internal enum SolanaChains {
-  static let mainnet = 101
-  static let testnet = 102
-  static let devnet = 103
+  static let mainnet = RainChain.solanaMainnet
+  static let testnet = RainChain.solanaTestnet
+  static let devnet = RainChain.solanaDevnet
 
   /// All Solana sentinel chain IDs. Dispatch keys off this set, never a hardcoded literal.
   static let sentinelChainIds: Set<Int> = [mainnet, testnet, devnet]

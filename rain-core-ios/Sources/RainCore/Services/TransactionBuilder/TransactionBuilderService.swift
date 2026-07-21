@@ -77,8 +77,47 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     }
   }
   
+  // MARK: - Admin Check
+
+  /// Whether `walletAddress` is an admin of the collateral contract at `proxyAddress`.
+  ///
+  /// Never throws: any failure means the answer is unknown, and an unknown answer must not block
+  /// a withdrawal that would otherwise succeed.
+  func isCollateralAdmin(
+    proxyAddress: String,
+    walletAddress: String,
+    chainId: Int
+  ) async -> Bool? {
+    guard let rpcURL = try? getRpcURL(chainId: chainId),
+          let collateralJsonABI = try? getCollateralJsonABI(),
+          let url = URL(string: rpcURL),
+          let ethereumCollateralAddress = Web3Core.EthereumAddress(proxyAddress),
+          let ethereumWalletAddress = Web3Core.EthereumAddress(walletAddress)
+    else {
+      return nil
+    }
+
+    do {
+      let web3 = try await Web3.new(url)
+      let contract = web3.contract(collateralJsonABI, at: ethereumCollateralAddress, abiVersion: 2)
+
+      // A missing operation means the collateral exposes no `isAdmin` — unknown, not unauthorized.
+      guard let operation = contract?.createReadOperation(
+        "isAdmin",
+        parameters: [ethereumWalletAddress]
+      ) else {
+        return nil
+      }
+
+      return try await operation.callContractMethod()["0"] as? Bool
+    } catch {
+      RainLogger.error("Rain SDK: isAdmin preflight failed, skipping the check - \(error.localizedDescription)")
+      return nil
+    }
+  }
+
   // MARK: - EIP-712 Message Building
-  
+
   /// Build EIP-712 message structure
   func buildEIP712Message(
     chainId: Int,

@@ -63,6 +63,10 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// RAIN_406: The amount is invalid for the token — more decimal places than the token supports, or negative/unrepresentable
   case invalidAmount(amount: String, reason: String)
 
+  /// RAIN_407: The signing wallet is not an admin of the collateral contract, so `withdrawAsset`
+  /// would reject its signature on-chain with `InvalidSignature()`
+  case walletNotAuthorized(walletAddress: String, proxyAddress: String)
+
   // MARK: - 5xx: Internal / Provider Errors
   
   /// RAIN_501: An unhandled error occurred within the wallet provider
@@ -108,6 +112,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "RAIN_405"
     case .invalidAmount:
       return "RAIN_406"
+    case .walletNotAuthorized:
+      return "RAIN_407"
     case .providerError:
       return "RAIN_501"
     case .internalLogicError:
@@ -153,6 +159,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "[\(errorCode)] Execution reverted by the network. Please try again in a few minutes."
     case .invalidAmount(let amount, let reason):
       return "[\(errorCode)] Invalid amount (\(amount)): \(reason)."
+    case .walletNotAuthorized(let walletAddress, let proxyAddress):
+      return "[\(errorCode)] Wallet \(walletAddress) is not an admin of collateral contract \(proxyAddress)."
     case .providerError(let underlying):
       return "[\(errorCode)] An unhandled error occurred within the wallet provider. \(underlying.localizedDescription)"
     case .internalLogicError(let details):

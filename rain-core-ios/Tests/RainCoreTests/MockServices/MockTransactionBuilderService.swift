@@ -9,7 +9,9 @@ import Web3Core
 final class MockTransactionBuilderService: TransactionBuilderProtocol {
   private let networkConfigs: [NetworkConfig]
   var mockNonce: BigUInt = BigUInt(123)
-  
+  /// `nil` mirrors an unavailable check, which must not block a withdrawal.
+  var mockIsCollateralAdmin: Bool?
+
   init(networkConfigs: [NetworkConfig]) {
     self.networkConfigs = networkConfigs
   }
@@ -23,6 +25,14 @@ final class MockTransactionBuilderService: TransactionBuilderProtocol {
   func getLatestNonce(proxyAddress: String, chainId: Int) async throws -> BigUInt {
     // Return mock nonce for testing
     return mockNonce
+  }
+
+  func isCollateralAdmin(
+    proxyAddress: String,
+    walletAddress: String,
+    chainId: Int
+  ) async -> Bool? {
+    return mockIsCollateralAdmin
   }
   
   func buildEIP712Message(
