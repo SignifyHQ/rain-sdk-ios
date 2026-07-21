@@ -9,8 +9,9 @@ import Web3
 /// ``PrivyManager``; balance and fee reads run through ``PrivyRpcClient`` against Rain's
 /// configured RPC, with metadata resolved by `tokenStore`.
 ///
-/// Privy exposes no transaction-history endpoint, so ``getTransactions(chainId:limit:offset:order:)``
-/// returns an empty list — on-chain history is expected to come from the Rain backend.
+/// Transaction history comes from Privy's indexer via the wallet's `getTransactions` (TEE wallets
+/// only, and only on chains Privy indexes); unsupported chains return an empty list, matching the
+/// pre-indexer behavior.
 internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSignerProvider, RainTransactionFeeEstimatingProvider, @unchecked Sendable {
   /// Upper bound on simultaneous per-token balance RPC calls in ``getBalances(chainId:)``. Without
   /// it a large token registry would fan out one connection per token at once.
@@ -238,14 +239,171 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
 
   // MARK: - Transactions
 
-  /// Privy exposes no history endpoint; on-chain history comes from the Rain backend.
+  /// Default rows returned by `getTransactions` when the caller passes no limit (parity with
+  /// Turnkey).
+  private static let defaultTransactionLimit = 10
+  /// Privy's server-side maximum page size for its transactions endpoint.
+  private static let maxTransactionsPageSize = 100
+  /// Privy's server-side maximum number of asset/token filters per request.
+  private static let maxTransactionFiltersPerRequest = 10
+
+  /// Wallet history from Privy's transaction indexer.
+  ///
+  /// Privy's endpoint requires exactly one of an `assets` or `tokens` filter per request, so
+  /// full history is assembled from one native-asset query plus token-address queries over the
+  /// registered tokens (chunked to the server's 10-filter cap). The native query is essential
+  /// (its failure propagates); token queries are best-effort, mirroring `getBalances`. Privy
+  /// paginates by cursor while the SDK contract is limit/offset, so each query collects pages
+  /// until `offset + limit` rows are gathered (or history is exhausted); the merged rows are
+  /// deduped, sorted by `createdAt` per `order` (newest first by default, matching Turnkey) and
+  /// sliced. Chains Privy does not index (e.g. Base Sepolia) return an empty list rather than
+  /// failing, preserving the previous always-empty behavior.
   func getTransactions(
     chainId: Int,
     limit: Int?,
     offset: Int?,
     order: WalletTransactionOrder?
-  ) async throws -> [WalletTransaction] {
-    []
+  ) async throws -> [RainCore.WalletTransaction] {
+    guard let chain = Self.privyChain(for: chainId) else {
+      return []
+    }
+    let walletAddress = try await address()
+    let needed = max((limit ?? Self.defaultTransactionLimit) + (offset ?? 0), 1)
+
+    var collected = try await collectTransactions(
+      walletAddress: walletAddress,
+      chain: chain.chain,
+      assets: [chain.nativeAsset],
+      tokens: nil,
+      needed: needed
+    )
+    let tokenAddresses = await tokenStore.registeredTokens(for: chainId).map(\.address)
+    for chunk in Self.chunks(tokenAddresses, size: Self.maxTransactionFiltersPerRequest) {
+      do {
+        collected += try await collectTransactions(
+          walletAddress: walletAddress,
+          chain: chain.chain,
+          assets: nil,
+          tokens: chunk,
+          needed: needed
+        )
+      } catch {
+        if error is CancellationError { throw error }
+      }
+    }
+
+    var seen = Set<String>()
+    let deduped = collected.filter { transaction in
+      guard let key = transaction.privyTransactionId ?? transaction.transactionHash else { return true }
+      return seen.insert(key).inserted
+    }
+    let sorted = deduped.sorted { lhs, rhs in
+      switch order ?? .DESC {
+      case .ASC: return lhs.createdAt < rhs.createdAt
+      case .DESC: return lhs.createdAt > rhs.createdAt
+      }
+    }
+    let sliced = sorted
+      .dropFirst(offset ?? 0)
+      .prefix(limit ?? needed)
+
+    return sliced.map { Self.rainTransaction(chainId: chainId, from: $0) }
+  }
+
+  /// Collects up to `needed` rows for one assets-or-tokens filter, following Privy's cursor.
+  private func collectTransactions(
+    walletAddress: String,
+    chain: TransactionChain,
+    assets: [String]?,
+    tokens: [String]?,
+    needed: Int
+  ) async throws -> [PrivyIndexedTransaction] {
+    var collected: [PrivyIndexedTransaction] = []
+    var cursor: String?
+    repeat {
+      let page = try await manager.getTransactions(
+        walletAddress: walletAddress,
+        params: GetTransactionsParams(
+          chain: chain,
+          assets: assets,
+          tokens: tokens,
+          limit: min(needed - collected.count, Self.maxTransactionsPageSize),
+          cursor: cursor
+        )
+      )
+      collected.append(contentsOf: page.transactions)
+      cursor = page.nextCursor
+    } while cursor != nil && collected.count < needed
+    return collected
+  }
+
+  private static func chunks<T>(_ array: [T], size: Int) -> [[T]] {
+    stride(from: 0, to: array.count, by: size).map {
+      Array(array[$0..<min($0 + size, array.count)])
+    }
+  }
+
+  private static func rainTransaction(
+    chainId: Int,
+    from transaction: PrivyIndexedTransaction
+  ) -> RainCore.WalletTransaction {
+    let details = transaction.details
+    // `asset` is either a named asset ("eth", "usdc") or a token contract address; an address
+    // means a token transfer, which carries its contract in `rawContract` like Alchemy's shape.
+    let assetIsAddress = details?.asset.hasPrefix("0x") == true
+    let value = details.flatMap { detail -> Double? in
+      guard let raw = Double(detail.rawValue) else { return nil }
+      return raw / pow(10, Double(detail.rawValueDecimals))
+    }
+    return RainCore.WalletTransaction(
+      blockNum: "",
+      uniqueId: transaction.privyTransactionId ?? transaction.transactionHash ?? "",
+      hash: transaction.transactionHash
+        ?? transaction.userOperationHash
+        ?? transaction.privyTransactionId
+        ?? "",
+      from: details?.sender ?? "",
+      to: details?.recipient,
+      value: value,
+      erc721TokenId: nil,
+      erc1155Metadata: nil,
+      tokenId: nil,
+      asset: assetIsAddress ? nil : details?.asset,
+      category: assetIsAddress ? "erc20" : "external",
+      rawContract: details.flatMap { detail in
+        guard assetIsAddress else { return nil }
+        return RainCore.WalletTransaction.RawContract(
+          value: detail.rawValue,
+          address: detail.asset,
+          decimal: String(detail.rawValueDecimals)
+        )
+      },
+      metadata: RainCore.WalletTransaction.Metadata(
+        blockTimestamp: Date(timeIntervalSince1970: Double(transaction.createdAt) / 1000)
+          .formatted(.iso8601)
+      ),
+      chainId: chainId
+    )
+  }
+
+  /// The `TransactionChain` and native-asset filter name Privy's indexer accepts for `chainId`,
+  /// or `nil` when the chain is not indexed (verified against the endpoint's server-side enum:
+  /// ethereum, arbitrum, avalanche, base, bsc, tempo, linea, optimism, polygon, solana, sepolia).
+  /// Privy identifies chains by slug, not chain id; when Privy adds a slug with no SDK case yet
+  /// (e.g. a testnet), map it here via `TransactionChain.custom(_:)`.
+  private static func privyChain(for chainId: Int) -> (chain: TransactionChain, nativeAsset: String)? {
+    switch chainId {
+    case 1: return (.ethereum, "eth")
+    case 10: return (.optimism, "eth")
+    case 56: return (.bsc, "bnb")
+    case 137: return (.polygon, "pol")
+    case 8453: return (.base, "eth")
+    case 42161: return (.arbitrum, "eth")
+    case 43114: return (.avalanche, "avax")
+    case 59144: return (.linea, "eth")
+    case 11155111: return (.sepolia, "eth")
+    default: return nil
+    }
   }
 
   // MARK: - Helpers

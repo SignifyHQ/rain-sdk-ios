@@ -102,6 +102,20 @@ actor PrivyManager {
     }
   }
 
+  // MARK: - Transactions
+
+  /// Fetches one page of transaction history for the signing wallet via Privy's indexer.
+  ///
+  /// Failures bubble up raw for the same reason as ``request(wallet:_:)``: pre-wrapping would
+  /// bypass error mapping downstream.
+  func getTransactions(
+    walletAddress: String?,
+    params: GetTransactionsParams
+  ) async throws -> PrivyTransactionsPage {
+    let wallet = try await Self.resolveWallet(source: source, override: walletAddress)
+    return try await wallet.getTransactions(params)
+  }
+
   // MARK: - Internals
 
   /// Issues an RPC request through the wallet's provider.

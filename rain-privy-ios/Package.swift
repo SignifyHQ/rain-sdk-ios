@@ -17,7 +17,7 @@ let package = Package(
     .package(path: "../rain-core-ios"),
     // Privy vendor SDK (binary xcframework, product "Privy", target "PrivySDK"). Owned here so
     // core never imports Privy — linking this module is what pulls it onto a client's graph.
-    .package(url: "https://github.com/privy-io/privy-ios", from: "2.12.0"),
+    .package(url: "https://github.com/privy-io/privy-ios", from: "2.14.0"),
   ],
   targets: [
     .target(

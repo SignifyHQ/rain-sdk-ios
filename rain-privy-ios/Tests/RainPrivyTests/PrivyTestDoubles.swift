@@ -47,6 +47,12 @@ final class FakeSigner: PrivyEthereumSigner, @unchecked Sendable {
   let address: String
   var requestResult: Result<String, Error>
   var requestDelayNs: UInt64 = 0
+  /// Results returned by successive `getTransactions` calls (consumed front-to-back; the last
+  /// entry repeats if calls outnumber entries). A failure entry throws for that call.
+  var transactionsResults: [Result<PrivyTransactionsPage, Error>] = [
+    .success(PrivyTransactionsPage(transactions: [], nextCursor: nil))
+  ]
+  private var transactionsCallCount = 0
 
   init(address: String, requestResult: Result<String, Error> = .success("0xHASH")) {
     self.address = address
@@ -74,6 +80,24 @@ final class FakeSigner: PrivyEthereumSigner, @unchecked Sendable {
   func switchChain(chainId: Int, rpcUrl: String?) async {
     record("switch:\(chainId)")
   }
+
+  func getTransactions(_ params: GetTransactionsParams) async throws -> PrivyTransactionsPage {
+    record(
+      "getTransactions:chain=\(params.chain)"
+        + ",assets=\(params.assets?.joined(separator: "+") ?? "nil")"
+        + ",tokens=\(params.tokens?.joined(separator: "+") ?? "nil")"
+        + ",limit=\(params.limit.map(String.init) ?? "nil")"
+        + ",cursor=\(params.cursor ?? "nil")"
+    )
+    return try transactionsResults[nextTransactionsResultIndex()].get()
+  }
+
+  private func nextTransactionsResultIndex() -> Int {
+    lock.lock(); defer { lock.unlock() }
+    let index = min(transactionsCallCount, transactionsResults.count - 1)
+    transactionsCallCount += 1
+    return index
+  }
 }
 
 // MARK: - Privy descriptor stub
@@ -83,6 +107,7 @@ final class FakeSigner: PrivyEthereumSigner, @unchecked Sendable {
 final class UnimplementedPrivy: Privy, @unchecked Sendable {
   func awaitReady() async { fatalError("unimplemented") }
   func getAuthState() async -> AuthState { fatalError("unimplemented") }
+  func getAuthStateWithoutRefresh() -> AuthState { fatalError("unimplemented") }
   var user: (any PrivyUser)? { fatalError("unimplemented") }
   func getUser() async -> (any PrivyUser)? { fatalError("unimplemented") }
   var authState: AuthState { fatalError("unimplemented") }
@@ -131,7 +156,7 @@ enum TestTokenStore {
     }
     func getTransactions(
       chainId: Int, limit: Int?, offset: Int?, order: WalletTransactionOrder?
-    ) async throws -> [WalletTransaction] {
+    ) async throws -> [RainCore.WalletTransaction] {
       throw RainSDKError.walletUnavailable
     }
   }
