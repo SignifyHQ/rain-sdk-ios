@@ -19,6 +19,16 @@ protocol TransactionBuilderProtocol {
     chainId: Int
   ) async throws -> BigUInt
   
+  /// Whether `walletAddress` is an admin of the collateral contract at `proxyAddress`.
+  /// - Returns: The contract's answer, or `nil` if the check could not be performed (RPC failure,
+  ///   or a collateral that exposes no `isAdmin`). Callers must treat `nil` as unknown and
+  ///   proceed, never as "not authorized".
+  func isCollateralAdmin(
+    proxyAddress: String,
+    walletAddress: String,
+    chainId: Int
+  ) async -> Bool?
+
   /// Build EIP-712 message structure
   /// - Parameters:
   ///   - chainId: The chain identifier

@@ -25,6 +25,20 @@ extension RainSdkManager {
 
     let walletAddress = try await walletProvider.address()
 
+    // `withdrawAsset` verifies the withdrawal signature against the collateral's admin set, so a
+    // non-admin signer reverts on-chain with `InvalidSignature()`. Only a definitive `false`
+    // blocks — an unknown result proceeds, so a check that cannot run never blocks a withdrawal.
+    if await transactionBuilderService.isCollateralAdmin(
+      proxyAddress: assetAddresses.proxyAddress,
+      walletAddress: walletAddress,
+      chainId: chainId
+    ) == false {
+      throw RainSDKError.walletNotAuthorized(
+        walletAddress: walletAddress,
+        proxyAddress: assetAddresses.proxyAddress
+      )
+    }
+
     guard let withdrawalSaltData = Data(base64Encoded: salt) else {
       throw RainSDKError.internalLogicError(details: "Failed to convert withdrawal salt base 64 string to Data")
     }

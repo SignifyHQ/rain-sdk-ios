@@ -1,0 +1,23 @@
+import Testing
+@testable import RainCore
+
+@Suite("RainChain")
+struct RainChainTests {
+
+  @Test("chain IDs mirror the Android RainChain constants")
+  func chainIdsMirrorAndroid() {
+    #expect(RainChain.avalancheMainnet == 43114)
+    #expect(RainChain.avalancheTestnet == 43113)
+    #expect(RainChain.solanaMainnet == 101)
+    #expect(RainChain.solanaTestnet == 102)
+    #expect(RainChain.solanaDevnet == 103)
+  }
+
+  @Test("Solana routing recognizes the public sentinel IDs")
+  func solanaSentinelsRoute() {
+    #expect(SolanaChains.isSolana(RainChain.solanaMainnet))
+    #expect(SolanaChains.isSolana(RainChain.solanaTestnet))
+    #expect(SolanaChains.isSolana(RainChain.solanaDevnet))
+    #expect(!SolanaChains.isSolana(RainChain.avalancheMainnet))
+  }
+}

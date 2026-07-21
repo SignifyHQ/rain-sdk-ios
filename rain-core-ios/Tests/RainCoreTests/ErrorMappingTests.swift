@@ -115,11 +115,41 @@ struct ErrorMappingTests {
       (.transactionSimulationFailed(underlying: underlying), "RAIN_403"),
       (.walletUnavailable, "RAIN_404"),
       (.withdrawalRevertedByNetwork, "RAIN_405"),
+      (.invalidAmount(amount: "1.005", reason: "too many decimals"), "RAIN_406"),
+      (.walletNotAuthorized(walletAddress: "0x1", proxyAddress: "0x2"), "RAIN_407"),
       (.providerError(underlying: underlying), "RAIN_501"),
       (.internalLogicError(details: "x"), "RAIN_502"),
     ]
     for (error, code) in expected {
       #expect(error.errorCode == code)
+      requireMappedCase(error)
+    }
+  }
+
+  /// Fails to compile when a `RainSDKError` case is added but not listed here.
+  private func requireMappedCase(_ error: RainSDKError) {
+    switch error {
+    case .sdkNotInitialized,
+         .invalidConfig,
+         .providerNotRegistered,
+         .invalidRpcUrl,
+         .rainApiNotConfigured,
+         .tokenExpired,
+         .unauthorized,
+         .networkError,
+         .apiError,
+         .signatureNotReady,
+         .noCollateralContracts,
+         .userRejected,
+         .insufficientFunds,
+         .transactionSimulationFailed,
+         .walletUnavailable,
+         .withdrawalRevertedByNetwork,
+         .invalidAmount,
+         .walletNotAuthorized,
+         .providerError,
+         .internalLogicError:
+      break
     }
   }
 }
