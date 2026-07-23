@@ -4,6 +4,19 @@ import Web3Core
 
 // MARK: Internal helpers for RainSdkManager (RainClient)
 extension RainSdkManager {
+  /// Maps an error thrown on a withdrawal flow (`withdrawCollateral` / `estimateWithdrawalFee`).
+  /// A simulation revert on this path means the network rejected the withdrawal itself (e.g. a
+  /// duplicate withdrawal or an already-used signature), so it surfaces as
+  /// `.withdrawalRevertedByNetwork` (RAIN_405) here and only here; plain sends and reads keep
+  /// `.transactionSimulationFailed` (RAIN_403) / their own codes.
+  func mapWithdrawalError(_ error: Error) -> RainSDKError {
+    let mapped = RainSDKError.from(underlying: error)
+    if case .transactionSimulationFailed = mapped {
+      return .withdrawalRevertedByNetwork
+    }
+    return mapped
+  }
+
   /// Builds withdrawal transaction params: EIP-712 message, admin signature via the backing
   /// provider, and calldata. Returns the wallet address and wallet transaction params ready for
   /// fee estimation or submission.
@@ -104,12 +117,11 @@ extension RainSdkManager {
       )
     }
 
-    let fee = try await estimatingProvider.estimateTransactionFee(
+    return try await estimatingProvider.estimateTransactionFee(
       chainId: chainId,
       walletAddress: address,
       params: params
     )
-    return Decimal(fee)
   }
 
   // MARK: - Transaction building (bound to this client's shared services)

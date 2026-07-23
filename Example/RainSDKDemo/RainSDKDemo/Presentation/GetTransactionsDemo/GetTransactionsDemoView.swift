@@ -379,13 +379,14 @@ private struct TransactionCardView: View {
     }
   }
 
-  private func formattedValue(_ value: Double) -> String {
+  private func formattedValue(_ value: Decimal) -> String {
     if value == 0 { return "0" }
-    if value < 0.0001 { return String(format: "%.8f", value) }
-    return String(format: "%.4f", value)
+    let double = NSDecimalNumber(decimal: value).doubleValue
+    if double < 0.0001 { return String(format: "%.8f", double) }
+    return String(format: "%.4f", double)
   }
 
-  private func valueColor(_ value: Double) -> Color {
+  private func valueColor(_ value: Decimal) -> Color {
     if value > 0 { return .green }
     if value < 0 { return .red }
     return .primary

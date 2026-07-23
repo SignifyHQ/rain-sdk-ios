@@ -46,6 +46,17 @@ struct AmountHelpersTests {
     }
   }
 
+  @Test("NaN amount throws invalidAmount instead of converting")
+  func nanAmountThrows() {
+    // Double.nan.asDecimal surfaces as Decimal.nan; it must never reach base units as 0.
+    #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+      try AmountHelpers.toBaseUnits(amount: Double.nan.asDecimal, decimals: 18)
+    }
+    #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+      try AmountHelpers.toBaseUnits(amount: Decimal.nan, decimals: 18)
+    }
+  }
+
   @Test("toHexString encodes large wei without trapping")
   func toHexStringDoesNotTrapOnLargeWei() {
     // 1e19 > Int64.max, so the old String(Int(self), radix: 16) trapped. 1e19 is an exact Double;

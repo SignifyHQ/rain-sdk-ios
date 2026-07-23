@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-import PortalSwift
+@testable import PortalSwift
 @testable import RainCore
 @testable import RainPortal
 
@@ -20,6 +20,25 @@ struct PortalErrorMappingTests {
   func testPortalUnauthorizedMapsToTokenExpired() {
     let mapped = RainSDKError.from(underlying: PortalRequestsError.unauthorized)
     #expect(mapped == RainSDKError.tokenExpired)
+  }
+
+  @Test("from(_:) maps PortalRpcError code 3 to transactionSimulationFailed, not withdrawalRevertedByNetwork")
+  func testPortalRpcErrorCode3MapsToSimulationFailed() {
+    let error = PortalRpcError(PortalProviderRpcResponseError(code: 3, message: "execution reverted"))
+    let mapped = RainSDKError.from(underlying: error)
+
+    // Code 3 only reaches this mapper from send / fee-estimation flows; the withdrawal-specific
+    // RAIN_405 classification happens in core, on the withdrawal paths only.
+    #expect(mapped == RainSDKError.transactionSimulationFailed(underlying: error))
+    #expect(mapped.errorCode == "RAIN_403")
+  }
+
+  @Test("from(_:) maps other PortalRpcError codes to providerError")
+  func testPortalRpcErrorOtherCodeMapsToProviderError() {
+    let error = PortalRpcError(PortalProviderRpcResponseError(code: -32000, message: "boom"))
+    let mapped = RainSDKError.from(underlying: error)
+
+    #expect(mapped == RainSDKError.providerError(underlying: error))
   }
 
   @Test("from(_:) maps PortalRequestsError.clientError to providerError")

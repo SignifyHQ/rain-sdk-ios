@@ -7,6 +7,16 @@ import RainCore
 /// Privy's EIP-1193 provider is reserved for custody (sign / send); everything read-only goes
 /// through here against the RPC endpoints Rain was configured with.
 final class PrivyRpcClient: Sendable {
+  /// What the RPC call is for; drives node-error classification.
+  enum CallPurpose: Sendable {
+    /// Read-only lookups (balances, gas price): node errors are infrastructure failures, never
+    /// simulation verdicts.
+    case read
+    /// Pre-broadcast simulation / estimation (`eth_call`, `eth_estimateGas`): reverts are real
+    /// verdicts about the transaction.
+    case simulation
+  }
+
   private let session: URLSession
   private let timeout: TimeInterval
 
@@ -19,7 +29,8 @@ final class PrivyRpcClient: Sendable {
   func callForHexResult(
     rpcUrl: String,
     method: String,
-    params: [Any]
+    params: [Any],
+    purpose: CallPurpose = .read
   ) async throws -> String {
     guard let url = URL(string: rpcUrl) else {
       throw RainSDKError.invalidRpcUrl(rpcUrl)
@@ -48,12 +59,7 @@ final class PrivyRpcClient: Sendable {
       if let error = response["error"] as? [String: Any] {
         let code = error["code"] as? Int ?? -1
         let message = error["message"] as? String ?? "Unknown RPC error"
-        // Preserve the node's own message; classified via RainSDKError.from below.
-        throw NSError(
-          domain: "eth.rpc",
-          code: code,
-          userInfo: [NSLocalizedDescriptionKey: message]
-        )
+        throw Self.classifyNodeError(code: code, message: message, purpose: purpose)
       }
 
       guard let result = response["result"] as? String else {
@@ -68,5 +74,35 @@ final class PrivyRpcClient: Sendable {
       RainLogger.error("Rain SDK: Privy JSON-RPC failure for \(method): \(error)")
       throw RainSDKError.from(underlying: error)
     }
+  }
+
+  /// Classifies a node JSON-RPC error by message, according to the call's purpose.
+  /// Simulation calls treat "revert" as a simulation verdict (checked before
+  /// "insufficient funds"); reads never do, since a revert on a read is an internal failure. No
+  /// user-rejection keyword mapping: node errors are never user actions. Anything unrecognized
+  /// falls back to `.internalLogicError` with the code and message preserved in the details.
+  private static func classifyNodeError(
+    code: Int,
+    message: String,
+    purpose: CallPurpose
+  ) -> RainSDKError {
+    let lowered = message.lowercased()
+    let details = "RPC error [\(code)]: \(message)"
+    switch purpose {
+    case .simulation:
+      if lowered.contains("revert") {
+        return .transactionSimulationFailed(
+          underlying: RainSDKError.internalLogicError(details: details)
+        )
+      }
+      if lowered.contains("insufficient funds") {
+        return .insufficientFunds(required: "unknown", available: "unknown")
+      }
+    case .read:
+      if lowered.contains("insufficient funds") {
+        return .insufficientFunds(required: "unknown", available: "unknown")
+      }
+    }
+    return .internalLogicError(details: details)
   }
 }

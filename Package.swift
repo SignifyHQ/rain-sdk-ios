@@ -8,7 +8,7 @@ import PackageDescription
 // The SDK is split into separate packages so a client links only the providers it uses:
 //   • rain-core-ios   — vendor-free port + registry + Rain domain logic + the Turnkey adapter
 //   • rain-portal-ios — the Portal MPC adapter (depends on rain-core-ios + PortalSwift)
-//   • rain-privy-ios  — the Privy embedded-key adapter (skeleton)
+//   • rain-privy-ios  — the Privy embedded-key adapter (RainCore + the Privy iOS SDK)
 //
 // New integrations should depend on the specific provider package(s) they need — see each
 // package's own Package.swift. This root package is a **migration umbrella**: it vends a

@@ -24,7 +24,9 @@ struct TransactionBuildingTests {
       walletProvider: StubWalletProvider(),
       networkConfigs: configs,
       transactionBuilder: builder,
-      tokenStore: tokenStore
+      tokenStore: tokenStore,
+      providerId: ProviderId("stub"),
+      capabilities: []
     )
   }
 

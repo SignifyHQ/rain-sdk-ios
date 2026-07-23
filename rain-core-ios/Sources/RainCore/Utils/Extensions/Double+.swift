@@ -20,8 +20,11 @@ extension Double {
 
   /// Shortest exact `Decimal` matching this value's printed form (e.g. `0.1` → `Decimal(string: "0.1")`).
   /// Use at `Double → Decimal` boundaries; avoids `Decimal(aDouble)`, which would capture the
-  /// full float error (`Decimal(0.1)` is `0.10000000000000000555…`).
+  /// full float error (`Decimal(0.1)` is `0.10000000000000000555…`). Non-finite input (NaN,
+  /// ±infinity) has no `Decimal` counterpart and surfaces as `Decimal.nan`, so downstream amount
+  /// validation rejects it as invalid instead of treating it as 0.
   var asDecimal: Decimal {
-    Decimal(string: String(self)) ?? 0
+    guard isFinite else { return .nan }
+    return Decimal(string: String(self)) ?? .nan
   }
 }

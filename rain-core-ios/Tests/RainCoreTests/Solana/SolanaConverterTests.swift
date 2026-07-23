@@ -33,9 +33,9 @@ struct SolanaConverterTests {
 
   @Test("lamportsToSol divides by 1e9")
   func lamportsToSol() {
-    // The Decimal form is exact; the Double form carries inherent floating-point drift.
+    // Both overloads (BigUInt and UInt64) are exact Decimal divisions.
     #expect(SolanaConverter.lamportsToSol(BigUInt(2_500_000_000)).description == "2.5")
     #expect(SolanaConverter.lamportsToSol(BigUInt(1)).description == "0.000000001")
-    #expect(abs(SolanaConverter.lamportsToSolDouble(BigUInt(1)) - 0.000000001) < 1e-15)
+    #expect(SolanaConverter.lamportsToSol(UInt64(1)).description == "0.000000001")
   }
 }

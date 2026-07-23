@@ -51,9 +51,13 @@ enum PortalErrorMapping {
   }
 
   private static func mapPortalRpcError(_ error: PortalRpcError) -> RainSDKError {
-    // Code `3` is returned for "execution reverted" — not declared by PortalSwift.
+    // Code `3` is returned for "execution reverted" (not declared by PortalSwift). Only send and
+    // fee-estimation flows can surface it here: contract-balance reads wrap Portal errors into
+    // `.providerError` inside the adapter before core's mapper runs, and the remaining reads
+    // (eth_getBalance, assets, transaction history) never execute EVM code. Withdrawal flows
+    // translate this into `.withdrawalRevertedByNetwork` (RAIN_405) in core.
     if error.code == 3 {
-      return .withdrawalRevertedByNetwork
+      return .transactionSimulationFailed(underlying: error)
     }
     return .providerError(underlying: error)
   }

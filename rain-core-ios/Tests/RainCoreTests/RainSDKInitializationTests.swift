@@ -13,7 +13,7 @@ struct SDKInitializationTests {
   /// `StubWalletProvider`. Lets these tests exercise builder validation without a vendor SDK.
   private struct StubProvider: RainProvider {
     var id: ProviderId = .turnkey
-    var capabilities: Set<Capability> { [] }
+    var capabilities: Set<Capability> = []
     func create(context: ProviderContext) async throws -> any RainWalletProvider {
       StubWalletProvider()
     }
@@ -124,6 +124,61 @@ struct SDKInitializationTests {
       .register(StubProvider())
       .build()
     #expect(sdk.providerIds == [.turnkey])
+  }
+
+  // MARK: - Client metadata
+
+  @Test("resolved client exposes providerId, capabilities and isInitialized")
+  func testClientMetadata() async throws {
+    let sdk = try RainSdk.builder()
+      .rpcEndpoints([NetworkConfig.testConfig(chainId: 1)])
+      .register(StubProvider(capabilities: [.export, .recovery]))
+      .build()
+
+    let client = try await sdk.provider(.turnkey)
+    #expect(client.providerId == .turnkey)
+    #expect(client.capabilities == [.export, .recovery])
+    #expect(client.isInitialized)
+  }
+
+  // MARK: - reset()
+
+  @Test("reset evicts resolved clients and clears Rain API credentials; the SDK stays usable")
+  func testReset() async throws {
+    let sdk = try RainSdk.builder()
+      .rpcEndpoints([NetworkConfig.testConfig(chainId: 1)])
+      .register(StubProvider())
+      .rainApiCredentials(apiKey: "key", userId: "user")
+      .build()
+
+    let first = try await sdk.provider(.turnkey)
+    #expect(sdk.isRainApiConfigured)
+
+    sdk.reset()
+    #expect(!sdk.isRainApiConfigured)
+
+    // The instance stays usable after reset: the next resolution re-runs create(context:)
+    // and yields a fresh client.
+    let second = try await sdk.provider(.turnkey)
+    let firstIdentity = ObjectIdentifier(first as AnyObject)
+    let secondIdentity = ObjectIdentifier(second as AnyObject)
+    #expect(firstIdentity != secondIdentity)
+  }
+
+  @Test("reset is idempotent and client-level reset is a safe no-op")
+  func testResetIdempotent() async throws {
+    let sdk = try RainSdk.builder()
+      .rpcEndpoints([NetworkConfig.testConfig(chainId: 1)])
+      .register(StubProvider())
+      .build()
+
+    let client = try await sdk.provider(.turnkey)
+    client.reset() // parity no-op; must not throw or corrupt the client
+    _ = try await client.getWalletAddress()
+
+    sdk.reset()
+    sdk.reset()
+    _ = try await sdk.provider(.turnkey)
   }
 
   // MARK: - Turnkey test seam

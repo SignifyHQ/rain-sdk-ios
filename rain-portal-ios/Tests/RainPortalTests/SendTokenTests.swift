@@ -119,7 +119,9 @@ struct SendTokenTests {
       walletProvider: stub,
       networkConfigs: configs,
       transactionBuilder: MockTransactionBuilderService(networkConfigs: configs),
-      tokenStore: tokenStore
+      tokenStore: tokenStore,
+      providerId: ProviderId("stub"),
+      capabilities: []
     )
 
     let unknownToken = "0x000000000000000000000000000000000000dEaD"

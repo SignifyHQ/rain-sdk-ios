@@ -21,7 +21,7 @@ public extension RainClient {
       chainId: chainId,
       contractAddress: contractAddress,
       to: to,
-      amount: Decimal(amount),
+      amount: amount.asDecimal,
       decimals: decimals
     ).transactionHash
   }
@@ -42,7 +42,7 @@ public extension RainClient {
       chainId: chainId,
       contractAddress: contractAddress,
       to: to,
-      amount: Decimal(amount),
+      amount: amount.asDecimal,
       decimals: decimals
     )
   }
@@ -50,7 +50,7 @@ public extension RainClient {
   /// Deprecated alias for ``sendNative(chainId:to:amount:)``.
   @available(*, deprecated, message: "Renamed to sendNative. It returns RainTokenTransferResult; read .transactionHash for the hash.")
   func sendNativeToken(chainId: Int, to: String, amount: Double) async throws -> String {
-    try await sendNative(chainId: chainId, to: to, amount: Decimal(amount)).transactionHash
+    try await sendNative(chainId: chainId, to: to, amount: amount.asDecimal).transactionHash
   }
 
   /// Deprecated. Use ``getBalance(chainId:token:)`` with `.native` and read `.decimalAmount`.

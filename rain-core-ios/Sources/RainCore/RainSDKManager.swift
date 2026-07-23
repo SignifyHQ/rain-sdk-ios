@@ -15,16 +15,35 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
   let transactionBuilderService: TransactionBuilderProtocol
   private let tokenStore: TokenMetadataStore
 
+  let providerId: ProviderId
+  let capabilities: Set<Capability>
+
   init(
     walletProvider: any RainWalletProvider,
     networkConfigs: [NetworkConfig],
     transactionBuilder: TransactionBuilderProtocol,
-    tokenStore: TokenMetadataStore
+    tokenStore: TokenMetadataStore,
+    providerId: ProviderId,
+    capabilities: Set<Capability>
   ) {
     self.walletProvider = walletProvider
     self.networkConfigs = networkConfigs
     self.transactionBuilderService = transactionBuilder
     self.tokenStore = tokenStore
+    self.providerId = providerId
+    self.capabilities = capabilities
+  }
+
+  // MARK: - Client metadata
+
+  /// A `RainSdkManager` only exists once its provider resolved against a validated
+  /// configuration, so this is constant `true`.
+  var isInitialized: Bool { true }
+
+  /// No-op: a resolved client is immutable on iOS (see the ``RainClient/reset()`` doc comment).
+  /// `RainSdk.reset()` is the operation that actually evicts resolved clients.
+  func reset() {
+    RainLogger.info("Rain SDK: RainClient.reset() called; resolved clients are immutable on iOS, use RainSdk.reset() to evict them")
   }
 
   // MARK: - Collateral / fees
@@ -54,6 +73,25 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
       let txHash = try await walletProvider.sendTransaction(chainId: chainId, params: transactionParams)
       RainLogger.info("Rain SDK: Withdrawal transaction submitted. Hash: \(txHash)")
       return txHash
+    } catch {
+      throw mapWithdrawalError(error)
+    }
+  }
+
+  func estimateGas(
+    chainId: Int,
+    from: String,
+    to: String,
+    data: String
+  ) async throws -> Decimal {
+    do {
+      let params = WalletTransactionParams(
+        from: from,
+        to: to,
+        value: 0.ethToWei.toHexString,
+        data: data
+      )
+      return try await estimateTransactionFee(chainId: chainId, address: from, params: params)
     } catch {
       throw RainSDKError.from(underlying: error)
     }
@@ -85,7 +123,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
         params: transactionParams
       )
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw mapWithdrawalError(error)
     }
   }
 

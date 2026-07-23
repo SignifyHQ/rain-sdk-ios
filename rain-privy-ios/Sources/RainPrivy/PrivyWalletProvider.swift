@@ -60,10 +60,21 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
       _ = try await rpcClient.callForHexResult(
         rpcUrl: rpcUrl,
         method: "eth_call",
-        params: [rpcTransactionObject(from: params), "latest"]
+        params: [rpcTransactionObject(from: params), "latest"],
+        purpose: .simulation
       )
     } catch {
       if error is CancellationError { throw error }
+      // Node errors the RPC client already classified (insufficient funds, simulation failure)
+      // surface as themselves; anything else is a simulation failure.
+      if let rainError = error as? RainSDKError {
+        switch rainError {
+        case .insufficientFunds, .transactionSimulationFailed:
+          throw rainError
+        default:
+          break
+        }
+      }
       throw RainSDKError.transactionSimulationFailed(underlying: error)
     }
 
@@ -99,21 +110,26 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
     chainId: Int,
     walletAddress: String,
     params: WalletTransactionParams
-  ) async throws -> Double {
+  ) async throws -> Decimal {
     let rpcUrl = try rpcUrl(for: chainId)
     let gasLimitHex = try await rpcClient.callForHexResult(
       rpcUrl: rpcUrl,
       method: "eth_estimateGas",
-      params: [rpcTransactionObject(from: params)]
+      params: [rpcTransactionObject(from: params)],
+      purpose: .simulation
     )
     let gasPriceHex = try await rpcClient.callForHexResult(
       rpcUrl: rpcUrl,
       method: "eth_gasPrice",
       params: []
     )
-    let gasLimit = EthereumConverter.parseHexToDouble(gasLimitHex, decimals: 0)
-    let gasPriceWei = EthereumConverter.parseHexToDouble(gasPriceHex, decimals: 0)
-    return gasLimit * gasPriceWei.weiToEth
+    // Exact wei math: multiply as BigUInt, divide to native units as Decimal.
+    let gasLimit = try EthereumConverter.parseHexToBigUIntStrict(gasLimitHex)
+    let gasPriceWei = try EthereumConverter.parseHexToBigUIntStrict(gasPriceHex)
+    return EthereumConverter.baseUnitsToDecimal(
+      gasLimit * gasPriceWei,
+      decimals: Constants.ERC20.defaultDecimals
+    )
   }
 
   // MARK: - Balances
@@ -206,7 +222,7 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
     return Balance(
       token: .native,
       chainId: chainId,
-      rawAmount: EthereumConverter.parseHexToBigUInt(hex),
+      rawAmount: try EthereumConverter.parseHexToBigUIntStrict(hex),
       decimals: native.decimals,
       symbol: native.symbol,
       name: native.name
@@ -230,7 +246,7 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
     return Balance(
       token: .contract(address: address),
       chainId: chainId,
-      rawAmount: EthereumConverter.parseHexToBigUInt(hex),
+      rawAmount: try EthereumConverter.parseHexToBigUIntStrict(hex),
       decimals: info.decimals,
       symbol: info.symbol,
       name: info.name
@@ -251,13 +267,14 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
   ///
   /// Privy's endpoint requires exactly one of an `assets` or `tokens` filter per request, so
   /// full history is assembled from one native-asset query plus token-address queries over the
-  /// registered tokens (chunked to the server's 10-filter cap). The native query is essential
-  /// (its failure propagates); token queries are best-effort, mirroring `getBalances`. Privy
-  /// paginates by cursor while the SDK contract is limit/offset, so each query collects pages
-  /// until `offset + limit` rows are gathered (or history is exhausted); the merged rows are
-  /// deduped, sorted by `createdAt` per `order` (newest first by default, matching Turnkey) and
-  /// sliced. Chains Privy does not index (e.g. Base Sepolia) return an empty list rather than
-  /// failing, preserving the previous always-empty behavior.
+  /// registered tokens (chunked to the server's 10-filter cap). Every query is essential: any
+  /// failure (native or token chunk) fails the whole call rather than returning silently
+  /// partial history, bubbling up raw so ``PrivyErrorMapping`` / `RainSDKError.from` classify
+  /// it at the SDK boundary. Privy paginates by cursor while the SDK contract is limit/offset,
+  /// so each query collects pages until `offset + limit` rows are gathered (or history is
+  /// exhausted); the merged rows are deduped, sorted by `createdAt` per `order` (newest first
+  /// by default, matching Turnkey) and sliced. Chains Privy does not index (e.g. Base Sepolia)
+  /// return an empty list rather than failing, preserving the previous always-empty behavior.
   func getTransactions(
     chainId: Int,
     limit: Int?,
@@ -279,17 +296,13 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
     )
     let tokenAddresses = await tokenStore.registeredTokens(for: chainId).map(\.address)
     for chunk in Self.chunks(tokenAddresses, size: Self.maxTransactionFiltersPerRequest) {
-      do {
-        collected += try await collectTransactions(
-          walletAddress: walletAddress,
-          chain: chain.chain,
-          assets: nil,
-          tokens: chunk,
-          needed: needed
-        )
-      } catch {
-        if error is CancellationError { throw error }
-      }
+      collected += try await collectTransactions(
+        walletAddress: walletAddress,
+        chain: chain.chain,
+        assets: nil,
+        tokens: chunk,
+        needed: needed
+      )
     }
 
     var seen = Set<String>()
@@ -351,9 +364,11 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
     // `asset` is either a named asset ("eth", "usdc") or a token contract address; an address
     // means a token transfer, which carries its contract in `rawContract` like Alchemy's shape.
     let assetIsAddress = details?.asset.hasPrefix("0x") == true
-    let value = details.flatMap { detail -> Double? in
-      guard let raw = Double(detail.rawValue) else { return nil }
-      return raw / pow(10, Double(detail.rawValueDecimals))
+    let value = details.flatMap { detail -> Decimal? in
+      guard let raw = Decimal(string: detail.rawValue) else { return nil }
+      return NSDecimalNumber(decimal: raw)
+        .multiplying(byPowerOf10: Int16(-detail.rawValueDecimals))
+        .decimalValue
     }
     return RainCore.WalletTransaction(
       blockNum: "",

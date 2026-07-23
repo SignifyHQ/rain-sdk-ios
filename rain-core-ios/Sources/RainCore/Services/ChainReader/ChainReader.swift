@@ -15,8 +15,8 @@ import Foundation
 /// `chainId: Int` matches the rest of the SDK's EVM-centric typing.
 internal protocol ChainReader: Sendable {
   /// Native balance (e.g. ETH on Ethereum, AVAX on Avalanche).
-  /// - Returns: Balance in human-readable form (e.g. `1.5` for 1.5 ETH).
-  func getNativeBalance(chainId: Int, walletAddress: String) async throws -> Double
+  /// - Returns: Balance in human-readable form (e.g. `1.5` for 1.5 ETH), as an exact `Decimal`.
+  func getNativeBalance(chainId: Int, walletAddress: String) async throws -> Decimal
 
   /// Single ERC-20 balance via `balanceOf(address)`.
   /// - Parameter decimals: Token decimal places; defaults to `Constants.ERC20.defaultDecimals` if nil.
@@ -25,7 +25,7 @@ internal protocol ChainReader: Sendable {
     tokenAddress: String,
     walletAddress: String,
     decimals: Int?
-  ) async throws -> Double
+  ) async throws -> Decimal
 
   /// Batched balances for many tokens on one chain, in a single round-trip when possible.
   /// - Parameter tokens: ERC-20 tokens to query. The native balance is always included.

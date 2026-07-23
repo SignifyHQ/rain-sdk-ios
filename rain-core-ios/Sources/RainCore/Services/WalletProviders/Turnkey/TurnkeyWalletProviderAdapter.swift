@@ -414,7 +414,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
           hash: txHash ?? draft.id,
           from: draft.from,
           to: draft.to,
-          value: decimalStringToDouble(
+          value: decimalStringToDecimal(
             balance: draft.value,
             decimals: Self.AdapterConstants.defaultNativeDecimals
           ),
@@ -513,7 +513,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
         hash: draft.sendTransactionStatusId ?? draft.id,
         from: draft.from,
         to: draft.to,
-        value: draft.lamports.map { SolanaConverter.lamportsToSolDouble($0) },
+        value: draft.lamports.map { SolanaConverter.lamportsToSol($0) },
         erc721TokenId: nil,
         erc1155Metadata: nil,
         tokenId: nil,
@@ -682,7 +682,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     chainId: Int,
     walletAddress: String,
     params: WalletTransactionParams
-  ) async throws -> Double {
+  ) async throws -> Decimal {
     let estimateHex = try await rpcCallForHex(
       chainId: chainId,
       method: "eth_estimateGas",
@@ -694,10 +694,14 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       params: []
     )
 
-    let gasLimit = EthereumConverter.parseHexToDouble(estimateHex, decimals: 0)
-    let gasPriceWei = EthereumConverter.parseHexToDouble(gasPriceHex, decimals: 0)
+    // Exact wei math: multiply as BigUInt, divide to native units as Decimal.
+    let gasLimit = try EthereumConverter.parseHexToBigUIntStrict(estimateHex)
+    let gasPriceWei = try EthereumConverter.parseHexToBigUIntStrict(gasPriceHex)
 
-    return gasLimit * gasPriceWei.weiToEth
+    return EthereumConverter.baseUnitsToDecimal(
+      gasLimit * gasPriceWei,
+      decimals: AdapterConstants.defaultNativeDecimals
+    )
   }
 
   private func resolveSessionAndClient() throws -> (Session, any TurnkeyClientProtocol) {
@@ -926,22 +930,25 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     return networkConfig.rpcUrl
   }
 
-  private func decimalStringToDouble(
+  private func decimalStringToDecimal(
     balance: String?,
     decimals: Int
-  ) -> Double {
+  ) -> Decimal {
     guard let balance, !balance.isEmpty else {
       return 0
     }
 
     let value = NSDecimalNumber(string: balance)
+    guard value != NSDecimalNumber.notANumber else {
+      return 0
+    }
     let divisor = NSDecimalNumber(
       mantissa: 1,
       exponent: Int16(decimals),
       isNegative: false
     )
 
-    return value.dividing(by: divisor).doubleValue
+    return value.dividing(by: divisor).decimalValue
   }
 
   private func decimalString(fromHex hex: String) -> String {

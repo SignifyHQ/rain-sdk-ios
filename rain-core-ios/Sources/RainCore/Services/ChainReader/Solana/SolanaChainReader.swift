@@ -18,10 +18,10 @@ internal final class SolanaChainReader: ChainReader, @unchecked Sendable {
     self.init(solanaRpcClient: SolanaRpcClient(jsonRpcClient: jsonRpcClient, networkConfigs: networkConfigs))
   }
 
-  func getNativeBalance(chainId: Int, walletAddress: String) async throws -> Double {
+  func getNativeBalance(chainId: Int, walletAddress: String) async throws -> Decimal {
     try validate(solanaAddress: walletAddress)
     let lamports = try await solanaRpcClient.getBalanceLamports(chainId: chainId, address: walletAddress)
-    return SolanaConverter.lamportsToSolDouble(lamports)
+    return SolanaConverter.lamportsToSol(lamports)
   }
 
   func getBalance(
@@ -63,7 +63,7 @@ internal final class SolanaChainReader: ChainReader, @unchecked Sendable {
     tokenAddress: String,
     walletAddress: String,
     decimals: Int?
-  ) async throws -> Double {
+  ) async throws -> Decimal {
     throw RainSDKError.internalLogicError(details: "ERC-20 reads are not supported on Solana")
   }
 

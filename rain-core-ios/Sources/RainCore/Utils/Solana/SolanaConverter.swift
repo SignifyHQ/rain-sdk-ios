@@ -37,13 +37,22 @@ internal enum SolanaConverter {
     return raw.dividing(by: divisor).decimalValue
   }
 
-  /// `lamportsToSol` as a `Double`, for the `ChainReader.getNativeBalance` Double surface.
+  /// `UInt64` overload (e.g. lamports decoded from a transaction), avoiding a `BigUInt(UInt64)`
+  /// conversion that is ambiguous once BigInt is in module scope.
+  static func lamportsToSol(_ lamports: UInt64) -> Decimal {
+    let raw = NSDecimalNumber(value: lamports)
+    let divisor = NSDecimalNumber(mantissa: 1, exponent: Int16(solDecimals), isNegative: false)
+    return raw.dividing(by: divisor).decimalValue
+  }
+
+  /// `lamportsToSol` as a `Double`. Deprecated: use `lamportsToSol(_:)`.
+  @available(*, deprecated, message: "Use lamportsToSol(_:): Double loses precision above 2^53 lamports.")
   static func lamportsToSolDouble(_ lamports: BigUInt) -> Double {
     NSDecimalNumber(decimal: lamportsToSol(lamports)).doubleValue
   }
 
-  /// `UInt64` overload (e.g. lamports decoded from a transaction), avoiding a `BigUInt(UInt64)`
-  /// conversion that is ambiguous once BigInt is in module scope.
+  /// `lamportsToSolDouble` for `UInt64` input. Deprecated: use ``lamportsToSol(_:)``.
+  @available(*, deprecated, message: "Use lamportsToSol(_:): Double loses precision above 2^53 lamports.")
   static func lamportsToSolDouble(_ lamports: UInt64) -> Double {
     Double(lamports) / Double(lamportsPerSol)
   }
