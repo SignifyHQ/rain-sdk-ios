@@ -514,7 +514,7 @@ class RainSDKService: ObservableObject {
     limit: Int? = nil,
     offset: Int? = nil,
     order: WalletTransactionOrder? = nil
-  ) async throws -> [WalletTransaction] {
+  ) async throws -> [RainCore.WalletTransaction] {
     try await requireClient().getTransactions(
       chainId: chainId,
       limit: limit,

@@ -511,8 +511,8 @@ struct TurnkeyAdapterTests {
       expiresAt: "1735689600"
     )
 
-    let expectedFee = Decimal(20_000_000_000.0 / pow(10.0, 18.0) * 21_000.0)
-    #expect(fee == expectedFee)
+    // 21_000 gas × 20 gwei = 420_000_000_000_000 wei = exactly 0.00042 native units.
+    #expect(fee == Decimal(string: "0.00042"))
   }
 
   @Test("estimateWithdrawalFee with Turnkey maps RPC network failures to networkError")
@@ -536,6 +536,42 @@ struct TurnkeyAdapterTests {
         salt: TestFixtures.validSaltBase64,
         signature: TestFixtures.validSignatureHex,
         expiresAt: "1735689600"
+      )
+    }
+  }
+
+  // MARK: - estimateGas with Turnkey
+
+  @Test("estimateGas with Turnkey computes gas × price for arbitrary calldata")
+  func testEstimateGasTurnkey() async throws {
+    MockURLProtocol.install()
+    defer { MockURLProtocol.reset() }
+    MockURLProtocol.stub(method: "eth_estimateGas", result: "0x5208") // 21000
+    MockURLProtocol.stub(method: "eth_gasPrice", result: "0x4a817c800") // 20 gwei
+
+    let (manager, _, _) = TestManagers.turnkeyManager()
+
+    let fee = try await manager.estimateGas(
+      chainId: 1,
+      from: TestFixtures.walletAddress,
+      to: TestFixtures.contractAddress,
+      data: "0xdeadbeef"
+    )
+
+    // 21_000 gas × 20 gwei = 420_000_000_000_000 wei = exactly 0.00042 native units.
+    #expect(fee == Decimal(string: "0.00042"))
+  }
+
+  @Test("estimateGas throws internalLogicError when the provider cannot estimate fees")
+  func testEstimateGasUnsupportedProvider() async throws {
+    let (manager, _) = try await TestManagers.stubProviderManager()
+
+    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+      _ = try await manager.estimateGas(
+        chainId: 1,
+        from: TestFixtures.walletAddress,
+        to: TestFixtures.contractAddress,
+        data: "0x"
       )
     }
   }

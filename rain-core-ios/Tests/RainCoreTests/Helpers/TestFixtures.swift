@@ -71,7 +71,9 @@ enum TestManagers {
       walletProvider: adapter,
       networkConfigs: configs,
       transactionBuilder: resolvedBuilder,
-      tokenStore: tokenStore
+      tokenStore: tokenStore,
+      providerId: .turnkey,
+      capabilities: [.multiChain, .biometricGate]
     )
     return (manager, resolvedTurnkey, resolvedBuilder)
   }
@@ -88,7 +90,9 @@ enum TestManagers {
       walletProvider: stub,
       networkConfigs: configs,
       transactionBuilder: builder,
-      tokenStore: tokenStore
+      tokenStore: tokenStore,
+      providerId: ProviderId("stub"),
+      capabilities: []
     )
     return (manager, stub)
   }

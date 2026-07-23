@@ -8,6 +8,25 @@ import Web3
 /// Wallet-agnostic building (EIP-712 message, withdraw calldata, transaction parameters) lives on
 /// ``RainSdk`` instead, since it needs no resolved provider. Mirrors Android's `RainClient`.
 public protocol RainClient: Sendable {
+  // MARK: - Client metadata
+
+  /// Identifier of the provider backing this client (e.g. ``ProviderId/portal``).
+  var providerId: ProviderId { get }
+
+  /// Optional behaviours the backing provider supports (see ``Capability``).
+  var capabilities: Set<Capability> { get }
+
+  /// Whether the SDK's chain configuration is set up. A `RainClient` only exists once its
+  /// provider has resolved against a validated configuration, so this is always `true` for a
+  /// live client.
+  var isInitialized: Bool { get }
+
+  /// Clears client-held state. A resolved client is immutable (configuration and the backing
+  /// provider are fixed at resolution), so there is nothing to tear down at this level; the
+  /// method is idempotent. Prefer ``RainSdk/reset()``, which evicts resolved clients so they
+  /// re-resolve on next access.
+  func reset()
+
   // MARK: - Collateral / fees
 
   /// Executes a collateral withdrawal transaction on-chain: builds the calldata, obtains the
@@ -22,6 +41,21 @@ public protocol RainClient: Sendable {
     expiresAt: String,
     nonce: BigUInt?
   ) async throws -> String
+
+  /// Estimates the total fee (estimated gas × gas price) to execute an arbitrary transaction,
+  /// in the chain's native token (e.g. ETH, AVAX).
+  ///
+  /// - Parameters:
+  ///   - chainId: Target network chain ID.
+  ///   - from: Sender wallet address.
+  ///   - to: Target contract address.
+  ///   - data: Hex-encoded transaction calldata.
+  func estimateGas(
+    chainId: Int,
+    from: String,
+    to: String,
+    data: String
+  ) async throws -> Decimal
 
   /// Estimates the total fee (gas cost) to execute a collateral withdrawal, in the chain's
   /// native token.

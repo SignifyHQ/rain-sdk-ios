@@ -75,7 +75,7 @@ final class MockPortal: PortalRequestProtocol {
         // Return a mock transaction hash
         resultValue = "0x" + String(repeating: "a", count: 64)
       case .eth_getBalance:
-        // Return wei as decimal string (1e18 = 1 ETH) so adapter's result?.asDouble?.weiToEth yields 1.0
+        // Return wei as decimal string (1e18 = 1 ETH) so the adapter's exact BigUInt/Decimal parse yields 1.0
         resultValue = PortalProviderRpcResponse(jsonrpc: "json", result: "1000000000000000000")
       default:
         resultValue = nil

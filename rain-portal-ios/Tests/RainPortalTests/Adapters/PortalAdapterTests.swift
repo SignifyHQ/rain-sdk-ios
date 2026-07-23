@@ -324,8 +324,72 @@ struct PortalAdapterTests {
       expiresAt: "1735689600"
     )
 
-    let expectedFee = Decimal(20_000_000_000.0 / pow(10.0, 18.0) * 21_000.0)
-    #expect(fee == expectedFee)
+    // 21_000 gas × 20 gwei = 420_000_000_000_000 wei = exactly 0.00042 native units.
+    #expect(fee == Decimal(string: "0.00042"))
+  }
+
+  @Test("estimateGas with Portal returns gasPrice × gasLimit fee for arbitrary calldata")
+  func testEstimateGasSuccess() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+
+    let chainIdString = "eip155:1"
+    mockPortal.setMockResponse(chainId: chainIdString, method: .eth_estimateGas, result: "21000")
+    mockPortal.setMockResponse(chainId: chainIdString, method: .eth_gasPrice, result: "20000000000")
+
+    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
+
+    let fee = try await manager.estimateGas(
+      chainId: 1,
+      from: TestFixtures.walletAddress,
+      to: TestFixtures.contractAddress,
+      data: "0xdeadbeef"
+    )
+
+    // 21_000 gas × 20 gwei = 420_000_000_000_000 wei = exactly 0.00042 native units.
+    #expect(fee == Decimal(string: "0.00042"))
+  }
+
+  @Test("estimateGas accepts integral float-formatted gas values")
+  func testEstimateGasAcceptsIntegralFloatStrings() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+
+    let chainIdString = "eip155:1"
+    // Some transports render integral gas values as floats; the old Double path tolerated these.
+    mockPortal.setMockResponse(chainId: chainIdString, method: .eth_estimateGas, result: "21000.0")
+    mockPortal.setMockResponse(chainId: chainIdString, method: .eth_gasPrice, result: "20000000000.0")
+
+    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
+
+    let fee = try await manager.estimateGas(
+      chainId: 1,
+      from: TestFixtures.walletAddress,
+      to: TestFixtures.contractAddress,
+      data: "0xdeadbeef"
+    )
+
+    // 21_000 gas × 20 gwei = 420_000_000_000_000 wei = exactly 0.00042 native units.
+    #expect(fee == Decimal(string: "0.00042"))
+  }
+
+  @Test("estimateGas rejects fractional and malformed gas values")
+  func testEstimateGasRejectsMalformedStrings() async throws {
+    for malformed in ["21000.5", "21000.0abc", "-21000.0", "not-a-number"] {
+      let mockPortal = MockPortal()
+      mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+      mockPortal.setMockResponse(chainId: "eip155:1", method: .eth_estimateGas, result: malformed)
+      let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
+
+      await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+        _ = try await manager.estimateGas(
+          chainId: 1,
+          from: TestFixtures.walletAddress,
+          to: TestFixtures.contractAddress,
+          data: "0xdeadbeef"
+        )
+      }
+    }
   }
 
   @Test("withdrawCollateral with Portal propagates sign error")

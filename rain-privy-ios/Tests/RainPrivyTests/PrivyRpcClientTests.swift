@@ -3,8 +3,8 @@ import Foundation
 import RainCore
 @testable import RainPrivy
 
-/// Wire-format coverage: node `error` objects and non-JSON bodies classify through
-/// `RainSDKError.from(underlying:)`.
+/// Wire-format coverage: node `error` objects classify purpose-aware inside the client,
+/// transport failures and non-JSON bodies go through `RainSDKError.from(underlying:)`.
 @Suite("Privy RPC Client Tests")
 struct PrivyRpcClientTests {
   private func client() -> PrivyRpcClient {
@@ -21,7 +21,7 @@ struct PrivyRpcClientTests {
     #expect(result == "0x2a")
   }
 
-  @Test("surfaces a JSON-RPC error object with its code and message")
+  @Test("surfaces an unrecognized JSON-RPC error object as internalLogicError with code and message")
   func rpcErrorObject() async {
     let host = "rpc-err.rpc"
     StubURLProtocol.setHandler(host: host) { _ in RpcStub.error(code: -32000, message: "boom") }
@@ -31,11 +31,80 @@ struct PrivyRpcClientTests {
         rpcUrl: "https://\(host)/", method: "eth_call", params: [])
       Issue.record("expected an error")
     } catch let error as RainSDKError {
-      // The node's own message must survive classification (send-path simulation relies on it).
-      #expect(error.errorCode == "RAIN_501")
+      // The node's own code and message must survive classification in the details.
+      #expect(error.errorCode == "RAIN_502")
       #expect(error.localizedDescription.contains("boom"))
+      #expect(error.localizedDescription.contains("-32000"))
     } catch {
       Issue.record("expected RainSDKError, got \(error)")
+    }
+  }
+
+  // MARK: - Purpose-aware node-error classification
+
+  @Test("simulation: a revert maps to transactionSimulationFailed")
+  func simulationRevertClassifies() async {
+    let host = "rpc-sim-revert.rpc"
+    StubURLProtocol.setHandler(host: host) { _ in
+      RpcStub.error(code: 3, message: "execution reverted")
+    }
+
+    await #expect(throws: RainSDKError.transactionSimulationFailed(underlying: NSError(domain: "", code: 0))) {
+      _ = try await client().callForHexResult(
+        rpcUrl: "https://\(host)/", method: "eth_call", params: [], purpose: .simulation)
+    }
+  }
+
+  @Test("simulation: revert is checked before insufficient funds")
+  func simulationRevertBeatsInsufficient() async {
+    let host = "rpc-sim-order.rpc"
+    StubURLProtocol.setHandler(host: host) { _ in
+      RpcStub.error(code: 3, message: "execution reverted: insufficient funds for transfer")
+    }
+
+    await #expect(throws: RainSDKError.transactionSimulationFailed(underlying: NSError(domain: "", code: 0))) {
+      _ = try await client().callForHexResult(
+        rpcUrl: "https://\(host)/", method: "eth_call", params: [], purpose: .simulation)
+    }
+  }
+
+  @Test("read: insufficient funds maps to insufficientFunds")
+  func readInsufficientFundsClassifies() async {
+    let host = "rpc-read-funds.rpc"
+    StubURLProtocol.setHandler(host: host) { _ in
+      RpcStub.error(code: -32000, message: "insufficient funds for gas * price + value")
+    }
+
+    await #expect(throws: RainSDKError.insufficientFunds(required: "", available: "")) {
+      _ = try await client().callForHexResult(
+        rpcUrl: "https://\(host)/", method: "eth_estimateGas", params: [])
+    }
+  }
+
+  @Test("read: access denied maps to internalLogicError, not userRejected")
+  func readAccessDeniedIsNotUserRejected() async {
+    let host = "rpc-read-denied.rpc"
+    StubURLProtocol.setHandler(host: host) { _ in
+      RpcStub.error(code: -32000, message: "access denied")
+    }
+
+    // A node message is never a user action; the old keyword mapping misfiled this as RAIN_401.
+    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+      _ = try await client().callForHexResult(
+        rpcUrl: "https://\(host)/", method: "eth_getBalance", params: [])
+    }
+  }
+
+  @Test("read: a revert maps to internalLogicError, not a simulation verdict")
+  func readRevertIsInternal() async {
+    let host = "rpc-read-revert.rpc"
+    StubURLProtocol.setHandler(host: host) { _ in
+      RpcStub.error(code: 3, message: "execution reverted")
+    }
+
+    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+      _ = try await client().callForHexResult(
+        rpcUrl: "https://\(host)/", method: "eth_call", params: [])
     }
   }
 

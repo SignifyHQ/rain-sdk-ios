@@ -68,7 +68,9 @@ enum TestManagers {
       walletProvider: adapter,
       networkConfigs: configs,
       transactionBuilder: resolvedBuilder,
-      tokenStore: tokenStore
+      tokenStore: tokenStore,
+      providerId: .portal,
+      capabilities: [.export, .recovery]
     )
     return (manager, resolvedPortal, resolvedBuilder)
   }
@@ -84,7 +86,9 @@ enum TestManagers {
       walletProvider: stub,
       networkConfigs: configs,
       transactionBuilder: builder,
-      tokenStore: tokenStore
+      tokenStore: tokenStore,
+      providerId: ProviderId("stub"),
+      capabilities: []
     )
     return (manager, stub)
   }

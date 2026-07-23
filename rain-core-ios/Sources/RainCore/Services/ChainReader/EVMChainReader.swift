@@ -42,7 +42,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
 
   // MARK: - ChainReader
 
-  func getNativeBalance(chainId: Int, walletAddress: String) async throws -> Double {
+  func getNativeBalance(chainId: Int, walletAddress: String) async throws -> Decimal {
     let rpcUrl = try resolveRpcUrl(chainId: chainId)
     try validate(ethereumAddress: walletAddress, label: "wallet address")
     let hex = try await jsonRpcClient.callForHexResult(
@@ -50,7 +50,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
       method: "eth_getBalance",
       params: [walletAddress, "latest"]
     )
-    return EthereumConverter.parseHexToDouble(hex, decimals: ReaderConstants.defaultNativeDecimals)
+    return try EthereumConverter.parseHexToDecimalStrict(hex, decimals: ReaderConstants.defaultNativeDecimals)
   }
 
   func getERC20Balance(
@@ -58,7 +58,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
     tokenAddress: String,
     walletAddress: String,
     decimals: Int?
-  ) async throws -> Double {
+  ) async throws -> Decimal {
     let rpcUrl = try resolveRpcUrl(chainId: chainId)
     try validate(ethereumAddress: walletAddress, label: "wallet address")
     try validate(ethereumAddress: tokenAddress, label: "token address")
@@ -72,7 +72,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
       method: "eth_call",
       params: [callParams, "latest"]
     )
-    return EthereumConverter.parseHexToDouble(
+    return try EthereumConverter.parseHexToDecimalStrict(
       hex,
       decimals: decimals ?? Constants.ERC20.defaultDecimals
     )
@@ -117,7 +117,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
         method: "eth_getBalance",
         params: [walletAddress, "latest"]
       )
-      return nativeBalance(chainId: chainId, hex: hex)
+      return try nativeBalance(chainId: chainId, hex: hex)
     case .contract(let address):
       try validate(ethereumAddress: address, label: "token address")
       let callData = Multicall3.encodeBalanceOf(address: walletAddress)
@@ -128,7 +128,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
         symbol: nil,
         decimals: Constants.ERC20.defaultDecimals
       )
-      return tokenBalance(chainId: chainId, token: info, hex: hex)
+      return try tokenBalance(chainId: chainId, token: info, hex: hex)
     }
   }
 
@@ -230,7 +230,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
         details: "Multicall3 native balance call reverted on chain \(chainId)"
       )
     }
-    var output: [Balance] = [nativeBalance(chainId: chainId, hex: nativeResult.returnData)]
+    var output: [Balance] = [try nativeBalance(chainId: chainId, hex: nativeResult.returnData)]
     for (i, token) in tokens.enumerated() {
       let result = results[i + 1]
       guard result.success else {
@@ -239,7 +239,15 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
         )
         continue
       }
-      output.append(tokenBalance(chainId: chainId, token: token, hex: result.returnData))
+      // Per-token failures stay best-effort (matching the parallel path): a malformed payload
+      // drops the token with a warning instead of poisoning the whole batch.
+      do {
+        output.append(try tokenBalance(chainId: chainId, token: token, hex: result.returnData))
+      } catch {
+        RainLogger.warning(
+          "Rain SDK: malformed balanceOf payload for token \(token.symbol ?? token.address) (\(token.address)) on chain \(chainId), omitting from result"
+        )
+      }
     }
     return output
   }
@@ -261,7 +269,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
       rpcUrl: rpcUrl,
       walletAddress: walletAddress
     )
-    let native = nativeBalance(chainId: chainId, hex: nativeHex)
+    let native = try nativeBalance(chainId: chainId, hex: nativeHex)
 
     // `balanceOf(walletAddress)` calldata is identical across every token — encode once.
     let balanceOfCallData = Multicall3.encodeBalanceOf(address: walletAddress)
@@ -275,7 +283,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
               to: token.address,
               data: balanceOfCallData
             )
-            return self.tokenBalance(chainId: chainId, token: token, hex: hex)
+            return try self.tokenBalance(chainId: chainId, token: token, hex: hex)
           } catch {
             RainLogger.warning(
               "Rain SDK: balanceOf failed for token \(token.symbol ?? token.address) (\(token.address)): \(error) — omitting from result"
@@ -303,13 +311,14 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
   // MARK: - Balance builders
 
   /// Builds a native-currency `Balance` from a raw hex wei value, pulling symbol / name /
-  /// decimals from the static native-currency table.
-  private func nativeBalance(chainId: Int, hex: String) -> Balance {
+  /// decimals from the static native-currency table. Throws on a malformed hex payload — a
+  /// garbage RPC response must never read as a zero balance.
+  private func nativeBalance(chainId: Int, hex: String) throws -> Balance {
     let native = TokenRegistry.nativeCurrency(for: chainId)
     return Balance(
       token: .native,
       chainId: chainId,
-      rawAmount: EthereumConverter.parseHexToBigUInt(hex),
+      rawAmount: try EthereumConverter.parseHexToBigUIntStrict(hex),
       decimals: native.decimals,
       symbol: native.symbol,
       name: native.name
@@ -317,11 +326,13 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
   }
 
   /// Builds a contract-token `Balance` from a raw hex base-unit value and the token's metadata.
-  private func tokenBalance(chainId: Int, token: TokenInfo, hex: String) -> Balance {
+  /// Throws on a malformed hex payload — a garbage RPC response must never read as a zero
+  /// balance.
+  private func tokenBalance(chainId: Int, token: TokenInfo, hex: String) throws -> Balance {
     Balance(
       token: .contract(address: token.address),
       chainId: chainId,
-      rawAmount: EthereumConverter.parseHexToBigUInt(hex),
+      rawAmount: try EthereumConverter.parseHexToBigUIntStrict(hex),
       decimals: token.decimals,
       symbol: token.symbol,
       name: token.name

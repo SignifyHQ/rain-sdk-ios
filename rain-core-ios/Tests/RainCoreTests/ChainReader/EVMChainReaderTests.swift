@@ -73,6 +73,18 @@ struct EVMChainReaderTests {
     }
   }
 
+  @Test("getNativeBalance surfaces an error for a malformed eth_getBalance payload instead of a zero balance")
+  func testGetNativeBalanceMalformedPayload() async throws {
+    try await MockURLProtocol.withInstalled {
+      MockURLProtocol.stub(method: "eth_getBalance", result: "0xZZ")
+
+      let reader = makeReader()
+      await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+        _ = try await reader.getNativeBalance(chainId: 1, walletAddress: walletAddress)
+      }
+    }
+  }
+
   // MARK: - Address validation
 
   @Test("getNativeBalance throws when the wallet address is syntactically invalid")

@@ -85,7 +85,8 @@ v2 is a **source-breaking** release. The `RainSDK` umbrella keeps `import RainSD
 | `initialize(networkConfigs:)` (wallet-agnostic) | `RainSdk.builder().rpcEndpoints(…).build()` — building methods live on `RainSdk` |
 | `manager.portal` accessor | `PortalProvider(_, onPortalCreated:)` hook |
 | `manager.turnkey` accessor | none — the host already owns its `TurnkeyContext` |
-| `setWalletProvider` / `reset()` | none — a resolved `RainClient` is immutable; build a new `RainSdk` instead |
+| `setWalletProvider` | none: a resolved `RainClient` is immutable; register multiple providers and resolve each instead |
+| `reset()` | `RainSdk.reset()`, which tears down resolved clients (they re-resolve on next access) and clears Rain API credentials |
 
 Business methods (`sendToken`, `withdrawCollateral`, balances, …) kept their names on
 `RainClient`; renamed/retyped 1.x variants remain as deprecated shims (see `Deprecated.swift`
@@ -95,7 +96,7 @@ in `RainCore` and `RainPortal`).
 
 - iOS 17.0+
 - Swift 6.1+
-- Xcode 15.0+
+- Xcode 16.3+
 
 ## Usage
 

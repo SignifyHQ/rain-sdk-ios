@@ -22,6 +22,13 @@ public enum AmountHelpers {
     amount: Decimal,
     decimals: Int
   ) throws -> BigUInt {
+    guard !amount.isNaN else {
+      throw RainSDKError.invalidAmount(
+        amount: "\(amount)",
+        reason: "amount is not a number"
+      )
+    }
+
     let scale = max(0, -amount.exponent)
 
     if scale > decimals {

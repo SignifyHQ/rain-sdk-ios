@@ -11,12 +11,16 @@ public protocol RainTypedDataSignerProvider: Sendable {
 }
 
 /// Gas / fee estimation capability. Public so out-of-core adapters can conform.
+///
+/// Returns the estimated total fee (estimated gas × gas price) in the chain's native token as a
+/// `Decimal`. Implementations must keep the wei-level math exact (`BigUInt` for raw values,
+/// `Decimal` for the final division), with no intermediate `Double`.
 public protocol RainTransactionFeeEstimatingProvider: Sendable {
   func estimateTransactionFee(
     chainId: Int,
     walletAddress: String,
     params: WalletTransactionParams
-  ) async throws -> Double
+  ) async throws -> Decimal
 }
 
 /// Solana transfers (native SOL + SPL tokens). Implemented by providers that manage a Solana

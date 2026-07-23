@@ -48,8 +48,8 @@ public struct WalletTransaction: Codable, Equatable, Sendable {
   public var from: String
   /// Address that the transaction was sent to.
   public var to: String?
-  /// Value transferred in the transaction.
-  public var value: Double?
+  /// Value transferred in the transaction, in human-readable units (e.g. `1.5` for 1.5 ETH).
+  public var value: Decimal?
   /// Token Id of an ERC721 token, if applicable.
   public var erc721TokenId: String?
   /// Metadata of an ERC1155 token, if applicable.
@@ -73,7 +73,7 @@ public struct WalletTransaction: Codable, Equatable, Sendable {
     hash: String,
     from: String,
     to: String?,
-    value: Double?,
+    value: Decimal?,
     erc721TokenId: String?,
     erc1155Metadata: [Erc1155Metadata?]?,
     tokenId: String?,
@@ -97,6 +97,69 @@ public struct WalletTransaction: Codable, Equatable, Sendable {
     self.rawContract = rawContract
     self.metadata = metadata
     self.chainId = chainId
+  }
+
+  // MARK: - Codable
+
+  private enum CodingKeys: String, CodingKey {
+    case blockNum, uniqueId, hash, from, to, value, erc721TokenId, erc1155Metadata,
+         tokenId, asset, category, rawContract, metadata, chainId
+  }
+
+  /// Custom decoding so `value` accepts either a JSON number or a numeric string. A string is
+  /// strict-parsed into `Decimal` (the whole content must be a decimal literal, so hex or
+  /// partially numeric strings throw instead of silently truncating); a JSON number is decoded
+  /// as `Decimal` directly, which keeps every digit the synthesized encoder emits (no `Double`
+  /// round trip). Absent / null decodes as `nil`; any other JSON type throws.
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    blockNum = try container.decode(String.self, forKey: .blockNum)
+    uniqueId = try container.decode(String.self, forKey: .uniqueId)
+    hash = try container.decode(String.self, forKey: .hash)
+    from = try container.decode(String.self, forKey: .from)
+    to = try container.decodeIfPresent(String.self, forKey: .to)
+    if !container.contains(.value) {
+      value = nil
+    } else if try container.decodeNil(forKey: .value) {
+      value = nil
+    } else if let string = try? container.decode(String.self, forKey: .value) {
+      value = try Self.decimal(
+        fromNumericString: string,
+        codingPath: container.codingPath + [CodingKeys.value]
+      )
+    } else {
+      value = try container.decode(Decimal.self, forKey: .value)
+    }
+    erc721TokenId = try container.decodeIfPresent(String.self, forKey: .erc721TokenId)
+    erc1155Metadata = try container.decodeIfPresent([Erc1155Metadata?].self, forKey: .erc1155Metadata)
+    tokenId = try container.decodeIfPresent(String.self, forKey: .tokenId)
+    asset = try container.decodeIfPresent(String.self, forKey: .asset)
+    category = try container.decode(String.self, forKey: .category)
+    rawContract = try container.decodeIfPresent(RawContract.self, forKey: .rawContract)
+    metadata = try container.decodeIfPresent(Metadata.self, forKey: .metadata)
+    chainId = try container.decode(Int.self, forKey: .chainId)
+  }
+
+  /// Strict-parses a decimal literal: the trimmed string must fully match an optional sign,
+  /// digits, an optional fraction, and an optional exponent. Anything else (hex like `"0x123"`,
+  /// trailing junk, empty) throws `DecodingError.dataCorrupted` instead of being accepted as a
+  /// partial parse.
+  private static func decimal(
+    fromNumericString raw: String,
+    codingPath: [CodingKey]
+  ) throws -> Decimal {
+    let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+    let pattern = "^[+-]?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?$"
+    guard trimmed.range(of: pattern, options: .regularExpression) != nil,
+          let parsed = Decimal(string: trimmed, locale: Locale(identifier: "en_US_POSIX")) else {
+      throw DecodingError.dataCorrupted(
+        DecodingError.Context(
+          codingPath: codingPath,
+          debugDescription: "value string \"\(raw)\" is not a decimal number"
+        )
+      )
+    }
+    return parsed
   }
 }
 

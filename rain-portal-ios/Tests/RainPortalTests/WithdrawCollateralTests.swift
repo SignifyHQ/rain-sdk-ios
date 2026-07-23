@@ -45,12 +45,42 @@ struct WithdrawCollateralTests {
       walletProvider: adapter,
       networkConfigs: configs,
       transactionBuilder: TransactionBuilderService(networkConfigs: configs),
-      tokenStore: tokenStore
+      tokenStore: tokenStore,
+      providerId: .portal,
+      capabilities: [.export, .recovery]
     )
 
     await #expect(throws: RainSDKError.invalidConfig(chainId: 999, rpcUrl: "")) {
       _ = try await manager.withdrawCollateral(
         chainId: 999,
+        assetAddresses: TestFixtures.defaultWithdrawAddresses,
+        amount: 100.0,
+        decimals: 18,
+        salt: TestFixtures.validSaltBase64,
+        signature: TestFixtures.validSignatureHex,
+        expiresAt: "1735689600",
+        nonce: nil
+      )
+    }
+  }
+
+  @Test("withdrawCollateral translates a simulation revert into withdrawalRevertedByNetwork")
+  func testWithdrawCollateralRevertMapsToWithdrawalReverted() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+    // The adapter's eth_call preflight wraps this into .transactionSimulationFailed; on the
+    // withdrawal path core re-classifies that as RAIN_405.
+    mockPortal.setMockResponse(
+      chainId: "eip155:1",
+      method: .eth_call,
+      error: NSError(domain: "PortalError", code: 3, userInfo: [NSLocalizedDescriptionKey: "execution reverted"])
+    )
+    let (manager, _, builder) = TestManagers.portalManager(portal: mockPortal)
+    builder.mockNonce = BigUInt(42)
+
+    await #expect(throws: RainSDKError.withdrawalRevertedByNetwork) {
+      _ = try await manager.withdrawCollateral(
+        chainId: 1,
         assetAddresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: 18,
@@ -72,6 +102,36 @@ struct WithdrawCollateralTests {
     builder.mockNonce = BigUInt(1)
 
     await #expect(throws: RainSDKError.walletUnavailable) {
+      _ = try await manager.estimateWithdrawalFee(
+        chainId: 1,
+        addresses: TestFixtures.defaultWithdrawAddresses,
+        amount: 100.0,
+        decimals: 18,
+        salt: TestFixtures.validSaltBase64,
+        signature: TestFixtures.validSignatureHex,
+        expiresAt: "1735689600"
+      )
+    }
+  }
+
+  @Test("estimateWithdrawalFee translates a simulation revert into withdrawalRevertedByNetwork")
+  func testEstimateWithdrawalFeeRevertMapsToWithdrawalReverted() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+    // The error Portal's mapper produces for a PortalRpcError code 3 on eth_estimateGas
+    // (PortalRpcError itself has no test-visible initializer); on the withdrawal path core
+    // re-classifies it as RAIN_405.
+    mockPortal.setMockResponse(
+      chainId: "eip155:1",
+      method: .eth_estimateGas,
+      error: RainSDKError.transactionSimulationFailed(
+        underlying: NSError(domain: "PortalError", code: 3, userInfo: [NSLocalizedDescriptionKey: "execution reverted"])
+      )
+    )
+    let (manager, _, builder) = TestManagers.portalManager(portal: mockPortal)
+    builder.mockNonce = BigUInt(42)
+
+    await #expect(throws: RainSDKError.withdrawalRevertedByNetwork) {
       _ = try await manager.estimateWithdrawalFee(
         chainId: 1,
         addresses: TestFixtures.defaultWithdrawAddresses,

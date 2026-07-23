@@ -18,7 +18,9 @@ extension WalletTransaction {
       hash: tx.hash,
       from: tx.from,
       to: tx.to,
-      value: tx.value,
+      // Portal reports `value` as a Double; round-trip through its printed form so e.g. 0.1
+      // becomes exactly Decimal("0.1") rather than the full binary float error.
+      value: tx.value.flatMap { Decimal(string: String($0)) },
       erc721TokenId: tx.erc721TokenId,
       erc1155Metadata: tx.erc1155Metadata?.map { meta in
         guard let meta else { return nil }

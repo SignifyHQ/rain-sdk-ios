@@ -134,8 +134,8 @@ struct PrivyWalletProviderTests {
       params: WalletTransactionParams(from: Self.wallet, to: "0xTO", value: "0x0", data: "0x")
     )
 
-    // 21000 * 1e9 wei = 2.1e13 wei = 0.000021 ETH
-    #expect(abs(fee - 0.000021) < 1e-12)
+    // 21000 * 1e9 wei = 2.1e13 wei = exactly 0.000021 ETH
+    #expect(fee == Decimal(string: "0.000021"))
   }
 
   // MARK: - Send path
@@ -423,8 +423,10 @@ struct PrivyWalletProviderTests {
     #expect(transactions.map(\.hash) == ["0xNATIVE", "0xTOKEN"])
   }
 
-  @Test("getTransactions keeps native history when a token query fails")
-  func historyTokenQueryFailureTolerated() async throws {
+  @Test("getTransactions fails the whole call when a token query fails instead of returning partial history")
+  func historyTokenQueryFailureFailsCall() async throws {
+    // The raw error bubbles up (like the native query) so `RainSDKError.from` classifies it via
+    // the registered PrivyErrorMapping at the SDK boundary; no partial rows are returned.
     struct TokenFilterRejected: Error {}
     let contract = "0x2222222222222222222222222222222222222222"
     let signer = FakeSigner(address: Self.wallet)
@@ -439,10 +441,30 @@ struct PrivyWalletProviderTests {
     let usdc = TokenInfo(
       chainId: Self.indexedChainId, address: contract, symbol: "USDC", decimals: 6, name: "USD Coin")
     let provider = try await Self.makeHistoryProvider(signer: signer, tokens: [usdc])
-    let transactions = try await provider.getTransactions(
-      chainId: Self.indexedChainId, limit: nil, offset: nil, order: nil)
+    await #expect(throws: TokenFilterRejected.self) {
+      _ = try await provider.getTransactions(
+        chainId: Self.indexedChainId, limit: nil, offset: nil, order: nil)
+    }
+  }
 
-    #expect(transactions.map(\.hash) == ["0xNATIVE"])
+  @Test("getTransactions surfaces a not-logged-in Privy session as tokenExpired")
+  func historyNotLoggedInSurfacesTokenExpired() async throws {
+    // `PrivySDK.PrivyError` has no public initializer, so the not-logged-in case is exercised
+    // through the manager's wallet resolution, which throws the same `.tokenExpired` that
+    // PrivyErrorMapping produces for authenticationFailure(.notLoggedIn).
+    let rpcUrl = "https://history-not-logged-in.rpc/"
+    let store = try await TestTokenStore.make(chainId: Self.indexedChainId, rpcUrl: rpcUrl, tokens: [])
+    let provider = PrivyWalletProvider(
+      manager: PrivyManager(source: FakeWalletSource(wallets: nil)),
+      rpcEndpoints: [Self.indexedChainId: rpcUrl],
+      tokenStore: store,
+      rpcClient: PrivyRpcClient(session: StubURLProtocol.makeSession())
+    )
+
+    await #expect(throws: RainSDKError.tokenExpired) {
+      _ = try await provider.getTransactions(
+        chainId: Self.indexedChainId, limit: nil, offset: nil, order: nil)
+    }
   }
 
   @Test("an unconfigured chain id surfaces invalidConfig")

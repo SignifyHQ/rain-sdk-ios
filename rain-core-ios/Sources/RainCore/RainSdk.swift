@@ -102,9 +102,10 @@ public final class RainSdk: @unchecked Sendable {
       clientsLock.lock(); defer { clientsLock.unlock() }
       if let existing = resolveBoxes[id] { return existing }
       let task = Task<RainClient, Error> { [self] in
+        let descriptor = descriptors[id]!
         let walletProvider: any RainWalletProvider
         do {
-          walletProvider = try await descriptors[id]!.create(context: providerContext)
+          walletProvider = try await descriptor.create(context: providerContext)
         } catch {
           throw RainSDKError.from(underlying: error)
         }
@@ -112,7 +113,9 @@ public final class RainSdk: @unchecked Sendable {
           walletProvider: walletProvider,
           networkConfigs: networkConfigs,
           transactionBuilder: transactionBuilder,
-          tokenStore: tokenStore
+          tokenStore: tokenStore,
+          providerId: descriptor.id,
+          capabilities: descriptor.capabilities
         )
       }
       let newBox = ResolveBox(task)
@@ -130,6 +133,31 @@ public final class RainSdk: @unchecked Sendable {
       }
       throw error
     }
+  }
+
+  /// Tears down all resolved clients and clears the Rain API credentials. Idempotent.
+  ///
+  /// The configuration (network configs, descriptors, token store) is immutable state fixed at
+  /// `build()`, so this instance stays usable: the next `provider(_:)` / `first(where:)` call
+  /// re-resolves the provider from scratch (re-running `create(context:)`). Build a new `RainSdk`
+  /// via ``builder()`` to change configuration.
+  public func reset() {
+    let boxes: [ResolveBox] = clientsLock.withLock {
+      let values = Array(resolveBoxes.values)
+      resolveBoxes.removeAll()
+      return values
+    }
+    // Reset each resolved client, and cancel in-flight resolutions so they don't finish
+    // into an evicted slot.
+    for box in boxes {
+      let task = box.task
+      task.cancel()
+      Task {
+        if let client = try? await task.value { client.reset() }
+      }
+    }
+    rainApiConfig.clear()
+    RainLogger.info("Rain SDK: Reset (resolved clients evicted; Rain API credentials cleared)")
   }
 
   /// Resolves the first registered provider (in registration order) matching `predicate`, e.g.

@@ -91,6 +91,51 @@ struct DeprecatedAPITests {
   }
 
   @available(*, deprecated)
+  @Test("Double-amount send shims convert via the printed form: 0.1 is exact, not the float error")
+  func testDoubleAmountShimExactness() async throws {
+    let (manager, stub) = try await TestManagers.stubProviderManager()
+
+    // With a naive Decimal(0.1) the full binary float error would exceed 18 decimal places and
+    // toBaseUnits would throw invalidAmount; the shim must parse the printed "0.1" instead.
+    _ = try await manager.sendNativeToken(chainId: 1, to: TestFixtures.recipientAddress, amount: 0.1)
+
+    // 0.1 ETH = 10^17 wei = 0x16345785d8a0000
+    #expect(stub.sendTransactionCalls.last?.params.value == "0x16345785d8a0000")
+  }
+
+  @available(*, deprecated)
+  @Test("sendNativeToken with a NaN amount throws invalidAmount and never sends")
+  func testSendNativeTokenNaNAmount() async throws {
+    let (manager, stub) = try await TestManagers.stubProviderManager()
+
+    await #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+      _ = try await manager.sendNativeToken(
+        chainId: 1,
+        to: TestFixtures.recipientAddress,
+        amount: Double.nan
+      )
+    }
+    #expect(stub.sendTransactionCalls.isEmpty)
+  }
+
+  @available(*, deprecated)
+  @Test("sendToken with a NaN amount throws invalidAmount and never sends")
+  func testSendTokenNaNAmount() async throws {
+    let (manager, stub) = try await TestManagers.stubProviderManager()
+
+    await #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+      _ = try await manager.sendToken(
+        chainId: 1,
+        contractAddress: Self.mixedCaseToken,
+        to: TestFixtures.recipientAddress,
+        amount: Double.nan,
+        decimals: 6
+      )
+    }
+    #expect(stub.sendTransactionCalls.isEmpty)
+  }
+
+  @available(*, deprecated)
   @Test("composeTransactionParameters returns Portal's ETHTransactionParam mapped from buildTransactionParameters")
   func testComposeTransactionParametersReturnsEthParam() throws {
     let rain = try TestManagers.rainSdk()

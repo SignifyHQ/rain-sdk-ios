@@ -93,7 +93,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     chainId: Int,
     walletAddress: String,
     params: WalletTransactionParams
-  ) async throws -> Double {
+  ) async throws -> Decimal {
     let ethParam = ETHTransactionParam(
       from: params.from,
       to: params.to,
@@ -107,13 +107,17 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
       address: walletAddress,
       params: [ethParam]
     )
-    let gasPrice = try await fetchGasData(
+    let gasPriceWei = try await fetchGasData(
       chainId: chainId,
       method: .eth_gasPrice,
       address: walletAddress
-    ).weiToEth
+    )
 
-    return estimateGas * gasPrice
+    // Exact wei math: multiply as BigUInt, divide to native units as Decimal.
+    return EthereumConverter.baseUnitsToDecimal(
+      estimateGas * gasPriceWei,
+      decimals: Constants.ERC20.defaultDecimals
+    )
   }
 
   public func getBalance(
@@ -165,7 +169,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
       params: [walletAddress, "latest"],
       options: nil
     )
-    let raw = parseBalanceString(portalResultString(response))
+    let raw = try parseBalanceString(portalResultString(response))
     let native = await tokenStore.nativeCurrency(for: chainId)
     return RainCore.Balance(
       token: .native,
@@ -195,7 +199,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
         params: [callParams, "latest"],
         options: nil
       )
-      let raw = EthereumConverter.parseHexToBigUInt(response.hexString)
+      let raw = try EthereumConverter.parseHexToBigUIntStrict(response.hexString)
       return RainCore.Balance(
         token: .contract(address: address),
         chainId: chainId,
@@ -224,11 +228,12 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
   }
 
   /// Parses a balance string that may be hex (`0x…`, production) or decimal (mocks / some
-  /// transports) into an exact `BigUInt`.
-  private func parseBalanceString(_ value: String?) -> BigUInt {
+  /// transports) into an exact `BigUInt`. Malformed hex throws instead of collapsing to a
+  /// silent zero balance.
+  private func parseBalanceString(_ value: String?) throws -> BigUInt {
     guard let value, !value.isEmpty else { return 0 }
     if value.hasPrefix("0x") || value.hasPrefix("0X") {
-      return EthereumConverter.parseHexToBigUInt(value)
+      return try EthereumConverter.parseHexToBigUIntStrict(value)
     }
     return BigUInt(value) ?? 0
   }
@@ -305,7 +310,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
         let decimals = transactions[i].rawContract?.decimal.flatMap { Int($0) }
           ?? decimalsMap[address]
           ?? Constants.ERC20.defaultDecimals
-        transactions[i].value = EthereumConverter.parseHexToDouble(hex, decimals: decimals)
+        transactions[i].value = EthereumConverter.parseHexToDecimal(hex, decimals: decimals)
       }
 
       if transactions[i].asset?.isEmpty ?? true, let symbol = symbolsMap[address] {
@@ -314,19 +319,20 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     }
   }
 
-  /// Fetches gas-related RPC result (e.g. eth_estimateGas, eth_gasPrice) via Portal; returns numeric value as Double.
+  /// Fetches gas-related RPC result (e.g. eth_estimateGas, eth_gasPrice) via Portal; returns the
+  /// exact wei-level value as `BigUInt`.
   ///
   /// The underlying `PortalProviderResult.result` can come back in different shapes depending on
   /// the Portal SDK / transport. This helper supports:
-  /// - `PortalProviderRpcResponse` whose `result` is a `String` that can be parsed as `Double`
-  /// - a raw `String` that can be parsed as `Double`
-  /// - a raw numeric type (`NSNumber` / `Double`)
+  /// - `PortalProviderRpcResponse` whose `result` is a hex (`0x…`) or decimal string
+  /// - a raw hex or decimal `String`
+  /// - a raw numeric type (`NSNumber`)
   private func fetchGasData(
     chainId: Int,
     method: PortalRequestMethod,
     address: String,
     params: [Any] = []
-  ) async throws -> Double {
+  ) async throws -> BigUInt {
     let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
 
     let response = try await portal.request(
@@ -339,24 +345,51 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     // 1) Preferred: PortalProviderRpcResponse wrapping a string result
     if let rpcResponse = response.result as? PortalProviderRpcResponse,
        let stringResult = rpcResponse.result,
-       let doubleValue = stringResult.asDouble {
-      return doubleValue
+       let value = Self.parseGasValue(stringResult) {
+      return value
     }
 
     // 2) Fallback: raw string result
     if let stringResult = response.result as? String,
-       let doubleValue = stringResult.asDouble {
-      return doubleValue
+       let value = Self.parseGasValue(stringResult) {
+      return value
     }
 
     // 3) Fallback: raw numeric result
-    if let numberResult = response.result as? NSNumber {
-      return numberResult.doubleValue
+    if let numberResult = response.result as? NSNumber,
+       let value = BigUInt(numberResult.stringValue) {
+      return value
     }
 
     RainLogger.error("Rain SDK: Error fetching \(method) for \(address). Unexpected RPC response")
     throw RainSDKError.internalLogicError(
       details: "Unexpected RPC response when fetching \(method) for \(address)"
     )
+  }
+
+  /// Parses a gas value string that may be hex (`0x…`, production) or decimal (mocks / some
+  /// transports) into an exact `BigUInt`. Integral float renderings (`"21000.0"`) are accepted;
+  /// fractional or otherwise malformed values return `nil`.
+  private static func parseGasValue(_ value: String) -> BigUInt? {
+    guard !value.isEmpty else { return nil }
+    if value.hasPrefix("0x") || value.hasPrefix("0X") {
+      return BigUInt(value.dropFirst(2), radix: 16)
+    }
+    if let integral = BigUInt(value) {
+      return integral
+    }
+    // Some transports render integral gas values as floats. Parse exactly via Decimal (no Double
+    // rounding) and accept only a whole, non-negative value; the strict full-match pattern keeps
+    // genuinely malformed input (trailing junk, negatives) rejected.
+    let pattern = "^[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?$"
+    guard value.range(of: pattern, options: .regularExpression) != nil,
+          let decimal = Decimal(string: value, locale: Locale(identifier: "en_US_POSIX")) else {
+      return nil
+    }
+    var source = decimal
+    var rounded = Decimal()
+    NSDecimalRound(&rounded, &source, 0, .down)
+    guard rounded == decimal else { return nil }
+    return BigUInt(NSDecimalNumber(decimal: rounded).stringValue, radix: 10)
   }
 }

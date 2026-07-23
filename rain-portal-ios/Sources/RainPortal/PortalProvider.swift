@@ -2,7 +2,7 @@ import Foundation
 import PortalSwift
 import RainCore
 
-/// Configuration for the Portal provider. Mirrors Android's `PortalConfig`.
+/// Configuration for the Portal provider.
 public struct PortalConfig: @unchecked Sendable {
   /// A valid Portal session token.
   public let sessionToken: String
@@ -59,6 +59,7 @@ public struct PortalProvider: RainProvider {
         config.sessionToken,
         withRpcConfig: rpcConfig,
         autoApprove: true,
+        featureFlags: FeatureFlags(isMultiBackupEnabled: true),
         iCloud: ICloudStorage(),
         keychain: PortalKeychain(),
         passwords: PasswordStorage()

@@ -18,14 +18,6 @@ public enum EthereumConverter {
 
   // MARK: - Hex to Numeric Conversion
 
-  /// Converts a hex-encoded uint256 string (e.g. from `eth_call`) to a human-readable `Double` using token decimals.
-  ///
-  /// Uses `NSDecimalNumber` for safe handling of the full uint256 range.
-  ///
-  /// - Parameters:
-  ///   - hex: Hex string with or without `0x` prefix (e.g. `"0x0de0b6b3a7640000"`).
-  ///   - decimals: Number of decimal places the token uses (e.g. 6 for USDC, 18 for ETH).
-  /// - Returns: Human-readable balance as `Double` (e.g. `1.0` for 1 ETH).
   /// Converts a hex-encoded uint256 string to an `Int` (e.g. for ERC-20 `decimals()` responses).
   public static func parseHexToInt(_ hex: String) -> Int {
     let cleanHex = hex.strippingHexPrefix
@@ -60,32 +52,76 @@ public enum EthereumConverter {
     return String(bytes: bytes, encoding: .utf8)
   }
 
-  public static func parseHexToDouble(_ hex: String, decimals: Int) -> Double {
-    let cleanHex = hex.strippingHexPrefix
-    guard !cleanHex.isEmpty else { return 0 }
-
-    var value = NSDecimalNumber.zero
-    let sixteen = NSDecimalNumber(value: 16)
-    for char in cleanHex {
-      guard let digit = Int(String(char), radix: 16) else { continue }
-      value = value.multiplying(by: sixteen).adding(NSDecimalNumber(value: digit))
-    }
-
-    let divisor = NSDecimalNumber(mantissa: 1, exponent: Int16(decimals), isNegative: false)
-    return value.dividing(by: divisor).doubleValue
+  /// Converts a hex-encoded uint256 string (e.g. from `eth_call`) to a human-readable `Decimal`
+  /// using token decimals.
+  ///
+  /// Uses `NSDecimalNumber` for safe handling of the full uint256 range; the result never passes
+  /// through binary floating point.
+  ///
+  /// - Parameters:
+  ///   - hex: Hex string with or without `0x` prefix (e.g. `"0x0de0b6b3a7640000"`).
+  ///   - decimals: Number of decimal places the token uses (e.g. 6 for USDC, 18 for ETH).
+  /// - Returns: Human-readable amount as `Decimal` (e.g. `1.0` for 1 ETH).
+  public static func parseHexToDecimal(_ hex: String, decimals: Int) -> Decimal {
+    baseUnitsToDecimal(BigUInt(hex.strippingHexPrefix, radix: 16) ?? 0, decimals: decimals)
   }
 
-  /// Converts a hex-encoded uint256 string to an exact `BigUInt` (no precision loss).
+  /// Strict counterpart of ``parseHexToDecimal(_:decimals:)`` for money paths: converts a
+  /// hex-encoded uint256 RPC payload to a human-readable `Decimal`, throwing on malformed input
+  /// instead of collapsing it to a silent zero.
   ///
-  /// Used for balances read directly from chain (`eth_getBalance`, `eth_call balanceOf`),
-  /// where the raw base-unit value must be preserved.
+  /// - Throws: `RainSDKError.internalLogicError` when `hex` is empty (`""` or a bare `"0x"`) or
+  ///   contains non-hex characters. `"0x0"` parses to zero as usual.
+  public static func parseHexToDecimalStrict(_ hex: String, decimals: Int) throws -> Decimal {
+    baseUnitsToDecimal(try parseHexToBigUIntStrict(hex), decimals: decimals)
+  }
+
+  /// Deprecated. Use ``parseHexToDecimal(_:decimals:)``; this variant collapses to a lossy `Double`.
+  @available(*, deprecated, message: "Use parseHexToDecimal(_:decimals:): Double loses precision above 2^53 base units.")
+  public static func parseHexToDouble(_ hex: String, decimals: Int) -> Double {
+    NSDecimalNumber(decimal: parseHexToDecimal(hex, decimals: decimals)).doubleValue
+  }
+
+  /// Converts an exact base-unit `BigUInt` to a human-readable `Decimal` (`value / 10^decimals`).
+  ///
+  /// The inverse of ``decimalStringToBigUInt(_:decimals:)``. The division happens on
+  /// `NSDecimalNumber`, so the result never passes through binary floating point.
+  public static func baseUnitsToDecimal(_ value: BigUInt, decimals: Int) -> Decimal {
+    let raw = NSDecimalNumber(string: value.description)
+    let divisor = NSDecimalNumber(mantissa: 1, exponent: Int16(decimals), isNegative: false)
+    return raw.dividing(by: divisor).decimalValue
+  }
+
+  /// Converts a hex-encoded uint256 string to a `BigUInt`, collapsing malformed input to `0`.
+  ///
+  /// Deprecated for exactly that reason: on a money path the silent zero turns a garbage RPC
+  /// payload into a zero balance or fee. Use ``parseHexToBigUIntStrict(_:)``, which throws
+  /// instead.
+  @available(*, deprecated, message: "Use parseHexToBigUIntStrict(_:): this variant silently turns malformed hex into 0.")
   public static func parseHexToBigUInt(_ hex: String) -> BigUInt {
     BigUInt(hex.strippingHexPrefix, radix: 16) ?? 0
   }
 
+  /// Converts a hex-encoded uint256 string to an exact `BigUInt` (no precision loss), throwing
+  /// on malformed input.
+  ///
+  /// Used for values read directly from chain (`eth_getBalance`, `eth_call balanceOf`, gas
+  /// reads), where the raw base-unit value must be preserved and a garbage RPC payload must
+  /// surface as an error rather than a silent zero.
+  ///
+  /// - Throws: `RainSDKError.internalLogicError` when `hex` is empty (`""` or a bare `"0x"`) or
+  ///   contains non-hex characters. `"0x0"` parses to zero as usual.
+  public static func parseHexToBigUIntStrict(_ hex: String) throws -> BigUInt {
+    let cleanHex = hex.strippingHexPrefix
+    guard !cleanHex.isEmpty, let value = BigUInt(cleanHex, radix: 16) else {
+      throw RainSDKError.internalLogicError(details: "Malformed hex payload: \(hex)")
+    }
+    return value
+  }
+
   /// Reconstructs an exact base-unit `BigUInt` from a human-readable decimal string.
   ///
-  /// The inverse of `parseHexToDouble`: multiplies by `10^decimals` and truncates any
+  /// The inverse of `parseHexToDecimal`: multiplies by `10^decimals` and truncates any
   /// remaining fractional part. Used where a provider only exposes a formatted decimal
   /// balance (e.g. Portal's `getAssets`, Turnkey's supported-chain API) rather than raw hex.
   public static func decimalStringToBigUInt(_ decimalString: String?, decimals: Int) -> BigUInt {
