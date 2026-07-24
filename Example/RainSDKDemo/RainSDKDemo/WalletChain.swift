@@ -23,7 +23,7 @@ enum WalletChain: String, CaseIterable, Identifiable {
     switch self {
     case .avalancheFuji: return 43113
     case .baseSepolia: return 84532
-    case .solanaDevnet: return 103 // Solana devnet sentinel
+    case .solanaDevnet: return RainChain.solanaDevnet // 901, Rain's Solana devnet chain ID
     }
   }
 

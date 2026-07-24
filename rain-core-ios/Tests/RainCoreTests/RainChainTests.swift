@@ -8,9 +8,9 @@ struct RainChainTests {
   func chainIdsMirrorAndroid() {
     #expect(RainChain.avalancheMainnet == 43114)
     #expect(RainChain.avalancheTestnet == 43113)
-    #expect(RainChain.solanaMainnet == 101)
-    #expect(RainChain.solanaTestnet == 102)
-    #expect(RainChain.solanaDevnet == 103)
+    #expect(RainChain.solanaMainnet == 900)
+    #expect(RainChain.solanaTestnet == 902)
+    #expect(RainChain.solanaDevnet == 901)
   }
 
   @Test("Solana routing recognizes the public sentinel IDs")
