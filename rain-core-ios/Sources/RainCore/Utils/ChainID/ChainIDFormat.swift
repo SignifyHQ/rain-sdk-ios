@@ -15,7 +15,7 @@ public enum ChainIDFormat: Equatable {
     }
   }
 
-  /// The format that addresses `chainId`: `.solana` for Solana sentinel IDs (101–103),
+  /// The format that addresses `chainId`: `.solana` for Rain's Solana chain IDs (900–902),
   /// `.EIP155` for everything else. Call sites use this instead of hardcoding `.EIP155`.
   public static func namespace(for chainId: Int) -> ChainIDFormat {
     SolanaChains.isSolana(chainId) ? .solana : .EIP155

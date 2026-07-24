@@ -2,10 +2,11 @@ import Foundation
 
 /// Per-cluster reference data for Solana, the analogue of `TokenRegistry` for EVM.
 ///
-/// Solana has no EIP-155 integer chain ID, so the SDK keys clusters by sentinel IDs
-/// (101/102/103) and maps them to their CAIP-2 (genesis-hash) identifiers — what Turnkey's
-/// Solana APIs (`sol_send_transaction`, balances) expect. These sentinel IDs are reserved:
-/// configuring an EVM chain at 101–103 would be misrouted to the Solana path.
+/// Solana has no EIP-155 integer chain ID, so the SDK keys clusters by Rain's chain IDs
+/// (900 mainnet / 901 devnet / 902 testnet, see `RainChain`) and maps them to their CAIP-2
+/// (genesis-hash) identifiers — what Turnkey's Solana APIs (`sol_send_transaction`, balances)
+/// expect. These IDs are reserved: configuring an EVM chain at 900–902 would be misrouted to
+/// the Solana path.
 internal enum SolanaChains {
   static let mainnet = RainChain.solanaMainnet
   static let testnet = RainChain.solanaTestnet
