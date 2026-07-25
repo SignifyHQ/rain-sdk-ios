@@ -1,6 +1,5 @@
 import Foundation
 import CoreGraphics
-import QRCode
 import Web3
 import Web3Core
 
@@ -150,23 +149,27 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     backgroundColor: CGColor? = nil,
     foregroundColor: CGColor? = nil
   ) async throws -> Data {
-    let address = try await getWalletAddress()
-    let bg = backgroundColor ?? CGColor(red: 0, green: 0, blue: 0, alpha: 1)
-    let fg = foregroundColor ?? CGColor(red: 1, green: 1, blue: 1, alpha: 1)
+    try await generateAddressQRCode(
+      address: nil,
+      dimension: dimension,
+      backgroundColor: backgroundColor,
+      foregroundColor: foregroundColor
+    )
+  }
 
-    guard let image = try? QRCode.build
-      .text(address)
-      .foregroundColor(fg)
-      .backgroundColor(bg)
-      .background.cornerRadius(0)
-      .onPixels.shape(QRCode.PixelShape.RoundedPath(cornerRadiusFraction: 0))
-      .eye.shape(QRCode.EyeShape.RoundedRect())
-      .pupil.shape(QRCode.PupilShape.Square())
-      .generate.image(dimension: dimension, representation: .png())
-    else {
-      throw RainSDKError.internalLogicError(details: "QR code image generation failed")
-    }
-    return image
+  func generateAddressQRCode(
+    address: String?,
+    dimension: Int,
+    backgroundColor: CGColor?,
+    foregroundColor: CGColor?
+  ) async throws -> Data {
+    let target = if let address { address } else { try await getWalletAddress() }
+    return try QRCodeRenderer.png(
+      text: target,
+      dimension: dimension,
+      backgroundColor: backgroundColor,
+      foregroundColor: foregroundColor
+    )
   }
 
   // MARK: - Fetch balances
@@ -272,15 +275,15 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
             details: "The active wallet provider does not support Solana transfers"
           )
         }
-        let resolvedDecimals = await resolveDecimals(
-          chainId: chainId, contractAddress: contractAddress, decimals: decimals
-        )
+        // No `resolveDecimals` here: `tokenStore` enrichment reads `decimals()` through the EVM
+        // reader, which cannot see a Solana mint and would cache a bogus 18. The adapter reads
+        // the mint's own decimals and treats them as authoritative.
         let signature = try await solanaProvider.sendSolanaSPLToken(
           chainId: chainId,
           mintAddress: contractAddress,
           to: to,
           amount: amount,
-          decimals: resolvedDecimals
+          decimals: decimals ?? 0
         )
         return RainTokenTransferResult(transactionHash: signature)
       }

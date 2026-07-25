@@ -10,11 +10,18 @@ import RainCore
 final class FakeWalletSource: PrivyWalletSource, @unchecked Sendable {
   private let lock = NSLock()
   private var _lookups = 0
+  private var _solanaLookups = 0
   private let wallets: [any PrivyEthereumSigner]?
+  private let solanaWallets: [any PrivySolanaAccount]?
   private let lookupDelayNs: UInt64
 
-  init(wallets: [any PrivyEthereumSigner]?, lookupDelayNs: UInt64 = 0) {
+  init(
+    wallets: [any PrivyEthereumSigner]?,
+    solanaWallets: [any PrivySolanaAccount]? = nil,
+    lookupDelayNs: UInt64 = 0
+  ) {
     self.wallets = wallets
+    self.solanaWallets = solanaWallets
     self.lookupDelayNs = lookupDelayNs
   }
 
@@ -23,9 +30,20 @@ final class FakeWalletSource: PrivyWalletSource, @unchecked Sendable {
     return _lookups
   }
 
+  /// Solana analogue of `lookups`.
+  var solanaLookups: Int {
+    lock.lock(); defer { lock.unlock() }
+    return _solanaLookups
+  }
+
   private func recordLookup() {
     lock.lock(); defer { lock.unlock() }
     _lookups += 1
+  }
+
+  private func recordSolanaLookup() {
+    lock.lock(); defer { lock.unlock() }
+    _solanaLookups += 1
   }
 
   func embeddedEthereumWallets() async -> [any PrivyEthereumSigner]? {
@@ -34,6 +52,80 @@ final class FakeWalletSource: PrivyWalletSource, @unchecked Sendable {
       try? await Task.sleep(nanoseconds: lookupDelayNs)
     }
     return wallets
+  }
+
+  func embeddedSolanaWallets() async -> [any PrivySolanaAccount]? {
+    recordSolanaLookup()
+    if lookupDelayNs > 0 {
+      try? await Task.sleep(nanoseconds: lookupDelayNs)
+    }
+    return solanaWallets
+  }
+}
+
+/// Recording `PrivySolanaAccount`: captures what was signed and for which cluster, and returns /
+/// throws a configured result.
+final class FakeSolanaAccount: PrivySolanaAccount, @unchecked Sendable {
+  private let lock = NSLock()
+  private var _sends: [(transaction: Data, caip2: String, rpcUrl: String)] = []
+  private var _transactionCalls: [String] = []
+
+  let address: String
+  var sendResult: Result<String, Error>
+  /// Results returned by successive `getTransactions` calls (consumed front-to-back; the last
+  /// entry repeats if calls outnumber entries). A failure entry throws for that call.
+  var transactionsResults: [Result<PrivyTransactionsPage, Error>] = [
+    .success(PrivyTransactionsPage(transactions: [], nextCursor: nil))
+  ]
+  private var transactionsCallCount = 0
+
+  init(address: String, sendResult: Result<String, Error> = .success("SIGNATURE")) {
+    self.address = address
+    self.sendResult = sendResult
+  }
+
+  var sends: [(transaction: Data, caip2: String, rpcUrl: String)] {
+    lock.lock(); defer { lock.unlock() }
+    return _sends
+  }
+
+  /// One recorded line per `getTransactions` call, describing the params it received.
+  var transactionCalls: [String] {
+    lock.lock(); defer { lock.unlock() }
+    return _transactionCalls
+  }
+
+  func signAndSendTransaction(
+    transaction: Data,
+    caip2: String,
+    rpcUrl: String
+  ) async throws -> String {
+    record((transaction, caip2, rpcUrl))
+    return try sendResult.get()
+  }
+
+  func getTransactions(_ params: GetTransactionsParams) async throws -> PrivyTransactionsPage {
+    let index = recordTransactionCall(
+      "chain=\(params.chain)"
+        + ",assets=\(params.assets?.joined(separator: "+") ?? "nil")"
+        + ",tokens=\(params.tokens?.joined(separator: "+") ?? "nil")"
+        + ",limit=\(params.limit.map(String.init) ?? "nil")"
+        + ",cursor=\(params.cursor ?? "nil")"
+    )
+    return try transactionsResults[index].get()
+  }
+
+  private func recordTransactionCall(_ line: String) -> Int {
+    lock.lock(); defer { lock.unlock() }
+    _transactionCalls.append(line)
+    let index = min(transactionsCallCount, transactionsResults.count - 1)
+    transactionsCallCount += 1
+    return index
+  }
+
+  private func record(_ send: (transaction: Data, caip2: String, rpcUrl: String)) {
+    lock.lock(); defer { lock.unlock() }
+    _sends.append(send)
   }
 }
 

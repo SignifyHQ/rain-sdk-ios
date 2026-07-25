@@ -85,6 +85,24 @@ public protocol RainClient: Sendable {
     foregroundColor: CGColor?
   ) async throws -> Data
 
+  /// Generates a square QR code (PNG) encoding `address`, or the wallet's own address when
+  /// `address` is `nil`.
+  ///
+  /// Use this for any address the host needs to show — a chain-specific wallet address (the
+  /// Solana account rather than the EVM one), or a Rain collateral deposit address.
+  ///
+  /// - Parameters:
+  ///   - address: Address to encode. `nil` encodes the provider's wallet address.
+  ///   - dimension: Output width and height in pixels (the QR is square).
+  ///   - backgroundColor: Background colour; `nil` uses black.
+  ///   - foregroundColor: QR module colour; `nil` uses white.
+  func generateAddressQRCode(
+    address: String?,
+    dimension: Int,
+    backgroundColor: CGColor?,
+    foregroundColor: CGColor?
+  ) async throws -> Data
+
   // MARK: - Fetch balances
 
   /// Fetches a single balance (native or a contract token) for the current wallet.
@@ -127,6 +145,17 @@ public protocol RainClient: Sendable {
 }
 
 public extension RainClient {
+  /// Generates a 256 px QR code (PNG) with the default colours, encoding `address` — or the
+  /// wallet's own address when `address` is omitted.
+  func generateAddressQRCode(address: String? = nil) async throws -> Data {
+    try await generateAddressQRCode(
+      address: address,
+      dimension: 256,
+      backgroundColor: nil,
+      foregroundColor: nil
+    )
+  }
+
   /// Sends tokens letting the SDK resolve the token's `decimals()` itself.
   func sendToken(
     chainId: Int,

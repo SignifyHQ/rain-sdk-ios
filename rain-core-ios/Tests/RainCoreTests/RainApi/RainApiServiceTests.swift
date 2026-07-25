@@ -149,6 +149,60 @@ struct RainApiServiceTests {
     }
   }
 
+  @Test("Solana tokens enrich from the registry only; unregistered mints stay bare")
+  func solanaEnrichmentIsRegistryOnly() async throws {
+    // The on-chain read path is EVM-only and SPL mints carry no on-chain symbol, so
+    // host-registered metadata is the sole naming source on Solana chains.
+    let solanaContractsJson = #"""
+    [
+      {
+        "chainId": 901,
+        "controllerAddress": "",
+        "proxyAddress": "CollateralAccount",
+        "adminAddresses": [],
+        "tokens": [
+          {"address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", "balance": "10", "exchangeRate": 1.0, "advanceRate": 0.8},
+          {"address": "So11111111111111111111111111111111111111112", "balance": "1", "exchangeRate": 1.0, "advanceRate": 0.8}
+        ]
+      }
+    ]
+    """#
+    try await MockRainApiURLProtocol.withStubs {
+      MockRainApiURLProtocol.stub("/sessions", .init(json: Self.sessionJson))
+      MockRainApiURLProtocol.stub("/contracts", .init(json: solanaContractsJson))
+
+      let chainReader = MockChainReader()
+      let tokenStore = TokenMetadataStore(chainReader: chainReader)
+      await tokenStore.register([
+        TokenInfo(
+          chainId: 901,
+          address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+          symbol: "USDC",
+          decimals: 6,
+          name: "USD Coin"
+        )
+      ])
+      let configStore = RainApiConfigStore(baseURL: URL(string: "https://rain-api.test")!)
+      configStore.setCredentials(apiKey: "key", userId: "user")
+      let service = RainApiService(
+        configStore: configStore,
+        tokenStore: tokenStore,
+        chainReader: chainReader,
+        client: RainApiClient(session: MockRainApiURLProtocol.makeSession())
+      )
+
+      let tokens = try #require(try await service.fetchCollateralContracts().first?.tokens)
+
+      #expect(tokens[0].symbol == "USDC")
+      #expect(tokens[0].name == "USD Coin")
+      #expect(tokens[0].decimals == 6)
+      #expect(tokens[1].symbol == nil)
+      #expect(tokens[1].decimals == nil)
+      #expect(chainReader.decimalsCalls.isEmpty)
+      #expect(chainReader.symbolCalls.isEmpty)
+    }
+  }
+
   @Test("fetchAdminSignature returns the mapped signature")
   func adminSignaturePassthrough() async throws {
     try await MockRainApiURLProtocol.withStubs {

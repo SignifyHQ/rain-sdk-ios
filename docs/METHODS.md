@@ -369,8 +369,12 @@ Sends ERC-20 (EVM) or SPL (Solana) tokens from the current wallet. Routed by `ch
 
 - **Returns:** `RainTokenTransferResult`: carrying the transaction hash.
 - **Throws:** `RainSDKError` if the send fails.
-- **Throws on Solana chains (Turnkey):** SPL token transfers are not yet implemented in the iOS
-  Turnkey adapter; calling this with a Solana `chainId` throws `RainSDKError.internalLogicError`.
+- **On Solana:** supported by the providers that hold a Solana account (Turnkey and Privy; Portal
+  throws). `decimals` is ignored — the mint's on-chain value is authoritative — and a recipient with
+  no token account for the mint gets an associated one created in the same transaction, paid for by
+  the sender. The transfer is dry-run against the cluster before signing, so a doomed send fails as
+  `tokenNotFound` / `tokenAccountNotFound` / `insufficientTokenBalance` / `invalidRecipient` /
+  `transactionSimulationFailed` rather than silently failing on chain.
 - **Async:** Yes
 
 | Parameter | Type | Description |
@@ -443,9 +447,31 @@ contributes no entries rather than failing the whole call.
 
 ---
 
+### generateAddressQRCode(address:dimension:backgroundColor:foregroundColor:)
+
+Generates a square QR code image (PNG) encoding `address` — or the wallet's own address when
+`address` is `nil`. Use it for any address the host shows: a chain-specific wallet address (the
+Solana account rather than the EVM one) or a Rain collateral deposit address.
+
+A convenience overload, `generateAddressQRCode(address:)`, applies the defaults below.
+
+- **Returns:** `Data`: PNG image bytes.
+- **Throws:** `RainSDKError` if the wallet address is needed but unavailable, or QR generation fails.
+- **Async:** Yes
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `address` | `String?` | Address to encode; `nil` uses the provider's wallet address. |
+| `dimension` | `Int` | Output width/height in pixels (`256` via the convenience overload). |
+| `backgroundColor` | `CGColor?` | Optional; default black. |
+| `foregroundColor` | `CGColor?` | Optional; default white. |
+
+---
+
 ### generateWalletAddressQRCode(dimension:backgroundColor:foregroundColor:)
 
-Generates a square QR code image (PNG) encoding the current wallet address.
+Generates a square QR code image (PNG) encoding the current wallet address — the same as
+`generateAddressQRCode(address: nil, …)`.
 
 - **Returns:** `Data`: PNG image bytes.
 - **Throws:** `RainSDKError` if the wallet is unavailable or QR generation fails.
@@ -465,6 +491,11 @@ Fetches transaction history for the current wallet on the given network.
 
 - **Returns:** `[WalletTransaction]`: transaction records (hash, from, to, value, category, metadata, chainId, …). `value` is a `Decimal?` in human-readable units.
 - **Throws:** `RainSDKError` if transaction history cannot be retrieved.
+- **On Solana:** rows cover native SOL (`category: "external"`) and SPL tokens
+  (`category: "token"`, with the mint, raw amount and decimals in `rawContract`); token accounts are
+  reported as the wallets behind them where they can be resolved. What is listed depends on the
+  provider's source: Turnkey reads its own activity log, so only sends made through the SDK appear,
+  with the Turnkey status id as the hash.
 - **Async:** Yes
 
 | Parameter | Type | Description |

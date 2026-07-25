@@ -26,6 +26,11 @@ public struct PrivyConfig: Sendable {
 /// Custody (signing, broadcasting) routes through Privy's EIP-1193 embedded-wallet provider;
 /// balance / fee reads use Rain's configured RPC via ``PrivyRpcClient``.
 ///
+/// On Solana: register the cluster's RPC URL and create an embedded Solana wallet
+/// (`user.createSolanaWallet()`); `getAddress`, `getBalance`, native SOL and SPL token sends
+/// resolve against that account. Fee estimates and typed-data stay EVM-only, and an embedded
+/// Ethereum wallet is always required.
+///
 /// ```swift
 /// import RainCore
 /// import RainPrivy
@@ -58,6 +63,7 @@ public struct PrivyProvider: RainProvider {
       manager: PrivyManager(privy: config.privy),
       rpcEndpoints: context.rpcEndpoints,
       tokenStore: context.tokenStore,
+      solanaSupport: context.solanaSupport,
       walletAddressOverride: config.walletAddress
     )
 

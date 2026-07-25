@@ -3,8 +3,9 @@ import Foundation
 /// Vendor-free infrastructure bundle that `RainSdk` builds once and hands to every adapter's
 /// `create(context:)`. Mirrors Android's `ProviderContext`. Contains no vendor SDK types.
 ///
-/// Public surface (out-of-core adapters): `rpcEndpoints`, `networkConfigs`, `tokenStore`.
-/// The transaction builder and chain reader are internal (in-core adapters only) for now.
+/// Public surface (out-of-core adapters): `rpcEndpoints`, `networkConfigs`, `tokenStore`,
+/// `solanaSupport`. The transaction builder and EVM chain reader are internal (in-core adapters
+/// only) for now.
 public final class ProviderContext: @unchecked Sendable {
   /// Chain id → RPC URL, as configured on the builder.
   public let rpcEndpoints: [Int: String]
@@ -14,6 +15,10 @@ public final class ProviderContext: @unchecked Sendable {
 
   /// Shared token metadata store (decimals / symbol / name resolution + cache).
   public let tokenStore: TokenMetadataStore
+
+  /// Solana surface — transfer composition (with preflights), balances and history — shared with
+  /// out-of-core adapters.
+  public let solanaSupport: RainSolanaSupport
 
   /// Wallet-agnostic transaction builder. In-core adapters only (internal, matching Android);
   /// widen when Turnkey graduates to rain-turnkey.
@@ -32,6 +37,7 @@ public final class ProviderContext: @unchecked Sendable {
     self.rpcEndpoints = rpcEndpoints
     self.networkConfigs = networkConfigs
     self.tokenStore = tokenStore
+    self.solanaSupport = RainSolanaSupport(networkConfigs: networkConfigs)
     self.transactionBuilder = transactionBuilder
     self.evmChainReader = evmChainReader
   }

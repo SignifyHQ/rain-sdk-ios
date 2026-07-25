@@ -1,28 +1,19 @@
 import Foundation
-import RainCore
 import PortalSwift
 
-/// ViewModel for the recover wallet popup. Portal-only. Wallet recovery is currently
-/// unavailable via the Rain dev API (the LF backup endpoint was removed), so `performRecover`
-/// surfaces that state instead of fetching a backup share.
+/// ViewModel for the recover-wallet popup. Portal-only.
+///
+/// Portal recovery previously pulled the encrypted backup share from the Liquidity Financial
+/// proxy (`GET /v1/portal/backup`). The Rain dev API has no equivalent yet — recovery is slated
+/// to move behind the wallet-provider endpoint (`POST /v1/issuing/users/{userId}/wallet`), which
+/// is not live. `performRecover` surfaces that state instead of calling a dead endpoint.
 @MainActor
-class RecoverViewModel: ObservableObject {
-  private let sdkService: RainSDKService
-  private let backupRepository: PortalBackupRepository
-
-  @Published var showRecoverChoiceSheet: Bool = false
+final class RecoverViewModel: ObservableObject {
+  @Published var showRecoverChoiceSheet = false
   @Published var selectedRecoverMethod: BackupMethods?
-  @Published var recoverPassword: String = ""
+  @Published var recoverPassword = ""
   @Published var recoverError: Error?
-  @Published var isRecovering: Bool = false
-
-  init(
-    sdkService: RainSDKService = .shared,
-    backupRepository: PortalBackupRepository = PortalBackupRepository()
-  ) {
-    self.sdkService = sdkService
-    self.backupRepository = backupRepository
-  }
+  @Published var isRecovering = false
 
   func showRecoverSheet() {
     recoverError = nil
@@ -44,14 +35,7 @@ class RecoverViewModel: ObservableObject {
   }
 
   func performRecover() async {
-    guard let method = selectedRecoverMethod else { return }
-    
-    // Portal wallet recovery previously pulled the encrypted backup share from the Liquidity
-    // Financial proxy (`GET /v1/portal/backup`). The Rain dev API has no equivalent yet —
-    // recovery is slated to move behind the wallet-provider endpoint
-    // (`POST /v1/issuing/users/{userId}/wallet`), which is not live. Surface that clearly
-    // instead of calling a dead endpoint.
-    _ = method
+    SampleLog.w("Portal.recover", "recovery unavailable — Rain wallet endpoint not yet live")
     recoverError = NSError(
       domain: "Recover",
       code: -1,

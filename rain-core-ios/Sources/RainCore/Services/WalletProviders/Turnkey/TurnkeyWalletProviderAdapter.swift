@@ -35,6 +35,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   private let chainReader: ChainReader
   private let solanaChainReader: ChainReader
   private let solanaRpcClient: SolanaRpcClient
+  private let solanaTransferComposer: SolanaTransferComposer
   private let tokenStore: TokenMetadataStore
 
   // Once resolved, each address is stable for the adapter's lifetime, so cache it. EVM and
@@ -67,6 +68,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     let resolvedSolanaRpcClient = solanaRpcClient
       ?? SolanaRpcClient(jsonRpcClient: jsonRpcClient, networkConfigs: networkConfigs)
     self.solanaRpcClient = resolvedSolanaRpcClient
+    self.solanaTransferComposer = SolanaTransferComposer(rpcClient: resolvedSolanaRpcClient)
     self.solanaChainReader = solanaChainReader
       ?? SolanaChainReader(solanaRpcClient: resolvedSolanaRpcClient)
     self.tokenStore = tokenStore ?? TokenMetadataStore(chainReader: resolvedReader)
@@ -156,6 +158,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     chainId: Int,
     params: WalletTransactionParams
   ) async throws -> String {
+    try requireEVM(chainId: chainId, operation: "sendTransaction")
     let (session, client) = try resolveSessionAndClient()
     let sendInput = try await buildTurnkeySendTransactionBody(
       session: session,
@@ -177,7 +180,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   ) async throws -> Balance {
     let walletAddress = try await getAddress(chainId: chainId)
 
-    // Solana has its own balance policy (Turnkey-first with an RPC fallback for native SOL),
+    // Solana has its own balance policy (Turnkey-first with an RPC fallback),
     // so it branches out before the EVM logic below.
     if SolanaChains.isSolana(chainId) {
       return try await solanaBalance(chainId: chainId, walletAddress: walletAddress, token: token)
@@ -212,9 +215,9 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     }
   }
 
-  /// Solana balance read. Turnkey is the primary source; native SOL falls back to the Solana
-  /// RPC reader if the Turnkey call fails (the RPC reader can't read SPL, so contract tokens
-  /// surface the original error instead of falling back).
+  /// Solana balance read. Turnkey is the primary source, with the Solana RPC reader as the
+  /// fallback for both native SOL and SPL tokens — Turnkey does not index every cluster (devnet
+  /// in particular), and the node always does.
   private func solanaBalance(
     chainId: Int,
     walletAddress: String,
@@ -227,29 +230,74 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       case .native:
         return await nativeBalance(chainId: chainId, from: balances, caip2: caip2)
       case .contract(let mint):
-        return await splBalance(chainId: chainId, from: balances, caip2: caip2, mint: mint)
+        return try await splBalance(
+          chainId: chainId,
+          walletAddress: walletAddress,
+          from: balances,
+          caip2: caip2,
+          mint: mint
+        )
       }
     } catch {
-      guard case .native = token else { throw error }
       return try await chainReaderFor(chainId: chainId).getBalance(
         chainId: chainId,
         walletAddress: walletAddress,
-        token: .native,
-        tokenInfo: nil
+        token: token,
+        tokenInfo: await solanaTokenInfo(chainId: chainId, token: token)
       )
     }
   }
 
-  /// Builds an SPL `Balance` for `mint` from a Turnkey asset list. Turnkey omits zero balances,
-  /// so a missing mint yields a zero balance with whatever metadata we can recover.
+  /// Host-registered metadata for a mint, if any — the naming source for the chain-fallback
+  /// path. Reads only the registry, never `TokenMetadataStore.tokenInfo`, whose enrichment path
+  /// goes through the EVM reader and cannot describe an SPL mint.
+  private func solanaTokenInfo(chainId: Int, token: Token) async -> TokenInfo? {
+    guard case .contract(let mint) = token else { return nil }
+    return await tokenStore.registeredTokens(for: chainId)
+      .first { $0.address.lowercased() == mint.lowercased() }
+  }
+
+  /// Native SOL plus the SPL tokens the wallet holds, read from the node. Zero balances are
+  /// dropped, matching every other chain. Naming falls back to host-registered tokens, so a
+  /// mint no indexer covers can still be labelled by the caller rather than shown as a bare
+  /// address.
+  private func solanaBalancesFromNode(
+    chainId: Int,
+    walletAddress: String
+  ) async throws -> [Balance] {
+    let all = try await chainReaderFor(chainId: chainId).getBalances(
+      chainId: chainId,
+      walletAddress: walletAddress,
+      tokens: await tokenStore.registeredTokens(for: chainId)
+    )
+    return all.filter { balance in
+      if case .native = balance.token { return true }
+      return balance.rawAmount > 0
+    }
+  }
+
+  /// Builds an SPL `Balance` for `mint` from a Turnkey asset list.
+  ///
+  /// Turnkey omits zero balances, and on a cluster it does not index every mint looks like a
+  /// zero — so a missing entry is re-read from the node rather than reported as zero with
+  /// unknown decimals.
   private func splBalance(
     chainId: Int,
+    walletAddress: String,
     from balances: [v1AssetBalance],
     caip2: String,
     mint: String
-  ) async -> Balance {
-    let asset = balances.first(where: { tokenAddress(from: $0.caip19 ?? "", caip2: caip2) == mint })
-    let raw = BigUInt(asset?.balance ?? "0") ?? 0
+  ) async throws -> Balance {
+    guard let asset = balances.first(where: { tokenAddress(from: $0.caip19 ?? "", caip2: caip2) == mint })
+    else {
+      return try await chainReaderFor(chainId: chainId).getBalance(
+        chainId: chainId,
+        walletAddress: walletAddress,
+        token: .contract(address: mint),
+        tokenInfo: await solanaTokenInfo(chainId: chainId, token: .contract(address: mint))
+      )
+    }
+    let raw = BigUInt(asset.balance ?? "0") ?? 0
     return await contractBalanceFrom(chainId: chainId, tokenAddress: mint, raw: raw, balance: asset)
   }
 
@@ -274,20 +322,17 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     let caip2 = caip2For(chainId: chainId)
     let balances: [v1AssetBalance]
     if SolanaChains.isSolana(chainId) {
-      do {
-        balances = try await fetchBalances(chainId: chainId, walletAddress: walletAddress)
-      } catch {
-        // RPC fallback: SolanaChainReader.getBalances returns native SOL only.
-        let all = try await chainReaderFor(chainId: chainId).getBalances(
-          chainId: chainId,
-          walletAddress: walletAddress,
-          tokens: []
-        )
-        return all.filter { balance in
-          if case .native = balance.token { return true }
-          return balance.rawAmount > 0
-        }
+      let turnkeyBalances = try? await fetchBalances(chainId: chainId, walletAddress: walletAddress)
+      // Turnkey does not index every cluster: on devnet / testnet it errors, or answers with SOL
+      // and no SPL assets at all. Discovering the wallet's token accounts from the node covers
+      // both cases; on mainnet, where Turnkey does list SPL assets, its richer metadata wins.
+      let listsSplAssets = turnkeyBalances?.contains { balance in
+        tokenAddress(from: balance.caip19 ?? "", caip2: caip2) != nil
+      } ?? false
+      guard let turnkeyBalances, listsSplAssets else {
+        return try await solanaBalancesFromNode(chainId: chainId, walletAddress: walletAddress)
       }
+      balances = turnkeyBalances
     } else {
       balances = try await fetchBalances(chainId: chainId, walletAddress: walletAddress)
     }
@@ -449,14 +494,21 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     let to: String?
     let lamports: UInt64?
     let sendTransactionStatusId: String?
+    /// Set instead of `lamports` when the activity was an SPL transfer.
+    let token: SolanaTransactionDecoder.TokenTransfer?
   }
 
   /// Solana transaction history, sourced from Turnkey activities
-  /// (`ACTIVITY_TYPE_SOL_SEND_TRANSACTION`) for consistency with the EVM path — so it shows
-  /// only transactions this wallet sent through Turnkey (no receives). Turnkey's Solana
-  /// activity carries only the unsigned transaction (no recipient/amount) and no on-chain
-  /// signature, so `to`/`value` are decoded from that blob and the row's hash is the Turnkey
-  /// status id (not an explorer-resolvable signature).
+  /// (`ACTIVITY_TYPE_SOL_SEND_TRANSACTION`) for consistency with the EVM path — so it shows only
+  /// transactions this wallet sent through Turnkey (no receives). Turnkey's Solana activity carries
+  /// only the unsigned transaction (no recipient/amount) and no on-chain signature, so `to`/`value`
+  /// are decoded from that blob and the row's hash is the Turnkey status id (not an
+  /// explorer-resolvable signature).
+  ///
+  /// Both shapes Rain sends are decoded: a System transfer becomes a native SOL row, and an SPL
+  /// `TransferChecked` a token row carrying the mint in `rawContract`. SPL transfers move between
+  /// *token accounts*, so the recipient wallet is recovered from the transaction's
+  /// account-creation instruction when it has one, and read from the node otherwise.
   private func getSolanaTransactions(
     chainId: Int,
     limit: Int?,
@@ -482,13 +534,17 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       let seconds = Double(activity.createdAt.seconds) ?? 0
       let nanos = Double(activity.createdAt.nanos) ?? 0
       let transfer = SolanaTransactionDecoder.decodeTransfer(intent.unsignedTransaction)
+      let token = transfer == nil
+        ? SolanaTransactionDecoder.decodeTokenTransfer(intent.unsignedTransaction)
+        : nil
       return SolanaActivityDraft(
         id: activity.id,
         timestamp: seconds + nanos / 1_000_000_000,
         from: intent.signWith,
-        to: transfer?.to,
+        to: transfer?.to ?? token?.destinationOwner ?? token?.destination,
         lamports: transfer?.lamports,
-        sendTransactionStatusId: activity.result.solSendTransactionResult?.sendTransactionStatusId
+        sendTransactionStatusId: activity.result.solSendTransactionResult?.sendTransactionStatusId,
+        token: token
       )
     }
 
@@ -505,27 +561,78 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
         .prefix(limit ?? sortedDrafts.count)
     )
 
-    let symbol = SolanaChains.nativeCurrency.symbol
-    return slicedDrafts.map { draft in
-      WalletTransaction(
-        blockNum: "",
-        uniqueId: draft.id,
-        hash: draft.sendTransactionStatusId ?? draft.id,
-        from: draft.from,
-        to: draft.to,
-        value: draft.lamports.map { SolanaConverter.lamportsToSol($0) },
-        erc721TokenId: nil,
-        erc1155Metadata: nil,
-        tokenId: nil,
-        asset: symbol,
-        category: "external",
-        rawContract: nil,
-        metadata: WalletTransaction.Metadata(
-          blockTimestamp: Self.iso8601String(from: draft.timestamp)
-        ),
-        chainId: chainId
-      )
+    var transactions: [WalletTransaction] = []
+    transactions.reserveCapacity(slicedDrafts.count)
+    for draft in slicedDrafts {
+      transactions.append(await solanaTransaction(chainId: chainId, from: draft))
     }
+    return transactions
+  }
+
+  /// Maps one decoded Solana activity onto the Rain model. SPL rows resolve their decimals and
+  /// recipient wallet from the node when the transaction itself didn't carry them; both reads are
+  /// best-effort, so a row always lists.
+  private func solanaTransaction(
+    chainId: Int,
+    from draft: SolanaActivityDraft
+  ) async -> WalletTransaction {
+    var value = draft.lamports.map { SolanaConverter.lamportsToSol($0) }
+    var asset: String? = SolanaChains.nativeCurrency.symbol
+    var category = "external"
+    var rawContract: WalletTransaction.RawContract?
+    var to = draft.to
+
+    if let token = draft.token {
+      category = "token"
+      let mint = token.mint
+      // TransferChecked carries the decimals; the bare Transfer instruction does not.
+      var decimals = token.decimals.map(Int.init)
+      if decimals == nil, let mint {
+        decimals = try? await solanaRpcClient.getMintInfo(chainId: chainId, mint: mint)?.decimals
+      }
+      value = decimals.map {
+        EthereumConverter.baseUnitsToDecimal(BigUInt(token.rawAmount.description) ?? 0, decimals: $0)
+      }
+      // Registered metadata only — enrichment reads `decimals()` over EVM RPC, which no mint answers.
+      asset = nil
+      if let mint {
+        asset = await tokenStore.registeredTokens(for: chainId)
+          .first { $0.address == mint }?
+          .symbol
+      }
+      rawContract = WalletTransaction.RawContract(
+        value: "\(token.rawAmount)",
+        address: mint,
+        decimal: decimals.map { "\($0)" }
+      )
+      if token.destinationOwner == nil {
+        // Falls back to the token account when the owner cannot be read — a real address the user
+        // can look up, rather than nothing.
+        let owner = try? await solanaRpcClient.getTokenAccount(
+          chainId: chainId, address: token.destination
+        )
+        to = owner?.owner.isEmpty == false ? owner?.owner : token.destination
+      }
+    }
+
+    return WalletTransaction(
+      blockNum: "",
+      uniqueId: draft.id,
+      hash: draft.sendTransactionStatusId ?? draft.id,
+      from: draft.from,
+      to: to,
+      value: value,
+      erc721TokenId: nil,
+      erc1155Metadata: nil,
+      tokenId: nil,
+      asset: asset,
+      category: category,
+      rawContract: rawContract,
+      metadata: WalletTransaction.Metadata(
+        blockTimestamp: Self.iso8601String(from: draft.timestamp)
+      ),
+      chainId: chainId
+    )
   }
 
   // MARK: - Solana send
@@ -536,27 +643,32 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     amount: Decimal
   ) async throws -> String {
     let from = try await getAddress(chainId: chainId)
-    let (session, client) = try resolveSessionAndClient()
-
-    let blockhash = try await solanaRpcClient.getLatestBlockhash(chainId: chainId)
-    let lamports = try SolanaConverter.solToLamports(amount)
-    // The Turnkey type documents `unsignedTransaction` as base64, but the live API hex-decodes
-    // it (see SolanaTransactionBuilder). Send hex.
-    let unsignedTransaction = try SolanaTransactionBuilder.buildTransferHex(
-      from: from,
-      to: toAddress,
-      lamports: lamports,
-      recentBlockhash: blockhash
+    let unsigned = try await solanaTransferComposer.composeNative(
+      chainId: chainId, from: from, to: toAddress, amount: amount
     )
+    return try await submitSolanaTransaction(chainId: chainId, from: from, unsigned: unsigned)
+  }
+
+  /// Hands a composed transfer to Turnkey (which signs with the wallet's ed25519 key and
+  /// broadcasts) and resolves it to a signature. Shared by the native and SPL paths.
+  ///
+  /// The Turnkey type documents `unsignedTransaction` as base64, but the live API hex-decodes it
+  /// (see `SolanaTransactionBuilder`), so the hex form is sent.
+  private func submitSolanaTransaction(
+    chainId: Int,
+    from: String,
+    unsigned: UnsignedSolanaTransfer
+  ) async throws -> String {
+    let (session, client) = try resolveSessionAndClient()
 
     let response = try await client.solSendTransaction(
       TSolSendTransactionBody(
         organizationId: session.organizationId,
         caip2: caip2For(chainId: chainId),
-        recentBlockhash: blockhash,
+        recentBlockhash: unsigned.recentBlockhash,
         signWith: from,
         sponsor: false,
-        unsignedTransaction: unsignedTransaction
+        unsignedTransaction: unsigned.transactionHex
       )
     )
     let statusId = response.sendTransactionStatusId
@@ -585,22 +697,12 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
 
   // MARK: - SPL token send
 
-  /// SPL token transfer placeholder.
+  /// Sends SPL tokens. Composition and every preflight (mint resolution, token-account
+  /// derivation/creation, balance and fee checks, simulation) live in ``SolanaTransferComposer``;
+  /// this method only signs and broadcasts through Turnkey.
   ///
-  /// The protocol surface is wired (so `RainSDKManager.sendToken` can route Solana chains here
-  /// instead of throwing at the public layer), but the on-chain message construction is not
-  /// yet implemented. A full implementation needs:
-  ///   - Associated Token Account derivation (Program-Derived Address with an ed25519
-  ///     off-curve check — see `solana-swift`'s `NaclLowLevel.isOnCurve` for the canonical
-  ///     algorithm).
-  ///   - SPL Token Program `TransferChecked` instruction (and optional `CreateIdempotent`
-  ///     preamble for new recipient ATAs).
-  ///   - A multi-instruction Solana message serializer (the existing `SolanaTransactionBuilder`
-  ///     only handles single-instruction System Program transfers).
-  ///
-  /// Until that lands, the adapter throws `internalLogicError` so the failure mode is identical
-  /// to the pre-change behavior. The public `sendToken` API on `RainSDKManager` therefore still
-  /// surfaces a clear error for Solana SPL attempts.
+  /// `decimals` is deliberately ignored: it arrives resolved against the EVM token store, which
+  /// cannot read an SPL mint. The mint's own scale is authoritative and is read from the chain.
   func sendSolanaSPLToken(
     chainId: Int,
     mintAddress: String,
@@ -608,9 +710,15 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     amount: Decimal,
     decimals: Int
   ) async throws -> String {
-    throw RainSDKError.internalLogicError(
-      details: "SPL token transfers are not yet implemented on iOS Turnkey (chainId=\(chainId))"
+    let from = try await getAddress(chainId: chainId)
+    let unsigned = try await solanaTransferComposer.composeSPLToken(
+      chainId: chainId,
+      from: from,
+      mintAddress: mintAddress,
+      to: toAddress,
+      amount: amount
     )
+    return try await submitSolanaTransaction(chainId: chainId, from: from, unsigned: unsigned)
   }
 
   /// Polls Turnkey for the terminal status of a Solana submission. Returns `solana.signature`
@@ -668,6 +776,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     walletAddress: String,
     typedData: String
   ) async throws -> String {
+    try requireEVM(chainId: chainId, operation: "signTypedData")
     let signature = try await turnkey.signRawPayload(
       signWith: walletAddress,
       payload: typedData,
@@ -683,6 +792,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     walletAddress: String,
     params: WalletTransactionParams
   ) async throws -> Decimal {
+    try requireEVM(chainId: chainId, operation: "estimateTransactionFee")
     let estimateHex = try await rpcCallForHex(
       chainId: chainId,
       method: "eth_estimateGas",
@@ -701,6 +811,16 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     return EthereumConverter.baseUnitsToDecimal(
       gasLimit * gasPriceWei,
       decimals: AdapterConstants.defaultNativeDecimals
+    )
+  }
+
+  /// Rejects Solana chain ids on the EVM-only paths; Solana transfers go through `sendNative` /
+  /// `sendToken`. Mirrors Android's `requireEvmChain`.
+  private func requireEVM(chainId: Int, operation: String) throws {
+    guard SolanaChains.isSolana(chainId) else { return }
+    throw RainSDKError.invalidConfig(
+      chainId: chainId,
+      rpcUrl: "Turnkey provider does not support \(operation) on Solana; use sendNative for SOL transfers"
     )
   }
 

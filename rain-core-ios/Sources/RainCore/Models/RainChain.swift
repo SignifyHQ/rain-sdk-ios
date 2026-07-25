@@ -12,4 +12,9 @@ public enum RainChain {
   public static let solanaMainnet = 900
   public static let solanaTestnet = 902
   public static let solanaDevnet = 901
+
+  /// Public accessors over the `internal` `SolanaChains` so out-of-core adapters (Privy, Portal)
+  /// can route Solana chains.
+  public static func isSolana(_ chainId: Int) -> Bool { SolanaChains.isSolana(chainId) }
+  public static func solanaCaip2(for chainId: Int) -> String? { SolanaChains.caip2(for: chainId) }
 }

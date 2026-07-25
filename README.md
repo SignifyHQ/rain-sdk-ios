@@ -28,7 +28,7 @@ your dependency graph.
 - **Withdrawal transaction building** — Build ABI-encoded withdraw calldata for submission.
 - **Full withdrawal flow** — builds the transaction, signs via the backing provider, and submits; returns the transaction hash.
 - **Fee estimation** — returns the estimated gas cost in the chain’s native token (e.g. ETH).
-- **Wallet information** — get current wallet address and generate a QR code image (PNG) for it.
+- **Wallet information** — get the wallet address (per chain family) and generate a QR code image (PNG) for it or for any other address.
 - **Balances** — get native and ERC-20 token balances for the current wallet.
 - **Transaction history** — get transactions for the current wallet with optional pagination and sort order (`WalletTransaction`, `WalletTransactionOrder`).
 - **Send tokens** — send native or ERC-20 tokens from the current wallet.
@@ -324,15 +324,23 @@ for tx in txs {
 
 ### 12. QR code generation
 
-Returns PNG `Data` encoding the current wallet address.
+Returns PNG `Data` encoding any address — pass `nil` (or omit it) for the wallet's own address.
 
 ```swift
-let png = try await client.generateWalletAddressQRCode(
+// The wallet's own address, 256 px, default colours.
+let walletPNG = try await client.generateAddressQRCode()
+
+// A specific address — e.g. the Solana account, or a Rain collateral deposit address.
+let depositPNG = try await client.generateAddressQRCode(address: contract.depositAddress)
+
+// Full control over size and colours.
+let large = try await client.generateAddressQRCode(
+    address: try await client.getWalletAddress(chainId: RainChain.solanaDevnet),
     dimension: 500,
     backgroundColor: nil, // defaults applied when nil
     foregroundColor: nil
 )
-let image = UIImage(data: png)
+let image = UIImage(data: walletPNG)
 ```
 
 For a short overview of all public methods, see [Method overview](docs/METHODS.md).

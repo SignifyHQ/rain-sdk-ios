@@ -27,6 +27,10 @@ final class PrivyAuthSample {
   /// Initializes the Privy singleton (idempotent — reuses the existing instance).
   func initialize(appId: String, appClientId: String) {
     guard instance == nil else { return }
+    SampleLog.d(
+      "PrivyAuth",
+      "init appId=\(SampleLog.maskToken(appId)) clientId=\(SampleLog.maskToken(appClientId))"
+    )
     instance = PrivySdk.initialize(
       config: PrivyConfig(appId: appId, appClientId: appClientId)
     )
@@ -39,6 +43,17 @@ final class PrivyAuthSample {
     return false
   }
 
+  /// Email of the user a restored session belongs to, or nil if it cannot be determined. Callers
+  /// reusing a restored session MUST compare this against the email being logged in — a valid
+  /// session for a *different* email must not be reused.
+  func activeSessionEmail() async -> String? {
+    guard await hasActiveSession(), let user = await instance?.getUser() else { return nil }
+    for account in user.linkedAccounts {
+      if case .email(let email) = account { return email.email }
+    }
+    return nil
+  }
+
   /// Logs the Privy user out. Safe no-op if not authenticated.
   func logout() async {
     guard let user = await instance?.getUser() else { return }
@@ -47,25 +62,49 @@ final class PrivyAuthSample {
 
   /// Sends an email OTP. Throws on failure.
   func sendEmailOtp(email: String) async throws {
+    SampleLog.d("PrivyAuth", "sendEmailOtp to=\(SampleLog.maskEmail(email))")
     try await privy.email.sendCode(to: email)
   }
 
-  /// Verifies the OTP and creates a Privy session, then ensures an embedded Ethereum wallet exists.
-  /// Throws on failure.
+  /// Verifies the OTP and creates a Privy session. Throws on failure.
   func verifyEmailOtp(code: String, email: String) async throws {
+    SampleLog.d("PrivyAuth", "verifyEmailOtp email=\(SampleLog.maskEmail(email))")
     _ = try await privy.email.loginWithCode(code, sentTo: email)
-    try await ensureEthereumWallet()
+    SampleLog.d("PrivyAuth", "session active")
   }
 
-  /// Ensures the authenticated user has an embedded Ethereum wallet, creating one if needed.
-  func ensureEthereumWallet() async throws {
+  /// Ensures the authenticated user has an embedded Ethereum wallet. Returns true when one was
+  /// created.
+  func ensureEthereumWallet() async throws -> Bool {
+    let user = try await requireUser()
+    guard user.embeddedEthereumWallets.isEmpty else {
+      SampleLog.d("PrivyAuth", "ensureEthereumWallet — wallet already present")
+      return false
+    }
+    let wallet = try await user.createEthereumWallet(allowAdditional: false)
+    SampleLog.i("PrivyAuth", "created embedded wallet address=\(wallet.address)")
+    return true
+  }
+
+  /// Ensures the authenticated user has an embedded Solana wallet (Rain's Solana operations use the
+  /// first one). Returns true when one was created.
+  func ensureSolanaWallet() async throws -> Bool {
+    let user = try await requireUser()
+    guard user.embeddedSolanaWallets.isEmpty else {
+      SampleLog.d("PrivyAuth", "ensureSolanaWallet — wallet already present")
+      return false
+    }
+    let wallet = try await user.createSolanaWallet(allowAdditional: false)
+    SampleLog.i("PrivyAuth", "created embedded Solana wallet address=\(wallet.address)")
+    return true
+  }
+
+  private func requireUser() async throws -> any PrivyUser {
     guard let user = await privy.getUser() else {
       throw NSError(
         domain: "RainSDKDemo.Privy", code: -1,
         userInfo: [NSLocalizedDescriptionKey: "Privy user not authenticated"])
     }
-    if user.embeddedEthereumWallets.isEmpty {
-      _ = try await user.createEthereumWallet(allowAdditional: false)
-    }
+    return user
   }
 }

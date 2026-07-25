@@ -89,13 +89,30 @@ internal final class RainApiService: Sendable {
   /// else direct on-chain reads. Best-effort and concurrent per token: a failed read leaves
   /// that field nil — never a fabricated default, since wrong decimals would corrupt the
   /// caller's base-unit math. (This is deliberately NOT `tokenStore.tokenInfo`, whose
-  /// enrichment falls back to 18 decimals on failure.) Solana chains are skipped — the
-  /// enrichment path is EVM-only.
+  /// enrichment falls back to 18 decimals on failure.) On Solana chains only the registry
+  /// is consulted — the on-chain read path is EVM-only, and an SPL mint carries no on-chain
+  /// symbol anyway, so host-registered metadata is the sole naming source there.
   private func enrichTokens(of contract: RainCollateralContract) async -> RainCollateralContract {
-    guard !contract.tokens.isEmpty, !SolanaChains.isSolana(contract.chainId) else { return contract }
+    guard !contract.tokens.isEmpty else { return contract }
 
     let chainId = contract.chainId
     let known = await tokenStore.registeredTokens(for: chainId)
+    if SolanaChains.isSolana(chainId) {
+      let tokens = contract.tokens.map { token in
+        known.first(where: { $0.address.lowercased() == token.address.lowercased() }).map { info in
+          RainCollateralToken(
+            address: token.address,
+            balance: token.balance,
+            exchangeRate: token.exchangeRate,
+            advanceRate: token.advanceRate,
+            name: info.name,
+            symbol: info.symbol,
+            decimals: info.decimals
+          )
+        } ?? token
+      }
+      return contractReplacingTokens(contract, with: tokens)
+    }
     let reader = chainReader
     let enriched = await withTaskGroup(of: (Int, RainCollateralToken).self) { group in
       for (index, token) in contract.tokens.enumerated() {
@@ -141,7 +158,14 @@ internal final class RainApiService: Sendable {
       return results
     }
 
-    return RainCollateralContract(
+    return contractReplacingTokens(contract, with: enriched)
+  }
+
+  private func contractReplacingTokens(
+    _ contract: RainCollateralContract,
+    with tokens: [RainCollateralToken]
+  ) -> RainCollateralContract {
+    RainCollateralContract(
       id: contract.id,
       chainId: contract.chainId,
       proxyAddress: contract.proxyAddress,
@@ -149,7 +173,7 @@ internal final class RainApiService: Sendable {
       depositAddress: contract.depositAddress,
       adminAddresses: contract.adminAddresses,
       contractVersion: contract.contractVersion,
-      tokens: enriched
+      tokens: tokens
     )
   }
 }

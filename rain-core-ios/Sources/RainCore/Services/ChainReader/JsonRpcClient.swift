@@ -56,11 +56,17 @@ internal final class JsonRpcClient: Sendable {
       if let error = response["error"] as? [String: Any] {
         let code = error["code"] as? Int ?? -1
         let message = error["message"] as? String ?? "Unknown RPC error"
-        throw NSError(
+        let rpcError = NSError(
           domain: "eth.rpc",
           code: code,
           userInfo: [NSLocalizedDescriptionKey: message]
         )
+        // A revert is an execution verdict, not an internal fault: map to
+        // `.transactionSimulationFailed` (RAIN_403), matching Android and the Privy/Portal clients.
+        if message.range(of: "revert", options: .caseInsensitive) != nil {
+          throw RainSDKError.transactionSimulationFailed(underlying: rpcError)
+        }
+        throw rpcError
       }
 
       return response

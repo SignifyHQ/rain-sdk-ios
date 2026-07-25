@@ -8,10 +8,14 @@ import Foundation
 /// the live API hex-decodes the field, so the adapter sends `serializedHex` by default. Both
 /// `serializedHex` and `serializedBase64` are exposed so flipping the encoding is one line.
 ///
-/// Scope is a single native SOL transfer (System Program `transfer`). The wire format matches
-/// `@solana/web3.js` `Transaction.serialize({ requireAllSignatures: false })`: a legacy
-/// transaction = compact-u16 signature count + one zero-filled 64-byte signature placeholder +
-/// the serialized message. Turnkey fills the placeholder with the real signature.
+/// The wire format matches `@solana/web3.js` `Transaction.serialize({ requireAllSignatures:
+/// false })`: a legacy transaction = compact-u16 signature count + one zero-filled 64-byte
+/// signature placeholder + the serialized message. Turnkey fills the placeholder with the real
+/// signature.
+///
+/// Two shapes are built: a native SOL transfer (System Program `transfer`) and an SPL token
+/// transfer (`TransferChecked`, optionally preceded by an idempotent ATA creation) — both through
+/// the same generic ``buildTransactionBytes(feePayer:recentBlockhash:instructions:)``.
 ///
 /// Pure and dependency-free so it can be unit-tested byte-for-byte.
 internal enum SolanaTransactionBuilder {
@@ -19,6 +23,28 @@ internal enum SolanaTransactionBuilder {
   private static let signatureLength = 64
   private static let systemProgramId = [UInt8](repeating: 0, count: 32) // all-zero account = 1111…1111
   private static let systemTransferInstructionIndex: UInt32 = 2 // SystemInstruction::Transfer
+
+  /// One account reference inside an instruction. The same account may appear in several
+  /// instructions with different flags; the message merges them.
+  struct AccountMeta {
+    let pubkey: String
+    let isSigner: Bool
+    let isWritable: Bool
+
+    static func writable(_ pubkey: String, signer: Bool = false) -> AccountMeta {
+      AccountMeta(pubkey: pubkey, isSigner: signer, isWritable: true)
+    }
+
+    static func readonly(_ pubkey: String, signer: Bool = false) -> AccountMeta {
+      AccountMeta(pubkey: pubkey, isSigner: signer, isWritable: false)
+    }
+  }
+
+  struct Instruction {
+    let programId: String
+    let accounts: [AccountMeta]
+    let data: [UInt8]
+  }
 
   /// Lowercase hex of the serialized unsigned transaction.
   static func buildTransferHex(
@@ -46,53 +72,252 @@ internal enum SolanaTransactionBuilder {
     lamports: UInt64,
     recentBlockhash: String
   ) throws -> [UInt8] {
-    let from = try decodeKey(fromAddress, label: "from")
-    let to = try decodeKey(toAddress, label: "to")
-    let blockhash = try decodeKey(recentBlockhash, label: "recentBlockhash")
+    // Account ordering works out to [from, to, systemProgram] — the historical layout.
+    try buildTransactionBytes(
+      feePayer: fromAddress,
+      recentBlockhash: recentBlockhash,
+      instructions: [
+        Instruction(
+          programId: Base58.encode(systemProgramId),
+          accounts: [
+            .writable(fromAddress, signer: true),
+            .writable(toAddress)
+          ],
+          data: transferInstructionData(lamports: lamports)
+        )
+      ]
+    )
+  }
 
-    let message = serializeMessage(from: from, to: to, blockhash: blockhash, lamports: lamports)
+  // MARK: - SPL token transfer
+
+  /// Lowercase hex of an unsigned SPL token transfer.
+  ///
+  /// `createDestinationAccount` prepends the Associated Token Account program's
+  /// `CreateIdempotent`, funded by the fee payer — needed when the recipient holds no account for
+  /// the mint yet, and harmless (a no-op) if one appears in between.
+  static func buildSPLTransferHex(
+    owner: String,
+    source: String,
+    destination: String,
+    destinationOwner: String,
+    mint: String,
+    tokenProgramId: String,
+    amount: UInt64,
+    decimals: UInt8,
+    recentBlockhash: String,
+    createDestinationAccount: Bool
+  ) throws -> String {
+    toHex(
+      try buildSPLTransferBytes(
+        owner: owner,
+        source: source,
+        destination: destination,
+        destinationOwner: destinationOwner,
+        mint: mint,
+        tokenProgramId: tokenProgramId,
+        amount: amount,
+        decimals: decimals,
+        recentBlockhash: recentBlockhash,
+        createDestinationAccount: createDestinationAccount
+      )
+    )
+  }
+
+  static func buildSPLTransferBytes(
+    owner: String,
+    source: String,
+    destination: String,
+    destinationOwner: String,
+    mint: String,
+    tokenProgramId: String,
+    amount: UInt64,
+    decimals: UInt8,
+    recentBlockhash: String,
+    createDestinationAccount: Bool
+  ) throws -> [UInt8] {
+    var instructions: [Instruction] = []
+
+    if createDestinationAccount {
+      instructions.append(
+        Instruction(
+          programId: SolanaPrograms.associatedTokenAccount,
+          accounts: [
+            .writable(owner, signer: true),      // payer
+            .writable(destination),              // the account being created
+            .readonly(destinationOwner),         // its owner
+            .readonly(mint),
+            .readonly(SolanaPrograms.system),
+            .readonly(tokenProgramId)
+          ],
+          data: SolanaPrograms.createIdempotentData
+        )
+      )
+    }
+
+    instructions.append(
+      Instruction(
+        programId: tokenProgramId,
+        accounts: [
+          .writable(source),
+          .readonly(mint),
+          .writable(destination),
+          .readonly(owner, signer: true)
+        ],
+        data: SolanaPrograms.transferCheckedData(amount: amount, decimals: decimals)
+      )
+    )
+
+    return try buildTransactionBytes(
+      feePayer: owner,
+      recentBlockhash: recentBlockhash,
+      instructions: instructions
+    )
+  }
+
+  // MARK: - Generic serialization
+
+  /// Serializes an unsigned legacy transaction: compact-u16 signature count + one zero-filled
+  /// 64-byte placeholder per required signature + the message.
+  ///
+  /// Only the fee payer ever signs the transactions this SDK builds, so the placeholder count is
+  /// derived from the merged account list rather than assumed.
+  static func buildTransactionBytes(
+    feePayer: String,
+    recentBlockhash: String,
+    instructions: [Instruction]
+  ) throws -> [UInt8] {
+    let blockhash = try decodeKey(recentBlockhash, label: "recentBlockhash")
+    let accounts = try mergedAccounts(feePayer: feePayer, instructions: instructions)
+    let signerCount = accounts.filter(\.isSigner).count
 
     var tx: [UInt8] = []
-    // Signature section: one required signature (the fee payer), zero-filled placeholder.
-    tx.append(contentsOf: compactU16(1))
-    tx.append(contentsOf: [UInt8](repeating: 0, count: signatureLength))
-    tx.append(contentsOf: message)
+    tx.append(contentsOf: compactU16(signerCount))
+    tx.append(contentsOf: [UInt8](repeating: 0, count: signerCount * signatureLength))
+    tx.append(
+      contentsOf: try serializeMessage(
+        accounts: accounts,
+        blockhash: blockhash,
+        instructions: instructions
+      )
+    )
     return tx
   }
 
+  /// One entry of the message's account-key table.
+  private struct MergedAccount {
+    let pubkey: String
+    let bytes: [UInt8]
+    var isSigner: Bool
+    var isWritable: Bool
+  }
+
+  /// Orders the account table the header describes: fee payer, writable signers, readonly signers,
+  /// writable non-signers, readonly non-signers, then invoked programs last. Within a bucket,
+  /// first-seen order — matching Android / web3.js so both SDKs serialize a transfer to identical
+  /// bytes.
+  private static func mergedAccounts(
+    feePayer: String,
+    instructions: [Instruction]
+  ) throws -> [MergedAccount] {
+    // Programs go last, first-seen, and are excluded from the merged table below.
+    var programOrder: [String] = []
+    var programBytes: [String: [UInt8]] = [:]
+    for instruction in instructions where programBytes[instruction.programId] == nil {
+      programBytes[instruction.programId] = try decodeKey(instruction.programId, label: "program")
+      programOrder.append(instruction.programId)
+    }
+    let programKeys = Set(programOrder)
+
+    // Merge accounts (excluding fee payer and programs), OR-ing privileges across duplicates.
+    var mergedOrder: [String] = []
+    var merged: [String: MergedAccount] = [:]
+    for instruction in instructions {
+      for account in instruction.accounts {
+        if account.pubkey == feePayer || programKeys.contains(account.pubkey) { continue }
+        if var existing = merged[account.pubkey] {
+          existing.isSigner = existing.isSigner || account.isSigner
+          existing.isWritable = existing.isWritable || account.isWritable
+          merged[account.pubkey] = existing
+        } else {
+          merged[account.pubkey] = MergedAccount(
+            pubkey: account.pubkey,
+            bytes: try decodeKey(account.pubkey, label: "account"),
+            isSigner: account.isSigner,
+            isWritable: account.isWritable
+          )
+          mergedOrder.append(account.pubkey)
+        }
+      }
+    }
+
+    // Stable partition: `filter` preserves first-seen order within each bucket.
+    let rest = mergedOrder.map { merged[$0]! }
+    let payer = MergedAccount(
+      pubkey: feePayer,
+      bytes: try decodeKey(feePayer, label: "fee payer"),
+      isSigner: true,
+      isWritable: true
+    )
+    let programs = programOrder.map { key in
+      MergedAccount(pubkey: key, bytes: programBytes[key]!, isSigner: false, isWritable: false)
+    }
+
+    return [payer]
+      + rest.filter { $0.isSigner && $0.isWritable }
+      + rest.filter { $0.isSigner && !$0.isWritable }
+      + rest.filter { !$0.isSigner && $0.isWritable }
+      + rest.filter { !$0.isSigner && !$0.isWritable }
+      + programs
+  }
+
   private static func serializeMessage(
-    from: [UInt8],
-    to: [UInt8],
+    accounts: [MergedAccount],
     blockhash: [UInt8],
-    lamports: UInt64
-  ) -> [UInt8] {
-    // Account ordering rule: writable-signers, readonly-signers, writable-nonsigners,
-    // readonly-nonsigners. For a transfer that's [from, to, systemProgram].
+    instructions: [Instruction]
+  ) throws -> [UInt8] {
     var out: [UInt8] = []
 
     // Message header.
-    out.append(1) // numRequiredSignatures (fee payer)
-    out.append(0) // numReadonlySignedAccounts
-    out.append(1) // numReadonlyUnsignedAccounts (the System Program)
+    out.append(UInt8(accounts.filter(\.isSigner).count))
+    out.append(UInt8(accounts.filter { $0.isSigner && !$0.isWritable }.count))
+    out.append(UInt8(accounts.filter { !$0.isSigner && !$0.isWritable }.count))
 
     // Account keys.
-    out.append(contentsOf: compactU16(3))
-    out.append(contentsOf: from)
-    out.append(contentsOf: to)
-    out.append(contentsOf: systemProgramId)
+    out.append(contentsOf: compactU16(accounts.count))
+    for account in accounts {
+      out.append(contentsOf: account.bytes)
+    }
 
     // Recent blockhash.
     out.append(contentsOf: blockhash)
 
-    // Instructions (exactly one: the transfer).
-    out.append(contentsOf: compactU16(1))
-    out.append(2) // programIdIndex -> systemProgramId at account index 2
-    out.append(contentsOf: compactU16(2)) // account indices used by the instruction
-    out.append(0) // from
-    out.append(1) // to
-    let data = transferInstructionData(lamports: lamports)
-    out.append(contentsOf: compactU16(data.count))
-    out.append(contentsOf: data)
+    // Instructions, referencing accounts by index into the table above.
+    var indexByPubkey: [String: UInt8] = [:]
+    for (index, account) in accounts.enumerated() {
+      indexByPubkey[account.pubkey] = UInt8(index)
+    }
+
+    out.append(contentsOf: compactU16(instructions.count))
+    for instruction in instructions {
+      guard let programIndex = indexByPubkey[instruction.programId] else {
+        throw RainSDKError.internalLogicError(
+          details: "Program \(instruction.programId) missing from the account table"
+        )
+      }
+      out.append(programIndex)
+      out.append(contentsOf: compactU16(instruction.accounts.count))
+      for account in instruction.accounts {
+        guard let index = indexByPubkey[account.pubkey] else {
+          throw RainSDKError.internalLogicError(
+            details: "Account \(account.pubkey) missing from the account table"
+          )
+        }
+        out.append(index)
+      }
+      out.append(contentsOf: compactU16(instruction.data.count))
+      out.append(contentsOf: instruction.data)
+    }
 
     return out
   }
@@ -151,6 +376,11 @@ internal enum SolanaTransactionBuilder {
       target[offset + i] = UInt8(truncatingIfNeeded: v)
       v >>= 8
     }
+  }
+
+  /// Lowercase hex of arbitrary bytes — the encoding Turnkey's `sol_send_transaction` expects.
+  static func hexEncode(_ bytes: [UInt8]) -> String {
+    toHex(bytes)
   }
 
   private static func toHex(_ bytes: [UInt8]) -> String {

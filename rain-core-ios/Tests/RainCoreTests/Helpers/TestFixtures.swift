@@ -55,11 +55,15 @@ enum TestManagers {
     turnkey: MockTurnkey? = nil,
     builder: MockTransactionBuilderService? = nil,
     configs: [NetworkConfig] = TestFixtures.configs(),
-    walletAddress: String? = nil
+    walletAddress: String? = nil,
+    registeredTokens: [TokenInfo] = []
   ) -> (RainSdkManager, MockTurnkey, MockTransactionBuilderService) {
     let resolvedTurnkey = turnkey ?? MockTurnkey()
     let resolvedBuilder = builder ?? MockTransactionBuilderService(networkConfigs: configs)
-    let tokenStore = TokenMetadataStore(chainReader: EVMChainReader(networkConfigs: configs))
+    let tokenStore = TokenMetadataStore(
+      chainReader: EVMChainReader(networkConfigs: configs),
+      seedTokens: registeredTokens
+    )
     let adapter = TurnkeyWalletProviderAdapter(
       turnkey: resolvedTurnkey,
       transactionBuilder: resolvedBuilder,

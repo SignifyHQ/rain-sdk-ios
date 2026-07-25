@@ -117,6 +117,12 @@ struct ErrorMappingTests {
       (.withdrawalRevertedByNetwork, "RAIN_405"),
       (.invalidAmount(amount: "1.005", reason: "too many decimals"), "RAIN_406"),
       (.walletNotAuthorized(walletAddress: "0x1", proxyAddress: "0x2"), "RAIN_407"),
+      // Token-transfer failures reuse existing codes on purpose — the code map is shared with the
+      // Android SDK, so a platform-only code would fork the contract.
+      (.insufficientTokenBalance(requested: "2", available: "1", token: "mint"), "RAIN_402"),
+      (.tokenAccountNotFound(walletAddress: "wallet", token: "mint"), "RAIN_402"),
+      (.tokenNotFound(token: "mint", chainId: 103), "RAIN_102"),
+      (.invalidRecipient(address: "addr", reason: "because"), "RAIN_102"),
       (.providerError(underlying: underlying), "RAIN_501"),
       (.internalLogicError(details: "x"), "RAIN_502"),
     ]
@@ -147,6 +153,10 @@ struct ErrorMappingTests {
          .withdrawalRevertedByNetwork,
          .invalidAmount,
          .walletNotAuthorized,
+         .insufficientTokenBalance,
+         .tokenAccountNotFound,
+         .tokenNotFound,
+         .invalidRecipient,
          .providerError,
          .internalLogicError:
       break
