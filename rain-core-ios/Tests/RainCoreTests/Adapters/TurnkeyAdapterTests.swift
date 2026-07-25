@@ -430,6 +430,31 @@ struct TurnkeyAdapterTests {
     }
   }
 
+  @Test("a zero gas estimate falls back to 21000 rather than submitting gasLimit 0")
+  func testZeroGasEstimateFallsBackToDefault() async throws {
+    MockURLProtocol.install()
+    defer { MockURLProtocol.reset() }
+    MockURLProtocol.stub(method: "eth_getTransactionCount", result: "0x1")
+    MockURLProtocol.stub(method: "eth_estimateGas", result: "0x0")
+    MockURLProtocol.stub(method: "eth_gasPrice", result: "0x4a817c800")
+
+    let mockTurnkey = MockTurnkey()
+    let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
+    client.sendTransactionStatusQueue = [.broadcasted(hash: "0x" + String(repeating: "8", count: 64))]
+
+    let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
+
+    _ = try await manager.sendNative(
+      chainId: 1,
+      to: TestFixtures.recipientAddress,
+      amount: 1.0
+    )
+
+    let body = try #require(client.ethSendTransactionCalls.first)
+    // 21000 fallback, then the same +20% buffer every estimate gets.
+    #expect(body.gasLimit == "25200")
+  }
+
   @Test("pollForTransactionHash keeps polling until status returns a hash")
   func testPollForTransactionHashRetriesUntilSuccess() async throws {
     MockURLProtocol.install()

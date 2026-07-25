@@ -11,7 +11,7 @@ import Web3
 struct TurnkeySolanaTests {
   private static let host = "solana.test"
   private static let rpcUrl = "https://solana.test/rpc"
-  private static let chainId = SolanaChains.mainnet // 101
+  private static let chainId = SolanaChains.mainnet // 900
   private static var solanaCaip2: String { SolanaChains.caip2(for: chainId)! }
 
   private let recipient = Base58.encode((0..<32).map { UInt8($0 + 40) })

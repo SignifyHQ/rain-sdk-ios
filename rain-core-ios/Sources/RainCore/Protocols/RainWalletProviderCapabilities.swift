@@ -61,4 +61,19 @@ public protocol RainSolanaTransfersProvider: Sendable {
     amount: Decimal,
     decimals: Int
   ) async throws -> String
+
+  /// Signs and broadcasts a transaction **composed by core**, rather than one the adapter builds.
+  ///
+  /// Collateral withdrawals are composed in core (the ed25519 proof of Rain's signature plus the
+  /// program's withdraw instruction), so the adapter only signs the bytes it is handed — it must
+  /// not rebuild or re-serialize them, or the executor's signature would no longer match.
+  ///
+  /// - Parameters:
+  ///   - chainId: Solana sentinel chain ID (900 / 901 / 902).
+  ///   - unsigned: The already-simulated unsigned transaction.
+  /// - Returns: The Solana transaction signature.
+  func signAndSendSolanaTransaction(
+    chainId: Int,
+    unsigned: UnsignedSolanaTransfer
+  ) async throws -> String
 }

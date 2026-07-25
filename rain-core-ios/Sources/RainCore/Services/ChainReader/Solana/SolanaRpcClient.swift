@@ -128,6 +128,37 @@ internal final class SolanaRpcClient: Sendable {
     try await getAccountInfo(chainId: chainId, address: address) != nil
   }
 
+  /// An account's owning program plus its undecoded bytes.
+  struct RawAccount: Sendable, Equatable {
+    let ownerProgram: String
+    let data: [UInt8]
+  }
+
+  /// `getAccountInfo` with `base64` encoding, for accounts the cluster cannot parse — Anchor
+  /// accounts like Rain's collateral and coordinator, whose layouts the SDK decodes itself.
+  func getRawAccount(chainId: Int, address: String) async throws -> RawAccount? {
+    let rpcUrl = try resolveRpcUrl(chainId: chainId)
+    let response = try await jsonRpcClient.call(
+      rpcUrl: rpcUrl,
+      method: "getAccountInfo",
+      params: [address, ["encoding": "base64", "commitment": "confirmed"]]
+    )
+    guard let result = response["result"] as? [String: Any] else {
+      throw RainSDKError.internalLogicError(details: "Unexpected getAccountInfo response for \(address)")
+    }
+    guard let value = result["value"] as? [String: Any] else { return nil }
+
+    // `data` is a [base64, encoding] pair for a base64 read.
+    let base64 = (value["data"] as? [Any])?.first as? String ?? ""
+    guard let decoded = Data(base64Encoded: base64) else {
+      throw RainSDKError.internalLogicError(details: "Undecodable account data for \(address)")
+    }
+    return RawAccount(
+      ownerProgram: value["owner"] as? String ?? "",
+      data: [UInt8](decoded)
+    )
+  }
+
   /// Decimals and owning token program for `mint`, or `nil` when `mint` is not an SPL mint on this
   /// cluster (missing account, or an account owned by some other program).
   ///

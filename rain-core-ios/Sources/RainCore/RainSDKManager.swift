@@ -17,6 +17,10 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
   let providerId: ProviderId
   let capabilities: Set<Capability>
 
+  /// Composes Solana collateral withdrawals. Built from `networkConfigs` so it resolves the same
+  /// cluster endpoints every other Solana read uses.
+  let solanaWithdrawComposer: SolanaCollateralWithdrawComposer
+
   init(
     walletProvider: any RainWalletProvider,
     networkConfigs: [NetworkConfig],
@@ -31,6 +35,9 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     self.tokenStore = tokenStore
     self.providerId = providerId
     self.capabilities = capabilities
+    self.solanaWithdrawComposer = SolanaCollateralWithdrawComposer(
+      rpcClient: SolanaRpcClient(networkConfigs: networkConfigs)
+    )
   }
 
   // MARK: - Client metadata
@@ -58,6 +65,23 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     nonce: BigUInt?
   ) async throws -> String {
     do {
+      try validateWithdrawRequest(chainId: chainId, amount: amount, decimals: decimals)
+
+      // Solana withdrawals go through Rain's on-chain collateral program rather than an EVM
+      // coordinator contract: core composes the two-instruction transaction (ed25519 proof of
+      // Rain's signature + the program's withdraw instruction) and the provider signs it.
+      if SolanaChains.isSolana(chainId) {
+        return try await withdrawSolanaCollateral(
+          chainId: chainId,
+          assetAddresses: assetAddresses,
+          amount: amount,
+          decimals: decimals,
+          salt: salt,
+          signature: signature,
+          expiresAt: expiresAt
+        )
+      }
+
       let (_, transactionParams) = try await buildTransactionParamForWithdrawAsset(
         chainId: chainId,
         assetAddresses: assetAddresses,
@@ -66,7 +90,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
         salt: salt,
         signature: signature,
         expiresAt: expiresAt,
-        nonce: nil
+        nonce: nonce
       )
 
       let txHash = try await walletProvider.sendTransaction(chainId: chainId, params: transactionParams)
@@ -106,6 +130,8 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     expiresAt: String
   ) async throws -> Decimal {
     do {
+      try validateWithdrawRequest(chainId: chainId, amount: amount, decimals: decimals)
+
       let (walletAddress, transactionParams) = try await buildTransactionParamForWithdrawAsset(
         chainId: chainId,
         assetAddresses: addresses,

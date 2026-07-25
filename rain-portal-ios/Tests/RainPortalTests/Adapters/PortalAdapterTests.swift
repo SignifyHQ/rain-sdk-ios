@@ -110,6 +110,24 @@ struct PortalAdapterTests {
     }
   }
 
+  @Test("getBalance(.contract) surfaces an expired Portal session as tokenExpired")
+  func testGetContractBalanceExpiredSession() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+    mockPortal.setMockResponse(
+      chainId: "eip155:1",
+      method: .eth_call,
+      error: PortalRequestsError.unauthorized
+    )
+    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
+
+    // This read wraps Portal errors itself so a read-path revert is never a failed simulation;
+    // auth must still classify, otherwise the host cannot tell it needs to re-authenticate.
+    await #expect(throws: RainSDKError.tokenExpired) {
+      _ = try await manager.getBalance(chainId: 1, token: .contract(address: TestFixtures.usdcAddress))
+    }
+  }
+
   // MARK: - getBalances
 
   @Test("getBalances returns only native when Portal reports no tokens")

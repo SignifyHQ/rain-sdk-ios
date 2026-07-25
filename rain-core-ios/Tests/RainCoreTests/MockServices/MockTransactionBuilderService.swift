@@ -12,6 +12,10 @@ final class MockTransactionBuilderService: TransactionBuilderProtocol {
   /// `nil` mirrors an unavailable check, which must not block a withdrawal.
   var mockIsCollateralAdmin: Bool?
 
+  /// Nonce the EIP-712 message was actually built with, and whether it came from the chain.
+  private(set) var capturedEIP712Nonce: BigUInt?
+  private(set) var getLatestNonceCallCount = 0
+
   init(networkConfigs: [NetworkConfig]) {
     self.networkConfigs = networkConfigs
   }
@@ -23,7 +27,7 @@ final class MockTransactionBuilderService: TransactionBuilderProtocol {
   }
   
   func getLatestNonce(proxyAddress: String, chainId: Int) async throws -> BigUInt {
-    // Return mock nonce for testing
+    getLatestNonceCallCount += 1
     return mockNonce
   }
 
@@ -45,6 +49,7 @@ final class MockTransactionBuilderService: TransactionBuilderProtocol {
     nonce: BigUInt,
     salt: String
   ) throws -> String {
+    capturedEIP712Nonce = nonce
     // Match protocol: salt is already a hex string (e.g. "0x...")
     let domain: [String: Any] = [
       "name": "Collateral",

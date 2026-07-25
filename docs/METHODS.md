@@ -216,7 +216,7 @@ Each adapter is a `RainProvider` descriptor that owns its vendor SDK as a privat
 |---------|--------|--------|-------|
 | `PortalProvider(PortalConfig(sessionToken:), onPortalCreated:)` | `rain-portal-ios` | `sessionToken: String` | Portal MPC signer (EVM). Advertises `.export`, `.recovery`. The optional `onPortalCreated` hook hands the host the underlying `Portal` instance for Portal-specific APIs (backup / recover). |
 | `TurnkeyProvider(TurnkeyConfig(turnkey:walletAddress:))` | `rain-core-ios` | `turnkey: TurnkeyContext`, `walletAddress: String?` | Turnkey P-256 signer (EVM + Solana). Advertises `.multiChain`, `.biometricGate`. See [TURNKEY_SUPPORT.md](TURNKEY_SUPPORT.md). |
-| `PrivyProvider(PrivyConfig(privy:walletAddress:))` | `rain-privy-ios` | `privy: any Privy`, `walletAddress: String?` | Privy embedded-key signer (EVM). Advertises `.export`, `.recovery`. Custody routes through Privy's EIP-1193 embedded wallet; balance/fee reads use Rain's configured RPC. |
+| `PrivyProvider(PrivyConfig(privy:walletAddress:))` | `rain-privy-ios` | `privy: any Privy`, `walletAddress: String?` | Privy embedded-key signer (EVM + Solana). Advertises `.export`, `.recovery`. EVM custody routes through Privy's EIP-1193 embedded wallet; balance/fee reads use Rain's configured RPC. |
 
 #### Platform differences (Portal)
 

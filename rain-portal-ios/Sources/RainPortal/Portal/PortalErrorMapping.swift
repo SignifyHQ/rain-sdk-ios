@@ -17,11 +17,8 @@ enum PortalErrorMapping {
   }
 
   private static func map(_ error: Error) -> RainSDKError? {
-    if let requestError = error as? PortalRequestsError {
-      return mapPortalRequestsError(requestError)
-    }
-    if let mpcError = error as? PortalMpcError {
-      return mapPortalMpcError(mpcError)
+    if let authError = mapAuthOrNil(error) {
+      return authError
     }
     if let rpcError = error as? PortalRpcError {
       return mapPortalRpcError(rpcError)
@@ -29,25 +26,37 @@ enum PortalErrorMapping {
     return nil
   }
 
-  private static func mapPortalRequestsError(_ error: PortalRequestsError) -> RainSDKError {
+  /// Auth-only mapping (401 / invalid API key → `.tokenExpired`). Call sites that deliberately
+  /// wrap Portal errors themselves — and so never reach the registered mapper — use this so an
+  /// expired session still classifies correctly. Returns `nil` for everything else.
+  static func mapAuthOrNil(_ error: Error) -> RainSDKError? {
+    if let requestError = error as? PortalRequestsError {
+      return mapPortalRequestsError(requestError)
+    }
+    if let mpcError = error as? PortalMpcError {
+      return mapPortalMpcError(mpcError)
+    }
+    return nil
+  }
+
+  private static func mapPortalRequestsError(_ error: PortalRequestsError) -> RainSDKError? {
     switch error {
     case .unauthorized:
       // Portal routes HTTP 401 to .unauthorized upstream, so this is the only path token-expired
       // errors reach the SDK through.
       return .tokenExpired
-    case .clientError, .internalServerError, .redirectError:
-      return .providerError(underlying: error)
     default:
-      return .providerError(underlying: error)
+      // Unrecognized: let the call site keep its own wrapping.
+      return nil
     }
   }
 
-  private static func mapPortalMpcError(_ error: PortalMpcError) -> RainSDKError {
+  private static func mapPortalMpcError(_ error: PortalMpcError) -> RainSDKError? {
     let code = error.id.flatMap { Int($0) }
     if code == 320 || code == PortalErrorCodes.INVALID_API_KEY.rawValue {
       return .tokenExpired
     }
-    return .providerError(underlying: error)
+    return nil
   }
 
   private static func mapPortalRpcError(_ error: PortalRpcError) -> RainSDKError {
