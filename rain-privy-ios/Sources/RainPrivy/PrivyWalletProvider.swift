@@ -153,6 +153,15 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
     return try await broadcast(chainId: chainId, unsigned: unsigned)
   }
 
+  /// Signs and broadcasts a transaction core composed (a collateral withdrawal). The bytes are
+  /// signed as handed over — rebuilding them would invalidate the coordinator signature they embed.
+  func signAndSendSolanaTransaction(
+    chainId: Int,
+    unsigned: UnsignedSolanaTransfer
+  ) async throws -> String {
+    try await broadcast(chainId: chainId, unsigned: unsigned)
+  }
+
   /// Hands a composed transfer to Privy for signing and broadcast on the cluster Rain reads from.
   private func broadcast(
     chainId: Int,

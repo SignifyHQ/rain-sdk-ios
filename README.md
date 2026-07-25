@@ -4,7 +4,10 @@
 [![CocoaPods](https://img.shields.io/badge/CocoaPods-not--supported-lightgrey)](#installation)
 [![Carthage](https://img.shields.io/badge/Carthage-not--supported-lightgrey)](#installation)
 
-iOS SDK with first-class [Portal](https://portalhq.io) and [Turnkey](https://www.turnkey.com) wallet support: build EIP-712 messages, compose withdrawal transactions, sign and submit through a registered wallet provider, and estimate fees.
+iOS SDK with first-class [Portal](https://portalhq.io), [Turnkey](https://www.turnkey.com), and
+[Privy](https://privy.io) wallet support: build EIP-712 messages, compose withdrawal transactions,
+sign and submit through a registered wallet provider, read balances and history, and estimate fees.
+Works on EVM chains and Solana.
 
 The SDK is **modular** (ports & adapters): a vendor-free **`RainCore`** plus one adapter module per
 wallet provider. Link only the providers you use — an unselected provider's vendor SDK never enters
@@ -26,12 +29,14 @@ your dependency graph.
 - **Wallet-agnostic utilities** — EIP-712 message + withdraw calldata building are available straight off `RainSdk` with no provider resolved — use them with your own wallet or backend.
 - **EIP-712 message building** — Build typed data for admin signature required by the collateral contract.
 - **Withdrawal transaction building** — Build ABI-encoded withdraw calldata for submission.
+- **Solana support** — native SOL and SPL transfers, balances, history, and collateral withdrawal, on the same `RainClient` methods as EVM. See [Solana](#10-solana).
 - **Full withdrawal flow** — builds the transaction, signs via the backing provider, and submits; returns the transaction hash.
 - **Fee estimation** — returns the estimated gas cost in the chain’s native token (e.g. ETH).
 - **Wallet information** — get the wallet address (per chain family) and generate a QR code image (PNG) for it or for any other address.
-- **Balances** — get native and ERC-20 token balances for the current wallet.
+- **Balances** — get native, ERC-20, and SPL token balances for the current wallet.
 - **Transaction history** — get transactions for the current wallet with optional pagination and sort order (`WalletTransaction`, `WalletTransactionOrder`).
-- **Send tokens** — send native or ERC-20 tokens from the current wallet.
+- **Send tokens** — send native, ERC-20, or SPL tokens from the current wallet.
+- **Exact money handling** — public money APIs are `Decimal`; base-unit conversion is exact and rejects an amount finer than the token's scale rather than truncating it.
 
 ## Installation
 
@@ -291,7 +296,38 @@ let txHash = try await client.withdrawCollateral(
 For manual submission (build the calldata yourself, no provider resolved), use the wallet-agnostic
 `rain.buildWithdrawTransactionData(...)` from section 4.
 
-### 10. Estimate withdrawal fee
+### 10. Solana
+
+Solana uses the same `RainClient` methods as EVM — the SDK routes on the chain ID. `RainChain`
+exposes the sentinel IDs (`solanaMainnet` 900, `solanaDevnet` 901, `solanaTestnet` 902); these are
+Rain's routing IDs, not Solana chain IDs. Register a Solana RPC URL against them like any other
+chain. `RainChain.isSolana(_:)` and `solanaCaip2(for:)` are available if the host needs to branch.
+
+```swift
+let client = try await rain.provider(.turnkey)   // or .privy; Portal has no Solana account
+let chainId = RainChain.solanaDevnet
+
+try await client.getWalletAddress(chainId: chainId)        // the Solana account, not the EVM address
+try await client.getBalance(chainId: chainId, token: .native)   // SOL
+try await client.getTokenBalances(chainId: chainId)             // SPL holdings
+try await client.sendNative(chainId: chainId, to: recipientBase58, amount: 0.01)
+try await client.sendToken(
+    chainId: chainId,
+    contractAddress: mintAddress,
+    to: recipientBase58,
+    amount: 1.5
+)
+```
+
+`withdrawCollateral` works unchanged, with `proxyAddress` as the collateral account and
+`tokenAddress` as the SPL mint (`contractAddress` is unused — there is no coordinator contract to
+call). Under the hood the withdrawal is authorized by Rain's coordinator signing a message off chain
+rather than by EVM calldata, so the SDK composes and simulates a collateral-program transaction and
+the provider signs it. See [TURNKEY_SUPPORT.md](docs/TURNKEY_SUPPORT.md#solana-notes) for details.
+
+An SPL mint's decimals are read from the chain, so a `decimals` argument is a hint only. Mints carry
+no on-chain symbol — `registerTokens(_:)` names the ones you want displayed.
+### 11. Estimate withdrawal fee
 
 Returns the estimated total fee in the chain's native token (e.g. ETH).
 
@@ -308,7 +344,7 @@ let fee = try await client.estimateWithdrawalFee(
 print("Estimated fee: \(fee)")
 ```
 
-### 11. Transaction history
+### 12. Transaction history
 
 ```swift
 let txs = try await client.getTransactions(
@@ -322,7 +358,7 @@ for tx in txs {
 }
 ```
 
-### 12. QR code generation
+### 13. QR code generation
 
 Returns PNG `Data` encoding any address — pass `nil` (or omit it) for the wallet's own address.
 

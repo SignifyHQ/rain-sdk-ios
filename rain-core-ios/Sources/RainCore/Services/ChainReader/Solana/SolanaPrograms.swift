@@ -10,6 +10,10 @@ internal enum SolanaPrograms {
   static let splToken = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
   static let token2022 = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
   static let associatedTokenAccount = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+  /// Native ed25519 signature-verification program — proves an off-chain signature to a program
+  /// that reads the result back through the instructions sysvar.
+  static let ed25519Verify = "Ed25519SigVerify111111111111111111111111111"
+  static let sysvarInstructions = "Sysvar1nstructions1111111111111111111111111"
 
   /// Whether `programId` is a token program the SDK can transfer through — the guard against
   /// treating an arbitrary account as a mint.

@@ -322,8 +322,9 @@ extension MockTurnkey {
   static let defaultSolanaAddress = Base58.encode((0..<32).map { UInt8($0 + 1) })
 
   /// A wallet carrying both an Ethereum and a Solana account, matching how the Turnkey demo
-  /// provisions dual-curve wallets.
-  static func dualCurveWallet() -> Wallet {
+  /// provisions dual-curve wallets. `solanaAddress` is overridable so a test can bind the wallet
+  /// to a specific on-chain fixture (e.g. a collateral account's real owner).
+  static func dualCurveWallet(solanaAddress: String = defaultSolanaAddress) -> Wallet {
     decode(
       WalletFixture(
         walletId: "wallet-id",
@@ -348,7 +349,7 @@ extension MockTurnkey {
             walletId: "wallet-id"
           ),
           WalletAccount(
-            address: defaultSolanaAddress,
+            address: solanaAddress,
             addressFormat: .address_format_solana,
             createdAt: externaldatav1Timestamp(nanos: "0", seconds: "0"),
             curve: .curve_ed25519,

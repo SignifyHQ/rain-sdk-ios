@@ -210,6 +210,9 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
       )
     } catch {
       if error is RainSDKError { throw error }
+      // This path wraps Portal errors itself (so a read-path revert never classifies as a failed
+      // simulation), which would otherwise also swallow an expired session — map auth first.
+      if let authError = PortalErrorMapping.mapAuthOrNil(error) { throw authError }
       RainLogger.error("Rain SDK: Failed to get ERC20 balance via RPC for token=\(address) chainId=\(chainId): \(error)")
       throw RainSDKError.providerError(underlying: error)
     }

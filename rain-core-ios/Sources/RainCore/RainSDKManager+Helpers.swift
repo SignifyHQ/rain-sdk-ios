@@ -17,6 +17,67 @@ extension RainSdkManager {
     return mapped
   }
 
+  /// Rejects withdrawal parameters that cannot produce a valid transaction, before any network
+  /// call or signature prompt. Mirrors Android's `TransactionValidator.validateWithdrawRequest`.
+  func validateWithdrawRequest(chainId: Int, amount: Decimal, decimals: Int) throws {
+    guard chainId > 0 else {
+      throw RainSDKError.invalidConfig(chainId: chainId, rpcUrl: "")
+    }
+    guard amount > 0 else {
+      throw RainSDKError.invalidAmount(
+        amount: "\(amount)",
+        reason: "amount must be greater than zero"
+      )
+    }
+    guard decimals >= 0 else {
+      throw RainSDKError.invalidAmount(
+        amount: "\(amount)",
+        reason: "decimals must be non-negative, got \(decimals)"
+      )
+    }
+  }
+
+  /// Composes and submits a Solana collateral withdrawal.
+  ///
+  /// On Solana the withdrawal is authorized by Rain's coordinator executor signing a keccak
+  /// message off chain (the admin signature) rather than by EIP-712 calldata, so core composes the
+  /// transaction and the provider only signs the bytes it is handed.
+  func withdrawSolanaCollateral(
+    chainId: Int,
+    assetAddresses: WithdrawAssetAddresses,
+    amount: Decimal,
+    decimals: Int,
+    salt: String,
+    signature: String,
+    expiresAt: String
+  ) async throws -> String {
+    guard let solanaProvider = walletProvider as? any RainSolanaTransfersProvider else {
+      throw RainSDKError.internalLogicError(
+        details: "The active wallet provider does not support Solana transfers"
+      )
+    }
+
+    let owner = try await walletProvider.getAddress(chainId: chainId)
+    let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
+
+    let unsigned = try await solanaWithdrawComposer.composeWithdraw(
+      chainId: chainId,
+      ownerAddress: owner,
+      collateralAddress: assetAddresses.proxyAddress,
+      mintAddress: assetAddresses.tokenAddress,
+      recipientAddress: assetAddresses.recipientAddress,
+      amountBaseUnits: amountBaseUnits,
+      adminSignature: RainAdminSignature(salt: salt, signature: signature, expiresAt: expiresAt)
+    )
+
+    let txSignature = try await solanaProvider.signAndSendSolanaTransaction(
+      chainId: chainId,
+      unsigned: unsigned
+    )
+    RainLogger.info("Rain SDK: Solana withdrawal submitted. Signature: \(txSignature)")
+    return txSignature
+  }
+
   /// Builds withdrawal transaction params: EIP-712 message, admin signature via the backing
   /// provider, and calldata. Returns the wallet address and wallet transaction params ready for
   /// fee estimation or submission.

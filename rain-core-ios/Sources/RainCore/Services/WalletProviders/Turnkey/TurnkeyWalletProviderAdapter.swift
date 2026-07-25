@@ -14,6 +14,8 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     /// Turnkey returns a status id, not a Solana signature, so the signature is read back from
     /// the chain as a defensive fallback when the status response carries none.
     static let solanaSignatureLookupAttempts = 8
+    /// Used when `eth_estimateGas` returns zero or an unparseable value.
+    static let fallbackGasLimit = 21_000
   }
 
   private struct ActivityDraft: Sendable {
@@ -649,6 +651,16 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     return try await submitSolanaTransaction(chainId: chainId, from: from, unsigned: unsigned)
   }
 
+  /// Signs and broadcasts a transaction core composed (a collateral withdrawal). The bytes are
+  /// signed as handed over — rebuilding them would invalidate the coordinator signature they embed.
+  func signAndSendSolanaTransaction(
+    chainId: Int,
+    unsigned: UnsignedSolanaTransfer
+  ) async throws -> String {
+    let from = try await getAddress(chainId: chainId)
+    return try await submitSolanaTransaction(chainId: chainId, from: from, unsigned: unsigned)
+  }
+
   /// Hands a composed transfer to Turnkey (which signs with the wallet's ed25519 key and
   /// broadcasts) and resolves it to a signature. Shared by the native and SPL paths.
   ///
@@ -874,7 +886,10 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     )
 
     let nonce = decimalString(fromHex: nonceHex)
-    let estimatedGas = BigUInt(decimalString(fromHex: estimateGasHex)) ?? BigUInt(21_000)
+    // `decimalString(fromHex:)` yields "0" (not nil) for a zero or unparseable estimate, so the
+    // fallback has to key off the value, not off a failed conversion.
+    let parsedGas = BigUInt(decimalString(fromHex: estimateGasHex)) ?? 0
+    let estimatedGas = parsedGas > 0 ? parsedGas : BigUInt(AdapterConstants.fallbackGasLimit)
     let bufferedGasLimit = estimatedGas + (estimatedGas / 5)
     let gasLimit = (bufferedGasLimit == 0 ? estimatedGas : bufferedGasLimit).description
     let gasPrice = decimalString(fromHex: gasPriceHex)
