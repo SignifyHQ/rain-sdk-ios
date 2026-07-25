@@ -60,10 +60,12 @@ enum PrivyErrorMapping {
     case .unsupportedChain, .rpcUrlNotFound:
       // A misconfiguration rather than a provider failure at runtime.
       return .internalLogicError(details: "Privy: \(error.localizedDescription)")
-    // The EIP-1193 request path surfaces node / user-facing failures as these message-carrying
-    // cases; classify by message.
+    // The EIP-1193 and Solana send paths surface node / user-facing failures as these
+    // message-carrying cases; classify by message.
     case .jsonRpcError(let message),
-         .signerError(let message):
+         .signerError(let message),
+         .transactionError(let message),
+         .invalidSolanaTransaction(let message):
       return classify(message: message, fallback: error)
     case .invalidRpcParams(_, let description):
       return classify(message: description, fallback: error)

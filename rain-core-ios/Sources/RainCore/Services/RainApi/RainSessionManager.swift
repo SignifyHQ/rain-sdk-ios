@@ -24,6 +24,11 @@ internal actor RainSessionManager {
 
   private var cached: RainSession?
   private var cachedFor: RainApiCredentials?
+  /// The mint currently running, and the credentials it is for. Actors are re-entrant at every
+  /// `await`, so without sharing the in-flight task concurrent callers all sail past the cache
+  /// check and mint a token each; Android guards the same block with a `Mutex`.
+  private var mintTask: Task<RainSession, Error>?
+  private var mintingFor: RainApiCredentials?
 
   init(
     now: @escaping @Sendable () -> Date = { Date() },
@@ -38,7 +43,23 @@ internal actor RainSessionManager {
       return session.token
     }
 
-    let minted = try await mint(credentials)
+    // A mint for these credentials is already running: share it rather than starting a second.
+    if let inFlight = mintTask, mintingFor == credentials {
+      return try await inFlight.value.token
+    }
+
+    let task = Task { [mint] in try await mint(credentials) }
+    mintTask = task
+    mintingFor = credentials
+    defer {
+      // Only clear our own task — a caller with different credentials may have replaced it.
+      if mintTask == task {
+        mintTask = nil
+        mintingFor = nil
+      }
+    }
+
+    let minted = try await task.value
     cached = RainSession(
       token: minted.token,
       expiresAt: minted.expiresAt ?? now().addingTimeInterval(Self.fallbackTTL)

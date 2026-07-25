@@ -67,6 +67,24 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// would reject its signature on-chain with `InvalidSignature()`
   case walletNotAuthorized(walletAddress: String, proxyAddress: String)
 
+  // The four cases below are token-transfer failures callers need to tell apart in the UI. They
+  // carry their own payloads but deliberately reuse existing error codes: the code map is a
+  // cross-platform contract shared with the Android SDK, so platform-only codes would fork it.
+
+  /// RAIN_402: The wallet holds less of the token than the transfer asks for — the shortfall is
+  /// in the token itself, not in the chain's native currency.
+  case insufficientTokenBalance(requested: String, available: String, token: String)
+
+  /// RAIN_402: The wallet has no account for this token, so there is nothing to send. On Solana a
+  /// balance lives in a per-mint token account that exists only once the wallet has received it.
+  case tokenAccountNotFound(walletAddress: String, token: String)
+
+  /// RAIN_102: No token exists at this address on this chain (wrong address, or wrong cluster).
+  case tokenNotFound(token: String, chainId: Int)
+
+  /// RAIN_102: The recipient address cannot receive this transfer — see `reason`.
+  case invalidRecipient(address: String, reason: String)
+
   // MARK: - 5xx: Internal / Provider Errors
   
   /// RAIN_501: An unhandled error occurred within the wallet provider
@@ -82,7 +100,7 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
     switch self {
     case .sdkNotInitialized:
       return "RAIN_101"
-    case .invalidConfig, .providerNotRegistered:
+    case .invalidConfig, .providerNotRegistered, .tokenNotFound, .invalidRecipient:
       return "RAIN_102"
     case .invalidRpcUrl:
       return "RAIN_103"
@@ -102,7 +120,7 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "RAIN_304"
     case .userRejected:
       return "RAIN_401"
-    case .insufficientFunds:
+    case .insufficientFunds, .insufficientTokenBalance, .tokenAccountNotFound:
       return "RAIN_402"
     case .transactionSimulationFailed:
       return "RAIN_403"
@@ -161,6 +179,14 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "[\(errorCode)] Invalid amount (\(amount)): \(reason)."
     case .walletNotAuthorized(let walletAddress, let proxyAddress):
       return "[\(errorCode)] Wallet \(walletAddress) is not an admin of collateral contract \(proxyAddress)."
+    case .insufficientTokenBalance(let requested, let available, let token):
+      return "[\(errorCode)] Insufficient balance for \(token): requested \(requested), available \(available)."
+    case .tokenAccountNotFound(let walletAddress, let token):
+      return "[\(errorCode)] Wallet \(walletAddress) holds no account for token \(token)."
+    case .tokenNotFound(let token, let chainId):
+      return "[\(errorCode)] No token found at \(token) on chainId=\(chainId)."
+    case .invalidRecipient(let address, let reason):
+      return "[\(errorCode)] Invalid recipient \(address): \(reason)."
     case .providerError(let underlying):
       return "[\(errorCode)] An unhandled error occurred within the wallet provider. \(underlying.localizedDescription)"
     case .internalLogicError(let details):

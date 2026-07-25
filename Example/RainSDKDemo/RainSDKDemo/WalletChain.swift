@@ -1,9 +1,9 @@
 import Foundation
 import RainCore
 
-/// The network the demo app operates on, selected via the dropdown on the connection screen.
-/// Mirrors the Android sample's WalletChain enum; the SDK is initialized with every entry's
-/// RPC endpoint at once (see `networkConfigs`), so switching chains needs no re-init.
+/// The network the demo app operates on, selected via the dropdown on the home screen.
+/// The SDK is initialized with every entry's RPC endpoint at once (see `networkConfigs`), so
+/// switching chains needs no re-init.
 enum WalletChain: String, CaseIterable, Identifiable {
   case avalancheFuji
   case baseSepolia
@@ -21,7 +21,7 @@ enum WalletChain: String, CaseIterable, Identifiable {
 
   var chainId: Int {
     switch self {
-    case .avalancheFuji: return 43113
+    case .avalancheFuji: return RainChain.avalancheTestnet
     case .baseSepolia: return 84532
     case .solanaDevnet: return RainChain.solanaDevnet // 901, Rain's Solana devnet chain ID
     }
@@ -44,6 +44,42 @@ enum WalletChain: String, CaseIterable, Identifiable {
   }
 
   var isSolana: Bool { self == .solanaDevnet }
+
+  /// What this chain calls a fungible token — used for labels on the send/balances screens.
+  var tokenStandard: String { isSolana ? "SPL" : "ERC-20" }
+
+  /// What the token-address field holds on this chain: a contract on EVM, a mint on Solana.
+  var tokenAddressLabel: String { isSolana ? "Token Mint Address" : "Token Contract Address" }
+
+  /// Token the demo pre-fills for this chain, so a tester doesn't have to find one first: USDC on
+  /// each testnet, and the devnet USDC mint on Solana. Clear the field to use a different one.
+  var defaultTokenAddress: String {
+    switch self {
+    case .avalancheFuji: return "0x5425890298aed601595a70AB815c96711a31Bc65" // Fuji USDC
+    case .baseSepolia: return "0x036CbD53842c5426634e7929541eC2318f3dCF7e"   // Base Sepolia USDC
+    case .solanaDevnet: return "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU" // Devnet USDC mint
+    }
+  }
+
+  /// A sample recipient pre-filled on the send screen. Blank on Solana on purpose: an SPL
+  /// transfer creates the recipient's token account at the sender's expense, so the address is
+  /// worth typing deliberately rather than defaulting.
+  var defaultRecipient: String {
+    isSolana ? "" : "0x3cA8ac240F6ebeA8684b3E629A8e8C1f0E3bC0Ff"
+  }
+
+  /// Naming for ``defaultTokenAddress``, registered with the SDK at init. An SPL mint carries no
+  /// on-chain symbol (and Turnkey's asset index skips devnet), so without this a discovered
+  /// holding shows only its mint address.
+  var defaultTokenInfo: TokenInfo {
+    TokenInfo(
+      chainId: chainId,
+      address: defaultTokenAddress,
+      symbol: "USDC",
+      decimals: 6,
+      name: isSolana ? "USD Coin (devnet)" : "USDC"
+    )
+  }
 
   /// Block-explorer name, e.g. for a "View on Snowtrace" label.
   var explorerName: String {
@@ -74,6 +110,13 @@ enum WalletChain: String, CaseIterable, Identifiable {
     URL(string: "\(explorerBase)/address/\(address)\(explorerSuffix)")
   }
 
+  /// True when a Rain collateral contract on `contractChainId` belongs to this wallet. Solana
+  /// matches its exact cluster; EVM accepts any EVM contract because Rain deploys the user's
+  /// collateral on one EVM chain (Base Sepolia) regardless of which EVM chain is selected.
+  func ownsCollateralContract(chainId contractChainId: Int) -> Bool {
+    isSolana ? contractChainId == chainId : !Self.solanaChainIds.contains(contractChainId)
+  }
+
   /// Light client-side address sanity check (the SDK validates authoritatively).
   func isValidAddress(_ address: String) -> Bool {
     guard !address.isEmpty else { return false }
@@ -93,9 +136,19 @@ enum WalletChain: String, CaseIterable, Identifiable {
     }
   }
 
+  /// EVM-only configs, for Portal (whose adapter holds no Solana account).
+  static var evmNetworkConfigs: [NetworkConfig] {
+    networkConfigs.filter { !RainChain.isSolana($0.chainId) }
+  }
+
   static func from(chainId: Int) -> WalletChain? {
     allCases.first { $0.chainId == chainId }
   }
+
+  /// Rain's Solana chain IDs, for classifying a collateral contract's chain family.
+  static let solanaChainIds: Set<Int> = [
+    RainChain.solanaMainnet, RainChain.solanaTestnet, RainChain.solanaDevnet
+  ]
 
   private static let base58Alphabet =
     Set("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")

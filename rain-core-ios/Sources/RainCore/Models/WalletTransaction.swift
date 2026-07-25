@@ -4,12 +4,46 @@ import Foundation
 /// Vendor-agnostic; adapters (e.g. Portal) map their own transaction type onto this in their module.
 public struct WalletTransaction: Codable, Equatable, Sendable {
   /// Represents metadata associated with a transaction.
+  ///
+  /// `blockTimestamp` is universal; the remaining fields are populated only by providers whose
+  /// history source carries them (currently Privy's indexer) and are `nil` elsewhere. The keys
+  /// mirror the Android SDK's transaction `metadata` map for cross-platform parity.
   public struct Metadata: Codable, Equatable, Sendable {
     /// Timestamp of the block in which the transaction was included (in ISO format).
     public var blockTimestamp: String
+    /// CAIP-2 identifier of the chain the transaction executed on (e.g. `eip155:1`).
+    public var caip2: String?
+    /// Indexer-reported status (e.g. `broadcasted`, `confirmed`, `finalized`, `failed`).
+    public var status: String?
+    /// Whether the transaction's gas was sponsored.
+    public var sponsored: Bool?
+    /// Privy's internal id for the transaction, when the row came from Privy's indexer.
+    public var privyTransactionId: String?
+    /// ERC-4337 user-operation hash, when the transaction was submitted as a user operation.
+    public var userOperationHash: String?
+    /// Transfer direction (e.g. `transferSent`, `transferReceived`).
+    public var type: String?
+    /// Human-readable value renderings keyed by unit, as supplied by the indexer.
+    public var displayValues: [String: String]?
 
-    public init(blockTimestamp: String) {
+    public init(
+      blockTimestamp: String,
+      caip2: String? = nil,
+      status: String? = nil,
+      sponsored: Bool? = nil,
+      privyTransactionId: String? = nil,
+      userOperationHash: String? = nil,
+      type: String? = nil,
+      displayValues: [String: String]? = nil
+    ) {
       self.blockTimestamp = blockTimestamp
+      self.caip2 = caip2
+      self.status = status
+      self.sponsored = sponsored
+      self.privyTransactionId = privyTransactionId
+      self.userOperationHash = userOperationHash
+      self.type = type
+      self.displayValues = displayValues
     }
   }
 

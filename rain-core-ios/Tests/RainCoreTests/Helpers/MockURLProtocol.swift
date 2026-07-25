@@ -20,6 +20,12 @@ final class MockURLProtocol: URLProtocol {
   nonisolated(unsafe) static var interceptedHosts: Set<String> = MockURLProtocol.defaultInterceptedHosts
   /// Maps JSON-RPC method name → stubbed `result` payload (any JSON-serializable value).
   nonisolated(unsafe) private static var stubs: [String: Any] = [:]
+  /// Results queued behind `stubs` for methods stubbed with `stub(method:results:)`.
+  nonisolated(unsafe) private static var stubQueues: [String: [Any]] = [:]
+  /// Param-aware stubs: chosen over `stubs` when present, so a method called concurrently with
+  /// different arguments (e.g. `getTokenAccountsByOwner` per token program) answers each call on
+  /// its own terms rather than by arrival order.
+  nonisolated(unsafe) private static var paramStubs: [String: @Sendable ([Any]) -> Any] = [:]
   /// Maps JSON-RPC method name → error to throw instead of returning a response.
   nonisolated(unsafe) private static var errors: [String: Error] = [:]
   /// Recorded JSON-RPC method names in call order.
@@ -39,6 +45,8 @@ final class MockURLProtocol: URLProtocol {
   static func reset() {
     URLProtocol.unregisterClass(MockURLProtocol.self)
     stubs.removeAll()
+    stubQueues.removeAll()
+    paramStubs.removeAll()
     errors.removeAll()
     recordedMethods.removeAll()
     interceptedHosts = defaultInterceptedHosts
@@ -56,6 +64,24 @@ final class MockURLProtocol: URLProtocol {
 
   static func stub(method: String, result: Any) {
     stubs[method] = result
+    errors.removeValue(forKey: method)
+  }
+
+  /// Stubs successive calls to the same method with different results — needed where one
+  /// operation calls a method more than once with different arguments (e.g. a Solana SPL send
+  /// reading the sender's token accounts, then the recipient's). The last result repeats once
+  /// the queue is exhausted.
+  static func stub(method: String, results: [Any]) {
+    guard let first = results.first else { return }
+    stubs[method] = first
+    stubQueues[method] = Array(results.dropFirst())
+    errors.removeValue(forKey: method)
+  }
+
+  /// Stubs a method with a closure over its JSON-RPC `params`, for calls that must be answered by
+  /// what they asked for rather than by call order.
+  static func stub(method: String, paramHandler: @escaping @Sendable ([Any]) -> Any) {
+    paramStubs[method] = paramHandler
     errors.removeValue(forKey: method)
   }
 
@@ -83,8 +109,15 @@ final class MockURLProtocol: URLProtocol {
     }
 
     let resultValue: Any
-    if let method, let stub = MockURLProtocol.stubs[method] {
+    if let method, let handler = MockURLProtocol.paramStubs[method] {
+      resultValue = handler(parseRPCParams(from: request))
+    } else if let method, let stub = MockURLProtocol.stubs[method] {
       resultValue = stub
+      // Advance the queue (if any) so the next call to this method sees the next result.
+      if var queue = MockURLProtocol.stubQueues[method], !queue.isEmpty {
+        MockURLProtocol.stubs[method] = queue.removeFirst()
+        MockURLProtocol.stubQueues[method] = queue
+      }
     } else {
       // Default fallback: zero hex string. Tests should stub explicitly for clarity.
       resultValue = "0x0"
@@ -105,6 +138,14 @@ final class MockURLProtocol: URLProtocol {
     client?.urlProtocol(self, didReceive: httpResponse, cacheStoragePolicy: .notAllowed)
     client?.urlProtocol(self, didLoad: data)
     client?.urlProtocolDidFinishLoading(self)
+  }
+
+  private func parseRPCParams(from request: URLRequest) -> [Any] {
+    guard let body = request.httpBody ?? request.httpBodyStream.flatMap(readStream),
+          let json = try? JSONSerialization.jsonObject(with: body) as? [String: Any] else {
+      return []
+    }
+    return json["params"] as? [Any] ?? []
   }
 
   private func parseRPCMethod(from request: URLRequest) -> String? {

@@ -22,6 +22,11 @@ actor PrivyManager {
   /// In-flight resolution shared by concurrent first callers (resolve-once).
   private var addressResolution: Task<String, Error>?
 
+  /// Same pair for the Solana account — a separate wallet in Privy, so a separate cache. The
+  /// account itself is cached (not just its address) since sends sign through it.
+  private var cachedSolanaAccount: (any PrivySolanaAccount)?
+  private var solanaAccountResolution: Task<any PrivySolanaAccount, Error>?
+
   // MARK: async lock (send serialization)
   private var sendLocked = false
   private var sendWaiters: [CheckedContinuation<Void, Never>] = []
@@ -59,6 +64,35 @@ actor PrivyManager {
     } catch {
       // Allow a later caller to retry (e.g. wallet created after this failed probe).
       addressResolution = nil
+      throw error
+    }
+  }
+
+  /// The embedded Solana account's base58 address. Never falls back to the Ethereum address (or
+  /// its override) — that would read the wrong account on Solana.
+  func solanaAddress() async throws -> String {
+    try await solanaAccount().address
+  }
+
+  /// The embedded Solana account, resolved once and cached.
+  private func solanaAccount() async throws -> any PrivySolanaAccount {
+    if let cachedSolanaAccount {
+      return cachedSolanaAccount
+    }
+    if let solanaAccountResolution {
+      return try await solanaAccountResolution.value
+    }
+    let task = Task { [source] in
+      try await Self.resolveSolanaAccount(source: source)
+    }
+    solanaAccountResolution = task
+    do {
+      let resolved = try await task.value
+      cachedSolanaAccount = resolved
+      return resolved
+    } catch {
+      // Allow a later caller to retry (e.g. Solana wallet created after this failed probe).
+      solanaAccountResolution = nil
       throw error
     }
   }
@@ -102,6 +136,29 @@ actor PrivyManager {
     }
   }
 
+  /// Signs and broadcasts a serialized Solana transaction, returning its signature. Not covered by
+  /// the send lock: Privy takes the cluster per call, so there is no chain state to serialize.
+  ///
+  /// Failures bubble up raw, for the same reason as ``request(wallet:_:)``.
+  func sendSolanaTransaction(
+    transaction: Data,
+    caip2: String,
+    rpcUrl: String
+  ) async throws -> String {
+    let account = try await solanaAccount()
+    do {
+      return try await account.signAndSendTransaction(
+        transaction: transaction,
+        caip2: caip2,
+        rpcUrl: rpcUrl
+      )
+    } catch {
+      if error is CancellationError { throw error }
+      RainLogger.error("Rain SDK: Privy Solana send failed: \(error)")
+      throw error
+    }
+  }
+
   // MARK: - Transactions
 
   /// Fetches one page of transaction history for the signing wallet via Privy's indexer.
@@ -114,6 +171,11 @@ actor PrivyManager {
   ) async throws -> PrivyTransactionsPage {
     let wallet = try await Self.resolveWallet(source: source, override: walletAddress)
     return try await wallet.getTransactions(params)
+  }
+
+  /// One page of Solana history for the embedded Solana account (vs. the Ethereum one).
+  func getSolanaTransactions(params: GetTransactionsParams) async throws -> PrivyTransactionsPage {
+    try await solanaAccount().getTransactions(params)
   }
 
   // MARK: - Internals
@@ -158,6 +220,20 @@ actor PrivyManager {
       throw RainSDKError.walletUnavailable
     }
     return match
+  }
+
+  /// Resolves the user's first embedded Solana account. `nil` = no session; `[]` = no Solana
+  /// wallet created yet (`user.createSolanaWallet()` in the host app).
+  private static func resolveSolanaAccount(
+    source: any PrivyWalletSource
+  ) async throws -> any PrivySolanaAccount {
+    guard let wallets = await source.embeddedSolanaWallets() else {
+      throw RainSDKError.tokenExpired
+    }
+    guard let wallet = wallets.first else {
+      throw RainSDKError.walletUnavailable
+    }
+    return wallet
   }
 
   // MARK: - Async lock

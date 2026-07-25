@@ -68,3 +68,87 @@ struct SolanaTransactionBuilderTests {
     }
   }
 }
+
+/// Byte-for-byte parity with the canonical Rust builder: the expected hex below is what
+/// `solders` (`solana-program`'s `Message` / `Transaction::new_unsigned`) produces for the same
+/// instructions, so account ordering, header and instruction indices are all pinned.
+@Suite("SolanaTransactionBuilder SPL")
+struct SolanaTransactionBuilderSPLTests {
+  static let owner = "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
+  static let recipient = "4zvwRjXUKGfvwnParsHAS3HuSVzV5cA4McphgmoCtajS"
+  static let mint = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+  static let source = "FGETo8T8wMcN2wCjav8VK6eh3dLk63evNDPxzLSJra8B"
+  static let destination = "DJcjpsHnWXSucjUpourygEN3mkcQwSHG6d5b2AzLSfSn"
+  static let blockhash = "5Pk716N113awdSaUDZEPZVi9Zs6hJmG5KCJtp5qQK3LB"
+
+  private func build(createDestination: Bool) throws -> String {
+    try SolanaTransactionBuilder.buildSPLTransferHex(
+      owner: Self.owner,
+      source: Self.source,
+      destination: Self.destination,
+      destinationOwner: Self.recipient,
+      mint: Self.mint,
+      tokenProgramId: SolanaPrograms.splToken,
+      amount: 1_500_000,
+      decimals: 6,
+      recentBlockhash: Self.blockhash,
+      createDestinationAccount: createDestination
+    )
+  }
+
+  @Test("a transfer into an existing token account is one TransferChecked instruction")
+  func transferOnly() throws {
+    let actual = try build(createDestination: false)
+    #expect(actual == """
+      0100000000000000000000000000000000000000000000000000000000000000000000000000000000000000\
+      000000000000000000000000000000000000000000010002057e8c088760bfde1dddcf32c17f209b8242ee52\
+      aaf131facd88d0ea2c6d0b06f2d3ea8cf5acaca8cd05207512175c43cef54a5dd99ede20a16b55253738f397\
+      dcb6cf86c040eaa718bcca6c81c5e6de2d9268577c8dd1bf41607975c62e9684a7c6fa7af3bedbad3a3d65f3\
+      6aabc97431b1bbe4c2d2f6e0e47ca60203452f5d6106ddf6e1d765a193d9cbe146ceeb79ac1cb485ed5f5b37\
+      913a8cf5857eff00a94142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f60010404\
+      010302000a0c60e316000000000006
+      """)
+  }
+
+  @Test("a recipient with no token account gets an idempotent create first")
+  func createThenTransfer() throws {
+    let actual = try build(createDestination: true)
+    #expect(actual == """
+      0100000000000000000000000000000000000000000000000000000000000000000000000000000000000000\
+      000000000000000000000000000000000000000000010005087e8c088760bfde1dddcf32c17f209b8242ee52\
+      aaf131facd88d0ea2c6d0b06f2b6cf86c040eaa718bcca6c81c5e6de2d9268577c8dd1bf41607975c62e9684\
+      a7d3ea8cf5acaca8cd05207512175c43cef54a5dd99ede20a16b55253738f397dc3b6a27bcceb6a42d62a3a8\
+      d02a6f0d73653215771de243a63ac048a18b59da29c6fa7af3bedbad3a3d65f36aabc97431b1bbe4c2d2f6e0\
+      e47ca60203452f5d6100000000000000000000000000000000000000000000000000000000000000008c9725\
+      8f4e2489f1bb3d1029148e0d830b5a1399daff1084048e7bd8dbe9f85906ddf6e1d765a193d9cbe146ceeb79\
+      ac1cb485ed5f5b37913a8cf5857eff00a94142434445464748494a4b4c4d4e4f505152535455565758595a5b\
+      5c5d5e5f6002060600010304050701010704020401000a0c60e316000000000006
+      """)
+  }
+
+  @Test("TransferChecked data is the tag, u64 amount and decimals")
+  func instructionData() {
+    #expect(
+      SolanaPrograms.transferCheckedData(amount: 1_500_000, decimals: 6)
+        == [12, 0x60, 0xE3, 0x16, 0, 0, 0, 0, 0, 6]
+    )
+  }
+
+  @Test("rejects a malformed mint before serializing")
+  func rejectsBadMint() {
+    #expect(throws: RainSDKError.self) {
+      _ = try SolanaTransactionBuilder.buildSPLTransferHex(
+        owner: Self.owner,
+        source: Self.source,
+        destination: Self.destination,
+        destinationOwner: Self.recipient,
+        mint: "not-a-mint!",
+        tokenProgramId: SolanaPrograms.splToken,
+        amount: 1,
+        decimals: 6,
+        recentBlockhash: Self.blockhash,
+        createDestinationAccount: false
+      )
+    }
+  }
+}

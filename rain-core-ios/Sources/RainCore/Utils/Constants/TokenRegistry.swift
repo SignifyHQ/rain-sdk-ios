@@ -6,8 +6,9 @@ import Foundation
 /// wallet provider's native balance API (e.g. chains outside Turnkey's allowlist).
 ///
 /// **Scope**
-/// - EVM chains only. Solana entries from the client's list are intentionally omitted —
-///   Turnkey already covers Solana, and the SDK has no Solana RPC client.
+/// - ERC-20 entries only. Solana SPL entries from the client's list are intentionally omitted —
+///   SPL balances are discovered on-chain by `SolanaChainReader`, and hosts supply SPL naming
+///   via registered token info (mints carry no on-chain symbol).
 /// - Stellar USDC is intentionally omitted (non-EVM; would require a separate Horizon client).
 ///
 /// **Maintenance**
