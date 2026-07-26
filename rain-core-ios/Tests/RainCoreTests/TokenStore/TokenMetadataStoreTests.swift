@@ -44,6 +44,30 @@ struct TokenMetadataStoreTests {
     #expect(reader.nameCalls.count == 1)
   }
 
+  @Test("a fallback decimals is not cached so a later lookup re-reads the chain")
+  func testFallbackDecimalsIsNotCached() async throws {
+    // A transient RPC failure must not pin the 18-decimals guess for the process lifetime:
+    // caching it would misreport a 6-decimal token's balance by a factor of 10^12.
+    let reader = MockChainReader()
+    reader.stubbedDecimals = 6
+    reader.stubbedSymbol = "EURC"
+    reader.stubbedMetadataError = URLError(.cannotConnectToHost)
+    let store = TokenMetadataStore(chainReader: reader)
+
+    let failed = await store.tokenInfo(chainId: 1, address: Self.unknownToken)
+    #expect(failed.decimals == 18)
+
+    reader.stubbedMetadataError = nil
+    let retried = await store.tokenInfo(chainId: 1, address: Self.unknownToken)
+    #expect(retried.decimals == 6)
+    #expect(retried.symbol == "EURC")
+    #expect(reader.decimalsCalls.count == 2)
+
+    // The successful read is cached — a third lookup issues no further RPC.
+    _ = await store.tokenInfo(chainId: 1, address: Self.unknownToken)
+    #expect(reader.decimalsCalls.count == 2)
+  }
+
   @Test("register makes a previously-unknown token resolve without enrichment")
   func testRegisterAvoidsEnrichment() async throws {
     let reader = MockChainReader()
