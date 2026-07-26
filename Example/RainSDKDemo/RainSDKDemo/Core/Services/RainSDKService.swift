@@ -11,6 +11,19 @@ import TurnkeySwift
 /// The demo picks a provider at runtime (Portal, Turnkey, or Privy), so it builds the ``RainSdk``
 /// lazily once the user supplies credentials and then keeps the resolved ``RainClient`` here.
 /// Screens read `rain` / `client` directly — there is no wrapper layer over the SDK surface.
+/// Setup failures the demo can explain better than the vendor error can.
+enum PortalWalletSetupError: LocalizedError {
+  case walletNotOnThisDevice
+
+  var errorDescription: String? {
+    switch self {
+    case .walletNotOnThisDevice:
+      return "This Portal client already has a wallet, but its signing share is not on this "
+        + "device. Recover it from a backup, or use a client ID dedicated to this device."
+    }
+  }
+}
+
 @MainActor
 final class RainSDKService: ObservableObject {
   static let shared = RainSDKService()
@@ -78,8 +91,8 @@ final class RainSDKService: ObservableObject {
     try await resolve(sdk: sdk, providerId: .portal, provider: .portal)
   }
 
-  /// Ensures the Portal client has an EIP-155 wallet, running MPC key generation on first use.
-  /// Returns true if a wallet was created, false if one already existed.
+  /// Ensures this device can sign for the Portal client, running MPC key generation on first
+  /// use. Returns true if a wallet was created, false if one was already usable here.
   ///
   /// A newly-provisioned Portal client has no wallet, and nothing in the Rain surface creates
   /// one — every address lookup would fail with `walletUnavailable` until this runs.
@@ -87,11 +100,14 @@ final class RainSDKService: ObservableObject {
   func ensurePortalWallet() async throws -> Bool {
     guard let portal = portalBox.value else { throw RainSDKError.sdkNotInitialized }
 
-    // `addresses` throws (not returns nil) when the keychain holds no wallet metadata.
-    let addresses = try? await portal.addresses
-    let existing = addresses?[.eip155] ?? nil
-    SampleLog.d("Portal.wallet", "ensurePortalWallet existing=\(existing != nil)")
-    if let existing, !existing.isEmpty { return false }
+    // Two independent facts: the signing share lives in this device's keychain, the wallet
+    // itself lives on the Portal client. Creating on a client that already has one fails.
+    let onDevice = try await portal.isWalletOnDevice()
+    let onClient = try await portal.doesWalletExist()
+    SampleLog.d("Portal.wallet", "ensurePortalWallet onDevice=\(onDevice) onClient=\(onClient)")
+
+    if onDevice { return false }
+    if onClient { throw PortalWalletSetupError.walletNotOnThisDevice }
 
     let created = try await portal.createWallet { status in
       SampleLog.d("Portal.wallet", "keygen status=\(status.status)")
