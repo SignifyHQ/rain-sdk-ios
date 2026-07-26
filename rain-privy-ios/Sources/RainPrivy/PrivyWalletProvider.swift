@@ -560,6 +560,7 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
     case 43114: return (.avalanche, "avax")
     case 59144: return (.linea, "eth")
     case 11155111: return (.sepolia, "eth")
+    case 84532: return (.custom("base_sepolia"), "eth")
     default: return nil
     }
   }

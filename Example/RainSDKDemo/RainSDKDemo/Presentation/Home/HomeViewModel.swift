@@ -87,7 +87,16 @@ final class HomeViewModel: ObservableObject {
 
     do {
       try await session.initializePortal(sessionToken: token)
-      SampleLog.i("Portal.init", "success — isInitialized=\(session.isInitialized)")
+
+      // A freshly-created Portal client has no wallet; generate one before any screen asks
+      // for an address. MPC keygen takes a few seconds on first run.
+      statusText = "Setting up wallet..."
+      let createdWallet = try await session.ensurePortalWallet()
+
+      SampleLog.i(
+        "Portal.init",
+        "success — isInitialized=\(session.isInitialized) createdWallet=\(createdWallet)"
+      )
       // Recovery (the Portal backup share) is no longer available via the Rain API, so a
       // successful init goes straight to the feature grid instead of gating on recovery.
       isInitialized = session.isInitialized

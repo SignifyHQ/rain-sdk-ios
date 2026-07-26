@@ -63,29 +63,52 @@ public actor TokenMetadataStore {
       return cached
     }
     let enriched = await enrich(chainId: chainId, address: address)
-    enrichmentCache[chainId, default: [:]][key] = enriched
-    return enriched
+
+    // A fallback `decimals` is a guess, not a fact: caching it would pin a balance that is
+    // wrong by orders of magnitude for the rest of the process. Retry on the next lookup.
+    guard enriched.decimalsResolved else { return enriched.info }
+
+    enrichmentCache[chainId, default: [:]][key] = enriched.info
+    return enriched.info
   }
 
   // MARK: - Enrichment
 
+  /// An enrichment result plus whether `decimals` came from the chain or the fallback.
+  private struct Enriched {
+    let info: TokenInfo
+    let decimalsResolved: Bool
+  }
+
   /// Reads `decimals()`, `symbol()` and `name()` in parallel. A failed `decimals()` falls
   /// back to the default; a failed `symbol()` / `name()` leaves that field `nil`.
-  private func enrich(chainId: Int, address: String) async -> TokenInfo {
+  private func enrich(chainId: Int, address: String) async -> Enriched {
     async let decimalsTask = chainReader.getDecimals(chainId: chainId, tokenAddress: address)
     async let symbolTask = chainReader.getSymbol(chainId: chainId, tokenAddress: address)
     async let nameTask = chainReader.getName(chainId: chainId, tokenAddress: address)
 
-    let decimals = (try? await decimalsTask) ?? Constants.ERC20.defaultDecimals
+    let resolvedDecimals = try? await decimalsTask
     let symbol = (try? await symbolTask) ?? nil
     let name = (try? await nameTask) ?? nil
 
-    return TokenInfo(
-      chainId: chainId,
-      address: address,
-      symbol: symbol,
-      decimals: decimals,
-      name: name
+    if resolvedDecimals == nil {
+      // Falling back here misreports the balance by orders of magnitude for any
+      // non-18-decimal token, so it must never fail silently.
+      RainLogger.warning(
+        "Rain SDK: decimals() read failed for token=\(address) chainId=\(chainId) — "
+          + "falling back to \(Constants.ERC20.defaultDecimals)"
+      )
+    }
+
+    return Enriched(
+      info: TokenInfo(
+        chainId: chainId,
+        address: address,
+        symbol: symbol,
+        decimals: resolvedDecimals ?? Constants.ERC20.defaultDecimals,
+        name: name
+      ),
+      decimalsResolved: resolvedDecimals != nil
     )
   }
 

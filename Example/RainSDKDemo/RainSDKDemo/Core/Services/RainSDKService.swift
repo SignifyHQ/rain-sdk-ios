@@ -2,6 +2,7 @@ import Foundation
 import RainCore
 import RainPortal
 import RainPrivy
+import PortalSwift
 import PrivySDK
 import TurnkeySwift
 
@@ -26,6 +27,14 @@ final class RainSDKService: ObservableObject {
 
   /// The provider-backed client (address, balances, send, withdraw). Nil before initialization.
   private(set) var client: RainClient?
+
+  /// Holds the `Portal` for provider-only APIs (wallet generation, backup/recover). Boxed because
+  /// the hook fires synchronously off the main actor — an actor hop would land too late.
+  private final class PortalBox: @unchecked Sendable {
+    var value: Portal?
+  }
+
+  private let portalBox = PortalBox()
 
   @Published private(set) var isInitialized = false
 
@@ -60,9 +69,35 @@ final class RainSDKService: ObservableObject {
   func initializePortal(sessionToken: String) async throws {
     RainLogger.isEnabled = true
     let sdk = try builder(networkConfigs: WalletChain.evmNetworkConfigs)
-      .register(PortalProvider(PortalConfig(sessionToken: sessionToken)))
+      .register(
+        PortalProvider(PortalConfig(sessionToken: sessionToken)) { [portalBox] portal in
+          portalBox.value = portal
+        }
+      )
       .build()
     try await resolve(sdk: sdk, providerId: .portal, provider: .portal)
+  }
+
+  /// Ensures the Portal client has an EIP-155 wallet, running MPC key generation on first use.
+  /// Returns true if a wallet was created, false if one already existed.
+  ///
+  /// A newly-provisioned Portal client has no wallet, and nothing in the Rain surface creates
+  /// one — every address lookup would fail with `walletUnavailable` until this runs.
+  @discardableResult
+  func ensurePortalWallet() async throws -> Bool {
+    guard let portal = portalBox.value else { throw RainSDKError.sdkNotInitialized }
+
+    // `addresses` throws (not returns nil) when the keychain holds no wallet metadata.
+    let addresses = try? await portal.addresses
+    let existing = addresses?[.eip155] ?? nil
+    SampleLog.d("Portal.wallet", "ensurePortalWallet existing=\(existing != nil)")
+    if let existing, !existing.isEmpty { return false }
+
+    let created = try await portal.createWallet { status in
+      SampleLog.d("Portal.wallet", "keygen status=\(status.status)")
+    }
+    SampleLog.i("Portal.wallet", "created wallet eth=\(created.ethereum)")
+    return true
   }
 
   /// Builds the SDK with the Turnkey provider and resolves the Turnkey-backed client.
@@ -101,6 +136,7 @@ final class RainSDKService: ObservableObject {
     rain?.reset()
     rain = nil
     client = nil
+    portalBox.value = nil
     isInitialized = false
     activeProvider = .none
   }
