@@ -11,7 +11,7 @@ struct ErrorMappingTests {
 
   @Test("from(_:) returns RainSDKError unchanged when input is already a RainSDKError")
   func testRainSDKErrorPassthrough() {
-    let original = RainSDKError.invalidConfig(chainId: 5, rpcUrl: "x")
+    let original = RainSDKError.invalidConfig(details: "x")
     let mapped = RainSDKError.from(underlying: original)
     #expect(mapped == original)
   }
@@ -93,14 +93,14 @@ struct ErrorMappingTests {
     }
   }
 
-  // Pins the error-code map shared with the Android SDK (see its RainErrorCodeParityTest).
+  // Pins the published error-code map — a contract host apps switch on.
   // A failure here means the platforms have drifted — fix the code, not the test.
   @Test("error codes match the cross-platform map")
   func testErrorCodeParityMap() {
     let underlying = NSError(domain: "Test", code: 1, userInfo: nil)
     let expected: [(RainSDKError, String)] = [
       (.sdkNotInitialized, "RAIN_101"),
-      (.invalidConfig(chainId: 1, rpcUrl: "x"), "RAIN_102"),
+      (.invalidConfig(details: "x"), "RAIN_102"),
       (.providerNotRegistered(details: "x"), "RAIN_102"),
       (.invalidRpcUrl("x"), "RAIN_103"),
       (.rainApiNotConfigured, "RAIN_104"),
@@ -118,7 +118,7 @@ struct ErrorMappingTests {
       (.invalidAmount(amount: "1.005", reason: "too many decimals"), "RAIN_406"),
       (.walletNotAuthorized(walletAddress: "0x1", proxyAddress: "0x2"), "RAIN_407"),
       // Token-transfer failures reuse existing codes on purpose — the code map is shared with the
-      // Android SDK, so a platform-only code would fork the contract.
+      // published contract, so a new code would fork it.
       (.insufficientTokenBalance(requested: "2", available: "1", token: "mint"), "RAIN_402"),
       (.tokenAccountNotFound(walletAddress: "wallet", token: "mint"), "RAIN_402"),
       (.tokenNotFound(token: "mint", chainId: 103), "RAIN_102"),
@@ -162,4 +162,114 @@ struct ErrorMappingTests {
       break
     }
   }
+
+  // MARK: - Equality
+
+  @Test("== distinguishes different cases that share an error code")
+  func testEqualityDistinguishesCasesSharingACode() {
+    // RAIN_402 trio
+    #expect(
+      RainSDKError.insufficientFunds(required: "1", available: "0")
+        != RainSDKError.tokenAccountNotFound(walletAddress: "w", token: "t")
+    )
+    #expect(
+      RainSDKError.insufficientFunds(required: "1", available: "0")
+        != RainSDKError.insufficientTokenBalance(requested: "2", available: "1", token: "t")
+    )
+    // RAIN_102 family
+    #expect(RainSDKError.invalidConfig(details: "x") != RainSDKError.tokenNotFound(token: "t", chainId: 1))
+    #expect(RainSDKError.invalidConfig(details: "x") != RainSDKError.providerNotRegistered(details: "x"))
+    #expect(
+      RainSDKError.tokenNotFound(token: "t", chainId: 1)
+        != RainSDKError.invalidRecipient(address: "a", reason: "r")
+    )
+  }
+
+  @Test("== treats same-case values as equal regardless of payload")
+  func testEqualityIsPayloadInsensitive() {
+    #expect(RainSDKError.invalidConfig(details: "a") == RainSDKError.invalidConfig(details: "b"))
+    #expect(
+      RainSDKError.insufficientFunds(required: "1", available: "0")
+        == RainSDKError.insufficientFunds(required: "9", available: "8")
+    )
+    #expect(RainSDKError.unauthorized == RainSDKError.unauthorized)
+    #expect(RainSDKError.tokenExpired == RainSDKError.tokenExpired)
+  }
+
+  // MARK: - Untyped vendor prose
+
+  @Test("from(_:) maps a rejection message to userRejected")
+  func testRejectionKeywordsMapToUserRejected() {
+    for message in [
+      "User rejected the request",
+      "Request denied by the user",
+      "Transaction cancelled",
+    ] {
+      let mapped = RainSDKError.from(underlying: VendorProseError(message))
+      #expect(mapped == RainSDKError.userRejected, "expected userRejected for: \(message)")
+    }
+  }
+
+  @Test("from(_:) maps an insufficient-funds message to insufficientFunds")
+  func testInsufficientKeywordMapsToInsufficientFunds() {
+    let mapped = RainSDKError.from(underlying: VendorProseError("insufficient funds for gas * price + value"))
+    #expect(mapped.errorCode == "RAIN_402")
+  }
+
+  @Test("from(_:) leaves an unrecognized message as providerError")
+  func testUnrecognizedProseStaysProviderError() {
+    let mapped = RainSDKError.from(underlying: VendorProseError("nonce too low"))
+    if case .providerError = mapped {} else {
+      Issue.record("expected providerError, got \(mapped)")
+    }
+  }
+
+  @Test("from(_:) does not read a bare 'user' mention as a rejection")
+  func testBareUserMentionIsNotARejection() {
+    let mapped = RainSDKError.from(underlying: VendorProseError("User doesn't have an embedded wallet"))
+    if case .providerError = mapped {} else {
+      Issue.record("expected providerError, got \(mapped)")
+    }
+  }
+
+  // Plain Swift errors (no LocalizedError) render a generic localizedDescription, so keyword
+  // classification must also read the debug description.
+
+  @Test("from(_:) classifies a plain Swift error whose case text says insufficient funds")
+  func testPlainErrorInsufficientFunds() {
+    let mapped = RainSDKError.from(underlying: PlainVendorError.insufficientFundsForTransfer)
+    #expect(mapped == RainSDKError.insufficientFunds(required: "unknown", available: "unknown"))
+
+    let prose = RainSDKError.from(underlying: PlainVendorError.prose("insufficient funds for gas"))
+    #expect(prose == RainSDKError.insufficientFunds(required: "unknown", available: "unknown"))
+  }
+
+  @Test("from(_:) classifies a plain Swift error whose case text says the user rejected")
+  func testPlainErrorUserRejection() {
+    #expect(RainSDKError.from(underlying: PlainVendorError.userRejectedSignature) == RainSDKError.userRejected)
+    #expect(RainSDKError.from(underlying: PlainVendorError.prose("request was denied")) == RainSDKError.userRejected)
+  }
+
+  @Test("from(_:) does not classify Task cancellation as a user rejection")
+  func testCancellationErrorIsNotUserRejected() {
+    let mapped = RainSDKError.from(underlying: CancellationError())
+    if case .providerError = mapped {} else {
+      Issue.record("expected providerError, got \(mapped)")
+    }
+  }
+}
+
+/// A vendor error that carries its meaning only in prose — the shape the keyword fallback exists
+/// for, and the shape Portal and Turnkey both produce for rejections and funds shortfalls.
+private struct VendorProseError: LocalizedError {
+  let errorDescription: String?
+  init(_ message: String) { self.errorDescription = message }
+}
+
+/// A plain Swift error (not LocalizedError): its meaning lives only in the case name or
+/// associated text, and its localizedDescription is the generic NSError placeholder.
+private enum PlainVendorError: Error {
+  case insufficientFundsForTransfer
+  case userRejectedSignature
+  case prose(String)
 }

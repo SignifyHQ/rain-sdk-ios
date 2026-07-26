@@ -62,7 +62,7 @@ internal final class JsonRpcClient: Sendable {
           userInfo: [NSLocalizedDescriptionKey: message]
         )
         // A revert is an execution verdict, not an internal fault: map to
-        // `.transactionSimulationFailed` (RAIN_403), matching Android and the Privy/Portal clients.
+        // `.transactionSimulationFailed` (RAIN_403), as the Privy and Portal clients do.
         if message.range(of: "revert", options: .caseInsensitive) != nil {
           throw RainSDKError.transactionSimulationFailed(underlying: rpcError)
         }

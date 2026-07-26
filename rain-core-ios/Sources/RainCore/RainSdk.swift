@@ -1,13 +1,12 @@
 import Foundation
 import Web3
-import Web3Core
 
 /// Entry point and provider registry for the Rain SDK.
 ///
 /// Built via ``RainSdk/builder()``: register RPC endpoints, one or more provider descriptors, and
 /// optional tokens, then `build()`. Resolve a wallet-bound ``RainClient`` by id (`provider(_:)`)
 /// or by capability (`first { }`). The registry is designed for the multi-provider case; a
-/// single-provider app is simply the trivial `N = 1` instance of it — mirrors Android's `RainSdk`.
+/// single-provider app is simply the trivial `N = 1` instance of it.
 ///
 /// Wallet-agnostic building (EIP-712 message, withdraw calldata, transaction parameters) is
 /// available directly off `RainSdk` with no provider resolved.
@@ -30,7 +29,7 @@ public final class RainSdk: @unchecked Sendable {
   // Resolved clients are cached by provider id (lazy, resolved-once). We cache the *in-flight
   // resolution Task*, not the finished client, so concurrent first-resolutions of the same id
   // share one Task and `create(context:)` runs exactly once. Boxed in a class so we can identity-
-  // compare on failure eviction. Mirrors Android resolving the whole create under `mutex.withLock`.
+  // compare on failure eviction.
   private final class ResolveBox {
     let task: Task<RainClient, Error>
     init(_ task: Task<RainClient, Error>) { self.task = task }
@@ -135,7 +134,8 @@ public final class RainSdk: @unchecked Sendable {
     }
   }
 
-  /// Tears down all resolved clients and clears the Rain API credentials. Idempotent.
+  /// Tears down all resolved clients and clears the Rain API credentials and cached session
+  /// token. Idempotent.
   ///
   /// The configuration (network configs, descriptors, token store) is immutable state fixed at
   /// `build()`, so this instance stays usable: the next `provider(_:)` / `first(where:)` call
@@ -157,7 +157,10 @@ public final class RainSdk: @unchecked Sendable {
       }
     }
     rainApiConfig.clear()
-    RainLogger.info("Rain SDK: Reset (resolved clients evicted; Rain API credentials cleared)")
+    // Fire-and-forget: credentials were cleared synchronously above, so calls racing this drop
+    // fail with rainApiNotConfigured until configureRainApi supplies a pair again.
+    Task { [rainApiService] in await rainApiService.invalidateSession() }
+    RainLogger.info("Rain SDK: Reset (resolved clients evicted; Rain API session and credentials cleared)")
   }
 
   /// Resolves the first registered provider (in registration order) matching `predicate`, e.g.
@@ -176,98 +179,79 @@ public final class RainSdk: @unchecked Sendable {
 
   // MARK: - Wallet-agnostic transaction building
 
-  /// Builds an EIP-712 message (and its salt) for the admin signature required for withdrawals.
+  /// Reads the collateral's current admin nonce — the value `buildEIP712Message` binds when
+  /// `nonce` is omitted.
+  public func getLatestNonce(chainId: Int, proxyAddress: String) async throws -> BigUInt {
+    try await transactionBuilder.getLatestNonce(proxyAddress: proxyAddress, chainId: chainId)
+  }
+
+  /// Whether `walletAddress` is an admin of the collateral at `proxyAddress`.
+  ///
+  /// - Returns: The contract's answer, or `nil` when the check could not run (RPC failure, or a
+  ///   collateral exposing no `isAdmin`). Treat `nil` as unknown and proceed, never as "not
+  ///   authorized".
+  public func isCollateralAdmin(
+    chainId: Int,
+    proxyAddress: String,
+    walletAddress: String
+  ) async -> Bool? {
+    await transactionBuilder.isCollateralAdmin(
+      proxyAddress: proxyAddress,
+      walletAddress: walletAddress,
+      chainId: chainId
+    )
+  }
+
+  /// Builds the EIP-712 message the wallet signs to authorize a withdrawal, along with the salt
+  /// bound into it. Pass `nonce: nil` to read the collateral's current nonce on chain.
   public func buildEIP712Message(
     chainId: Int,
     walletAddress: String,
-    assetAddresses: EIP712AssetAddresses,
+    addresses: RainWithdrawAddresses,
     amount: Decimal,
     decimals: Int,
-    nonce: BigUInt?
-  ) async throws -> (String, String) {
-    let salt = transactionBuilder.generateSalt()
-    let saltHex = "0x" + salt.toHexString()
-
-    let finalNonce: BigUInt
-    if let providedNonce = nonce {
-      finalNonce = providedNonce
-    } else {
-      finalNonce = try await transactionBuilder.getLatestNonce(
-        proxyAddress: assetAddresses.proxyAddress,
-        chainId: chainId
-      )
-    }
-
-    let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
-    let jsonMessage = try transactionBuilder.buildEIP712Message(
+    nonce: BigUInt? = nil
+  ) async throws -> RainEIP712Message {
+    try await WithdrawalBuilder.buildEIP712Message(
+      builder: transactionBuilder,
       chainId: chainId,
-      collateralProxyAddress: assetAddresses.proxyAddress,
       walletAddress: walletAddress,
-      tokenAddress: assetAddresses.tokenAddress,
-      amount: amountBaseUnits,
-      recipientAddress: assetAddresses.recipientAddress,
-      nonce: finalNonce,
-      salt: saltHex
+      addresses: addresses,
+      amount: amount,
+      decimals: decimals,
+      nonce: nonce
     )
-    return (jsonMessage, saltHex)
   }
 
-  /// Builds the encoded withdrawal calldata for the collateral proxy contract.
+  /// ABI-encodes the `withdrawAsset` call for the collateral controller.
+  ///
+  /// Pure encoding — no RPC, so it needs no chain id.
+  ///
+  /// - Parameters:
+  ///   - executorSignature: Rain's authorization, from ``fetchAdminSignature(chainId:tokenAddress:amountBaseUnits:adminAddress:recipientAddress:isAmountNative:)``.
+  ///   - walletSalt: The salt from ``RainEIP712Message/salt``, unchanged.
+  ///   - walletSignature: The wallet's hex signature over ``RainEIP712Message/message``.
   public func buildWithdrawTransactionData(
-    chainId: Int,
-    assetAddresses: WithdrawAssetAddresses,
+    addresses: RainWithdrawAddresses,
     amount: Decimal,
     decimals: Int,
-    expiresAt: String,
-    salt: Data,
-    signatureData: Data,
-    adminSalt: Data,
-    adminSignature: Data
-  ) async throws -> String {
-    guard let ethereumContractAddress = Web3Core.EthereumAddress(assetAddresses.contractAddress),
-          let ethereumProxyAddress = Web3Core.EthereumAddress(assetAddresses.proxyAddress),
-          let ethereumTokenAddress = Web3Core.EthereumAddress(assetAddresses.tokenAddress),
-          let ethereumRecipientAddress = Web3Core.EthereumAddress(assetAddresses.recipientAddress)
-    else {
-      throw RainSDKError.internalLogicError(
-        details: "Error building transaction parameters for withdrawal. One of the addresses could not be built"
-      )
-    }
-
-    let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
-
-    let unixTimestamp: Int
-    if let timestamp = Int(expiresAt) {
-      unixTimestamp = timestamp
-    } else if let date = Self.parseISO8601(expiresAt) {
-      unixTimestamp = Int(date.timeIntervalSince1970)
-    } else {
-      throw RainSDKError.internalLogicError(
-        details: "Invalid expiration timestamp format. Expected ISO8601 or Unix timestamp string"
-      )
-    }
-
-    let withdrawAssetParameter = WithdrawAssetParameter(
-      proxyAddress: ethereumProxyAddress,
-      tokenAddress: ethereumTokenAddress,
-      amount: amountBaseUnits,
-      recipientAddress: ethereumRecipientAddress,
-      expiryAt: BigUInt(unixTimestamp),
-      salt: salt,
-      signature: signatureData,
-      adminSalt: adminSalt,
-      adminSignature: adminSignature
-    )
-
-    return try await transactionBuilder.buildErc20TransactionForWithdrawAsset(
-      chainId: chainId,
-      ethereumContractAddress: ethereumContractAddress,
-      withdrawAssetParameter: withdrawAssetParameter
+    executorSignature: RainAdminSignature,
+    walletSalt: Data,
+    walletSignature: String
+  ) throws -> String {
+    try WithdrawalBuilder.buildWithdrawTransactionData(
+      builder: transactionBuilder,
+      addresses: addresses,
+      amount: amount,
+      decimals: decimals,
+      executorSignature: executorSignature,
+      walletSalt: walletSalt,
+      walletSignature: walletSignature
     )
   }
 
   /// Composes Rain-owned transaction parameters. Rain-owned so the public surface does not leak
-  /// Portal/Turnkey types (parity with Android).
+  /// Portal/Turnkey types.
   public func buildTransactionParameters(
     walletAddress: String,
     contractAddress: String,
@@ -321,7 +305,7 @@ public final class RainSdk: @unchecked Sendable {
 
   /// Fetches the admin withdrawal signature
   /// (`GET /v1/issuing/users/{userId}/signatures/withdrawals`) that authorizes a
-  /// ``RainClient/withdrawCollateral(chainId:assetAddresses:amount:decimals:salt:signature:expiresAt:nonce:)`` call.
+  /// ``RainClient/withdrawCollateral(chainId:addresses:amount:decimals:adminSignature:nonce:)`` call.
   ///
   /// - Parameters:
   ///   - amountBaseUnits: Withdrawal amount in the token's base units.
@@ -358,7 +342,7 @@ public final class RainSdk: @unchecked Sendable {
   /// Returns a new builder. Register RPC endpoints and provider descriptors, then `build()`.
   public static func builder() -> Builder { Builder() }
 
-  /// Fluent builder for `RainSdk`. Mirrors Android's `RainSdk.builder()`.
+  /// Fluent builder for `RainSdk`.
   public final class Builder {
     private var networkConfigs: [NetworkConfig] = []
     private var descriptors: [ProviderId: RainProvider] = [:]
@@ -376,7 +360,7 @@ public final class RainSdk: @unchecked Sendable {
       return self
     }
 
-    /// Sets RPC endpoints from a `[chainId: rpcUrl]` map (parity with Android's `rpcEndpoints`).
+    /// Sets RPC endpoints from a `[chainId: rpcUrl]` map.
     @discardableResult
     public func rpcEndpoints(_ map: [Int: String]) -> Builder {
       networkConfigs = map.map { NetworkConfig(chainId: $0.key, rpcUrl: $0.value) }
@@ -424,15 +408,19 @@ public final class RainSdk: @unchecked Sendable {
     /// - Throws: `RainSDKError.invalidConfig` if no/invalid RPC endpoints were provided.
     public func build() throws -> RainSdk {
       guard !networkConfigs.isEmpty else {
-        throw RainSDKError.invalidConfig(chainId: 0, rpcUrl: "")
+        throw RainSDKError.invalidConfig(details: "At least one RPC endpoint is required")
       }
       for config in networkConfigs {
         guard config.chainId > 0, config.rpcUrl.isValidHTTPURL() else {
-          throw RainSDKError.invalidConfig(chainId: config.chainId, rpcUrl: config.rpcUrl)
+          throw RainSDKError.invalidConfig(
+            details: "Invalid RPC endpoint for chainId \(config.chainId): \(config.rpcUrl)"
+          )
         }
       }
       guard rainApiEnvironment.baseURL.absoluteString.isValidHTTPURL() else {
-        throw RainSDKError.invalidConfig(chainId: 0, rpcUrl: rainApiEnvironment.baseURL.absoluteString)
+        throw RainSDKError.invalidConfig(
+          details: "Invalid Rain API base URL: \(rainApiEnvironment.baseURL.absoluteString)"
+        )
       }
       return RainSdk(
         networkConfigs: networkConfigs,

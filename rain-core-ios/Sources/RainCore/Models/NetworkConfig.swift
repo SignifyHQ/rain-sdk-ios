@@ -12,9 +12,9 @@ public struct NetworkConfig: Sendable {
   /// Optional network name for display purposes
   public let networkName: String?
   
-  /// EIP-155 formatted chain ID (e.g., "eip155:1", "eip155:137")
+  /// CAIP-2 chain ID: "eip155:<id>" for EVM chains, "solana:<genesis>" for Solana sentinels.
   public var eip155ChainId: String {
-    return ChainIDFormat.EIP155.format(chainId: chainId)
+    return ChainIDFormat.namespace(for: chainId).format(chainId: chainId)
   }
   
   /// Initialize network configuration with integer chain ID
@@ -39,31 +39,21 @@ public struct NetworkConfig: Sendable {
   ///   - rpcUrl: The RPC endpoint URL
   ///   - networkName: Optional network name
   ///   - customParams: Optional custom parameters
-  /// - Throws: Error if the eip155ChainId format is invalid
+  /// - Throws: `RainSDKError.invalidConfig` if the eip155ChainId format is invalid
   public init(
     eip155ChainId: String,
     rpcUrl: String,
     networkName: String? = nil
   ) throws {
     guard let chainIdInt = ChainIDFormat.EIP155.parse(eip155ChainId) else {
-      throw NetworkConfigError.invalidEIP155Format(eip155ChainId)
+      throw RainSDKError.invalidConfig(
+        details: "Invalid EIP-155 chain ID format: \(eip155ChainId). Expected 'eip155:<chainId>'"
+      )
     }
 
     self.chainId = chainIdInt
     self.rpcUrl = rpcUrl
     self.networkName = networkName
-  }
-}
-
-/// Errors related to NetworkConfig
-public enum NetworkConfigError: Error, LocalizedError, Equatable {
-  case invalidEIP155Format(String)
-  
-  public var errorDescription: String? {
-    switch self {
-    case .invalidEIP155Format(let format):
-      return "Invalid EIP-155 chain ID format: \(format). Expected format: 'eip155:<chainId>'"
-    }
   }
 }
 

@@ -1,7 +1,7 @@
 import Foundation
 
 /// Stable identifier for a wallet provider. Open (wraps a `String`) rather than a closed enum so
-/// host apps can register their own providers with custom ids. Mirrors Android's `ProviderId`.
+/// host apps can register their own providers with custom ids.
 public struct ProviderId: Hashable, Sendable, RawRepresentable, CustomStringConvertible {
   public let rawValue: String
 

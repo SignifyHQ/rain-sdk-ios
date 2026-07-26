@@ -1,6 +1,5 @@
 import Foundation
 import Web3
-import Web3Core
 
 // MARK: Internal helpers for RainSdkManager (RainClient)
 extension RainSdkManager {
@@ -18,10 +17,12 @@ extension RainSdkManager {
   }
 
   /// Rejects withdrawal parameters that cannot produce a valid transaction, before any network
-  /// call or signature prompt. Mirrors Android's `TransactionValidator.validateWithdrawRequest`.
+  /// call or signature prompt.
   func validateWithdrawRequest(chainId: Int, amount: Decimal, decimals: Int) throws {
     guard chainId > 0 else {
-      throw RainSDKError.invalidConfig(chainId: chainId, rpcUrl: "")
+      throw RainSDKError.invalidConfig(
+        details: "Invalid chainId: \(chainId). Must be a positive integer."
+      )
     }
     guard amount > 0 else {
       throw RainSDKError.invalidAmount(
@@ -37,60 +38,76 @@ extension RainSdkManager {
     }
   }
 
-  /// Composes and submits a Solana collateral withdrawal.
-  ///
-  /// On Solana the withdrawal is authorized by Rain's coordinator executor signing a keccak
-  /// message off chain (the admin signature) rather than by EIP-712 calldata, so core composes the
-  /// transaction and the provider only signs the bytes it is handed.
-  func withdrawSolanaCollateral(
+  /// Builds a withdrawal for `chainId` without broadcasting it — the one pipeline behind
+  /// `withdrawCollateral`, `prepareWithdrawal`, and `estimateWithdrawalFee`.
+  func buildPreparedWithdrawal(
     chainId: Int,
-    assetAddresses: WithdrawAssetAddresses,
+    assetAddresses: RainWithdrawAddresses,
     amount: Decimal,
     decimals: Int,
-    salt: String,
-    signature: String,
-    expiresAt: String
-  ) async throws -> String {
-    guard let solanaProvider = walletProvider as? any RainSolanaTransfersProvider else {
-      throw RainSDKError.internalLogicError(
-        details: "The active wallet provider does not support Solana transfers"
+    adminSignature: RainAdminSignature,
+    nonce: BigUInt?
+  ) async throws -> RainPreparedWithdrawal {
+    try validateWithdrawRequest(chainId: chainId, amount: amount, decimals: decimals)
+
+    // Solana withdrawals go through Rain's on-chain collateral program rather than an EVM
+    // coordinator contract: core composes the two-instruction transaction (ed25519 proof of
+    // Rain's signature + the program's withdraw instruction) and the provider signs it.
+    if SolanaChains.isSolana(chainId) {
+      let unsigned = try await prepareSolanaWithdrawal(
+        chainId: chainId,
+        assetAddresses: assetAddresses,
+        amount: amount,
+        decimals: decimals,
+        adminSignature: adminSignature
       )
+      return .solana(unsigned)
     }
 
+    let (_, parameters) = try await prepareEvmWithdrawal(
+      chainId: chainId,
+      assetAddresses: assetAddresses,
+      amount: amount,
+      decimals: decimals,
+      adminSignature: adminSignature,
+      nonce: nonce
+    )
+    return .evm(parameters)
+  }
+
+  /// Composes a Solana collateral withdrawal. The withdrawal is authorized by Rain's coordinator
+  /// executor signing a keccak message off chain, so core composes and the provider only signs.
+  func prepareSolanaWithdrawal(
+    chainId: Int,
+    assetAddresses: RainWithdrawAddresses,
+    amount: Decimal,
+    decimals: Int,
+    adminSignature: RainAdminSignature
+  ) async throws -> UnsignedSolanaTransfer {
     let owner = try await walletProvider.getAddress(chainId: chainId)
     let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
 
-    let unsigned = try await solanaWithdrawComposer.composeWithdraw(
+    return try await solanaWithdrawComposer.composeWithdraw(
       chainId: chainId,
       ownerAddress: owner,
       collateralAddress: assetAddresses.proxyAddress,
       mintAddress: assetAddresses.tokenAddress,
       recipientAddress: assetAddresses.recipientAddress,
       amountBaseUnits: amountBaseUnits,
-      adminSignature: RainAdminSignature(salt: salt, signature: signature, expiresAt: expiresAt)
+      adminSignature: adminSignature
     )
-
-    let txSignature = try await solanaProvider.signAndSendSolanaTransaction(
-      chainId: chainId,
-      unsigned: unsigned
-    )
-    RainLogger.info("Rain SDK: Solana withdrawal submitted. Signature: \(txSignature)")
-    return txSignature
   }
 
-  /// Builds withdrawal transaction params: EIP-712 message, admin signature via the backing
-  /// provider, and calldata. Returns the wallet address and wallet transaction params ready for
-  /// fee estimation or submission.
-  func buildTransactionParamForWithdrawAsset(
+  /// Builds EVM withdrawal params: EIP-712 message, admin signature via the backing provider, and
+  /// calldata. Returns the wallet address and a complete, submittable transaction.
+  func prepareEvmWithdrawal(
     chainId: Int,
-    assetAddresses: WithdrawAssetAddresses,
+    assetAddresses: RainWithdrawAddresses,
     amount: Decimal,
     decimals: Int,
-    salt: String,
-    signature: String,
-    expiresAt: String,
+    adminSignature: RainAdminSignature,
     nonce: BigUInt?
-  ) async throws -> (walletAddress: String, transactionParams: WalletTransactionParams) {
+  ) async throws -> (walletAddress: String, parameters: RainTransactionParameters) {
     guard let signerProvider = walletProvider as? any RainTypedDataSignerProvider else {
       throw RainSDKError.internalLogicError(
         details: "Current wallet provider does not support EIP-712 signing"
@@ -113,61 +130,50 @@ extension RainSdkManager {
       )
     }
 
-    guard let withdrawalSaltData = Data(base64Encoded: salt) else {
-      throw RainSDKError.internalLogicError(details: "Failed to convert withdrawal salt base 64 string to Data")
-    }
-
-    guard let withdrawalSignatureData = Data(hexString: signature, length: 65) else {
-      throw RainSDKError.internalLogicError(details: "Failed to convert withdrawal signature hex string to Data")
-    }
-
-    let eip712Addresses = EIP712AssetAddresses(
-      proxyAddress: assetAddresses.proxyAddress,
-      recipientAddress: assetAddresses.recipientAddress,
-      tokenAddress: assetAddresses.tokenAddress
-    )
-    let (eip712Message, adminSaltHex) = try await buildEIP712Message(
+    let eip712 = try await WithdrawalBuilder.buildEIP712Message(
+      builder: transactionBuilderService,
       chainId: chainId,
       walletAddress: walletAddress,
-      assetAddresses: eip712Addresses,
+      addresses: assetAddresses,
       amount: amount,
       decimals: decimals,
       nonce: nonce
     )
-    let adminSignatureString = try await signerProvider.signTypedData(
+    let walletSignatureString = try await signerProvider.signTypedData(
       chainId: chainId,
       walletAddress: walletAddress,
-      typedData: eip712Message
+      typedData: eip712.message
     )
 
-    guard let adminSaltData = Data.fromHex(adminSaltHex) else {
-      throw RainSDKError.internalLogicError(details: "Failed to convert admin salt hex string to Data")
-    }
-
-    guard let adminSignatureData = Data(hexString: adminSignatureString, length: 65) else {
-      throw RainSDKError.internalLogicError(details: "Failed to convert admin signature hex string to Data or invalid length")
-    }
-
-    let transactionData = try await buildWithdrawTransactionData(
-      chainId: chainId,
-      assetAddresses: assetAddresses,
+    let transactionData = try WithdrawalBuilder.buildWithdrawTransactionData(
+      builder: transactionBuilderService,
+      addresses: assetAddresses,
       amount: amount,
       decimals: decimals,
-      expiresAt: expiresAt,
-      salt: withdrawalSaltData,
-      signatureData: withdrawalSignatureData,
-      adminSalt: adminSaltData,
-      adminSignature: adminSignatureData
+      executorSignature: adminSignature,
+      walletSalt: eip712.salt,
+      walletSignature: walletSignatureString
     )
 
-    let transactionParams = WalletTransactionParams(
+    let parameters = RainTransactionParameters(
       from: walletAddress,
-      to: assetAddresses.contractAddress,
+      to: assetAddresses.controllerAddress,
       value: 0.ethToWei.toHexString,
       data: transactionData
     )
 
-    return (walletAddress, transactionParams)
+    return (walletAddress, parameters)
+  }
+
+  /// Bridges the public result type to the provider port's DTO. The two are field-identical;
+  /// collapsing them is a follow-up that would ripple through every adapter and test double.
+  func walletParams(_ parameters: RainTransactionParameters) -> WalletTransactionParams {
+    WalletTransactionParams(
+      from: parameters.from,
+      to: parameters.to,
+      value: parameters.value,
+      data: parameters.data
+    )
   }
 
   /// Estimates total transaction fee (estimated gas × gas price) in native token via the backing provider.
@@ -185,95 +191,4 @@ extension RainSdkManager {
     )
   }
 
-  // MARK: - Transaction building (bound to this client's shared services)
-
-  /// Builds an EIP-712 message (and its salt) for the admin signature required for withdrawals.
-  func buildEIP712Message(
-    chainId: Int,
-    walletAddress: String,
-    assetAddresses: EIP712AssetAddresses,
-    amount: Decimal,
-    decimals: Int,
-    nonce: BigUInt?
-  ) async throws -> (String, String) {
-    let salt = transactionBuilderService.generateSalt()
-    let saltHex = "0x" + salt.toHexString()
-
-    let finalNonce: BigUInt
-    if let providedNonce = nonce {
-      finalNonce = providedNonce
-    } else {
-      finalNonce = try await transactionBuilderService.getLatestNonce(
-        proxyAddress: assetAddresses.proxyAddress,
-        chainId: chainId
-      )
-    }
-
-    let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
-    let jsonMessage = try transactionBuilderService.buildEIP712Message(
-      chainId: chainId,
-      collateralProxyAddress: assetAddresses.proxyAddress,
-      walletAddress: walletAddress,
-      tokenAddress: assetAddresses.tokenAddress,
-      amount: amountBaseUnits,
-      recipientAddress: assetAddresses.recipientAddress,
-      nonce: finalNonce,
-      salt: saltHex
-    )
-    return (jsonMessage, saltHex)
-  }
-
-  /// Builds the encoded withdrawal calldata for the collateral proxy contract.
-  func buildWithdrawTransactionData(
-    chainId: Int,
-    assetAddresses: WithdrawAssetAddresses,
-    amount: Decimal,
-    decimals: Int,
-    expiresAt: String,
-    salt: Data,
-    signatureData: Data,
-    adminSalt: Data,
-    adminSignature: Data
-  ) async throws -> String {
-    guard let ethereumContractAddress = Web3Core.EthereumAddress(assetAddresses.contractAddress),
-          let ethereumProxyAddress = Web3Core.EthereumAddress(assetAddresses.proxyAddress),
-          let ethereumTokenAddress = Web3Core.EthereumAddress(assetAddresses.tokenAddress),
-          let ethereumRecipientAddress = Web3Core.EthereumAddress(assetAddresses.recipientAddress)
-    else {
-      throw RainSDKError.internalLogicError(
-        details: "Error building transaction parameters for withdrawal. One of the addresses could not be built"
-      )
-    }
-
-    let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
-
-    let unixTimestamp: Int
-    if let timestamp = Int(expiresAt) {
-      unixTimestamp = timestamp
-    } else if let date = RainSdk.parseISO8601(expiresAt) {
-      unixTimestamp = Int(date.timeIntervalSince1970)
-    } else {
-      throw RainSDKError.internalLogicError(
-        details: "Invalid expiration timestamp format. Expected ISO8601 or Unix timestamp string"
-      )
-    }
-
-    let withdrawAssetParameter = WithdrawAssetParameter(
-      proxyAddress: ethereumProxyAddress,
-      tokenAddress: ethereumTokenAddress,
-      amount: amountBaseUnits,
-      recipientAddress: ethereumRecipientAddress,
-      expiryAt: BigUInt(unixTimestamp),
-      salt: salt,
-      signature: signatureData,
-      adminSalt: adminSalt,
-      adminSignature: adminSignature
-    )
-
-    return try await transactionBuilderService.buildErc20TransactionForWithdrawAsset(
-      chainId: chainId,
-      ethereumContractAddress: ethereumContractAddress,
-      withdrawAssetParameter: withdrawAssetParameter
-    )
-  }
 }

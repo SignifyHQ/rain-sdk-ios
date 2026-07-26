@@ -3,7 +3,6 @@ import Foundation
 /// Rain issuing API environment the SDK talks to.
 ///
 /// Selected at build time via `RainSdk.Builder.rainApiEnvironment(_:)`; defaults to `.dev`.
-/// Mirrors Android's `RainApiEnvironment`.
 public enum RainApiEnvironment: Sendable {
   /// Rain development environment (`api-dev.rain.xyz`). The default.
   case dev

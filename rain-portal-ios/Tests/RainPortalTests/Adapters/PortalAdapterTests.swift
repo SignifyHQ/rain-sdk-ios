@@ -256,7 +256,7 @@ struct PortalAdapterTests {
     }
   }
 
-  // Mirrors Android's `sendTransaction propagates TransactionSimulationFailed` (RAIN_403 parity).
+  // A simulation revert on a plain send stays RAIN_403, not a withdrawal-specific code.
   @Test("sendNative throws transactionSimulationFailed when eth_call preflight fails")
   func testSendNativeTokenPreflightFailure() async throws {
     let mockPortal = MockPortal()
@@ -269,6 +269,27 @@ struct PortalAdapterTests {
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
     await #expect(throws: RainSDKError.transactionSimulationFailed(underlying: NSError(domain: "x", code: 0))) {
+      _ = try await manager.sendNative(
+        chainId: 1,
+        to: TestFixtures.recipientAddress,
+        amount: 1.0
+      )
+    }
+  }
+
+  // An expired session failing the eth_call preflight must classify as auth, not as RAIN_403.
+  @Test("sendNative surfaces tokenExpired when the eth_call preflight fails with a 401")
+  func testSendNativeTokenPreflightAuthFailure() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+    mockPortal.setMockResponse(
+      chainId: "eip155:1",
+      method: .eth_call,
+      error: PortalRequestsError.unauthorized
+    )
+    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
+
+    await #expect(throws: RainSDKError.tokenExpired) {
       _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
@@ -295,12 +316,10 @@ struct PortalAdapterTests {
 
     let txHash = try await manager.withdrawCollateral(
       chainId: 1,
-      assetAddresses: TestFixtures.defaultWithdrawAddresses,
+      addresses: TestFixtures.defaultWithdrawAddresses,
       amount: 100.0,
       decimals: 18,
-      salt: TestFixtures.validSaltBase64,
-      signature: TestFixtures.validSignatureHex,
-      expiresAt: "1735689600",
+      adminSignature: TestFixtures.adminSignature(),
       nonce: nil
     )
 
@@ -337,9 +356,7 @@ struct PortalAdapterTests {
       addresses: TestFixtures.defaultWithdrawAddresses,
       amount: 100.0,
       decimals: 18,
-      salt: TestFixtures.validSaltBase64,
-      signature: TestFixtures.validSignatureHex,
-      expiresAt: "1735689600"
+      adminSignature: TestFixtures.adminSignature()
     )
 
     // 21_000 gas × 20 gwei = 420_000_000_000_000 wei = exactly 0.00042 native units.
@@ -424,12 +441,10 @@ struct PortalAdapterTests {
     await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
-        assetAddresses: TestFixtures.defaultWithdrawAddresses,
+        addresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: 18,
-        salt: TestFixtures.validSaltBase64,
-        signature: TestFixtures.validSignatureHex,
-        expiresAt: "1735689600",
+        adminSignature: TestFixtures.adminSignature(),
         nonce: BigUInt(1)
       )
     }
@@ -453,9 +468,7 @@ struct PortalAdapterTests {
         addresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: 18,
-        salt: TestFixtures.validSaltBase64,
-        signature: TestFixtures.validSignatureHex,
-        expiresAt: "1735689600"
+        adminSignature: TestFixtures.adminSignature()
       )
     }
   }
@@ -482,8 +495,10 @@ struct PortalAdapterTests {
     #expect(list[0].hash == "0xabc123")
     #expect(list[0].from == "0xfrom")
     #expect(list[0].to == "0xto")
-    #expect(list[0].blockNum == "100")
+    #expect(list[0].blockNumber == "100")
     #expect(list[0].chainId == 1)
+    // Vendor-supplied millisecond timestamps are normalized to second-precision Zulu.
+    #expect(list[0].timestamp == "2024-01-01T00:00:00Z")
   }
 
   @Test("getTransactions with Portal passes order parameter through")
@@ -501,6 +516,69 @@ struct PortalAdapterTests {
     #expect(list[0].chainId == 137)
   }
 
+  @Test("a native row takes its asset from the chain's native currency")
+  func testNativeRowGetsNativeSymbol() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+    mockPortal.mockFetchedTransactions = [
+      Self.makeFetchedTransaction(hash: "0xnative", from: "0xa", to: "0xb", blockNum: "1", chainId: 1)
+    ]
+    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
+
+    let list = try await manager.getTransactions(chainId: 1)
+
+    // No rawContract → native transfer → the SDK names it, rather than leaving the host to guess.
+    #expect(list[0].tokenAddress == nil)
+    #expect(list[0].asset == "ETH")
+  }
+
+  @Test("a native row on an unlisted chain gets no asset rather than a wrong one")
+  func testNativeRowOnUnknownChainHasNoAsset() async throws {
+    let unlistedChainId = 123456
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+    mockPortal.mockFetchedTransactions = [
+      Self.makeFetchedTransaction(
+        hash: "0xnative", from: "0xa", to: "0xb", blockNum: "1", chainId: unlistedChainId
+      )
+    ]
+    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
+
+    let list = try await manager.getTransactions(chainId: unlistedChainId)
+
+    // The registry knows no gas token here. Falling back to the ETH-like default would label
+    // the row with a symbol the chain doesn't use, which is worse than none.
+    #expect(list[0].tokenAddress == nil)
+    #expect(list[0].asset == nil)
+  }
+
+  @Test("an unresolvable token's amount is left nil rather than scaled at a default precision")
+  func testUnresolvableDecimalsLeavesValueNil() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+    // A contract row with a raw hex value and no decimals, whose decimals() read fails.
+    mockPortal.mockFetchedTransactions = [
+      Self.makeFetchedTransaction(
+        hash: "0xtoken", from: "0xa", to: "0xb", blockNum: "1", chainId: 1,
+        value: nil,
+        rawContractJSON: """
+        , "rawContract": { "value": "0x16345785d8a0000", "address": "\(TestFixtures.usdcAddress)" }
+        """
+      )
+    ]
+    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
+
+    let list = try await manager.getTransactions(chainId: 1)
+
+    // The raw amount and the contract are still surfaced; only the scaled value is withheld.
+    // Scaling at a default 18 would render a 6-decimal token off by 10^12.
+    #expect(list[0].tokenAddress == TestFixtures.usdcAddress)
+    #expect(list[0].rawValue == "0x16345785d8a0000")
+    if list[0].decimals == nil {
+      #expect(list[0].value == nil)
+    }
+  }
+
   // MARK: - Helpers
 
   private static func makeFetchedTransaction(
@@ -508,8 +586,11 @@ struct PortalAdapterTests {
     from: String,
     to: String,
     blockNum: String,
-    chainId: Int
+    chainId: Int,
+    value: Double? = 1.0,
+    rawContractJSON: String = ""
   ) -> FetchedTransaction {
+    let valueJSON: String = value.map { "\($0)" } ?? "null"
     let json = """
     {
       "blockNum": "\(blockNum)",
@@ -517,10 +598,10 @@ struct PortalAdapterTests {
       "hash": "\(hash)",
       "from": "\(from)",
       "to": "\(to)",
-      "value": 1.0,
+      "value": \(valueJSON),
       "category": "external",
-      "metadata": { "blockTimestamp": "2024-01-01T00:00:00Z" },
-      "chainId": \(chainId)
+      "metadata": { "blockTimestamp": "2024-01-01T00:00:00.000Z" },
+      "chainId": \(chainId)\(rawContractJSON)
     }
     """
     return try! JSONDecoder().decode(FetchedTransaction.self, from: Data(json.utf8))

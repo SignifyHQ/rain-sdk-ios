@@ -36,8 +36,8 @@ extension RainSDKError {
   }
 
   /// Maps a thrown error (e.g. from Turnkey, or an adapter-registered vendor) to a `RainSDKError`.
-  /// Common cases (session expired, network, user cancellation) are mapped explicitly; everything
-  /// else is `providerError(underlying:)`.
+  /// Typed cases (session expired, network, user cancellation) are mapped first, then untyped
+  /// vendor prose by keyword; everything else is `providerError(underlying:)`.
   public static func from(underlying error: Error) -> RainSDKError {
     if let rain = error as? RainSDKError { return rain }
 
@@ -62,7 +62,35 @@ extension RainSDKError {
       return .networkError(underlying: error)
     }
 
+    // Last resort before the generic wrap: vendors that surface a rejection or a funds shortfall
+    // only as prose still have to classify, or the same failure reports a different code per
+    // provider. Adapter mappers and the typed checks above always win over these.
+    if let keyworded = mapByKeyword(error) { return keyworded }
+
     return .providerError(underlying: error)
+  }
+
+  /// Classifies an untyped vendor error by its message.
+  ///
+  /// A bare "user" mention is deliberately not enough: "User doesn't have an embedded wallet" is
+  /// not a rejection.
+  private static func mapByKeyword(_ error: Error) -> RainSDKError? {
+    // Task cancellation is not a wallet-UI rejection, and its type name would match "cancel".
+    if error is CancellationError { return nil }
+
+    // Both renderings: localizedDescription for LocalizedError/NSError prose, and the debug
+    // description — a plain Swift error's localizedDescription is a generic placeholder.
+    let message = (String(describing: error) + " " + (error as NSError).localizedDescription)
+      .lowercased()
+    guard !message.isEmpty else { return nil }
+
+    if ["reject", "denied", "cancel"].contains(where: message.contains) {
+      return .userRejected
+    }
+    if message.contains("insufficient") {
+      return .insufficientFunds(required: "unknown", available: "unknown")
+    }
+    return nil
   }
 
   private static func mapTurnkeySwiftError(_ error: TurnkeySwiftError) -> RainSDKError {

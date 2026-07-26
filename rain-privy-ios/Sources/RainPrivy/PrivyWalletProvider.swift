@@ -19,7 +19,7 @@ import Web3
 /// only, and only on chains Privy indexes); unsupported chains return an empty list, matching the
 /// pre-indexer behavior. Solana history reads the embedded Solana account's own indexer entries —
 /// Privy's server-side chain enum covers only mainnet, so devnet / testnet return empty like an
-/// unindexed EVM chain. Matches Android.
+/// unindexed EVM chain.
 internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSignerProvider, RainTransactionFeeEstimatingProvider, RainSolanaTransfersProvider, @unchecked Sendable {
   /// Upper bound on simultaneous per-token balance RPC calls in ``getBalances(chainId:)``. Without
   /// it a large token registry would fan out one connection per token at once.
@@ -134,7 +134,8 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
   ///
   /// Composition and every preflight (mint resolution, token-account derivation/creation, balance
   /// and fee checks, simulation) live in core's composer, so Turnkey and Privy cannot drift.
-  /// `decimals` is ignored — the mint's own scale is read from the chain.
+  /// `decimals` is deliberately unread — the composer reads the mint's own scale from the chain,
+  /// which `TransferChecked` then enforces.
   func sendSolanaSPLToken(
     chainId: Int,
     mintAddress: String,
@@ -393,8 +394,8 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
     chainId: Int,
     limit: Int?,
     offset: Int?,
-    order: WalletTransactionOrder?
-  ) async throws -> [RainCore.WalletTransaction] {
+    order: RainTransactionOrder?
+  ) async throws -> [RainTransaction] {
     let needed = max((limit ?? Self.defaultTransactionLimit) + (offset ?? 0), 1)
     let collected =
       RainChain.isSolana(chainId)
@@ -499,7 +500,7 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
   private static func rainTransaction(
     chainId: Int,
     from transaction: PrivyIndexedTransaction
-  ) -> RainCore.WalletTransaction {
+  ) -> RainTransaction {
     let details = transaction.details
     // `asset` is a named asset ("eth"/"sol"/"usdc") or a token address. EVM addresses are
     // 0x-prefixed; a Solana mint is base58, told from a named asset by length.
@@ -509,37 +510,29 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
       return isSolana ? asset.count >= Self.solanaMinAddressLength : asset.hasPrefix("0x")
     }()
     let value = details.flatMap { detail -> Decimal? in
-      guard let raw = Decimal(string: detail.rawValue) else { return nil }
+      guard let raw = AmountHelpers.strictDecimal(from: detail.rawValue) else { return nil }
       return NSDecimalNumber(decimal: raw)
         .multiplying(byPowerOf10: Int16(-detail.rawValueDecimals))
         .decimalValue
     }
-    return RainCore.WalletTransaction(
-      blockNum: "",
-      uniqueId: transaction.privyTransactionId ?? transaction.transactionHash ?? "",
+    return RainTransaction(
       hash: transaction.transactionHash
         ?? transaction.userOperationHash
         ?? transaction.privyTransactionId
         ?? "",
+      uniqueId: transaction.privyTransactionId ?? transaction.transactionHash,
+      timestamp: Date(timeIntervalSince1970: Double(transaction.createdAt) / 1000)
+        .formatted(.iso8601),
       from: details?.sender ?? "",
       to: details?.recipient,
       value: value,
-      erc721TokenId: nil,
-      erc1155Metadata: nil,
-      tokenId: nil,
       asset: assetIsAddress ? nil : details?.asset,
-      category: assetIsAddress ? (isSolana ? "token" : "erc20") : "external",
-      rawContract: details.flatMap { detail in
-        guard assetIsAddress else { return nil }
-        return RainCore.WalletTransaction.RawContract(
-          value: detail.rawValue,
-          address: detail.asset,
-          decimal: String(detail.rawValueDecimals)
-        )
-      },
-      metadata: RainCore.WalletTransaction.Metadata(
-        blockTimestamp: Date(timeIntervalSince1970: Double(transaction.createdAt) / 1000)
-          .formatted(.iso8601),
+      tokenAddress: assetIsAddress ? details?.asset : nil,
+      rawValue: assetIsAddress ? details?.rawValue : nil,
+      decimals: assetIsAddress ? details?.rawValueDecimals : nil,
+      category: assetIsAddress ? (isSolana ? .token : .erc20) : .external,
+      chainId: chainId,
+      metadata: RainTransaction.Metadata(
         caip2: transaction.caip2,
         status: transaction.status,
         sponsored: transaction.sponsored,
@@ -547,8 +540,7 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
         userOperationHash: transaction.userOperationHash,
         type: details?.type,
         displayValues: details.flatMap { $0.displayValues.isEmpty ? nil : $0.displayValues }
-      ),
-      chainId: chainId
+      )
     )
   }
 
@@ -579,25 +571,21 @@ internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSigne
   private static func requireEVM(chainId: Int, operation: String) throws {
     guard RainChain.isSolana(chainId) else { return }
     throw RainSDKError.invalidConfig(
-      chainId: chainId,
-      rpcUrl: "Privy provider does not support \(operation) on Solana; use sendNative for SOL transfers"
+      details: "Privy provider does not support \(operation) on Solana; use sendNative for SOL transfers"
     )
   }
 
   /// CAIP-2 + RPC URL Privy broadcasts to, so it uses the same node Rain reads from.
   private func solanaCluster(for chainId: Int) throws -> (caip2: String, rpcUrl: String) {
     guard let caip2 = RainChain.solanaCaip2(for: chainId) else {
-      throw RainSDKError.invalidConfig(
-        chainId: chainId,
-        rpcUrl: "Not a Solana cluster"
-      )
+      throw RainSDKError.invalidConfig(details: "Not a known Solana chainId: \(chainId)")
     }
     return (caip2, try rpcUrl(for: chainId))
   }
 
   private func rpcUrl(for chainId: Int) throws -> String {
     guard let rpcUrl = rpcEndpoints[chainId], !rpcUrl.isEmpty else {
-      throw RainSDKError.invalidConfig(chainId: chainId, rpcUrl: "")
+      throw RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
     }
     return rpcUrl
   }

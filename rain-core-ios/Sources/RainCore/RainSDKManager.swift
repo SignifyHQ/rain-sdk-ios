@@ -52,50 +52,76 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     RainLogger.info("Rain SDK: RainClient.reset() called; resolved clients are immutable on iOS, use RainSdk.reset() to evict them")
   }
 
+  /// Registers token metadata into the store shared with the owning `RainSdk`, so every resolved
+  /// client sees it. Fire-and-forget, to keep registration synchronous for callers.
+  func registerTokens(_ tokens: [TokenInfo]) {
+    Task { await tokenStore.register(tokens) }
+  }
+
   // MARK: - Collateral / fees
 
   func withdrawCollateral(
     chainId: Int,
-    assetAddresses: WithdrawAssetAddresses,
+    addresses: RainWithdrawAddresses,
     amount: Decimal,
     decimals: Int,
-    salt: String,
-    signature: String,
-    expiresAt: String,
+    adminSignature: RainAdminSignature,
     nonce: BigUInt?
   ) async throws -> String {
     do {
-      try validateWithdrawRequest(chainId: chainId, amount: amount, decimals: decimals)
-
-      // Solana withdrawals go through Rain's on-chain collateral program rather than an EVM
-      // coordinator contract: core composes the two-instruction transaction (ed25519 proof of
-      // Rain's signature + the program's withdraw instruction) and the provider signs it.
-      if SolanaChains.isSolana(chainId) {
-        return try await withdrawSolanaCollateral(
-          chainId: chainId,
-          assetAddresses: assetAddresses,
-          amount: amount,
-          decimals: decimals,
-          salt: salt,
-          signature: signature,
-          expiresAt: expiresAt
-        )
-      }
-
-      let (_, transactionParams) = try await buildTransactionParamForWithdrawAsset(
+      let prepared = try await buildPreparedWithdrawal(
         chainId: chainId,
-        assetAddresses: assetAddresses,
+        assetAddresses: addresses,
         amount: amount,
         decimals: decimals,
-        salt: salt,
-        signature: signature,
-        expiresAt: expiresAt,
+        adminSignature: adminSignature,
         nonce: nonce
       )
 
-      let txHash = try await walletProvider.sendTransaction(chainId: chainId, params: transactionParams)
-      RainLogger.info("Rain SDK: Withdrawal transaction submitted. Hash: \(txHash)")
-      return txHash
+      switch prepared {
+      case let .solana(unsigned):
+        guard let solanaProvider = walletProvider as? any RainSolanaTransfersProvider else {
+          throw RainSDKError.internalLogicError(
+            details: "The active wallet provider does not support Solana transfers"
+          )
+        }
+        let signature = try await solanaProvider.signAndSendSolanaTransaction(
+          chainId: chainId,
+          unsigned: unsigned
+        )
+        RainLogger.info("Rain SDK: Solana withdrawal submitted. Signature: \(signature)")
+        return signature
+
+      case let .evm(parameters):
+        let txHash = try await walletProvider.sendTransaction(
+          chainId: chainId,
+          params: walletParams(parameters)
+        )
+        RainLogger.info("Rain SDK: Withdrawal transaction submitted. Hash: \(txHash)")
+        return txHash
+      }
+    } catch {
+      throw mapWithdrawalError(error)
+    }
+  }
+
+  func prepareWithdrawal(
+    chainId: Int,
+    addresses: RainWithdrawAddresses,
+    amount: Decimal,
+    decimals: Int,
+    adminSignature: RainAdminSignature,
+    nonce: BigUInt?
+  ) async throws -> RainPreparedWithdrawal {
+    do {
+      return try await buildPreparedWithdrawal(
+        chainId: chainId,
+        assetAddresses: addresses,
+        amount: amount,
+        decimals: decimals,
+        adminSignature: adminSignature,
+        nonce: nonce
+      )
     } catch {
       throw mapWithdrawalError(error)
     }
@@ -122,30 +148,35 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
 
   func estimateWithdrawalFee(
     chainId: Int,
-    addresses: WithdrawAssetAddresses,
+    addresses: RainWithdrawAddresses,
     amount: Decimal,
     decimals: Int,
-    salt: String,
-    signature: String,
-    expiresAt: String
+    adminSignature: RainAdminSignature,
+    nonce: BigUInt?
   ) async throws -> Decimal {
     do {
       try validateWithdrawRequest(chainId: chainId, amount: amount, decimals: decimals)
 
-      let (walletAddress, transactionParams) = try await buildTransactionParamForWithdrawAsset(
+      // TODO(v2.1): a Solana estimate is the flat per-signature fee plus token-account rent when
+      // `UnsignedSolanaTransfer.createsRecipientAccount` is true.
+      guard !SolanaChains.isSolana(chainId) else {
+        throw RainSDKError.internalLogicError(
+          details: "Withdrawal fee estimation is not supported on Solana"
+        )
+      }
+
+      let (walletAddress, parameters) = try await prepareEvmWithdrawal(
         chainId: chainId,
         assetAddresses: addresses,
         amount: amount,
         decimals: decimals,
-        salt: salt,
-        signature: signature,
-        expiresAt: expiresAt,
-        nonce: nil
+        adminSignature: adminSignature,
+        nonce: nonce
       )
       return try await estimateTransactionFee(
         chainId: chainId,
         address: walletAddress,
-        params: transactionParams
+        params: walletParams(parameters)
       )
     } catch {
       throw mapWithdrawalError(error)
@@ -239,8 +270,8 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     chainId: Int,
     limit: Int? = nil,
     offset: Int? = nil,
-    order: WalletTransactionOrder? = nil
-  ) async throws -> [WalletTransaction] {
+    order: RainTransactionOrder? = nil
+  ) async throws -> [RainTransaction] {
     do {
       return try await walletProvider.getTransactions(
         chainId: chainId,

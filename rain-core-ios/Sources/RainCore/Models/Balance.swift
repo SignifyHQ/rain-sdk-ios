@@ -47,8 +47,14 @@ public struct Balance: Sendable, Equatable, Hashable {
     return raw.dividing(by: divisor).decimalValue
   }
 
-  /// Human-readable balance string (e.g. `"1.5"`).
+  /// Human-readable balance string (e.g. `"1.5"`): plain notation, trailing
+  /// fractional zeros trimmed (`"1.0"` → `"1"`, `"0.500"` → `"0.5"`).
   public var formatted: String {
-    decimalAmount.description
+    var text = NSDecimalNumber(decimal: decimalAmount)
+      .description(withLocale: Locale(identifier: "en_US_POSIX"))
+    guard text.contains(".") else { return text }
+    while text.hasSuffix("0") { text.removeLast() }
+    if text.hasSuffix(".") { text.removeLast() }
+    return text
   }
 }

@@ -28,6 +28,11 @@ public struct RainSolanaSupport: Sendable {
     SolanaChains.isSolana(chainId)
   }
 
+  // In-core seams so adapters inside RainCore reuse this stack instead of building their own.
+  internal var chainReader: ChainReader { reader }
+  internal var solanaRpcClient: SolanaRpcClient { rpcClient }
+  internal var transferComposer: SolanaTransferComposer { composer }
+
   // MARK: - Transfers
 
   /// See ``SolanaTransferComposer/composeNative(chainId:from:to:amount:)``.

@@ -284,11 +284,12 @@ struct PrivyWalletProviderTests {
     #expect(tx.to == "0x1111111111111111111111111111111111111111")
     #expect(tx.value == 1.5)
     #expect(tx.asset == "eth")
-    #expect(tx.category == "external")
-    #expect(tx.rawContract == nil)
+    #expect(tx.category == .external)
+    #expect(tx.tokenAddress == nil)
+    #expect(tx.rawValue == nil)
     #expect(tx.chainId == Self.indexedChainId)
-    #expect(tx.metadata?.blockTimestamp == "2023-11-14T22:13:20Z")
-    // Indexer metadata carries through, matching the Android adapter's metadata map.
+    #expect(tx.timestamp == "2023-11-14T22:13:20Z")
+    // Indexer metadata carries through into the row's metadata map.
     #expect(tx.metadata?.caip2 == "eip155:1")
     #expect(tx.metadata?.status == "confirmed")
     #expect(tx.metadata?.sponsored == false)
@@ -339,9 +340,10 @@ struct PrivyWalletProviderTests {
 
     let tx = try #require(transactions.first)
     #expect(tx.asset == nil)
-    #expect(tx.category == "erc20")
-    #expect(tx.rawContract == RainCore.WalletTransaction.RawContract(
-      value: "1500000", address: contract, decimal: "6"))
+    #expect(tx.category == .erc20)
+    #expect(tx.tokenAddress == contract)
+    #expect(tx.rawValue == "1500000")
+    #expect(tx.decimals == 6)
     #expect(tx.value == 1.5)
   }
 
@@ -506,7 +508,7 @@ struct PrivyWalletProviderTests {
   @Test("an unconfigured chain id surfaces invalidConfig")
   func missingRpcEndpoint() async throws {
     let provider = try await Self.makeProvider(host: "missing-rpc.rpc")
-    await #expect(throws: RainSDKError.invalidConfig(chainId: 999, rpcUrl: "")) {
+    await #expect(throws: RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=999")) {
       _ = try await provider.getBalance(chainId: 999, token: .native)
     }
   }
@@ -866,7 +868,9 @@ struct PrivySolanaTests {
     let provider = try await Self.makeProvider(host: host, source: Self.source(account: account))
 
     // Only devnet is registered on this provider.
-    await #expect(throws: RainSDKError.invalidConfig(chainId: RainChain.solanaMainnet, rpcUrl: "")) {
+    await #expect(throws: RainSDKError.invalidConfig(
+      details: "No RPC endpoint configured for chainId=\(RainChain.solanaMainnet)"
+    )) {
       _ = try await provider.sendSolanaNative(
         chainId: RainChain.solanaMainnet, to: Self.recipient, amount: 1)
     }
@@ -934,7 +938,7 @@ struct PrivySolanaTests {
     #expect(transaction.to == Self.recipient)
     #expect(transaction.value == Decimal(string: "0.25"))
     #expect(transaction.asset == "sol") // named asset, not a mint address
-    #expect(transaction.category == "external")
+    #expect(transaction.category == .external)
     #expect(transaction.chainId == RainChain.solanaMainnet)
   }
 

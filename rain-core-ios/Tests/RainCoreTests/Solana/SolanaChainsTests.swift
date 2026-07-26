@@ -37,4 +37,18 @@ struct SolanaChainsTests {
     #expect(sol.symbol == "SOL")
     #expect(sol.decimals == 9)
   }
+
+  @Test("NetworkConfig reports CAIP-2 per chain family, not eip155 for Solana sentinels")
+  func networkConfigCaip2() {
+    let solana = NetworkConfig.testConfig(chainId: SolanaChains.mainnet)
+    #expect(solana.eip155ChainId == "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp")
+    #expect(NetworkConfig.testConfig(chainId: 1).eip155ChainId == "eip155:1")
+  }
+
+  @Test("NetworkConfig rejects a malformed EIP-155 string with invalidConfig")
+  func networkConfigInvalidEip155() {
+    #expect(throws: RainSDKError.invalidConfig(details: "Invalid EIP-155 chain ID format: bogus. Expected 'eip155:<chainId>'")) {
+      _ = try NetworkConfig(eip155ChainId: "bogus", rpcUrl: "https://test-rpc.com")
+    }
+  }
 }

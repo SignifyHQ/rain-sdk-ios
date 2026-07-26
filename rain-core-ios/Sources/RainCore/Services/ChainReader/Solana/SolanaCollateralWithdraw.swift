@@ -48,7 +48,9 @@ internal struct SolanaCollateralWithdrawComposer: Sendable {
       chainId: chainId,
       address: collateralAddress
     ) else {
-      throw RainSDKError.invalidConfig(chainId: chainId, rpcUrl: "")
+      throw RainSDKError.invalidConfig(
+        details: "No collateral account at \(collateralAddress) on chainId=\(chainId)"
+      )
     }
     let programId = collateralAccount.ownerProgram
     _ = try decodeKey(programId, label: "collateral program")

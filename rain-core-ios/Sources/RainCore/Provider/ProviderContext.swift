@@ -1,7 +1,7 @@
 import Foundation
 
 /// Vendor-free infrastructure bundle that `RainSdk` builds once and hands to every adapter's
-/// `create(context:)`. Mirrors Android's `ProviderContext`. Contains no vendor SDK types.
+/// `create(context:)`. Contains no vendor SDK types.
 ///
 /// Public surface (out-of-core adapters): `rpcEndpoints`, `networkConfigs`, `tokenStore`,
 /// `solanaSupport`. The transaction builder and EVM chain reader are internal (in-core adapters
@@ -20,11 +20,11 @@ public final class ProviderContext: @unchecked Sendable {
   /// out-of-core adapters.
   public let solanaSupport: RainSolanaSupport
 
-  /// Wallet-agnostic transaction builder. In-core adapters only (internal, matching Android);
+  /// Wallet-agnostic transaction builder. In-core adapters only (internal);
   /// widen when Turnkey graduates to rain-turnkey.
   internal let transactionBuilder: TransactionBuilderProtocol
 
-  /// EVM chain reader (multicall, RPC reads). In-core adapters only (internal, matching Android).
+  /// EVM chain reader (multicall, RPC reads). In-core adapters only (internal).
   internal let evmChainReader: ChainReader
 
   internal init(

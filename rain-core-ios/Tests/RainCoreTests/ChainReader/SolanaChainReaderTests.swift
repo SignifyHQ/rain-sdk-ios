@@ -84,6 +84,23 @@ struct SolanaChainReaderTests {
     }
   }
 
+  @Test("getERC20Balance scales by the mint's decimals, ignoring a caller override")
+  func splBalanceIgnoresDecimalsOverride() async throws {
+    try await MockURLProtocol.withInstalled {
+      MockURLProtocol.interceptedHosts = [Self.host]
+      MockURLProtocol.stub(method: "getAccountInfo", results: [
+        Self.mintAccountInfo(decimals: 6),
+        Self.tokenAccountInfo(amount: "2000000", decimals: 6)
+      ])
+      let reader = makeReader()
+
+      let value = try await reader.getERC20Balance(
+        chainId: SolanaChains.mainnet, tokenAddress: Self.mint,
+        walletAddress: address, decimals: 2)
+      #expect(value == 2)
+    }
+  }
+
   @Test("a balance for a mint that does not exist surfaces tokenNotFound")
   func splBalanceUnknownMint() async throws {
     try await MockURLProtocol.withInstalled {

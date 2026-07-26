@@ -26,12 +26,10 @@ struct WithdrawalRequestTests {
 
     _ = try await manager.withdrawCollateral(
       chainId: 1,
-      assetAddresses: TestFixtures.defaultWithdrawAddresses,
+      addresses: TestFixtures.defaultWithdrawAddresses,
       amount: 100.0,
       decimals: 18,
-      salt: TestFixtures.validSaltBase64,
-      signature: TestFixtures.validSignatureHex,
-      expiresAt: "1735689600",
+      adminSignature: TestFixtures.adminSignature(),
       nonce: BigUInt(7)
     )
 
@@ -54,12 +52,10 @@ struct WithdrawalRequestTests {
 
     _ = try await manager.withdrawCollateral(
       chainId: 1,
-      assetAddresses: TestFixtures.defaultWithdrawAddresses,
+      addresses: TestFixtures.defaultWithdrawAddresses,
       amount: 100.0,
       decimals: 18,
-      salt: TestFixtures.validSaltBase64,
-      signature: TestFixtures.validSignatureHex,
-      expiresAt: "1735689600",
+      adminSignature: TestFixtures.adminSignature(),
       nonce: nil
     )
 
@@ -73,15 +69,13 @@ struct WithdrawalRequestTests {
   func testWithdrawCollateralRejectsNonPositiveChainId() async throws {
     let (manager, stub) = try await TestManagers.stubProviderManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(chainId: 0, rpcUrl: "")) {
+    await #expect(throws: RainSDKError.invalidConfig(details: "Invalid chainId: 0. Must be a positive integer.")) {
       _ = try await manager.withdrawCollateral(
         chainId: 0,
-        assetAddresses: TestFixtures.defaultWithdrawAddresses,
+        addresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: 18,
-        salt: TestFixtures.validSaltBase64,
-        signature: TestFixtures.validSignatureHex,
-        expiresAt: "1735689600",
+        adminSignature: TestFixtures.adminSignature(),
         nonce: nil
       )
     }
@@ -96,12 +90,10 @@ struct WithdrawalRequestTests {
       await #expect(throws: RainSDKError.self) {
         _ = try await manager.withdrawCollateral(
           chainId: 1,
-          assetAddresses: TestFixtures.defaultWithdrawAddresses,
+          addresses: TestFixtures.defaultWithdrawAddresses,
           amount: amount,
           decimals: 18,
-          salt: TestFixtures.validSaltBase64,
-          signature: TestFixtures.validSignatureHex,
-          expiresAt: "1735689600",
+          adminSignature: TestFixtures.adminSignature(),
           nonce: nil
         )
       }
@@ -116,12 +108,10 @@ struct WithdrawalRequestTests {
     await #expect(throws: RainSDKError.self) {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
-        assetAddresses: TestFixtures.defaultWithdrawAddresses,
+        addresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: -1,
-        salt: TestFixtures.validSaltBase64,
-        signature: TestFixtures.validSignatureHex,
-        expiresAt: "1735689600",
+        adminSignature: TestFixtures.adminSignature(),
         nonce: nil
       )
     }
@@ -132,15 +122,13 @@ struct WithdrawalRequestTests {
   func testEstimateWithdrawalFeeValidatesParameters() async throws {
     let (manager, _) = try await TestManagers.stubProviderManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(chainId: -1, rpcUrl: "")) {
+    await #expect(throws: RainSDKError.invalidConfig(details: "Invalid chainId: -1. Must be a positive integer.")) {
       _ = try await manager.estimateWithdrawalFee(
         chainId: -1,
         addresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: 18,
-        salt: TestFixtures.validSaltBase64,
-        signature: TestFixtures.validSignatureHex,
-        expiresAt: "1735689600"
+        adminSignature: TestFixtures.adminSignature()
       )
     }
 
@@ -150,11 +138,116 @@ struct WithdrawalRequestTests {
         addresses: TestFixtures.defaultWithdrawAddresses,
         amount: 0,
         decimals: 18,
-        salt: TestFixtures.validSaltBase64,
-        signature: TestFixtures.validSignatureHex,
-        expiresAt: "1735689600"
+        adminSignature: TestFixtures.adminSignature()
       )
     }
+  }
+
+  @Test("prepareWithdrawal applies the same validation as withdrawCollateral")
+  func testPrepareWithdrawalValidatesParameters() async throws {
+    let (manager, stub) = try await TestManagers.stubProviderManager()
+
+    await #expect(throws: RainSDKError.invalidConfig(details: "Invalid chainId: 0. Must be a positive integer.")) {
+      _ = try await manager.prepareWithdrawal(
+        chainId: 0,
+        addresses: TestFixtures.defaultWithdrawAddresses,
+        amount: 100.0,
+        decimals: 18,
+        adminSignature: TestFixtures.adminSignature()
+      )
+    }
+
+    for amount in [Decimal(0), Decimal(-1)] {
+      await #expect(throws: RainSDKError.self) {
+        _ = try await manager.prepareWithdrawal(
+          chainId: 1,
+          addresses: TestFixtures.defaultWithdrawAddresses,
+          amount: amount,
+          decimals: 18,
+          adminSignature: TestFixtures.adminSignature()
+        )
+      }
+    }
+
+    await #expect(throws: RainSDKError.self) {
+      _ = try await manager.prepareWithdrawal(
+        chainId: 1,
+        addresses: TestFixtures.defaultWithdrawAddresses,
+        amount: 100.0,
+        decimals: -1,
+        adminSignature: TestFixtures.adminSignature()
+      )
+    }
+
+    #expect(stub.sendTransactionCalls.isEmpty)
+  }
+
+  // MARK: - Prepare vs broadcast
+
+  @Test("prepareWithdrawal returns the exact calldata withdrawCollateral broadcasts")
+  func testPrepareWithdrawalMatchesBroadcastBytes() async throws {
+    MockURLProtocol.install()
+    defer { MockURLProtocol.reset() }
+    stubSendTransactionRPCs()
+
+    let mockTurnkey = MockTurnkey()
+    let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
+    client.sendTransactionStatusQueue = [.broadcasted(hash: "0x" + String(repeating: "7", count: 64))]
+
+    let (manager, _, builder) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
+    builder.mockNonce = BigUInt(42)
+
+    // A pinned nonce is what makes the two runs comparable: the salt is random per call, but the
+    // caller-supplied signature bytes and the encoded arguments are not.
+    let prepared = try await manager.prepareWithdrawal(
+      chainId: 1,
+      addresses: TestFixtures.defaultWithdrawAddresses,
+      amount: 100.0,
+      decimals: 18,
+      adminSignature: TestFixtures.adminSignature(),
+      nonce: BigUInt(7)
+    )
+    let parameters = try #require(prepared.evmParameters)
+
+    // Preparing broadcasts nothing.
+    #expect(client.ethSendTransactionCalls.isEmpty)
+
+    _ = try await manager.withdrawCollateral(
+      chainId: 1,
+      addresses: TestFixtures.defaultWithdrawAddresses,
+      amount: 100.0,
+      decimals: 18,
+      adminSignature: TestFixtures.adminSignature(),
+      nonce: BigUInt(7)
+    )
+    let broadcast = try #require(client.ethSendTransactionCalls.first)
+    let broadcastData = try #require(broadcast.data)
+
+    // The prepared transaction is complete, not bare calldata.
+    #expect(parameters.from == broadcast.from)
+    #expect(parameters.to == broadcast.to)
+    #expect(parameters.value == "0x0")
+    #expect(!parameters.from.isEmpty)
+
+    // Same selector and same encoded length; only the random salt differs.
+    #expect(parameters.data.hasPrefix(String(broadcastData.prefix(10))))
+    #expect(parameters.data.count == broadcastData.count)
+  }
+
+  @Test("estimateWithdrawalFee rejects a Solana chain id instead of taking the EVM path")
+  func testEstimateWithdrawalFeeRejectsSolana() async throws {
+    let (manager, stub) = try await TestManagers.stubProviderManager()
+
+    await #expect(throws: RainSDKError.self) {
+      _ = try await manager.estimateWithdrawalFee(
+        chainId: SolanaChains.devnet,
+        addresses: TestFixtures.defaultWithdrawAddresses,
+        amount: 100.0,
+        decimals: 6,
+        adminSignature: TestFixtures.adminSignature()
+      )
+    }
+    #expect(stub.sendTransactionCalls.isEmpty)
   }
 
   // MARK: - Helpers

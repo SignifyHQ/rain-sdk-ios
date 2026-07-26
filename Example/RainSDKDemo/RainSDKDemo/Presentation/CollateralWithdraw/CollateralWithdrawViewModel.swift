@@ -36,6 +36,10 @@ final class CollateralWithdrawViewModel: ObservableObject {
   @Published private(set) var isLoadingContract = false
   @Published private(set) var isWithdrawing = false
   @Published private(set) var withdrawResult: String?
+  /// Summary of the last `prepareWithdrawal` result — nothing was broadcast.
+  @Published private(set) var preparedWithdrawal: String?
+  /// Fee from the last `estimateWithdrawalFee` call, in the chain's native token.
+  @Published private(set) var estimatedFee: String?
   @Published private(set) var errorText: String?
   /// The chain the loaded contract lives on — drives the explorer link for the result hash.
   @Published private(set) var contractChainId = 0
@@ -43,7 +47,8 @@ final class CollateralWithdrawViewModel: ObservableObject {
   private var proxyAddress = ""
   private var controllerAddress = ""
   private var adminAddress = ""
-  private var isSolanaContract = false
+  /// True when the loaded contract lives on a Solana cluster (drives the EVM-only fee estimate).
+  @Published private(set) var isSolanaContract = false
   private var adminSignature: RainAdminSignature?
   private var signatureKey: SignatureKey?
 
@@ -56,9 +61,6 @@ final class CollateralWithdrawViewModel: ObservableObject {
   var selectedToken: WithdrawTokenOption? {
     availableTokens.indices.contains(selectedTokenIndex) ? availableTokens[selectedTokenIndex] : nil
   }
-
-  /// True when the wallet provider is active (Portal is gated to EVM contracts by the home screen).
-  var hasPortal: Bool { session.activeProvider == .portal }
 
   private var parsedAmount: Decimal? { Decimal(string: amount) }
 
@@ -78,6 +80,9 @@ final class CollateralWithdrawViewModel: ObservableObject {
   var canWithdrawMaximum: Bool {
     (selectedToken?.balance ?? 0) > 0 && !isWithdrawing
   }
+
+  /// Dry-run actions need the same valid amount a real withdraw does.
+  var canDryRun: Bool { isAmountValid && !isWithdrawing }
 
   private static let epsilon = Decimal(string: "0.000000001") ?? 0
 
@@ -169,11 +174,90 @@ final class CollateralWithdrawViewModel: ObservableObject {
     await executeWithdraw(amountOverride: token.balance)
   }
 
+  /// Builds the withdrawal without broadcasting it, and shows what came back. The EVM case is a
+  /// complete transaction (from/to/value/data); the Solana case is the serialized unsigned
+  /// transaction plus the blockhash it was simulated against.
+  func prepareWithdrawal(amountOverride: Decimal? = nil) async {
+    await runWithdrawFlow(amountOverride: amountOverride, tag: "Withdraw.prepare") { addresses, amount, token, signature in
+      let prepared = try await self.session.requireClient().prepareWithdrawal(
+        chainId: self.contractChainId,
+        addresses: addresses,
+        amount: amount,
+        decimals: token.decimals,
+        adminSignature: signature
+      )
+
+      switch prepared {
+      case let .evm(parameters):
+        self.preparedWithdrawal = """
+          EVM transaction
+          to: \(parameters.to)
+          value: \(parameters.value)
+          data: \(Self.truncate(parameters.data))
+          """
+      case let .solana(transfer):
+        self.preparedWithdrawal = """
+          Solana transaction
+          blockhash: \(transfer.recentBlockhash)
+          creates recipient account: \(transfer.createsRecipientAccount)
+          tx: \(Self.truncate(transfer.transactionHex))
+          """
+      }
+      // Nothing was broadcast, so the signature is still good — keep it cached.
+    }
+  }
+
+  /// Estimates the withdrawal fee without broadcasting. EVM only — the SDK throws on a Solana
+  /// chain id, which the UI surfaces as-is.
+  func estimateFee(amountOverride: Decimal? = nil) async {
+    await runWithdrawFlow(amountOverride: amountOverride, tag: "Withdraw.estimate") { addresses, amount, token, signature in
+      let fee = try await self.session.requireClient().estimateWithdrawalFee(
+        chainId: self.contractChainId,
+        addresses: addresses,
+        amount: amount,
+        decimals: token.decimals,
+        adminSignature: signature
+      )
+      self.estimatedFee = "\(fee.plainString) \(self.nativeSymbol)"
+    }
+  }
+
+  private static func truncate(_ value: String) -> String {
+    value.count > 40 ? "\(value.prefix(24))…\(value.suffix(12))" : value
+  }
+
+  private var nativeSymbol: String {
+    WalletChain.allCases.first { $0.chainId == contractChainId }?.nativeSymbol ?? ""
+  }
+
   /// Executes a collateral withdrawal. Gas estimation happens inside the SDK as part of sending,
   /// so it isn't surfaced to the caller.
   /// - Parameter amountOverride: when set (e.g. "Withdraw Maximum"), withdraws this amount instead
   ///   of the value typed into the amount field.
   func executeWithdraw(amountOverride: Decimal? = nil) async {
+    await runWithdrawFlow(amountOverride: amountOverride, tag: "Withdraw.execute") { addresses, amount, token, signature in
+      let hash = try await self.session.requireClient().withdrawCollateral(
+        chainId: self.contractChainId,
+        addresses: addresses,
+        amount: amount,
+        decimals: token.decimals,
+        adminSignature: signature
+      )
+      SampleLog.i("Withdraw.execute", "success — txHash=\(hash)")
+      self.withdrawResult = hash
+      // The signature is consumed by a broadcast; clear it so the next withdraw refetches.
+      self.invalidateSignature()
+    }
+  }
+
+  /// Shared prep for every withdrawal-shaped call: validate the amount, resolve (and cache) the
+  /// admin signature for these exact inputs, then hand the pieces to `action`. The three SDK
+  /// entry points differ only in what they do with them.
+  private func runWithdrawFlow(
+    amountOverride: Decimal?,
+    tag: String,
+    action: (RainWithdrawAddresses, Decimal, WithdrawTokenOption, RainAdminSignature) async throws -> Void
+  ) async {
     guard let token = selectedToken else { return }
     guard let rawAmount = amountOverride ?? parsedAmount, rawAmount > 0 else {
       errorText = "Enter a valid amount"
@@ -196,13 +280,12 @@ final class CollateralWithdrawViewModel: ObservableObject {
       return
     }
 
-    SampleLog.i(
-      "Withdraw.execute",
-      "token=\(token.symbol) amount=\(normalized.value.plainString) to=\(recipientAddress)"
-    )
+    SampleLog.i(tag, "token=\(token.symbol) amount=\(normalized.value.plainString) to=\(recipientAddress)")
     isWithdrawing = true
     errorText = nil
     withdrawResult = nil
+    preparedWithdrawal = nil
+    estimatedFee = nil
 
     // Only reuse the cached signature when it was issued for THIS exact (token, amount,
     // recipient). Reusing matching inputs avoids the "active signature already exists" error on a
@@ -219,7 +302,7 @@ final class CollateralWithdrawViewModel: ObservableObject {
       if let cached = adminSignature, signatureKey == key {
         signature = cached
       } else {
-        SampleLog.d("Withdraw.execute", "fetching fresh admin signature")
+        SampleLog.d(tag, "fetching fresh admin signature")
         do {
           signature = try await session.requireRain().fetchAdminSignature(
             chainId: contractChainId,
@@ -229,7 +312,7 @@ final class CollateralWithdrawViewModel: ObservableObject {
             recipientAddress: recipientAddress
           )
         } catch {
-          SampleLog.e("Withdraw.execute", "fetchAdminSignature failed: \(error.localizedDescription)")
+          SampleLog.e(tag, "fetchAdminSignature failed: \(error.localizedDescription)")
           throw friendlySignatureError(error)
         }
         // Cache it (with the inputs it's bound to) so a retry after a transient send failure
@@ -238,30 +321,17 @@ final class CollateralWithdrawViewModel: ObservableObject {
         signatureKey = key
       }
 
-      let addresses = WithdrawAssetAddresses(
-        contractAddress: controllerAddress,
+      let addresses = RainWithdrawAddresses(
         proxyAddress: proxyAddress,
-        recipientAddress: recipientAddress,
-        tokenAddress: token.address
+        controllerAddress: controllerAddress,
+        tokenAddress: token.address,
+        recipientAddress: recipientAddress
       )
 
-      let hash = try await session.requireClient().withdrawCollateral(
-        chainId: contractChainId,
-        assetAddresses: addresses,
-        amount: normalized.value,
-        decimals: token.decimals,
-        salt: signature.salt,
-        signature: signature.signature,
-        expiresAt: signature.expiresAt,
-        nonce: nil
-      )
-      SampleLog.i("Withdraw.execute", "success — txHash=\(hash)")
-      withdrawResult = hash
-      // The signature is consumed; clear it so the next withdraw fetches a fresh one.
-      invalidateSignature()
+      try await action(addresses, normalized.value, token, signature)
     } catch {
-      SampleLog.e("Withdraw.execute", "failed: \(error.localizedDescription)")
-      errorText = "Withdrawal failed: \(error.localizedDescription)"
+      SampleLog.e(tag, "failed: \(error.localizedDescription)")
+      errorText = error.localizedDescription
     }
     isWithdrawing = false
   }

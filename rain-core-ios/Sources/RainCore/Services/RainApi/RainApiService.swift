@@ -2,7 +2,7 @@ import Foundation
 
 /// Orchestrates the Rain issuing API: composes credentials (`RainApiConfigStore`), the CST
 /// cache (`RainSessionManager`) and the HTTP client (`RainApiClient`), and enriches contract
-/// tokens through the SDK token store. Mirrors Android's `RainApiService`.
+/// tokens through the SDK token store.
 ///
 /// A Bearer call rejected as `.unauthorized` invalidates the cached CST and retries exactly
 /// once with a freshly minted token before rethrowing.
@@ -66,6 +66,11 @@ internal final class RainApiService: Sendable {
         isAmountNative: isAmountNative
       )
     }
+  }
+
+  /// Drops the cached CST so the next call re-mints. Awaitable so callers can order against it.
+  func invalidateSession() async {
+    await sessionManager.invalidate()
   }
 
   // MARK: - Internals

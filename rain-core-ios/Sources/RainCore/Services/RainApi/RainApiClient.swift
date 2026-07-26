@@ -17,7 +17,14 @@ internal final class RainApiClient: Sendable {
 
   private static let maxErrorBodyChars = 300
 
-  internal init(session: URLSession = .shared) {
+  /// Default session with a 30-second per-request timeout instead of URLSession's 60.
+  private static let defaultSession: URLSession = {
+    let configuration = URLSessionConfiguration.default
+    configuration.timeoutIntervalForRequest = 30
+    return URLSession(configuration: configuration)
+  }()
+
+  internal init(session: URLSession = RainApiClient.defaultSession) {
     self.session = session
   }
 
@@ -178,7 +185,7 @@ internal final class RainApiClient: Sendable {
     else {
       let trimmed = status.trimmingCharacters(in: .whitespaces)
       throw RainSDKError.signatureNotReady(
-        status: trimmed.isEmpty ? "unknown" : status,
+        status: trimmed.isEmpty ? "unknown" : trimmed,
         retryAfter: response.retryAfter
       )
     }

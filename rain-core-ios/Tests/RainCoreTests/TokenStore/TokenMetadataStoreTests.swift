@@ -101,4 +101,16 @@ struct TokenMetadataStoreTests {
     let avax = await store.nativeCurrency(for: 43114)
     #expect(avax.symbol == "AVAX")
   }
+
+  @Test("nativeCurrencyOrNil returns nil for an unknown chain instead of a default")
+  func testNativeCurrencyOrNilOnUnknownChain() async throws {
+    let reader = MockChainReader()
+    let store = TokenMetadataStore(chainReader: reader)
+
+    #expect(await store.nativeCurrencyOrNil(for: 43114)?.symbol == "AVAX")
+    #expect(await store.nativeCurrencyOrNil(for: RainChain.solanaMainnet)?.symbol == "SOL")
+    // The ETH-like fallback would label an unlisted chain's gas token wrongly.
+    #expect(await store.nativeCurrency(for: 123456).symbol == "ETH")
+    #expect(await store.nativeCurrencyOrNil(for: 123456) == nil)
+  }
 }

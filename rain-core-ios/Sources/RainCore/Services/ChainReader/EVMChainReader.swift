@@ -346,10 +346,12 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
   /// this, parse failures bubble up from `JsonRpcClient` with `chainId: 0`.
   private func resolveRpcUrl(chainId: Int) throws -> String {
     guard let config = networkConfigResolver(chainId) else {
-      throw RainSDKError.invalidConfig(chainId: chainId, rpcUrl: "")
+      throw RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
     }
     guard URL(string: config.rpcUrl) != nil else {
-      throw RainSDKError.invalidConfig(chainId: chainId, rpcUrl: config.rpcUrl)
+      throw RainSDKError.invalidConfig(
+        details: "Invalid RPC URL for chainId=\(chainId): \(config.rpcUrl)"
+      )
     }
     return config.rpcUrl
   }

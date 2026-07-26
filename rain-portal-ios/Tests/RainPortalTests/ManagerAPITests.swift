@@ -16,7 +16,7 @@ struct ManagerAPITests {
   func testComposeTransactionParameters() throws {
     let rain = try TestManagers.rainSdk()
 
-    // Rain-owned return type, not Portal's `ETHTransactionParam` (parity with Android).
+    // Rain-owned return type, not Portal's `ETHTransactionParam`.
     let params: RainTransactionParameters = rain.buildTransactionParameters(
       walletAddress: TestFixtures.walletAddress,
       contractAddress: TestFixtures.contractAddress,

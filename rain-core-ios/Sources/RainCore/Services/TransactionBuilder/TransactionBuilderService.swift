@@ -192,67 +192,48 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
   
   /// Build withdraw transaction data.
   ///
-  /// Encodes against a minimal single-function ABI (only `withdrawAsset`) instead of the full
-  /// contract ABI. web3swift parses the entire ABI string up front when building a contract;
-  /// the proven encode path in this file (`encodeBalanceOfCall`) uses a minimal ABI for the
-  /// same reason, and Android encodes the function directly (web3j `FunctionEncoder`). Params
-  /// are passed `as AnyObject` to match that working path.
+  /// Pure ABI encoding — no RPC, so it needs no chain id and cannot fail on the network. Encodes
+  /// against a minimal single-function ABI (only `withdrawAsset`) rather than the full contract
+  /// ABI, since web3swift parses the whole ABI string up front.
   func buildErc20TransactionForWithdrawAsset(
-    chainId: Int,
     ethereumContractAddress: Web3Core.EthereumAddress,
     withdrawAssetParameter: WithdrawAssetParameter
-  ) async throws -> String {
-    let rpcURL = try getRpcURL(chainId: chainId)
-
-    guard let url = URL(string: rpcURL) else {
-      RainLogger.error("Rain SDK: Error building transaction for withdrawal. RPC URL is missing")
-      throw RainSDKError.internalLogicError(
-        details: "RPC URL is missing for chain ID \(chainId)"
-      )
-    }
-
+  ) throws -> String {
     // bytes32 fields must be exactly 32 bytes or web3swift fails the encode (returns nil).
     // Surface a precise error instead of the opaque "Could not encode" when they aren't.
-    guard withdrawAssetParameter.salt.count == 32, withdrawAssetParameter.adminSalt.count == 32 else {
-      RainLogger.error("Rain SDK: Error building withdrawal. bytes32 salt is not 32 bytes (executor=\(withdrawAssetParameter.salt.count), admin=\(withdrawAssetParameter.adminSalt.count))")
+    guard withdrawAssetParameter.executorSalt.count == 32,
+          withdrawAssetParameter.walletSalt.count == 32 else {
+      RainLogger.error("Rain SDK: Error building withdrawal. bytes32 salt is not 32 bytes (executor=\(withdrawAssetParameter.executorSalt.count), wallet=\(withdrawAssetParameter.walletSalt.count))")
       throw RainSDKError.internalLogicError(
-        details: "Withdrawal salt must be 32 bytes (executor=\(withdrawAssetParameter.salt.count), admin=\(withdrawAssetParameter.adminSalt.count))"
+        details: "Withdrawal salt must be 32 bytes (executor=\(withdrawAssetParameter.executorSalt.count), wallet=\(withdrawAssetParameter.walletSalt.count))"
       )
     }
 
-    let web3 = try await Web3.new(url)
-    let contract = web3.contract(
-      Self.withdrawAssetABI,
-      at: ethereumContractAddress,
-      abiVersion: 2
-    )
+    let contract = try EthereumContract(Self.withdrawAssetABI, at: ethereumContractAddress)
 
-    guard let tx = contract?
-      .createWriteOperation(
-        "withdrawAsset",
-        parameters: [
-          withdrawAssetParameter.proxyAddress as AnyObject,
-          withdrawAssetParameter.tokenAddress as AnyObject,
-          withdrawAssetParameter.amount as AnyObject,
-          withdrawAssetParameter.recipientAddress as AnyObject,
-          withdrawAssetParameter.expiryAt as AnyObject,
-          withdrawAssetParameter.salt as AnyObject,
-          withdrawAssetParameter.signature as AnyObject,
-          [withdrawAssetParameter.adminSalt] as AnyObject,
-          [withdrawAssetParameter.adminSignature] as AnyObject,
-          true as AnyObject
-        ]
-      )?
-      .data?
-      .toHexString()
-    else {
+    guard let encoded = contract.method(
+      "withdrawAsset",
+      parameters: [
+        withdrawAssetParameter.proxyAddress,
+        withdrawAssetParameter.tokenAddress,
+        withdrawAssetParameter.amount,
+        withdrawAssetParameter.recipientAddress,
+        withdrawAssetParameter.expiryAt,
+        withdrawAssetParameter.executorSalt,
+        withdrawAssetParameter.executorSignature,
+        [withdrawAssetParameter.walletSalt],
+        [withdrawAssetParameter.walletSignature],
+        true
+      ],
+      extraData: nil
+    ) else {
       RainLogger.error("Rain SDK: Error building transaction for withdrawal. Could not encode withdrawAsset contract function")
       throw RainSDKError.internalLogicError(
         details: "Failed to encode withdrawAsset contract function"
       )
     }
 
-    return "0x" + tx
+    return "0x" + encoded.toHexString()
   }
 
   /// Minimal ABI carrying only `withdrawAsset` — see `buildErc20TransactionForWithdrawAsset`.
@@ -389,12 +370,14 @@ private extension TransactionBuilderService {
   func getRpcURL(chainId: Int) throws -> String {
     guard let config = networkConfigsByChainId[chainId] else {
       RainLogger.error("Rain SDK: Error getting RPC URL. Chain ID \(chainId) not found in network configs")
-      throw RainSDKError.invalidConfig(chainId: chainId, rpcUrl: "")
+      throw RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
     }
-    
+
     guard config.rpcUrl.isValidHTTPURL() else {
       RainLogger.error("Rain SDK: Error getting RPC URL. Invalid RPC URL for chain ID \(chainId)")
-      throw RainSDKError.invalidConfig(chainId: chainId, rpcUrl: config.rpcUrl)
+      throw RainSDKError.invalidConfig(
+        details: "Invalid RPC URL for chainId=\(chainId): \(config.rpcUrl)"
+      )
     }
     
     return config.rpcUrl

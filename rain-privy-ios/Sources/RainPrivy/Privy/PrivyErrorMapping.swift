@@ -83,7 +83,7 @@ enum PrivyErrorMapping {
       return .userRejected
     }
     if lower.contains("insufficient") {
-      return .insufficientFunds(required: "", available: "")
+      return .insufficientFunds(required: "unknown", available: "unknown")
     }
     return .providerError(underlying: fallback)
   }

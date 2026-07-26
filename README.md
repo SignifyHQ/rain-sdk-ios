@@ -18,7 +18,7 @@ your dependency graph.
 | `RainCore`    | The `RainWalletProvider` port, capability model, provider registry (`RainSdk`), all Rain domain logic, **and the Turnkey adapter** (`TurnkeyProvider`, for now). |
 | `RainPortal`  | The Portal MPC adapter (`PortalProvider`); depends on `RainCore` + `PortalSwift`. |
 | `RainPrivy`   | The Privy embedded-key adapter (`PrivyProvider`); depends on `RainCore` + the Privy iOS SDK (`Privy`). Custody (sign/send) routes through Privy's EIP-1193 embedded wallet; balance/fee reads use Rain's configured RPC. |
-| `RainSDK`     | Backward-compat umbrella that re-exports `RainCore` + `RainPortal` (migration only; prefer the specific modules). |
+| `RainSDK`     | Backward-compat umbrella that re-exports `RainCore` + `RainPortal` (migration only; prefer the specific modules). Deliberately excludes `RainPrivy` — 1.x had no Privy support, so no existing `import RainSDK` depends on it, and including it would pull Privy's vendor SDK into every umbrella consumer. |
 
 ## Features
 
@@ -325,8 +325,10 @@ call). Under the hood the withdrawal is authorized by Rain's coordinator signing
 rather than by EVM calldata, so the SDK composes and simulates a collateral-program transaction and
 the provider signs it. See [TURNKEY_SUPPORT.md](docs/TURNKEY_SUPPORT.md#solana-notes) for details.
 
-An SPL mint's decimals are read from the chain, so a `decimals` argument is a hint only. Mints carry
-no on-chain symbol — `registerTokens(_:)` names the ones you want displayed.
+On `sendToken`, an SPL mint's decimals are read from the chain, so the `decimals` argument does not
+scale the amount. `withdrawCollateral` and `prepareWithdrawal` are the opposite: there `decimals`
+**does** scale the amount and is not checked against the mint, so pass the mint's real decimals.
+Mints carry no on-chain symbol — `registerTokens(_:)` names the ones you want displayed.
 ### 11. Estimate withdrawal fee
 
 Returns the estimated total fee in the chain's native token (e.g. ETH).

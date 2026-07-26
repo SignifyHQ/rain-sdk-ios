@@ -4,7 +4,7 @@ import RainCore
 /// Fetches the wallet's transaction history on the active chain (latest 20, newest first).
 @MainActor
 final class TransactionHistoryViewModel: ObservableObject {
-  @Published private(set) var transactions: [WalletTransaction] = []
+  @Published private(set) var transactions: [RainTransaction] = []
   @Published private(set) var walletAddress: String?
   @Published private(set) var isLoading = false
   @Published private(set) var errorText: String?

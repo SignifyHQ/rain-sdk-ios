@@ -101,10 +101,9 @@ final class MockTransactionBuilderService: TransactionBuilderProtocol {
   }
   
   func buildErc20TransactionForWithdrawAsset(
-    chainId: Int,
     ethereumContractAddress: Web3Core.EthereumAddress,
     withdrawAssetParameter: WithdrawAssetParameter
-  ) async throws -> String {
+  ) throws -> String {
     // Mock implementation - return dummy transaction data
     return "0x" + String(repeating: "a1b2c3d4", count: 16)
   }

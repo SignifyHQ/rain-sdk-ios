@@ -8,7 +8,7 @@ final class StubWalletProvider: RainWalletProvider, @unchecked Sendable {
   var addressToReturn: String = TestFixtures.walletAddress
   var balanceToReturn: Balance?
   var balancesToReturn: [Balance] = []
-  var transactionsToReturn: [WalletTransaction] = []
+  var transactionsToReturn: [RainTransaction] = []
   var sendTransactionHashToReturn: String = "0x" + String(repeating: "0", count: 64)
 
   var balancesByChainId: [Int: [Balance]] = [:]
@@ -17,7 +17,7 @@ final class StubWalletProvider: RainWalletProvider, @unchecked Sendable {
   private(set) var sendTransactionCalls: [(chainId: Int, params: WalletTransactionParams)] = []
   private(set) var getBalanceCalls: [(chainId: Int, token: Token)] = []
   private(set) var getBalancesCalls: [Int] = []
-  private(set) var getTransactionsCalls: [(chainId: Int, limit: Int?, offset: Int?, order: WalletTransactionOrder?)] = []
+  private(set) var getTransactionsCalls: [(chainId: Int, limit: Int?, offset: Int?, order: RainTransactionOrder?)] = []
 
   func address() async throws -> String { addressToReturn }
 
@@ -42,8 +42,8 @@ final class StubWalletProvider: RainWalletProvider, @unchecked Sendable {
     chainId: Int,
     limit: Int?,
     offset: Int?,
-    order: WalletTransactionOrder?
-  ) async throws -> [WalletTransaction] {
+    order: RainTransactionOrder?
+  ) async throws -> [RainTransaction] {
     getTransactionsCalls.append((chainId, limit, offset, order))
     return transactionsToReturn
   }

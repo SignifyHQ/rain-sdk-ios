@@ -78,6 +78,24 @@ struct RainApiServiceTests {
     }
   }
 
+  @Test("invalidateSession drops the cached CST so the next call re-mints")
+  func invalidateSessionRemints() async throws {
+    // Regression: RainSdk.reset() invalidates the session — reset + reconfigure with the same
+    // credentials must not reuse the pre-reset token.
+    try await MockRainApiURLProtocol.withStubs {
+      MockRainApiURLProtocol.stub("/sessions", .init(json: Self.sessionJson))
+      MockRainApiURLProtocol.stub("/contracts", .init(json: Self.contractsJson))
+
+      let service = makeService()
+      _ = try await service.fetchCollateralContracts()
+      #expect(MockRainApiURLProtocol.recordedRequests(pathSuffix: "/sessions").count == 1)
+
+      await service.invalidateSession()
+      _ = try await service.fetchCollateralContracts()
+      #expect(MockRainApiURLProtocol.recordedRequests(pathSuffix: "/sessions").count == 2)
+    }
+  }
+
   @Test("enriches token metadata through the token store")
   func enrichesTokens() async throws {
     try await MockRainApiURLProtocol.withStubs {

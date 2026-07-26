@@ -4,7 +4,12 @@
 // per wallet provider (`RainPortal`, `RainPrivy`; Turnkey ships inside `RainCore` for now).
 //
 // This umbrella re-exports `RainCore` + `RainPortal` so `import RainSDK` keeps resolving during
-// migration. Note this is **module-level** compatibility only: v2 is a source-breaking release —
+// migration. It deliberately does **not** re-export `RainPrivy`: 1.x had no Privy support, so no
+// existing `import RainSDK` can be relying on it, and pulling it in here would drag Privy's vendor
+// SDK into the dependency graph of every umbrella consumer — the opposite of the modular split's
+// point. Privy adopters depend on `rain-privy-ios` and `import RainPrivy` directly.
+//
+// Note this is **module-level** compatibility only: v2 is a source-breaking release —
 // the 1.x entry point (`RainSDKManager()`, `initializePortal` / `initializeTurnkey` /
 // `initialize`, `setWalletProvider`, `reset`, the `.portal` / `.turnkey` accessors) was replaced
 // by `RainSdk.builder()` + `provider(_:)`, with no shims. Models, errors, and the deprecated

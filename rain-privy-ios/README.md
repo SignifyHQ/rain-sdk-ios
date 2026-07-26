@@ -34,4 +34,4 @@ history comes from Privy's indexer on the chains it supports (unsupported chains
 list). Resolving `rain.provider(.privy)` probes for an embedded Ethereum wallet and throws
 `RainSDKError.walletUnavailable` if none is available.
 
-Advertised capabilities: `.export`, `.recovery`.
+Advertised capabilities: `.export`, `.recovery`, `.multiChain`.
