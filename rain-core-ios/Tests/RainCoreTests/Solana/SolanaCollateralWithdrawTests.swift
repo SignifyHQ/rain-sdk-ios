@@ -8,7 +8,7 @@ import Web3
 /// 32-byte payload that the coordinator executor's real ed25519 signature verified against.
 /// If the encoding drifts in any byte, on-chain verification would fail — this pins it.
 ///
-/// Ported byte-for-byte from the Android suite so both platforms assert the same vectors.
+/// Byte-exact vectors for the withdraw instruction encoding.
 @Suite("Solana Withdraw Messages Tests")
 struct SolanaWithdrawMessagesTests {
 

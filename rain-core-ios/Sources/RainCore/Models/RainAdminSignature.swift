@@ -1,9 +1,8 @@
 import Foundation
 
 /// Admin withdrawal signature and its metadata, as returned by
-/// `GET /v1/issuing/users/{userId}/signatures/withdrawals`. Mirrors Android's
-/// `RainAdminSignature`; feeds `RainClient.withdrawCollateral`'s `salt` / `signature` /
-/// `expiresAt` parameters.
+/// `GET /v1/issuing/users/{userId}/signatures/withdrawals`. Passed whole to
+/// `withdrawCollateral` / `prepareWithdrawal` / `estimateWithdrawalFee`.
 public struct RainAdminSignature: Sendable, Hashable {
   /// The salt used for the admin signature.
   public let salt: String

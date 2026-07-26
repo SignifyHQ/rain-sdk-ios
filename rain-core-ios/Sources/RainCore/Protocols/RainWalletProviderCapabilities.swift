@@ -51,8 +51,9 @@ public protocol RainSolanaTransfersProvider: Sendable {
   ///   - mintAddress: SPL mint address (base58).
   ///   - to: Recipient wallet base58 address (NOT the recipient ATA — the SDK derives that).
   ///   - amount: Human-readable token amount (e.g. 1.5 for 1.5 USDC).
-  ///   - decimals: Number of decimals the SPL mint uses (e.g. 6 for USDC). A hint only —
-  ///     implementations read the mint's own decimals, which `TransferChecked` verifies on chain.
+  ///   - decimals: Not authoritative, and 0 when the caller supplied none — never scale the amount
+  ///     with it. Read the mint's decimals and pass those to `TransferChecked`; the token program
+  ///     rejects a mismatch (`TokenError` 18). 0 is also a legal mint value, so never branch on it.
   /// - Returns: The Solana transaction signature.
   func sendSolanaSPLToken(
     chainId: Int,

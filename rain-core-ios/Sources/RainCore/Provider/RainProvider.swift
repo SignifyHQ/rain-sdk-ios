@@ -5,7 +5,7 @@ import Foundation
 /// `TurnkeyProvider`, `PrivyProvider`, or a custom one) with its config and registers it on
 /// `RainSdk.builder()`. Core references only this abstraction, never a concrete vendor type.
 ///
-/// Mirrors Android's `RainProvider`:
+/// A provider descriptor:
 /// - `id` / `capabilities` are cheap and available before any wallet is materialized, so the
 ///   registry can resolve by id or by capability without constructing the provider.
 /// - `create(context:)` lazily builds the vendor-backed `RainWalletProvider`, receiving the

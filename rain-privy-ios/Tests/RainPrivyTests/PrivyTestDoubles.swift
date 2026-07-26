@@ -247,8 +247,8 @@ enum TestTokenStore {
       throw RainSDKError.walletUnavailable
     }
     func getTransactions(
-      chainId: Int, limit: Int?, offset: Int?, order: WalletTransactionOrder?
-    ) async throws -> [RainCore.WalletTransaction] {
+      chainId: Int, limit: Int?, offset: Int?, order: RainTransactionOrder?
+    ) async throws -> [RainTransaction] {
       throw RainSDKError.walletUnavailable
     }
   }

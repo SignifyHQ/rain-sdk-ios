@@ -8,11 +8,10 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// RAIN_101: Business methods were called before initialize() was successfully completed
   case sdkNotInitialized
   
-  /// RAIN_102: The provided RPC URL format or Chain ID is invalid or unsupported
-  case invalidConfig(chainId: Int, rpcUrl: String)
+  /// RAIN_102: Invalid SDK configuration or parameter — `details` says what was wrong.
+  case invalidConfig(details: String)
 
-  /// RAIN_102: No provider registered for the requested id / capability (parity with
-  /// Android's `RainError.InvalidConfig` message for the same states)
+  /// RAIN_102: No provider registered for the requested id / capability.
   case providerNotRegistered(details: String)
 
   /// RAIN_103: An RPC URL could not be parsed as a valid URL (no chain ID context)
@@ -69,7 +68,7 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
 
   // The four cases below are token-transfer failures callers need to tell apart in the UI. They
   // carry their own payloads but deliberately reuse existing error codes: the code map is a
-  // cross-platform contract shared with the Android SDK, so platform-only codes would fork it.
+  // published contract host apps switch on, so a new code would fork it.
 
   /// RAIN_402: The wallet holds less of the token than the transfer asks for — the shortfall is
   /// in the token itself, not in the chain's native currency.
@@ -145,8 +144,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
     switch self {
     case .sdkNotInitialized:
       return "[\(errorCode)] Business methods were called before initialize() was successfully completed."
-    case .invalidConfig(let chainId, let rpcUrl):
-      return "[\(errorCode)] The provided RPC URL format or Chain ID is invalid or unsupported. Chain ID: \(chainId). RPC URL: \(rpcUrl)."
+    case .invalidConfig(let details):
+      return "[\(errorCode)] \(details)"
     case .providerNotRegistered(let details):
       return "[\(errorCode)] \(details)"
     case .invalidRpcUrl(let rpcUrl):
@@ -194,9 +193,40 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
     }
   }
 }
-//
 extension RainSDKError {
+  /// Stable per-case name, payload-insensitive. Several cases share an errorCode, so equality
+  /// needs this to keep e.g. .insufficientFunds and .tokenAccountNotFound distinct.
+  internal var caseIdentifier: String {
+    switch self {
+    case .sdkNotInitialized: return "sdkNotInitialized"
+    case .invalidConfig: return "invalidConfig"
+    case .providerNotRegistered: return "providerNotRegistered"
+    case .invalidRpcUrl: return "invalidRpcUrl"
+    case .rainApiNotConfigured: return "rainApiNotConfigured"
+    case .tokenExpired: return "tokenExpired"
+    case .unauthorized: return "unauthorized"
+    case .networkError: return "networkError"
+    case .apiError: return "apiError"
+    case .signatureNotReady: return "signatureNotReady"
+    case .noCollateralContracts: return "noCollateralContracts"
+    case .userRejected: return "userRejected"
+    case .insufficientFunds: return "insufficientFunds"
+    case .transactionSimulationFailed: return "transactionSimulationFailed"
+    case .walletUnavailable: return "walletUnavailable"
+    case .withdrawalRevertedByNetwork: return "withdrawalRevertedByNetwork"
+    case .invalidAmount: return "invalidAmount"
+    case .walletNotAuthorized: return "walletNotAuthorized"
+    case .insufficientTokenBalance: return "insufficientTokenBalance"
+    case .tokenAccountNotFound: return "tokenAccountNotFound"
+    case .tokenNotFound: return "tokenNotFound"
+    case .invalidRecipient: return "invalidRecipient"
+    case .providerError: return "providerError"
+    case .internalLogicError: return "internalLogicError"
+    }
+  }
+
+  /// Same enum case (payload-insensitive) and same published error code.
   public static func == (lhs: RainSDKError, rhs: RainSDKError) -> Bool {
-    lhs.errorCode == rhs.errorCode
+    lhs.errorCode == rhs.errorCode && lhs.caseIdentifier == rhs.caseIdentifier
   }
 }

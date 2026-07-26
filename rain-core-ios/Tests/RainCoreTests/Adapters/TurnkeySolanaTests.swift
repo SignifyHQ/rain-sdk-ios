@@ -131,15 +131,18 @@ struct TurnkeySolanaTests {
       let txs = try await manager.getTransactions(
         chainId: Self.chainId, limit: nil, offset: nil, order: nil)
       #expect(txs.count == 1)
-      #expect(txs[0].category == "token")
+      #expect(txs[0].category == .token)
       #expect(txs[0].from == MockTurnkey.defaultSolanaAddress)
       // The wallet, not its token account — recovered from the transaction's ATA creation.
       #expect(txs[0].to == recipient)
       #expect(txs[0].value == Decimal(string: "2.5"))
-      #expect(txs[0].rawContract?.address == Self.mint)
-      #expect(txs[0].rawContract?.value == "2500000")
-      #expect(txs[0].rawContract?.decimal == "6")
+      #expect(txs[0].tokenAddress == Self.mint)
+      #expect(txs[0].rawValue == "2500000")
+      #expect(txs[0].decimals == 6)
       #expect(txs[0].chainId == Self.chainId)
+      // The token accounts are not reconstructible from `to`, so they ride in metadata.
+      #expect(txs[0].metadata?.sourceTokenAccount != nil)
+      #expect(txs[0].metadata?.destinationTokenAccount != nil)
     }
   }
 

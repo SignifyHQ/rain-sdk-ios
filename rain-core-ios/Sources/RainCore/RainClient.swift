@@ -6,7 +6,7 @@ import Web3
 ///
 /// Every method here operates against the single wallet provider this client was resolved for.
 /// Wallet-agnostic building (EIP-712 message, withdraw calldata, transaction parameters) lives on
-/// ``RainSdk`` instead, since it needs no resolved provider. Mirrors Android's `RainClient`.
+/// ``RainSdk`` instead, since it needs no resolved provider.
 public protocol RainClient: Sendable {
   // MARK: - Client metadata
 
@@ -29,18 +29,28 @@ public protocol RainClient: Sendable {
 
   // MARK: - Collateral / fees
 
-  /// Executes a collateral withdrawal transaction on-chain: builds the calldata, obtains the
-  /// admin EIP-712 signature via the backing provider, and submits. Returns the transaction hash.
+  /// Executes a collateral withdrawal on-chain and returns the transaction hash (EVM) or
+  /// transaction signature (Solana). `decimals` scales `amount` on every chain including Solana,
+  /// where it is not checked against the SPL mint — pass the mint's real decimals.
   func withdrawCollateral(
     chainId: Int,
-    assetAddresses: WithdrawAssetAddresses,
+    addresses: RainWithdrawAddresses,
     amount: Decimal,
     decimals: Int,
-    salt: String,
-    signature: String,
-    expiresAt: String,
+    adminSignature: RainAdminSignature,
     nonce: BigUInt?
   ) async throws -> String
+
+  /// Builds a collateral withdrawal without broadcasting it. See ``RainPreparedWithdrawal`` for
+  /// what this does and does not do offline, and for the Solana blockhash lifetime.
+  func prepareWithdrawal(
+    chainId: Int,
+    addresses: RainWithdrawAddresses,
+    amount: Decimal,
+    decimals: Int,
+    adminSignature: RainAdminSignature,
+    nonce: BigUInt?
+  ) async throws -> RainPreparedWithdrawal
 
   /// Estimates the total fee (estimated gas × gas price) to execute an arbitrary transaction,
   /// in the chain's native token (e.g. ETH, AVAX).
@@ -58,15 +68,14 @@ public protocol RainClient: Sendable {
   ) async throws -> Decimal
 
   /// Estimates the total fee (gas cost) to execute a collateral withdrawal, in the chain's
-  /// native token.
+  /// native token. EVM only — throws on a Solana chain id.
   func estimateWithdrawalFee(
     chainId: Int,
-    addresses: WithdrawAssetAddresses,
+    addresses: RainWithdrawAddresses,
     amount: Decimal,
     decimals: Int,
-    salt: String,
-    signature: String,
-    expiresAt: String
+    adminSignature: RainAdminSignature,
+    nonce: BigUInt?
   ) async throws -> Decimal
 
   // MARK: - Wallet information
@@ -79,6 +88,10 @@ public protocol RainClient: Sendable {
   func getWalletAddress(chainId: Int) async throws -> String
 
   /// Generates a square QR code (PNG) encoding the current wallet address.
+  @available(
+    *, deprecated,
+    message: "Call generateAddressQRCode(address: nil, …) — it encodes the wallet's own address when address is nil."
+  )
   func generateWalletAddressQRCode(
     dimension: Int,
     backgroundColor: CGColor?,
@@ -94,8 +107,8 @@ public protocol RainClient: Sendable {
   /// - Parameters:
   ///   - address: Address to encode. `nil` encodes the provider's wallet address.
   ///   - dimension: Output width and height in pixels (the QR is square).
-  ///   - backgroundColor: Background colour; `nil` uses black.
-  ///   - foregroundColor: QR module colour; `nil` uses white.
+  ///   - backgroundColor: Background colour; `nil` uses white.
+  ///   - foregroundColor: QR module colour; `nil` uses black.
   func generateAddressQRCode(
     address: String?,
     dimension: Int,
@@ -121,8 +134,8 @@ public protocol RainClient: Sendable {
     chainId: Int,
     limit: Int?,
     offset: Int?,
-    order: WalletTransactionOrder?
-  ) async throws -> [WalletTransaction]
+    order: RainTransactionOrder?
+  ) async throws -> [RainTransaction]
 
   // MARK: - Send tokens
 
@@ -134,7 +147,8 @@ public protocol RainClient: Sendable {
   ) async throws -> RainTokenTransferResult
 
   /// Sends ERC-20 (EVM) or SPL (Solana) tokens depending on `chainId`. Pass `nil` decimals to let
-  /// the SDK resolve them from its registry or an on-chain read.
+  /// the SDK resolve them from its registry or an on-chain read. On Solana `decimals` never scales
+  /// the amount: the mint's own value is read from the chain and enforced by `TransferChecked`.
   func sendToken(
     chainId: Int,
     contractAddress: String,
@@ -142,9 +156,69 @@ public protocol RainClient: Sendable {
     amount: Decimal,
     decimals: Int?
   ) async throws -> RainTokenTransferResult
+
+  // MARK: - Token metadata
+
+  /// Registers token metadata so balance and transfer calls can resolve symbol/decimals without an
+  /// on-chain read. Additive: re-registering an address replaces its entry.
+  func registerTokens(_ tokens: [TokenInfo])
 }
 
 public extension RainClient {
+  /// Withdraws collateral, letting the SDK read the collateral's current nonce on chain.
+  func withdrawCollateral(
+    chainId: Int,
+    addresses: RainWithdrawAddresses,
+    amount: Decimal,
+    decimals: Int,
+    adminSignature: RainAdminSignature
+  ) async throws -> String {
+    try await withdrawCollateral(
+      chainId: chainId,
+      addresses: addresses,
+      amount: amount,
+      decimals: decimals,
+      adminSignature: adminSignature,
+      nonce: nil
+    )
+  }
+
+  /// Prepares a withdrawal, letting the SDK read the collateral's current nonce on chain.
+  func prepareWithdrawal(
+    chainId: Int,
+    addresses: RainWithdrawAddresses,
+    amount: Decimal,
+    decimals: Int,
+    adminSignature: RainAdminSignature
+  ) async throws -> RainPreparedWithdrawal {
+    try await prepareWithdrawal(
+      chainId: chainId,
+      addresses: addresses,
+      amount: amount,
+      decimals: decimals,
+      adminSignature: adminSignature,
+      nonce: nil
+    )
+  }
+
+  /// Estimates the withdrawal fee, letting the SDK read the collateral's current nonce on chain.
+  func estimateWithdrawalFee(
+    chainId: Int,
+    addresses: RainWithdrawAddresses,
+    amount: Decimal,
+    decimals: Int,
+    adminSignature: RainAdminSignature
+  ) async throws -> Decimal {
+    try await estimateWithdrawalFee(
+      chainId: chainId,
+      addresses: addresses,
+      amount: amount,
+      decimals: decimals,
+      adminSignature: adminSignature,
+      nonce: nil
+    )
+  }
+
   /// Generates a 256 px QR code (PNG) with the default colours, encoding `address` — or the
   /// wallet's own address when `address` is omitted.
   func generateAddressQRCode(address: String? = nil) async throws -> Data {
@@ -169,6 +243,17 @@ public extension RainClient {
       to: to,
       amount: amount,
       decimals: nil
+    )
+  }
+
+  /// Fetches transaction history with the provider's defaults. Reduced-arity on purpose: a
+  /// full-signature extension member would be a self-calling default witness.
+  func getTransactions(chainId: Int) async throws -> [RainTransaction] {
+    try await getTransactions(
+      chainId: chainId,
+      limit: nil,
+      offset: nil,
+      order: nil
     )
   }
 }

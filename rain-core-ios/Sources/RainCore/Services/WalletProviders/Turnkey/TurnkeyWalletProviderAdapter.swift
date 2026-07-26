@@ -30,35 +30,37 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   }
 
   private let turnkey: TurnkeyContextProtocol
-  private let transactionBuilder: TransactionBuilderProtocol?
   private let networkConfigsByChainId: [Int: NetworkConfig]
   private let walletAddressOverride: String?
   private let jsonRpcClient: JsonRpcClient
   private let chainReader: ChainReader
-  private let solanaChainReader: ChainReader
-  private let solanaRpcClient: SolanaRpcClient
-  private let solanaTransferComposer: SolanaTransferComposer
+  private let solanaSupport: RainSolanaSupport
   private let tokenStore: TokenMetadataStore
+
+  private var solanaChainReader: ChainReader { solanaSupport.chainReader }
+  private var solanaRpcClient: SolanaRpcClient { solanaSupport.solanaRpcClient }
+  private var solanaTransferComposer: SolanaTransferComposer { solanaSupport.transferComposer }
 
   // Once resolved, each address is stable for the adapter's lifetime, so cache it. EVM and
   // Solana accounts are cached independently — a Solana request never reads the EVM address.
+  // Resolution is single-flighted: concurrent first callers share one in-flight Task, so
+  // `refreshWallets` runs at most once per resolution.
   private var cachedAddress: String?
   private var cachedSolanaAddress: String?
+  private var addressResolution: Task<String, Error>?
+  private var solanaAddressResolution: Task<String, Error>?
   private let cachedAddressLock = NSLock()
 
   internal init(
     turnkey: TurnkeyContextProtocol,
-    transactionBuilder: TransactionBuilderProtocol? = nil,
     networkConfigs: [NetworkConfig],
     walletAddress: String? = nil,
     jsonRpcClient: JsonRpcClient = JsonRpcClient(),
     chainReader: ChainReader? = nil,
-    solanaChainReader: ChainReader? = nil,
-    solanaRpcClient: SolanaRpcClient? = nil,
+    solanaSupport: RainSolanaSupport? = nil,
     tokenStore: TokenMetadataStore? = nil
   ) {
     self.turnkey = turnkey
-    self.transactionBuilder = transactionBuilder
     self.networkConfigsByChainId = Dictionary(uniqueKeysWithValues: networkConfigs.map { ($0.chainId, $0) })
     self.walletAddressOverride = walletAddress
     self.jsonRpcClient = jsonRpcClient
@@ -67,12 +69,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       networkConfigs: networkConfigs
     )
     self.chainReader = resolvedReader
-    let resolvedSolanaRpcClient = solanaRpcClient
-      ?? SolanaRpcClient(jsonRpcClient: jsonRpcClient, networkConfigs: networkConfigs)
-    self.solanaRpcClient = resolvedSolanaRpcClient
-    self.solanaTransferComposer = SolanaTransferComposer(rpcClient: resolvedSolanaRpcClient)
-    self.solanaChainReader = solanaChainReader
-      ?? SolanaChainReader(solanaRpcClient: resolvedSolanaRpcClient)
+    self.solanaSupport = solanaSupport ?? RainSolanaSupport(networkConfigs: networkConfigs)
     self.tokenStore = tokenStore ?? TokenMetadataStore(chainReader: resolvedReader)
   }
 
@@ -97,28 +94,48 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     if let walletAddressOverride, !walletAddressOverride.isEmpty {
       return walletAddressOverride
     }
-
-    if let cached = cachedAddressLock.withLock({ cachedAddress }) {
-      return cached
+    return try await resolveAddress(cache: \.cachedAddress, inFlight: \.addressResolution) {
+      $0.resolveEthereumWalletAddress(from: $0.turnkey.wallets)
     }
-
-    if let walletAddress = resolveEthereumWalletAddress(from: turnkey.wallets) {
-      storeCachedAddress(walletAddress)
-      return walletAddress
-    }
-
-    try await turnkey.refreshWallets()
-
-    if let walletAddress = resolveEthereumWalletAddress(from: turnkey.wallets) {
-      storeCachedAddress(walletAddress)
-      return walletAddress
-    }
-
-    throw RainSDKError.walletUnavailable
   }
 
-  private func storeCachedAddress(_ address: String) {
-    cachedAddressLock.withLock { cachedAddress = address }
+  /// Single-flight resolve-once: the cached value wins; otherwise concurrent callers share the
+  /// in-flight Task (one wallet refresh). A failed Task is evicted so a later call retries.
+  private func resolveAddress(
+    cache: ReferenceWritableKeyPath<TurnkeyWalletProviderAdapter, String?>,
+    inFlight: ReferenceWritableKeyPath<TurnkeyWalletProviderAdapter, Task<String, Error>?>,
+    resolve: @escaping @Sendable (TurnkeyWalletProviderAdapter) -> String?
+  ) async throws -> String {
+    let task: Task<String, Error> = cachedAddressLock.withLock {
+      if let cached = self[keyPath: cache] {
+        return Task { cached }
+      }
+      if let existing = self[keyPath: inFlight] {
+        return existing
+      }
+      let task = Task { [self] in
+        if let walletAddress = resolve(self) { return walletAddress }
+        try await turnkey.refreshWallets()
+        if let walletAddress = resolve(self) { return walletAddress }
+        throw RainSDKError.walletUnavailable
+      }
+      self[keyPath: inFlight] = task
+      return task
+    }
+
+    do {
+      let resolved = try await task.value
+      cachedAddressLock.withLock {
+        self[keyPath: cache] = resolved
+        if self[keyPath: inFlight] == task { self[keyPath: inFlight] = nil }
+      }
+      return resolved
+    } catch {
+      cachedAddressLock.withLock {
+        if self[keyPath: inFlight] == task { self[keyPath: inFlight] = nil }
+      }
+      throw error
+    }
   }
 
   /// Chain-aware address. Solana chains resolve the Turnkey Solana account (base58, ed25519);
@@ -130,23 +147,9 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
 
   private func solanaAddress() async throws -> String {
     // The `walletAddress` override is an EVM address, so it never applies to Solana.
-    if let cached = cachedAddressLock.withLock({ cachedSolanaAddress }) {
-      return cached
+    try await resolveAddress(cache: \.cachedSolanaAddress, inFlight: \.solanaAddressResolution) {
+      $0.resolveSolanaWalletAddress(from: $0.turnkey.wallets)
     }
-
-    if let walletAddress = resolveSolanaWalletAddress(from: turnkey.wallets) {
-      cachedAddressLock.withLock { cachedSolanaAddress = walletAddress }
-      return walletAddress
-    }
-
-    try await turnkey.refreshWallets()
-
-    if let walletAddress = resolveSolanaWalletAddress(from: turnkey.wallets) {
-      cachedAddressLock.withLock { cachedSolanaAddress = walletAddress }
-      return walletAddress
-    }
-
-    throw RainSDKError.walletUnavailable
   }
 
   private func resolveSolanaWalletAddress(from wallets: [Wallet]) -> String? {
@@ -410,8 +413,8 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     chainId: Int,
     limit: Int?,
     offset: Int?,
-    order: WalletTransactionOrder?
-  ) async throws -> [WalletTransaction] {
+    order: RainTransactionOrder?
+  ) async throws -> [RainTransaction] {
     if SolanaChains.isSolana(chainId) {
       return try await getSolanaTransactions(chainId: chainId, limit: limit, offset: offset, order: order)
     }
@@ -444,7 +447,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
         .prefix(limit ?? sortedDrafts.count)
     )
 
-    var transactions: [WalletTransaction] = []
+    var transactions: [RainTransaction] = []
     transactions.reserveCapacity(slicedDrafts.count)
 
     for draft in slicedDrafts {
@@ -453,34 +456,24 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
         organizationId: session.organizationId,
         sendTransactionStatusId: draft.sendTransactionStatusId
       )
+      // A contract call carries calldata; a plain transfer does not.
+      let isContractCall = draft.data.map { $0 != "0x" && !$0.isEmpty } ?? false
 
       transactions.append(
-        WalletTransaction(
-          blockNum: "",
-          uniqueId: draft.id,
+        RainTransaction(
           hash: txHash ?? draft.id,
+          uniqueId: draft.id,
+          timestamp: Self.iso8601String(from: draft.timestamp),
           from: draft.from,
           to: draft.to,
           value: decimalStringToDecimal(
             balance: draft.value,
             decimals: Self.AdapterConstants.defaultNativeDecimals
           ),
-          erc721TokenId: nil,
-          erc1155Metadata: nil,
-          tokenId: nil,
-          asset: nil,
-          category: "external",
-          rawContract: draft.data.flatMap { data in
-            guard data != "0x" && !data.isEmpty else { return nil }
-            return WalletTransaction.RawContract(
-              value: nil,
-              address: draft.to,
-              decimal: nil
-            )
-          },
-          metadata: WalletTransaction.Metadata(
-            blockTimestamp: Self.iso8601String(from: draft.timestamp)
-          ),
+          tokenAddress: isContractCall ? draft.to : nil,
+          rawValue: draft.value,
+          decimals: Self.AdapterConstants.defaultNativeDecimals,
+          category: .external,
           chainId: draft.chainId
         )
       )
@@ -515,8 +508,8 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     chainId: Int,
     limit: Int?,
     offset: Int?,
-    order: WalletTransactionOrder?
-  ) async throws -> [WalletTransaction] {
+    order: RainTransactionOrder?
+  ) async throws -> [RainTransaction] {
     let (session, client) = try resolveSessionAndClient()
     let caip2 = caip2For(chainId: chainId)
     let requestedLimit = min(max((limit ?? 10) + (offset ?? 0), 1), 100)
@@ -563,7 +556,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
         .prefix(limit ?? sortedDrafts.count)
     )
 
-    var transactions: [WalletTransaction] = []
+    var transactions: [RainTransaction] = []
     transactions.reserveCapacity(slicedDrafts.count)
     for draft in slicedDrafts {
       transactions.append(await solanaTransaction(chainId: chainId, from: draft))
@@ -577,15 +570,18 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   private func solanaTransaction(
     chainId: Int,
     from draft: SolanaActivityDraft
-  ) async -> WalletTransaction {
+  ) async -> RainTransaction {
     var value = draft.lamports.map { SolanaConverter.lamportsToSol($0) }
     var asset: String? = SolanaChains.nativeCurrency.symbol
-    var category = "external"
-    var rawContract: WalletTransaction.RawContract?
+    var category = RainTransactionCategory.external
+    var tokenAddress: String?
+    var rawValue: String?
+    var resolvedDecimals: Int?
+    var metadata: RainTransaction.Metadata?
     var to = draft.to
 
     if let token = draft.token {
-      category = "token"
+      category = .token
       let mint = token.mint
       // TransferChecked carries the decimals; the bare Transfer instruction does not.
       var decimals = token.decimals.map(Int.init)
@@ -602,10 +598,14 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
           .first { $0.address == mint }?
           .symbol
       }
-      rawContract = WalletTransaction.RawContract(
-        value: "\(token.rawAmount)",
-        address: mint,
-        decimal: decimals.map { "\($0)" }
+      tokenAddress = mint
+      rawValue = "\(token.rawAmount)"
+      resolvedDecimals = decimals
+      // The token accounts are not reconstructible from `to`, which holds the wallet when the
+      // owner read succeeded and the token account when it didn't.
+      metadata = RainTransaction.Metadata(
+        sourceTokenAccount: token.source,
+        destinationTokenAccount: token.destination
       )
       if token.destinationOwner == nil {
         // Falls back to the token account when the owner cannot be read — a real address the user
@@ -617,23 +617,20 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       }
     }
 
-    return WalletTransaction(
-      blockNum: "",
-      uniqueId: draft.id,
+    return RainTransaction(
       hash: draft.sendTransactionStatusId ?? draft.id,
+      uniqueId: draft.id,
+      timestamp: Self.iso8601String(from: draft.timestamp),
       from: draft.from,
       to: to,
       value: value,
-      erc721TokenId: nil,
-      erc1155Metadata: nil,
-      tokenId: nil,
       asset: asset,
+      tokenAddress: tokenAddress,
+      rawValue: rawValue,
+      decimals: resolvedDecimals,
       category: category,
-      rawContract: rawContract,
-      metadata: WalletTransaction.Metadata(
-        blockTimestamp: Self.iso8601String(from: draft.timestamp)
-      ),
-      chainId: chainId
+      chainId: chainId,
+      metadata: metadata
     )
   }
 
@@ -713,8 +710,8 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   /// derivation/creation, balance and fee checks, simulation) live in ``SolanaTransferComposer``;
   /// this method only signs and broadcasts through Turnkey.
   ///
-  /// `decimals` is deliberately ignored: it arrives resolved against the EVM token store, which
-  /// cannot read an SPL mint. The mint's own scale is authoritative and is read from the chain.
+  /// `decimals` is deliberately unread — it is not authoritative here. The composer reads the
+  /// mint's own scale from the chain, which `TransferChecked` then enforces.
   func sendSolanaSPLToken(
     chainId: Int,
     mintAddress: String,
@@ -827,12 +824,11 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   }
 
   /// Rejects Solana chain ids on the EVM-only paths; Solana transfers go through `sendNative` /
-  /// `sendToken`. Mirrors Android's `requireEvmChain`.
+  /// `sendToken`.
   private func requireEVM(chainId: Int, operation: String) throws {
     guard SolanaChains.isSolana(chainId) else { return }
     throw RainSDKError.invalidConfig(
-      chainId: chainId,
-      rpcUrl: "Turnkey provider does not support \(operation) on Solana; use sendNative for SOL transfers"
+      details: "Turnkey provider does not support \(operation) on Solana; use sendNative for SOL transfers"
     )
   }
 
@@ -1039,7 +1035,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       return try await jsonRpcClient.callForHexResult(rpcUrl: rpcURL, method: method, params: params)
     } catch RainSDKError.invalidRpcUrl(let url) {
       // Upgrade to invalidConfig with the chainId we have on hand.
-      throw RainSDKError.invalidConfig(chainId: chainId, rpcUrl: url)
+      throw RainSDKError.invalidConfig(details: "Invalid RPC URL for chainId=\(chainId): \(url)")
     }
   }
 
@@ -1059,7 +1055,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
 
   private func getRpcURL(chainId: Int) throws -> String {
     guard let networkConfig = networkConfigsByChainId[chainId] else {
-      throw RainSDKError.invalidConfig(chainId: chainId, rpcUrl: "")
+      throw RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
     }
 
     return networkConfig.rpcUrl

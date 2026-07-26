@@ -178,10 +178,10 @@ internal enum SolanaTransactionBuilder {
   // MARK: - Generic serialization
 
   /// Serializes an unsigned legacy transaction: compact-u16 signature count + one zero-filled
-  /// 64-byte placeholder per required signature + the message.
+  /// 64-byte fee-payer signature placeholder + the message.
   ///
-  /// Only the fee payer ever signs the transactions this SDK builds, so the placeholder count is
-  /// derived from the merged account list rather than assumed.
+  /// Only the fee payer ever signs: a required signer besides it would yield a transaction the
+  /// single wallet key can never complete, so that is rejected rather than silently emitted.
   static func buildTransactionBytes(
     feePayer: String,
     recentBlockhash: String,
@@ -189,11 +189,16 @@ internal enum SolanaTransactionBuilder {
   ) throws -> [UInt8] {
     let blockhash = try decodeKey(recentBlockhash, label: "recentBlockhash")
     let accounts = try mergedAccounts(feePayer: feePayer, instructions: instructions)
-    let signerCount = accounts.filter(\.isSigner).count
+    let extraSigners = accounts.filter(\.isSigner).count - 1
+    guard extraSigners == 0 else {
+      throw RainSDKError.invalidConfig(
+        details: "Transaction requires \(extraSigners) signer(s) besides the fee payer"
+      )
+    }
 
     var tx: [UInt8] = []
-    tx.append(contentsOf: compactU16(signerCount))
-    tx.append(contentsOf: [UInt8](repeating: 0, count: signerCount * signatureLength))
+    tx.append(contentsOf: compactU16(1))
+    tx.append(contentsOf: [UInt8](repeating: 0, count: signatureLength))
     tx.append(
       contentsOf: try serializeMessage(
         accounts: accounts,
@@ -214,8 +219,7 @@ internal enum SolanaTransactionBuilder {
 
   /// Orders the account table the header describes: fee payer, writable signers, readonly signers,
   /// writable non-signers, readonly non-signers, then invoked programs last. Within a bucket,
-  /// first-seen order — matching Android / web3.js so both SDKs serialize a transfer to identical
-  /// bytes.
+  /// first-seen order, as web3.js does, so a given transfer always serializes to identical bytes.
   private static func mergedAccounts(
     feePayer: String,
     instructions: [Instruction]

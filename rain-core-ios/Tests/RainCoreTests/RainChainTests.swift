@@ -4,8 +4,8 @@ import Testing
 @Suite("RainChain")
 struct RainChainTests {
 
-  @Test("chain IDs mirror the Android RainChain constants")
-  func chainIdsMirrorAndroid() {
+  @Test("chain IDs are pinned; hosts and the Rain API both switch on them")
+  func chainIdsArePinned() {
     #expect(RainChain.avalancheMainnet == 43114)
     #expect(RainChain.avalancheTestnet == 43113)
     #expect(RainChain.solanaMainnet == 900)

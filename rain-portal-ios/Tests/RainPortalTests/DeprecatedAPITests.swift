@@ -8,7 +8,6 @@ import PortalSwift
 /// Locks the 1.0.0 source-compat shims: return-type parity, the Double-collapse, verbatim
 /// contract-address keying, and delegation to the canonical API. The balance/send shims live on
 /// `RainClient` (RainCore); `composeTransactionParameters` lives on `RainSdk` in `RainPortal`.
-/// Mirrors the Android `RainSdkManagerDeprecatedApiTest`.
 @Suite("Deprecated API Parity")
 struct DeprecatedAPITests {
   /// Mixed-case on purpose — proves keys are kept verbatim, not lowercased.

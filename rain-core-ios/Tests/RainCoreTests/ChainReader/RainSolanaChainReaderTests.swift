@@ -42,7 +42,9 @@ struct RainSolanaChainReaderTests {
 
   @Test("an unconfigured cluster surfaces invalidConfig")
   func unconfiguredCluster() async {
-    await #expect(throws: RainSDKError.invalidConfig(chainId: SolanaChains.mainnet, rpcUrl: "")) {
+    await #expect(throws: RainSDKError.invalidConfig(
+      details: "No RPC endpoint configured for chainId=\(SolanaChains.mainnet)"
+    )) {
       _ = try await makeReader().latestBlockhash(chainId: SolanaChains.mainnet)
     }
   }

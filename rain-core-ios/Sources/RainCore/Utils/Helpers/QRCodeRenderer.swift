@@ -6,9 +6,10 @@ import QRCode
 /// ``RainClient/generateAddressQRCode(address:dimension:backgroundColor:foregroundColor:)`` and
 /// ``RainClient/generateWalletAddressQRCode(dimension:backgroundColor:foregroundColor:)``.
 enum QRCodeRenderer {
-  /// Default colours, applied when a caller passes `nil`.
-  static let defaultBackgroundColor = CGColor(red: 0, green: 0, blue: 0, alpha: 1)
-  static let defaultForegroundColor = CGColor(red: 1, green: 1, blue: 1, alpha: 1)
+  /// Default colours, applied when a caller passes `nil`: dark modules on a light background,
+  /// the orientation scanners expect.
+  static let defaultBackgroundColor = CGColor(red: 1, green: 1, blue: 1, alpha: 1)
+  static let defaultForegroundColor = CGColor(red: 0, green: 0, blue: 0, alpha: 1)
 
   static func png(
     text: String,

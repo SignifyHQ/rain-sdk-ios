@@ -14,7 +14,7 @@ struct PrivyProviderTest {
     // id / capabilities are static descriptor knowledge — the vendor singleton is never touched.
     let provider = PrivyProvider(PrivyConfig(privy: UnimplementedPrivy()))
     #expect(provider.id == .privy)
-    #expect(provider.capabilities == [.export, .recovery])
+    #expect(provider.capabilities == [.export, .recovery, .multiChain])
   }
 
   @Test("registering the Privy error mapper is idempotent")

@@ -54,10 +54,10 @@ struct TransactionBuildingTests {
     let amount: Decimal = 100.0
     let decimals = 18
 
-    let (message, _) = try await manager.buildEIP712Message(
+    let message = try await manager.buildEIP712MessageForTest(
       chainId: chainId,
       walletAddress: TestFixtures.walletAddress,
-      assetAddresses: TestFixtures.defaultEIP712Addresses,
+      addresses: TestFixtures.defaultWithdrawAddresses,
       amount: amount,
       decimals: decimals,
       nonce: nonce
@@ -66,17 +66,19 @@ struct TransactionBuildingTests {
     let jsonObject = try parseJSON(message)
     #expect(jsonObject["primaryType"] as? String == "Withdraw")
 
+    // The message carries checksum-normalized addresses — the same forms the calldata uses.
+    let checksummed = try TestFixtures.defaultWithdrawAddresses.validated()
     let domain = jsonObject["domain"] as? [String: Any]
     #expect(domain?["name"] as? String == "Collateral")
     #expect(domain?["version"] as? String == "2")
     #expect(domain?["chainId"] as? Int == chainId)
-    #expect(domain?["verifyingContract"] as? String == TestFixtures.proxyAddress)
+    #expect(domain?["verifyingContract"] as? String == checksummed.proxyAddress)
     #expect(domain?["salt"] != nil)
 
     let messageData = jsonObject["message"] as? [String: Any]
     #expect(messageData?["user"] as? String == TestFixtures.walletAddress)
-    #expect(messageData?["asset"] as? String == TestFixtures.tokenAddress)
-    #expect(messageData?["recipient"] as? String == TestFixtures.recipientAddress)
+    #expect(messageData?["asset"] as? String == checksummed.tokenAddress)
+    #expect(messageData?["recipient"] as? String == checksummed.recipientAddress)
     #expect(messageData?["nonce"] as? String == nonce.description)
 
     let expectedAmount = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
@@ -88,10 +90,10 @@ struct TransactionBuildingTests {
     let (manager, mockBuilder) = mockBuilderManager()
     mockBuilder.mockNonce = BigUInt(42)
 
-    let (message, _) = try await manager.buildEIP712Message(
+    let message = try await manager.buildEIP712MessageForTest(
       chainId: 1,
       walletAddress: TestFixtures.walletAddress,
-      assetAddresses: TestFixtures.defaultEIP712Addresses,
+      addresses: TestFixtures.defaultWithdrawAddresses,
       amount: 100.0,
       decimals: 18,
       nonce: nil
@@ -105,10 +107,10 @@ struct TransactionBuildingTests {
   func testBuildEIP712MessageZeroAmount() async throws {
     let manager = realBuilderManager()
 
-    let (message, _) = try await manager.buildEIP712Message(
+    let message = try await manager.buildEIP712MessageForTest(
       chainId: 1,
       walletAddress: TestFixtures.walletAddress,
-      assetAddresses: TestFixtures.defaultEIP712Addresses,
+      addresses: TestFixtures.defaultWithdrawAddresses,
       amount: 0.0,
       decimals: 18,
       nonce: BigUInt(0)
@@ -122,10 +124,10 @@ struct TransactionBuildingTests {
   func testBuildEIP712MessageDifferentDecimals() async throws {
     let manager = realBuilderManager()
 
-    let (message, _) = try await manager.buildEIP712Message(
+    let message = try await manager.buildEIP712MessageForTest(
       chainId: 1,
       walletAddress: TestFixtures.walletAddress,
-      assetAddresses: TestFixtures.defaultEIP712Addresses,
+      addresses: TestFixtures.defaultWithdrawAddresses,
       amount: 100.5,
       decimals: 6,
       nonce: BigUInt(1)
@@ -139,18 +141,18 @@ struct TransactionBuildingTests {
   func testBuildEIP712MessageDifferentSalt() async throws {
     let manager = realBuilderManager()
 
-    let (message1, salt1) = try await manager.buildEIP712Message(
+    let (message1, salt1) = try await manager.buildEIP712PairForTest(
       chainId: 1,
       walletAddress: TestFixtures.walletAddress,
-      assetAddresses: TestFixtures.defaultEIP712Addresses,
+      addresses: TestFixtures.defaultWithdrawAddresses,
       amount: 100.0,
       decimals: 18,
       nonce: BigUInt(1)
     )
-    let (message2, salt2) = try await manager.buildEIP712Message(
+    let (message2, salt2) = try await manager.buildEIP712PairForTest(
       chainId: 1,
       walletAddress: TestFixtures.walletAddress,
-      assetAddresses: TestFixtures.defaultEIP712Addresses,
+      addresses: TestFixtures.defaultWithdrawAddresses,
       amount: 100.0,
       decimals: 18,
       nonce: BigUInt(1)
@@ -167,10 +169,10 @@ struct TransactionBuildingTests {
     let amount: Decimal = 1_000_000_000.0
     let decimals = 18
 
-    let (message, _) = try await manager.buildEIP712Message(
+    let message = try await manager.buildEIP712MessageForTest(
       chainId: 1,
       walletAddress: TestFixtures.walletAddress,
-      assetAddresses: TestFixtures.defaultEIP712Addresses,
+      addresses: TestFixtures.defaultWithdrawAddresses,
       amount: amount,
       decimals: decimals,
       nonce: BigUInt(1)
@@ -190,18 +192,18 @@ struct TransactionBuildingTests {
     ]
     let manager = realBuilderManager(configs: configs)
 
-    let (message1, _) = try await manager.buildEIP712Message(
+    let message1 = try await manager.buildEIP712MessageForTest(
       chainId: 1,
       walletAddress: TestFixtures.walletAddress,
-      assetAddresses: TestFixtures.defaultEIP712Addresses,
+      addresses: TestFixtures.defaultWithdrawAddresses,
       amount: 100.0,
       decimals: 18,
       nonce: BigUInt(1)
     )
-    let (message137, _) = try await manager.buildEIP712Message(
+    let message137 = try await manager.buildEIP712MessageForTest(
       chainId: 137,
       walletAddress: TestFixtures.walletAddress,
-      assetAddresses: TestFixtures.defaultEIP712Addresses,
+      addresses: TestFixtures.defaultWithdrawAddresses,
       amount: 100.0,
       decimals: 18,
       nonce: BigUInt(1)
@@ -217,11 +219,11 @@ struct TransactionBuildingTests {
   func testBuildEIP712MessageInvalidChainId() async throws {
     let manager = realBuilderManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(chainId: 999, rpcUrl: "")) {
-      try await manager.buildEIP712Message(
+    await #expect(throws: RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=999")) {
+      try await manager.buildEIP712MessageForTest(
         chainId: 999,
         walletAddress: TestFixtures.walletAddress,
-        assetAddresses: TestFixtures.defaultEIP712Addresses,
+        addresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: 18,
         nonce: nil
@@ -233,10 +235,10 @@ struct TransactionBuildingTests {
   func testBuildEIP712MessageInvalidChainIdWithNonce() async throws {
     let manager = realBuilderManager()
 
-    let (message, _) = try await manager.buildEIP712Message(
+    let message = try await manager.buildEIP712MessageForTest(
       chainId: 999,
       walletAddress: TestFixtures.walletAddress,
-      assetAddresses: TestFixtures.defaultEIP712Addresses,
+      addresses: TestFixtures.defaultWithdrawAddresses,
       amount: 100.0,
       decimals: 18,
       nonce: BigUInt(1)
@@ -246,140 +248,152 @@ struct TransactionBuildingTests {
     #expect(domain?["chainId"] as? Int == 999)
   }
 
-  // MARK: - buildWithdrawTransactionData
+  @Test("buildEIP712Message rejects an invalid wallet address before building")
+  func testBuildEIP712MessageInvalidWalletAddress() async throws {
+    let manager = realBuilderManager()
 
-  @Test("buildWithdrawTransactionData returns mock calldata with valid inputs")
-  func testBuildWithdrawTransactionDataSuccess() async throws {
-    let (manager, _) = mockBuilderManager()
+    await #expect(throws: RainSDKError.invalidConfig(details: "Invalid walletAddress format: invalid-address")) {
+      try await manager.buildEIP712MessageForTest(
+        chainId: 1,
+        walletAddress: "invalid-address",
+        addresses: TestFixtures.defaultWithdrawAddresses,
+        amount: 100.0,
+        decimals: 18,
+        nonce: BigUInt(1)
+      )
+    }
+  }
 
-    let txData = try await manager.buildWithdrawTransactionData(
-      chainId: 1,
-      assetAddresses: TestFixtures.defaultWithdrawAddresses,
-      amount: 100.0,
-      decimals: 18,
-      expiresAt: "1735689600",
-      salt: Data([UInt8](repeating: 0x11, count: 32)),
-      signatureData: Data([UInt8](repeating: 0x42, count: 65)),
-      adminSalt: Data([UInt8](repeating: 0xAA, count: 32)),
-      adminSignature: Data([UInt8](repeating: 0xBB, count: 65))
+  @Test("buildEIP712Message checksum-normalizes a mixed-case token address")
+  func testBuildEIP712MessageChecksumsMixedCase() async throws {
+    let manager = realBuilderManager()
+    let addresses = RainWithdrawAddresses(
+      proxyAddress: TestFixtures.proxyAddress,
+      controllerAddress: TestFixtures.contractAddress,
+      tokenAddress: TestFixtures.usdcAddress.lowercased(),
+      recipientAddress: TestFixtures.recipientAddress
     )
 
+    let message = try await manager.buildEIP712MessageForTest(
+      chainId: 1,
+      walletAddress: TestFixtures.walletAddress,
+      addresses: addresses,
+      amount: 1.0,
+      decimals: 6,
+      nonce: BigUInt(1)
+    )
+
+    let messageData = try parseJSON(message)["message"] as? [String: Any]
+    #expect(messageData?["asset"] as? String == TestFixtures.usdcAddress)
+  }
+
+  // MARK: - buildWithdrawTransactionData
+
+  /// Drives the shared builder with the golden-style arguments, overriding one at a time.
+  private func withdrawCalldata(
+    builder: TransactionBuilderProtocol,
+    addresses: RainWithdrawAddresses = TestFixtures.defaultWithdrawAddresses,
+    amount: Decimal = 100.0,
+    decimals: Int = 18,
+    expiresAt: String = "1735689600"
+  ) throws -> String {
+    try WithdrawalBuilder.buildWithdrawTransactionData(
+      builder: builder,
+      addresses: addresses,
+      amount: amount,
+      decimals: decimals,
+      executorSignature: RainAdminSignature(
+        salt: Data(repeating: 0x11, count: 32).base64EncodedString(),
+        signature: "0x" + String(repeating: "42", count: 65),
+        expiresAt: expiresAt
+      ),
+      walletSalt: Data(repeating: 0xAA, count: 32),
+      walletSignature: "0x" + String(repeating: "bb", count: 65)
+    )
+  }
+
+  /// Invalid EVM addresses surface as RAIN_102 with the offending address in the message.
+  private var addressError: RainSDKError {
+    .invalidConfig(details: "Invalid address format: invalid-address")
+  }
+
+  @Test("buildWithdrawTransactionData returns mock calldata with valid inputs")
+  func testBuildWithdrawTransactionDataSuccess() throws {
+    let txData = try withdrawCalldata(builder: MockTransactionBuilderService(networkConfigs: TestFixtures.configs()))
+
     #expect(txData.hasPrefix("0x"))
-    // Mock builder always returns "0x" + "a1b2c3d4" × 16
+    // Mock builder always returns "0x" + "a1b2c3d4" x 16
     #expect(txData == "0x" + String(repeating: "a1b2c3d4", count: 16))
   }
 
-  @Test("buildWithdrawTransactionData throws for invalid contract address")
-  func testBuildWithdrawTransactionDataInvalidContractAddress() async throws {
-    let manager = realBuilderManager()
-
-    let addresses = WithdrawAssetAddresses(
-      contractAddress: "invalid-address",
+  @Test("buildWithdrawTransactionData throws for invalid controller address")
+  func testBuildWithdrawTransactionDataInvalidControllerAddress() throws {
+    let addresses = RainWithdrawAddresses(
       proxyAddress: TestFixtures.proxyAddress,
-      recipientAddress: TestFixtures.recipientAddress,
-      tokenAddress: TestFixtures.tokenAddress
+      controllerAddress: "invalid-address",
+      tokenAddress: TestFixtures.tokenAddress,
+      recipientAddress: TestFixtures.recipientAddress
     )
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "Error building transaction parameters for withdrawal. One of the addresses could not be built")) {
-      try await manager.buildWithdrawTransactionData(
-        chainId: 1,
-        assetAddresses: addresses,
-        amount: 100.0,
-        decimals: 18,
-        expiresAt: "1735689600",
-        salt: Data([UInt8](repeating: 0x11, count: 32)),
-        signatureData: Data([UInt8](repeating: 0x42, count: 65)),
-        adminSalt: Data([UInt8](repeating: 0xAA, count: 32)),
-        adminSignature: Data([UInt8](repeating: 0xBB, count: 65))
-      )
+    #expect(throws: addressError) {
+      try withdrawCalldata(builder: TransactionBuilderService(networkConfigs: []), addresses: addresses)
     }
   }
 
   @Test("buildWithdrawTransactionData throws for invalid proxy address")
-  func testBuildWithdrawTransactionDataInvalidProxyAddress() async throws {
-    let manager = realBuilderManager()
-
-    let addresses = WithdrawAssetAddresses(
-      contractAddress: TestFixtures.contractAddress,
+  func testBuildWithdrawTransactionDataInvalidProxyAddress() throws {
+    let addresses = RainWithdrawAddresses(
       proxyAddress: "invalid-address",
-      recipientAddress: TestFixtures.recipientAddress,
-      tokenAddress: TestFixtures.tokenAddress
+      controllerAddress: TestFixtures.contractAddress,
+      tokenAddress: TestFixtures.tokenAddress,
+      recipientAddress: TestFixtures.recipientAddress
     )
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "Error building transaction parameters for withdrawal. One of the addresses could not be built")) {
-      try await manager.buildWithdrawTransactionData(
-        chainId: 1,
-        assetAddresses: addresses,
-        amount: 100.0,
-        decimals: 18,
-        expiresAt: "1735689600",
-        salt: Data([UInt8](repeating: 0x11, count: 32)),
-        signatureData: Data([UInt8](repeating: 0x42, count: 65)),
-        adminSalt: Data([UInt8](repeating: 0xAA, count: 32)),
-        adminSignature: Data([UInt8](repeating: 0xBB, count: 65))
-      )
+    #expect(throws: addressError) {
+      try withdrawCalldata(builder: TransactionBuilderService(networkConfigs: []), addresses: addresses)
     }
   }
 
   @Test("buildWithdrawTransactionData throws for invalid recipient address")
-  func testBuildWithdrawTransactionDataInvalidRecipientAddress() async throws {
-    let manager = realBuilderManager()
-
-    let addresses = WithdrawAssetAddresses(
-      contractAddress: TestFixtures.contractAddress,
+  func testBuildWithdrawTransactionDataInvalidRecipientAddress() throws {
+    let addresses = RainWithdrawAddresses(
       proxyAddress: TestFixtures.proxyAddress,
-      recipientAddress: "invalid-address",
-      tokenAddress: TestFixtures.tokenAddress
+      controllerAddress: TestFixtures.contractAddress,
+      tokenAddress: TestFixtures.tokenAddress,
+      recipientAddress: "invalid-address"
     )
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "Error building transaction parameters for withdrawal. One of the addresses could not be built")) {
-      try await manager.buildWithdrawTransactionData(
-        chainId: 1,
-        assetAddresses: addresses,
-        amount: 100.0,
-        decimals: 18,
-        expiresAt: "1735689600",
-        salt: Data([UInt8](repeating: 0x11, count: 32)),
-        signatureData: Data([UInt8](repeating: 0x42, count: 65)),
-        adminSalt: Data([UInt8](repeating: 0xAA, count: 32)),
-        adminSignature: Data([UInt8](repeating: 0xBB, count: 65))
-      )
+    #expect(throws: addressError) {
+      try withdrawCalldata(builder: TransactionBuilderService(networkConfigs: []), addresses: addresses)
     }
   }
 
   @Test("buildWithdrawTransactionData throws for invalid expiration timestamp")
-  func testBuildWithdrawTransactionDataInvalidExpiration() async throws {
-    let manager = realBuilderManager()
-
-    await #expect(throws: RainSDKError.internalLogicError(details: "Invalid expiration timestamp format. Expected ISO8601 or Unix timestamp string")) {
-      try await manager.buildWithdrawTransactionData(
-        chainId: 1,
-        assetAddresses: TestFixtures.defaultWithdrawAddresses,
-        amount: 100.0,
-        decimals: 18,
-        expiresAt: "invalid-timestamp",
-        salt: Data([UInt8](repeating: 0x11, count: 32)),
-        signatureData: Data([UInt8](repeating: 0x42, count: 65)),
-        adminSalt: Data([UInt8](repeating: 0xAA, count: 32)),
-        adminSignature: Data([UInt8](repeating: 0xBB, count: 65))
+  func testBuildWithdrawTransactionDataInvalidExpiration() throws {
+    #expect(throws: RainSDKError.invalidConfig(details: "Invalid expiresAt format: invalid-timestamp. Expected a unix-seconds or ISO-8601 string.")) {
+      try withdrawCalldata(
+        builder: TransactionBuilderService(networkConfigs: []),
+        expiresAt: "invalid-timestamp"
       )
     }
   }
 
   @Test("buildWithdrawTransactionData accepts ISO8601 timestamp")
-  func testBuildWithdrawTransactionDataISO8601Timestamp() async throws {
-    let (manager, _) = mockBuilderManager()
+  func testBuildWithdrawTransactionDataISO8601Timestamp() throws {
+    let txData = try withdrawCalldata(
+      builder: MockTransactionBuilderService(networkConfigs: TestFixtures.configs()),
+      expiresAt: "2025-01-01T00:00:00Z"
+    )
 
-    let txData = try await manager.buildWithdrawTransactionData(
-      chainId: 1,
-      assetAddresses: TestFixtures.defaultWithdrawAddresses,
-      amount: 100.0,
-      decimals: 18,
-      expiresAt: "2025-01-01T00:00:00Z",
-      salt: Data([UInt8](repeating: 0x11, count: 32)),
-      signatureData: Data([UInt8](repeating: 0x42, count: 65)),
-      adminSalt: Data([UInt8](repeating: 0xAA, count: 32)),
-      adminSignature: Data([UInt8](repeating: 0xBB, count: 65))
+    #expect(txData.hasPrefix("0x"))
+  }
+
+  @Test("buildWithdrawTransactionData accepts 6-decimal tokens")
+  func testBuildWithdrawTransactionDataDifferentDecimals() throws {
+    let txData = try withdrawCalldata(
+      builder: MockTransactionBuilderService(networkConfigs: TestFixtures.configs()),
+      amount: 100.5,
+      decimals: 6
     )
 
     #expect(txData.hasPrefix("0x"))
@@ -404,24 +418,50 @@ struct TransactionBuildingTests {
     #expect(first == second, "Consecutive nonce reads on a stable contract must be equal")
     #expect(first.bitWidth <= 256, "Nonce must fit in uint256")
   }
+}
 
-  @Test("buildWithdrawTransactionData accepts 6-decimal tokens")
-  func testBuildWithdrawTransactionDataDifferentDecimals() async throws {
-    let (manager, _) = mockBuilderManager()
+// MARK: - Test-only shims
 
-    let txData = try await manager.buildWithdrawTransactionData(
-      chainId: 1,
-      assetAddresses: TestFixtures.defaultWithdrawAddresses,
-      amount: 100.5,
-      decimals: 6,
-      expiresAt: "1735689600",
-      salt: Data([UInt8](repeating: 0x11, count: 32)),
-      signatureData: Data([UInt8](repeating: 0x42, count: 65)),
-      adminSalt: Data([UInt8](repeating: 0xAA, count: 32)),
-      adminSignature: Data([UInt8](repeating: 0xBB, count: 65))
+/// The EIP-712 builder moved to ``WithdrawalBuilder``; these keep the existing cases readable by
+/// driving it through the manager's own services.
+private extension RainSdkManager {
+  func buildEIP712MessageForTest(
+    chainId: Int,
+    walletAddress: String,
+    addresses: RainWithdrawAddresses,
+    amount: Decimal,
+    decimals: Int,
+    nonce: BigUInt?
+  ) async throws -> String {
+    try await WithdrawalBuilder.buildEIP712Message(
+      builder: transactionBuilderService,
+      chainId: chainId,
+      walletAddress: walletAddress,
+      addresses: addresses,
+      amount: amount,
+      decimals: decimals,
+      nonce: nonce
+    ).message
+  }
+
+  func buildEIP712PairForTest(
+    chainId: Int,
+    walletAddress: String,
+    addresses: RainWithdrawAddresses,
+    amount: Decimal,
+    decimals: Int,
+    nonce: BigUInt?
+  ) async throws -> (String, String) {
+    let built = try await WithdrawalBuilder.buildEIP712Message(
+      builder: transactionBuilderService,
+      chainId: chainId,
+      walletAddress: walletAddress,
+      addresses: addresses,
+      amount: amount,
+      decimals: decimals,
+      nonce: nonce
     )
-
-    #expect(txData.hasPrefix("0x"))
+    return (built.message, built.saltHex)
   }
 }
 

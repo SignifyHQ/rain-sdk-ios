@@ -51,6 +51,10 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
       )
     } catch {
       if error is CancellationError { throw error }
+      if let rainError = error as? RainSDKError { throw rainError }
+      // Auth failures (401 / invalid API key) surface as .tokenExpired even here; anything
+      // else that fails the pre-flight is a simulation failure.
+      if let authError = PortalErrorMapping.mapAuthOrNil(error) { throw authError }
       throw RainSDKError.transactionSimulationFailed(underlying: error)
     }
 
@@ -257,8 +261,8 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     chainId: Int,
     limit: Int?,
     offset: Int?,
-    order: WalletTransactionOrder?
-  ) async throws -> [WalletTransaction] {
+    order: RainTransactionOrder?
+  ) async throws -> [RainTransaction] {
     let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
     let portalOrder = order?.toPortalOrder
     let fetchedTransactions = try await portal.getTransactions(
@@ -268,58 +272,52 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
       order: portalOrder
     )
 
-    var transactions = fetchedTransactions.map(WalletTransaction.init)
-    await enrichTransactions(&transactions, chainId: chainId)
-    return transactions
+    // Resolve metadata once per distinct contract, then build each row with everything known —
+    // rows are immutable, so nothing is patched after construction.
+    let tokenInfoByAddress = await resolveTokenInfo(for: fetchedTransactions, chainId: chainId)
+    // Nil rather than an ETH-like default: labelling an unlisted chain's gas token "ETH" would be
+    // wrong, and no symbol beats a wrong one.
+    let nativeSymbol = await tokenStore.nativeCurrencyOrNil(for: chainId)?.symbol
+
+    return fetchedTransactions.map { tx in
+      RainTransaction.make(
+        tx,
+        tokenInfo: tx.rawContract?.address.flatMap { tokenInfoByAddress[$0] },
+        nativeSymbol: nativeSymbol
+      )
+    }
   }
 
   // MARK: - Transaction Enrichment
 
-  /// Fills in missing `value` and `asset` on each transaction by calling `decimals()` and `symbol()`
-  /// on the token contracts. Fetches each unique contract address once, in parallel.
-  private func enrichTransactions(_ transactions: inout [WalletTransaction], chainId: Int) async {
+  /// Reads `decimals()` / `symbol()` for every distinct contract in the page, concurrently.
+  /// A row that already carries both a parsed value and an asset needs neither.
+  private func resolveTokenInfo(
+    for transactions: [FetchedTransaction],
+    chainId: Int
+  ) async -> [String: TokenInfo] {
     let addresses = Set(
       transactions.compactMap { tx -> String? in
         guard let address = tx.rawContract?.address, !address.isEmpty else { return nil }
         let needsDecimals = tx.value == nil && tx.rawContract?.value != nil && tx.rawContract?.decimal == nil
-        let needsSymbol   = tx.asset?.isEmpty ?? true
+        let needsSymbol = tx.asset?.isEmpty ?? true
         return (needsDecimals || needsSymbol) ? address : nil
       }
     )
-    guard !addresses.isEmpty else { return }
+    guard !addresses.isEmpty else { return [:] }
 
-    // Fetch decimals + symbol for each address in parallel
-    var decimalsMap: [String: Int] = [:]
-    var symbolsMap:  [String: String] = [:]
-
+    var resolved: [String: TokenInfo] = [:]
     await withTaskGroup(of: (String, TokenInfo).self) { group in
       for address in addresses {
         group.addTask { [tokenStore] in
-          let info = await tokenStore.tokenInfo(chainId: chainId, address: address)
-          return (address, info)
+          (address, await tokenStore.tokenInfo(chainId: chainId, address: address))
         }
       }
       for await (address, info) in group {
-        decimalsMap[address] = info.decimals
-        if let symbol = info.symbol { symbolsMap[address] = symbol }
+        resolved[address] = info
       }
     }
-
-    // Apply enriched data back to transactions
-    for i in transactions.indices {
-      guard let address = transactions[i].rawContract?.address else { continue }
-
-      if transactions[i].value == nil, let hex = transactions[i].rawContract?.value {
-        let decimals = transactions[i].rawContract?.decimal.flatMap { Int($0) }
-          ?? decimalsMap[address]
-          ?? Constants.ERC20.defaultDecimals
-        transactions[i].value = EthereumConverter.parseHexToDecimal(hex, decimals: decimals)
-      }
-
-      if transactions[i].asset?.isEmpty ?? true, let symbol = symbolsMap[address] {
-        transactions[i].asset = symbol
-      }
-    }
+    return resolved
   }
 
   /// Fetches gas-related RPC result (e.g. eth_estimateGas, eth_gasPrice) via Portal; returns the

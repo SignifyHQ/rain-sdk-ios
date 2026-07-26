@@ -184,6 +184,9 @@ final class MockTurnkey: TurnkeyContextProtocol {
   var refreshWalletsCallCount = 0
   var signRawPayloadCalls: [SignRawPayloadCall] = []
 
+  /// Runs inside `refreshWallets` (e.g. to populate `wallets` after a simulated delay).
+  var onRefreshWallets: (() async throws -> Void)?
+
   var mockSignature = SignRawPayloadResult(
     r: String(repeating: "1", count: 64),
     s: String(repeating: "2", count: 64),
@@ -205,6 +208,7 @@ final class MockTurnkey: TurnkeyContextProtocol {
 
   func refreshWallets() async throws {
     refreshWalletsCallCount += 1
+    try await onRefreshWallets?()
   }
 
   func signRawPayload(

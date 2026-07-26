@@ -3,7 +3,7 @@ import TurnkeySwift
 
 /// Configuration for the Turnkey provider. Turnkey authentication (passkeys / auth proxy / OAuth /
 /// OTP) happens **outside** Rain — the host drives Turnkey's Swift SDK and hands the authenticated
-/// `TurnkeyContext` to Rain. Mirrors Android's `TurnkeyConfig`.
+/// `TurnkeyContext` to Rain.
 ///
 /// `@unchecked Sendable`: `TurnkeyContext` is a host-owned reference type with mutable published
 /// state that Rain reads from arbitrary executors. Host contract: finish authentication before
@@ -25,9 +25,9 @@ public struct TurnkeyConfig: @unchecked Sendable {
 /// Registrable descriptor for the Turnkey wallet provider.
 ///
 /// Turnkey is bundled inside `RainCore` for now (it will graduate to a standalone `rain-turnkey`
-/// module later). It implements `RainProvider` like any adapter, but relies on core-internal
-/// `ProviderContext` members (transaction builder, chain reader) that out-of-core adapters
-/// cannot reach yet — those must be widened when the module is extracted.
+/// module later). It implements `RainProvider` like any adapter, but relies on the core-internal
+/// `ProviderContext` EVM chain reader that out-of-core adapters cannot reach yet — that must be
+/// widened when the module is extracted.
 ///
 /// ```swift
 /// let rain = try RainSdk.builder()
@@ -50,10 +50,10 @@ public struct TurnkeyProvider: RainProvider {
   public func create(context: ProviderContext) async throws -> any RainWalletProvider {
     let provider = TurnkeyWalletProviderAdapter(
       turnkey: config.turnkey,
-      transactionBuilder: context.transactionBuilder,
       networkConfigs: context.networkConfigs,
       walletAddress: config.walletAddress,
       chainReader: context.evmChainReader,
+      solanaSupport: context.solanaSupport,
       tokenStore: context.tokenStore
     )
     // Probe the wallet so an unusable context fails fast at resolution time (parity with the

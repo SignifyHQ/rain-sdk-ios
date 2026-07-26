@@ -17,20 +17,21 @@ enum TestFixtures {
   /// 65-byte signature encoded as hex with `0x` prefix.
   static let validSignatureHex = "0x" + String(repeating: "01", count: 65)
 
-  static var defaultWithdrawAddresses: WithdrawAssetAddresses {
-    WithdrawAssetAddresses(
-      contractAddress: contractAddress,
-      proxyAddress: proxyAddress,
-      recipientAddress: recipientAddress,
-      tokenAddress: tokenAddress
+  /// Rain-issued withdrawal authorization, with a unix-seconds `expiresAt`.
+  static func adminSignature(expiresAt: String = "1735689600") -> RainAdminSignature {
+    RainAdminSignature(
+      salt: validSaltBase64,
+      signature: validSignatureHex,
+      expiresAt: expiresAt
     )
   }
 
-  static var defaultEIP712Addresses: EIP712AssetAddresses {
-    EIP712AssetAddresses(
+  static var defaultWithdrawAddresses: RainWithdrawAddresses {
+    RainWithdrawAddresses(
       proxyAddress: proxyAddress,
-      recipientAddress: recipientAddress,
-      tokenAddress: tokenAddress
+      controllerAddress: contractAddress,
+      tokenAddress: tokenAddress,
+      recipientAddress: recipientAddress
     )
   }
 
@@ -66,7 +67,6 @@ enum TestManagers {
     )
     let adapter = TurnkeyWalletProviderAdapter(
       turnkey: resolvedTurnkey,
-      transactionBuilder: resolvedBuilder,
       networkConfigs: configs,
       walletAddress: walletAddress,
       tokenStore: tokenStore

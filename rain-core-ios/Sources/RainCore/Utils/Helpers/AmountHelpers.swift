@@ -3,6 +3,16 @@ import Web3
 
 /// Utility functions for amount conversion and validation
 public enum AmountHelpers {
+  /// Strict-parses a decimal literal. Anything else — hex like `"0x123"`, trailing junk, empty —
+  /// returns `nil` rather than a silent partial parse: `Decimal(string:)` alone takes the longest
+  /// valid prefix, so `"0x10"` would yield `0`.
+  public static func strictDecimal(from raw: String) -> Decimal? {
+    let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+    let pattern = "^[+-]?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?$"
+    guard trimmed.range(of: pattern, options: .regularExpression) != nil else { return nil }
+    return Decimal(string: trimmed, locale: Locale(identifier: "en_US_POSIX"))
+  }
+
   /// Rounds down (toward −∞) with no fractional digits. Given the scale guard the scaled value is
   /// already integral, so this only ever acts as a defensive no-op (and keeps the string output
   /// free of a decimal point or exponent).

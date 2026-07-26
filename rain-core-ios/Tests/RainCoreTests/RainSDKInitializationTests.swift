@@ -33,16 +33,35 @@ struct SDKInitializationTests {
     #expect(sdk.providerIds.contains(.turnkey))
   }
 
+  /// Runs `body`, expecting `.invalidConfig` whose details equal `expectedDetails`.
+  private func expectInvalidConfig(
+    details expectedDetails: String,
+    _ body: () throws -> Void
+  ) {
+    do {
+      try body()
+      Issue.record("Expected invalidConfig, but no error was thrown")
+    } catch let error as RainSDKError {
+      guard case .invalidConfig(let details) = error else {
+        Issue.record("Expected .invalidConfig, got \(error)")
+        return
+      }
+      #expect(details == expectedDetails)
+    } catch {
+      Issue.record("Expected RainSDKError.invalidConfig, got \(error)")
+    }
+  }
+
   @Test("build throws invalidConfig for empty configs")
   func testBuildEmptyConfigs() throws {
-    #expect(throws: RainSDKError.invalidConfig(chainId: 0, rpcUrl: "")) {
+    expectInvalidConfig(details: "At least one RPC endpoint is required") {
       _ = try RainSdk.builder().register(StubProvider()).build()
     }
   }
 
   @Test("build throws invalidConfig for zero chain ID")
   func testBuildInvalidChainIdZero() throws {
-    #expect(throws: RainSDKError.invalidConfig(chainId: 0, rpcUrl: "https://test-rpc.com")) {
+    expectInvalidConfig(details: "Invalid RPC endpoint for chainId 0: https://test-rpc.com") {
       _ = try RainSdk.builder()
         .rpcEndpoints([NetworkConfig.testConfig(chainId: 0)])
         .register(StubProvider())
@@ -52,7 +71,7 @@ struct SDKInitializationTests {
 
   @Test("build throws invalidConfig for negative chain ID")
   func testBuildInvalidChainIdNegative() throws {
-    #expect(throws: RainSDKError.invalidConfig(chainId: -1, rpcUrl: "https://test-rpc.com")) {
+    expectInvalidConfig(details: "Invalid RPC endpoint for chainId -1: https://test-rpc.com") {
       _ = try RainSdk.builder()
         .rpcEndpoints([NetworkConfig.testConfig(chainId: -1)])
         .register(StubProvider())
@@ -62,7 +81,7 @@ struct SDKInitializationTests {
 
   @Test("build throws invalidConfig for empty RPC URL")
   func testBuildEmptyRpcUrl() throws {
-    #expect(throws: RainSDKError.invalidConfig(chainId: 1, rpcUrl: "")) {
+    expectInvalidConfig(details: "Invalid RPC endpoint for chainId 1: ") {
       _ = try RainSdk.builder()
         .rpcEndpoints([NetworkConfig.testConfig(chainId: 1, rpcUrl: "")])
         .register(StubProvider())
@@ -72,7 +91,7 @@ struct SDKInitializationTests {
 
   @Test("build throws invalidConfig for URL without scheme")
   func testBuildRpcUrlMissingScheme() throws {
-    #expect(throws: RainSDKError.invalidConfig(chainId: 1, rpcUrl: "not-a-valid-url")) {
+    expectInvalidConfig(details: "Invalid RPC endpoint for chainId 1: not-a-valid-url") {
       _ = try RainSdk.builder()
         .rpcEndpoints([NetworkConfig.testConfig(chainId: 1, rpcUrl: "not-a-valid-url")])
         .register(StubProvider())
@@ -82,7 +101,7 @@ struct SDKInitializationTests {
 
   @Test("build throws invalidConfig for non-HTTP scheme")
   func testBuildRpcUrlNonHttpScheme() throws {
-    #expect(throws: RainSDKError.invalidConfig(chainId: 1, rpcUrl: "ftp://example.com")) {
+    expectInvalidConfig(details: "Invalid RPC endpoint for chainId 1: ftp://example.com") {
       _ = try RainSdk.builder()
         .rpcEndpoints([NetworkConfig.testConfig(chainId: 1, rpcUrl: "ftp://example.com")])
         .register(StubProvider())

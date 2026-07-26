@@ -1,7 +1,6 @@
 import Foundation
 
 /// A collateral contract returned by `GET /v1/issuing/users/{userId}/contracts`.
-/// Mirrors Android's `RainCollateralContract`.
 public struct RainCollateralContract: Sendable, Hashable {
   /// Rain's identifier for the contract, when present.
   public let id: String?
@@ -67,8 +66,9 @@ public struct RainCollateralToken: Sendable, Hashable {
   public let symbol: String?
   public let decimals: Int?
 
-  /// `balance` as a decimal, or `nil` when it doesn't parse.
-  public var balanceAmount: Decimal? { Decimal(string: balance) }
+  /// `balance` as a decimal, or `nil` when it doesn't parse. Strict: malformed values (e.g.
+  /// "12abc") are `nil`, never a partial parse.
+  public var balanceAmount: Decimal? { AmountHelpers.strictDecimal(from: balance) }
 
   public init(
     address: String,

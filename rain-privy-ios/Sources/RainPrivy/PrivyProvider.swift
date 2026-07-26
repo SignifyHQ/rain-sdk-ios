@@ -55,8 +55,8 @@ public struct PrivyProvider: RainProvider {
 
   public var id: ProviderId { .privy }
 
-  /// Privy holds an exportable embedded key with a recovery flow.
-  public var capabilities: Set<Capability> { [.export, .recovery] }
+  /// Privy holds an exportable embedded key with a recovery flow, over EVM and Solana.
+  public var capabilities: Set<Capability> { [.export, .recovery, .multiChain] }
 
   public func create(context: ProviderContext) async throws -> any RainWalletProvider {
     let provider = PrivyWalletProvider(

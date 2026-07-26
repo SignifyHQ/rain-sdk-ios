@@ -173,6 +173,7 @@ internal final class SolanaChainReader: ChainReader, @unchecked Sendable {
     }
   }
 
+  /// `decimals` is ignored: the mint's on-chain scale is authoritative for SPL amounts.
   func getERC20Balance(
     chainId: Int,
     tokenAddress: String,
@@ -187,7 +188,7 @@ internal final class SolanaChainReader: ChainReader, @unchecked Sendable {
     )
     return EthereumConverter.baseUnitsToDecimal(
       balance.rawAmount,
-      decimals: decimals ?? balance.decimals
+      decimals: balance.decimals
     )
   }
 

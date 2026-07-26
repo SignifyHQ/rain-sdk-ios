@@ -42,14 +42,14 @@ public protocol RainWalletProvider: Sendable {
   ///   - limit: Optional maximum number of transactions to return.
   ///   - offset: Optional offset for pagination.
   ///   - order: Optional sort order (e.g. newest first).
-  /// - Returns: List of high-level `WalletTransaction` records.
+  /// - Returns: List of high-level `RainTransaction` records.
   /// - Throws: RainSDKError if wallet is unavailable or the request fails.
   func getTransactions(
     chainId: Int,
     limit: Int?,
     offset: Int?,
-    order: WalletTransactionOrder?
-  ) async throws -> [WalletTransaction]
+    order: RainTransactionOrder?
+  ) async throws -> [RainTransaction]
 }
 
 public extension RainWalletProvider {

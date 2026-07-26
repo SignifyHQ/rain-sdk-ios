@@ -52,32 +52,20 @@ protocol TransactionBuilderProtocol {
     salt: String
   ) throws -> String
   
-  /// Builds the encoded transaction calldata required to execute a withdrawal
-  /// on the collateral proxy contract.
+  /// ABI-encodes the `withdrawAsset` call executed against the collateral controller.
   ///
-  /// This method ABI-encodes the contract function call with the provided
-  /// withdrawal parameters and returns the hex-encoded calldata.
+  /// Pure encoding: no RPC, so no chain id and no network failure mode.
   ///
   /// - Parameters:
-  ///   - chainId: The chain identifier for the target network
-  ///   - ethereumContractAddress: The main contract address that will execute the withdrawal
-  ///   - withdrawAssetParameter: A `WithdrawAssetParameter` struct containing:
-  ///     - proxyAddress: Address of the collateral proxy contract
-  ///     - tokenAddress: ERC-20 token contract address
-  ///     - amount: Withdrawal amount in base units (BigUInt)
-  ///     - recipientAddress: Address receiving the withdrawal
-  ///     - expiryAt: Expiration timestamp (Unix timestamp as BigUInt)
-  ///     - salt: User salt data (32 bytes) for the withdrawal authorization
-  ///     - signature: User signature data from Rain API (65 bytes)
-  ///     - adminSalt: Admin salt data (32 bytes) from buildEIP712Message
-  ///     - adminSignature: Admin signature authorizing the withdrawal (65 bytes)
+  ///   - ethereumContractAddress: The collateral controller that will execute the withdrawal
+  ///   - withdrawAssetParameter: The encoded call's arguments — see `WithdrawAssetParameter` for
+  ///     which salt/signature pair belongs to Rain and which to the wallet
   /// - Returns: Hex-encoded transaction calldata (prefixed with "0x")
-  /// - Throws: RainSDKError if ABI encoding, contract interaction, or validation fails
+  /// - Throws: RainSDKError if ABI encoding or validation fails
   func buildErc20TransactionForWithdrawAsset(
-    chainId: Int,
     ethereumContractAddress: Web3Core.EthereumAddress,
     withdrawAssetParameter: WithdrawAssetParameter
-  ) async throws -> String
+  ) throws -> String
 
   /// ABI-encodes a `balanceOf(address)` call for the given wallet address on the given chain.
   /// - Parameters:

@@ -22,12 +22,10 @@ struct WithdrawCollateralTests {
     await #expect(throws: RainSDKError.walletUnavailable) {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
-        assetAddresses: TestFixtures.defaultWithdrawAddresses,
+        addresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: 18,
-        salt: TestFixtures.validSaltBase64,
-        signature: TestFixtures.validSignatureHex,
-        expiresAt: "1735689600",
+        adminSignature: TestFixtures.adminSignature(),
         nonce: nil
       )
     }
@@ -50,15 +48,13 @@ struct WithdrawCollateralTests {
       capabilities: [.export, .recovery]
     )
 
-    await #expect(throws: RainSDKError.invalidConfig(chainId: 999, rpcUrl: "")) {
+    await #expect(throws: RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=999")) {
       _ = try await manager.withdrawCollateral(
         chainId: 999,
-        assetAddresses: TestFixtures.defaultWithdrawAddresses,
+        addresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: 18,
-        salt: TestFixtures.validSaltBase64,
-        signature: TestFixtures.validSignatureHex,
-        expiresAt: "1735689600",
+        adminSignature: TestFixtures.adminSignature(),
         nonce: nil
       )
     }
@@ -81,12 +77,10 @@ struct WithdrawCollateralTests {
     await #expect(throws: RainSDKError.withdrawalRevertedByNetwork) {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
-        assetAddresses: TestFixtures.defaultWithdrawAddresses,
+        addresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: 18,
-        salt: TestFixtures.validSaltBase64,
-        signature: TestFixtures.validSignatureHex,
-        expiresAt: "1735689600",
+        adminSignature: TestFixtures.adminSignature(),
         nonce: nil
       )
     }
@@ -107,9 +101,7 @@ struct WithdrawCollateralTests {
         addresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: 18,
-        salt: TestFixtures.validSaltBase64,
-        signature: TestFixtures.validSignatureHex,
-        expiresAt: "1735689600"
+        adminSignature: TestFixtures.adminSignature()
       )
     }
   }
@@ -137,9 +129,7 @@ struct WithdrawCollateralTests {
         addresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: 18,
-        salt: TestFixtures.validSaltBase64,
-        signature: TestFixtures.validSignatureHex,
-        expiresAt: "1735689600"
+        adminSignature: TestFixtures.adminSignature()
       )
     }
   }
@@ -155,9 +145,7 @@ struct WithdrawCollateralTests {
         addresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: 18,
-        salt: TestFixtures.validSaltBase64,
-        signature: "invalid-base64!!!",
-        expiresAt: "1735689600"
+        adminSignature: TestFixtures.adminSignature(signature: "invalid-base64!!!")
       )
     }
   }

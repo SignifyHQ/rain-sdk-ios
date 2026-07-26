@@ -48,6 +48,29 @@ struct SolanaTransactionBuilderTests {
     #expect(tx.count == 215)
   }
 
+  @Test("rejects a transaction requiring a signer besides the fee payer")
+  func rejectsExtraRequiredSigner() throws {
+    // A second required signer can never be satisfied: only the fee payer's key signs.
+    let extraSigner = Base58.encode((0..<32).map { UInt8($0 + 97) })
+    let instruction = SolanaTransactionBuilder.Instruction(
+      programId: Base58.encode([UInt8](repeating: 0, count: 32)),
+      accounts: [
+        .writable(from, signer: true),
+        .writable(extraSigner, signer: true),
+        .writable(to)
+      ],
+      data: []
+    )
+
+    #expect(throws: RainSDKError.invalidConfig(details: "Transaction requires 1 signer(s) besides the fee payer")) {
+      _ = try SolanaTransactionBuilder.buildTransactionBytes(
+        feePayer: from,
+        recentBlockhash: blockhash,
+        instructions: [instruction]
+      )
+    }
+  }
+
   @Test("buildTransferHex emits lowercase hex of the serialized bytes")
   func hexMatchesBytes() throws {
     let bytes = try SolanaTransactionBuilder.buildTransferBytes(

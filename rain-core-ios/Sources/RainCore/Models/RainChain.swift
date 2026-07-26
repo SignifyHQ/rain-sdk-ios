@@ -1,6 +1,6 @@
 import Foundation
 
-/// Chain IDs for the networks Rain supports out of the box. Mirrors Android's `RainChain`.
+/// Chain IDs for the networks Rain supports out of the box.
 /// Solana has no EIP-155 ID, so the SDK uses Rain's own chain IDs (900 = mainnet-beta,
 /// 901 = devnet — the values the Rain issuing API returns in collateral contracts and expects
 /// on withdrawal-signature requests). Rain assigns no ID to the testnet cluster; 902 extends

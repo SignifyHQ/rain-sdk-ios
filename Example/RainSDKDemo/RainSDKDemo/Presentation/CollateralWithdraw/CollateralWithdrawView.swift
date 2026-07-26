@@ -3,9 +3,7 @@ import SwiftUI
 /// Withdraws collateral from the Rain contract for the active chain.
 struct CollateralWithdrawView: View {
   @StateObject private var viewModel = CollateralWithdrawViewModel()
-  @StateObject private var recoverViewModel = RecoverViewModel()
   @ObservedObject private var sdkService = RainSDKService.shared
-  @State private var hasShownRecoverOnAppear = false
 
   private var chain: WalletChain { sdkService.selectedChain }
 
@@ -38,8 +36,20 @@ struct CollateralWithdrawView: View {
             )
           )
           amountField
+          dryRunButtons
           actionButtons
 
+          // Dry-run results — neither of these broadcast anything.
+          if let fee = viewModel.estimatedFee {
+            dryRunCard(title: "⛽ Estimated Fee", body: fee)
+          }
+          if let prepared = viewModel.preparedWithdrawal {
+            dryRunCard(
+              title: "📝 Prepared (not broadcast)",
+              body: prepared,
+              footnote: "A Solana blockhash is valid ~60-90s — submit promptly or re-prepare."
+            )
+          }
           if let txHash = viewModel.withdrawResult {
             resultCard(txHash: txHash)
           }
@@ -51,21 +61,6 @@ struct CollateralWithdrawView: View {
     .navigationBarTitleDisplayMode(.inline)
     // Re-load whenever the active chain changes so the screen shows that chain's contract.
     .task(id: chain) { await viewModel.loadContractInfo(chain: chain) }
-    .onAppear {
-      if viewModel.hasPortal && !hasShownRecoverOnAppear {
-        hasShownRecoverOnAppear = true
-        recoverViewModel.showRecoverSheet()
-      }
-    }
-    .overlay {
-      if recoverViewModel.showRecoverChoiceSheet {
-        Color.black.opacity(0.4)
-          .ignoresSafeArea()
-          .onTapGesture { recoverViewModel.dismissRecoverSheet() }
-        RecoverChoiceView(viewModel: recoverViewModel)
-      }
-    }
-    .animation(.easeInOut(duration: 0.2), value: recoverViewModel.showRecoverChoiceSheet)
   }
 
   private var tokenSelection: some View {
@@ -140,8 +135,58 @@ struct CollateralWithdrawView: View {
     }
   }
 
-  // Gas estimation happens in the background as part of the withdraw, so there's no separate
-  // "Estimate Gas" step. "Withdraw Maximum" withdraws the full available balance.
+  // Both dry-run actions build the withdrawal exactly as "Withdraw" would — signing EIP-712 and
+  // reading the collateral's admin set — but broadcast nothing.
+  private var dryRunButtons: some View {
+    HStack(spacing: 8) {
+      Button {
+        hideKeyboard()
+        Task { await viewModel.estimateFee() }
+      } label: {
+        Text("Estimate Fee")
+          .frame(maxWidth: .infinity)
+          .padding()
+          .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.accentColor))
+      }
+      // EVM only: the SDK rejects a Solana chain id for fee estimation.
+      .disabled(!viewModel.canDryRun || viewModel.isSolanaContract)
+      .opacity(viewModel.canDryRun && !viewModel.isSolanaContract ? 1 : 0.6)
+
+      Button {
+        hideKeyboard()
+        Task { await viewModel.prepareWithdrawal() }
+      } label: {
+        Text("Prepare Only")
+          .frame(maxWidth: .infinity)
+          .padding()
+          .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.accentColor))
+      }
+      .disabled(!viewModel.canDryRun)
+      .opacity(viewModel.canDryRun ? 1 : 0.6)
+    }
+  }
+
+  private func dryRunCard(title: String, body: String, footnote: String? = nil) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Text(title)
+        .font(.subheadline)
+        .fontWeight(.bold)
+      Text(body)
+        .font(.caption)
+        .textSelection(.enabled)
+      if let footnote {
+        Text(footnote)
+          .font(.caption2)
+          .foregroundColor(.secondary)
+      }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding()
+    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.secondary.opacity(0.5)))
+  }
+
+  // Gas estimation also happens in the background as part of the withdraw, so "Estimate Fee"
+  // above is optional. "Withdraw Maximum" withdraws the full available balance.
   private var actionButtons: some View {
     HStack(spacing: 8) {
       Button {

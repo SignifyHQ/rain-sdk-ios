@@ -190,8 +190,8 @@ struct EVMChainReaderTests {
       _ = try await reader.getNativeBalance(chainId: 1, walletAddress: walletAddress)
       Issue.record("Expected invalidConfig to throw")
     } catch let error as RainSDKError {
-      if case .invalidConfig(let chainId, _) = error {
-        #expect(chainId == 1)
+      if case .invalidConfig(let details) = error {
+        #expect(details.contains("chainId=1"))
       } else {
         Issue.record("Expected .invalidConfig, got \(error)")
       }

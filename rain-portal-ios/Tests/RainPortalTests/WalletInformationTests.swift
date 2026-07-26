@@ -77,20 +77,15 @@ struct WalletInformationTests {
   @Test("getTransactions forwards pagination/order to the provider and returns its list")
   func testGetTransactionsRoutesToProvider() async throws {
     let (manager, stub) = try await TestManagers.stubProviderManager()
-    let tx = WalletTransaction(
-      blockNum: "100",
-      uniqueId: "uid-1",
+    let tx = RainTransaction(
       hash: "0xabc",
+      uniqueId: "uid-1",
+      blockNumber: "100",
+      timestamp: "2024-01-01T00:00:00Z",
       from: "0xfrom",
       to: "0xto",
       value: 1.0,
-      erc721TokenId: nil,
-      erc1155Metadata: nil,
-      tokenId: nil,
-      asset: nil,
-      category: "external",
-      rawContract: nil,
-      metadata: WalletTransaction.Metadata(blockTimestamp: "2024-01-01T00:00:00Z"),
+      category: .external,
       chainId: 1
     )
     stub.transactionsToReturn = [tx]

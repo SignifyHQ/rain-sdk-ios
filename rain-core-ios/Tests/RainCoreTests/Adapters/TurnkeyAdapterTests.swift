@@ -38,6 +38,46 @@ struct TurnkeyAdapterTests {
     #expect(turnkey.refreshWalletsCallCount == 1)
   }
 
+  @Test("concurrent first address resolutions share a single wallet refresh")
+  func testAddressResolutionSingleFlight() async throws {
+    let mockTurnkey = MockTurnkey(wallets: [])
+    mockTurnkey.onRefreshWallets = { [weak mockTurnkey] in
+      // Simulated Turnkey latency, then the refreshed wallet list appears.
+      try await Task.sleep(nanoseconds: 50_000_000)
+      mockTurnkey?.wallets = [MockTurnkey.defaultWallet()]
+    }
+    let (manager, turnkey, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
+
+    let addresses = try await withThrowingTaskGroup(of: String.self) { group in
+      for _ in 0..<10 {
+        group.addTask { try await manager.getWalletAddress() }
+      }
+      var results: [String] = []
+      for try await address in group { results.append(address) }
+      return results
+    }
+
+    #expect(addresses.count == 10)
+    #expect(Set(addresses) == [MockTurnkey.defaultWalletAddress])
+    #expect(turnkey.refreshWalletsCallCount == 1)
+  }
+
+  @Test("a failed address resolution is not cached — the next call retries")
+  func testFailedAddressResolutionRetries() async throws {
+    let mockTurnkey = MockTurnkey(wallets: [])
+    let (manager, turnkey, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
+
+    await #expect(throws: RainSDKError.walletUnavailable) {
+      _ = try await manager.getWalletAddress()
+    }
+
+    mockTurnkey.wallets = [MockTurnkey.defaultWallet()]
+    let address = try await manager.getWalletAddress()
+
+    #expect(address == MockTurnkey.defaultWalletAddress)
+    #expect(turnkey.refreshWalletsCallCount == 1)
+  }
+
   // MARK: - Balances
 
   @Test("getBalance(.native) with Turnkey parses 1 ETH from a single ether balance")
@@ -142,7 +182,6 @@ struct TurnkeyAdapterTests {
     let mockReader = MockChainReader()
     let adapter = TurnkeyWalletProviderAdapter(
       turnkey: mockTurnkey,
-      transactionBuilder: MockTransactionBuilderService(networkConfigs: configs),
       networkConfigs: configs,
       walletAddress: walletAddress,
       chainReader: mockReader
@@ -266,26 +305,24 @@ struct TurnkeyAdapterTests {
 
   // MARK: - withdraw signing payload
 
-  @Test("buildTransactionParamForWithdrawAsset uses Turnkey EIP-712 signing")
+  @Test("prepareEvmWithdrawal uses Turnkey EIP-712 signing")
   func testBuildTransactionParamForWithdrawAssetTurnkey() async throws {
     let (manager, mockTurnkey, builder) = TestManagers.turnkeyManager()
     builder.mockNonce = BigUInt(42)
 
-    let result = try await manager.buildTransactionParamForWithdrawAsset(
+    let result = try await manager.prepareEvmWithdrawal(
       chainId: 1,
       assetAddresses: TestFixtures.defaultWithdrawAddresses,
       amount: 100.0,
       decimals: 18,
-      salt: TestFixtures.validSaltBase64,
-      signature: TestFixtures.validSignatureHex,
-      expiresAt: "1735689600",
+      adminSignature: TestFixtures.adminSignature(),
       nonce: nil
     )
 
     #expect(result.walletAddress == MockTurnkey.defaultWalletAddress)
-    #expect(result.transactionParams.from == MockTurnkey.defaultWalletAddress)
-    #expect(result.transactionParams.to == TestFixtures.contractAddress)
-    #expect(result.transactionParams.data.hasPrefix("0x"))
+    #expect(result.parameters.from == MockTurnkey.defaultWalletAddress)
+    #expect(result.parameters.to == TestFixtures.contractAddress)
+    #expect(result.parameters.data.hasPrefix("0x"))
     #expect(mockTurnkey.signRawPayloadCalls.count == 1)
 
     let signCall = try #require(mockTurnkey.signRawPayloadCalls.first)
@@ -309,14 +346,12 @@ struct TurnkeyAdapterTests {
     builder.mockNonce = BigUInt(1)
 
     do {
-      _ = try await manager.buildTransactionParamForWithdrawAsset(
+      _ = try await manager.prepareEvmWithdrawal(
         chainId: 1,
         assetAddresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: 18,
-        salt: TestFixtures.validSaltBase64,
-        signature: TestFixtures.validSignatureHex,
-        expiresAt: "1735689600",
+        adminSignature: TestFixtures.adminSignature(),
         nonce: BigUInt(1)
       )
       Issue.record("Expected Turnkey sign error to propagate")
@@ -499,12 +534,10 @@ struct TurnkeyAdapterTests {
 
     let txHash = try await manager.withdrawCollateral(
       chainId: 1,
-      assetAddresses: TestFixtures.defaultWithdrawAddresses,
+      addresses: TestFixtures.defaultWithdrawAddresses,
       amount: 100.0,
       decimals: 18,
-      salt: TestFixtures.validSaltBase64,
-      signature: TestFixtures.validSignatureHex,
-      expiresAt: "1735689600",
+      adminSignature: TestFixtures.adminSignature(),
       nonce: nil
     )
 
@@ -531,9 +564,7 @@ struct TurnkeyAdapterTests {
       addresses: TestFixtures.defaultWithdrawAddresses,
       amount: 100.0,
       decimals: 18,
-      salt: TestFixtures.validSaltBase64,
-      signature: TestFixtures.validSignatureHex,
-      expiresAt: "1735689600"
+      adminSignature: TestFixtures.adminSignature()
     )
 
     // 21_000 gas × 20 gwei = 420_000_000_000_000 wei = exactly 0.00042 native units.
@@ -558,9 +589,7 @@ struct TurnkeyAdapterTests {
         addresses: TestFixtures.defaultWithdrawAddresses,
         amount: 100.0,
         decimals: 18,
-        salt: TestFixtures.validSaltBase64,
-        signature: TestFixtures.validSignatureHex,
-        expiresAt: "1735689600"
+        adminSignature: TestFixtures.adminSignature()
       )
     }
   }

@@ -11,7 +11,7 @@ internal struct RainSession: Sendable {
 /// A cached CST is reused while it was minted for the current credential pair and is more
 /// than `refreshBuffer` from expiry; otherwise `mint` runs (actor-serialized, so concurrent
 /// callers share one mint). A session without a parseable expiry is kept for `fallbackTTL`
-/// from mint time. Mirrors Android's `RainSessionStore`.
+/// from mint time.
 internal actor RainSessionManager {
   /// Re-mint the CST when it is within this window of expiring.
   internal static let refreshBuffer: TimeInterval = 60
@@ -26,7 +26,7 @@ internal actor RainSessionManager {
   private var cachedFor: RainApiCredentials?
   /// The mint currently running, and the credentials it is for. Actors are re-entrant at every
   /// `await`, so without sharing the in-flight task concurrent callers all sail past the cache
-  /// check and mint a token each; Android guards the same block with a `Mutex`.
+  /// check and mint a token each.
   private var mintTask: Task<RainSession, Error>?
   private var mintingFor: RainApiCredentials?
 

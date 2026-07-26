@@ -11,7 +11,6 @@ import Foundation
 /// public surface stays forward-compatible — future versions can attach richer metadata
 /// (status, included block, fee paid) without breaking the call shape.
 ///
-/// Mirrors the Android `RainTokenTransferResult` data class.
 public struct RainTokenTransferResult: Sendable, Equatable {
   /// The on-chain transaction hash (EVM) or transaction signature (Solana).
   ///

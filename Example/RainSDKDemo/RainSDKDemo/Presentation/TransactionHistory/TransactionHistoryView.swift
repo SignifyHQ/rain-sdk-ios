@@ -62,7 +62,7 @@ struct TransactionHistoryView: View {
     .task(id: chain) { await viewModel.fetchTransactions(chain: chain) }
   }
 
-  private func transactionCard(_ tx: WalletTransaction) -> some View {
+  private func transactionCard(_ tx: RainTransaction) -> some View {
     // Solana history rows carry the Turnkey status id, not an explorer-resolvable signature, so
     // the hash is shown plainly (no link) on Solana.
     let explorerLinkable = !chain.isSolana
@@ -126,7 +126,7 @@ struct TransactionHistoryView: View {
           // transfer whose symbol is unknown (SPL names live in off-chain metadata) shows the bare
           // amount, identified by the token address beside it — labelling it "SOL" would name the
           // wrong asset entirely.
-          let tokenAddress = tx.rawContract?.address
+          let tokenAddress = tx.tokenAddress
           let unit = tx.asset ?? (tokenAddress == nil ? chain.nativeSymbol : nil)
           Text(["Value: \(value.plainString)", unit].compactMap { $0 }.joined(separator: " "))
             .font(.caption)
@@ -168,7 +168,7 @@ struct TransactionHistoryView: View {
     .cornerRadius(12)
   }
 
-  private func directionBadge(_ tx: WalletTransaction) -> (label: String, color: Color)? {
+  private func directionBadge(_ tx: RainTransaction) -> (label: String, color: Color)? {
     guard let wallet = viewModel.walletAddress else { return nil }
     let isSend = tx.from.caseInsensitiveCompare(wallet) == .orderedSame
     let isReceive = tx.to?.caseInsensitiveCompare(wallet) == .orderedSame

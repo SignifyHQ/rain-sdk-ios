@@ -7,7 +7,7 @@ import Web3
 /// signature, and salt are the ones from the first successful withdrawal on devnet
 /// (tx `3ByKrsXW…`, 2026-07-24), so the asserted bytes are known-good on chain.
 ///
-/// Ported from the Android suite with the same fixtures, so a divergence in either platform's
+/// Fixed fixtures pinned to an exact serialization, so a divergence in the
 /// composition shows up as a failing assertion rather than a rejected transaction.
 @Suite("Solana Collateral Withdraw Composer Tests", .serialized)
 struct SolanaCollateralWithdrawComposerTests {
@@ -36,7 +36,7 @@ struct SolanaCollateralWithdrawComposerTests {
     + "fVfif1UZRiOh7fIUUtHNs="
 
   /// The full unsigned transaction these fixtures compose to, verified byte-for-byte against the
-  /// Android SDK. Pinned on both platforms so either one drifting is caught by a unit test.
+  /// composer. Pinned so any drift in the serialization is caught by a unit test.
   private static let goldenWithdrawTransactionHex =
     "010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
     + "00000000000000000000000000000000000100070c292a5b419bea8cd6c5ef3831ed093377684808afba6a0539fa0cbb"
@@ -144,7 +144,7 @@ struct SolanaCollateralWithdrawComposerTests {
       )
 
       let hex = unsigned.transactionHex
-      // Cross-platform golden: the Android suite pins this same string for the same fixtures, so
+      // Golden: the full serialized transaction for these exact fixtures, so
       // a composition change on either platform fails here instead of on chain. Deterministic
       // because the stubbed blockhash is fixed.
       #expect(hex == Self.goldenWithdrawTransactionHex)
@@ -224,20 +224,17 @@ struct SolanaCollateralWithdrawComposerTests {
 
       let signature = try await manager.withdrawCollateral(
         chainId: devnet,
-        assetAddresses: WithdrawAssetAddresses(
+        addresses: RainWithdrawAddresses(
           // On Solana the "proxy" is the collateral account and the token is the SPL mint;
-          // contractAddress is unused because there is no coordinator contract to call.
-          contractAddress: collateral,
+          // controllerAddress is unused because there is no coordinator contract to call.
           proxyAddress: collateral,
-          recipientAddress: owner,
-          tokenAddress: mint
+          controllerAddress: collateral,
+          tokenAddress: mint,
+          recipientAddress: owner
         ),
         amount: Decimal(string: "0.000001")!, // 1 base unit at 6 decimals
         decimals: 6,
-        salt: adminSignature.salt,
-        signature: adminSignature.signature,
-        expiresAt: adminSignature.expiresAt,
-        nonce: nil
+        adminSignature: adminSignature
       )
 
       #expect(signature == "sol-withdraw-sig")
@@ -250,6 +247,53 @@ struct SolanaCollateralWithdrawComposerTests {
         submitted.unsignedTransaction
           .contains("77229dff3a1aca1bf472323ba0cdf247669970593ab8f64b31d7e1e74d28e8f4")
       )
+    }
+  }
+
+  @Test("prepareWithdrawal hands back the exact bytes withdrawCollateral submits, with its blockhash")
+  func testPrepareSolanaWithdrawalMatchesBroadcastBytes() async throws {
+    try await MockURLProtocol.withInstalled {
+      try stubHappyPath()
+
+      let turnkey = MockTurnkey(wallets: [MockTurnkey.dualCurveWallet(solanaAddress: owner)])
+      let client = turnkey.turnkeyClient as! MockTurnkeyClient
+      client.sendTransactionStatusQueue = [.solanaIncluded(signature: "sol-withdraw-sig")]
+
+      let (manager, _, _) = TestManagers.turnkeyManager(
+        turnkey: turnkey,
+        configs: [.testConfig(chainId: SolanaChains.devnet, rpcUrl: Self.rpcUrl)]
+      )
+      let addresses = RainWithdrawAddresses(
+        proxyAddress: collateral,
+        controllerAddress: collateral,
+        tokenAddress: mint,
+        recipientAddress: owner
+      )
+
+      let prepared = try await manager.prepareWithdrawal(
+        chainId: devnet,
+        addresses: addresses,
+        amount: Decimal(string: "0.000001")!,
+        decimals: 6,
+        adminSignature: adminSignature
+      )
+      let transfer = try #require(prepared.solanaTransfer)
+
+      // Preparing broadcasts nothing, and the blockhash survives — the field the old
+      // `String?`-shaped result had nowhere to put.
+      #expect(client.solSendTransactionCalls.isEmpty)
+      #expect(!transfer.recentBlockhash.isEmpty)
+
+      _ = try await manager.withdrawCollateral(
+        chainId: devnet,
+        addresses: addresses,
+        amount: Decimal(string: "0.000001")!,
+        decimals: 6,
+        adminSignature: adminSignature
+      )
+      let submitted = try #require(client.solSendTransactionCalls.first)
+
+      #expect(transfer.transactionHex == submitted.unsignedTransaction)
     }
   }
 

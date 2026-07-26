@@ -16,20 +16,21 @@ enum TestFixtures {
   static let validSaltBase64 = Data(repeating: 0xAA, count: 32).base64EncodedString()
   static let validSignatureHex = "0x" + String(repeating: "01", count: 65)
 
-  static var defaultWithdrawAddresses: WithdrawAssetAddresses {
-    WithdrawAssetAddresses(
-      contractAddress: contractAddress,
-      proxyAddress: proxyAddress,
-      recipientAddress: recipientAddress,
-      tokenAddress: tokenAddress
-    )
+  /// Rain-issued withdrawal authorization, with a unix-seconds `expiresAt`.
+  static func adminSignature(
+    salt: String = Data(repeating: 0xAA, count: 32).base64EncodedString(),
+    signature: String = "0x" + String(repeating: "01", count: 65),
+    expiresAt: String = "1735689600"
+  ) -> RainAdminSignature {
+    RainAdminSignature(salt: salt, signature: signature, expiresAt: expiresAt)
   }
 
-  static var defaultEIP712Addresses: EIP712AssetAddresses {
-    EIP712AssetAddresses(
+  static var defaultWithdrawAddresses: RainWithdrawAddresses {
+    RainWithdrawAddresses(
       proxyAddress: proxyAddress,
-      recipientAddress: recipientAddress,
-      tokenAddress: tokenAddress
+      controllerAddress: contractAddress,
+      tokenAddress: tokenAddress,
+      recipientAddress: recipientAddress
     )
   }
 

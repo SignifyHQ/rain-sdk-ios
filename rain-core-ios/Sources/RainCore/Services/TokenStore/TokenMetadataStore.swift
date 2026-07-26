@@ -40,6 +40,13 @@ public actor TokenMetadataStore {
     TokenRegistry.nativeCurrency(for: chainId)
   }
 
+  /// Native currency for a chain, or `nil` when the chain is not in the registry. Unlike
+  /// ``nativeCurrency(for:)`` this never falls back to an ETH-like default, so callers that must
+  /// not show a wrong symbol (e.g. transaction history) can tell "unknown chain" apart.
+  public func nativeCurrencyOrNil(for chainId: Int) -> NativeCurrency? {
+    TokenRegistry.nativeCurrencyByChainId[chainId]
+  }
+
   /// All known tokens for a chain (registry + host-registered), in deterministic order.
   public func registeredTokens(for chainId: Int) -> [TokenInfo] {
     knownTokens[chainId] ?? []
