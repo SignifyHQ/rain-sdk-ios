@@ -141,6 +141,6 @@ Each client is bound to its provider for its lifetime; there is no "active provi
 
 ## iOS-specific integration notes
 
-- **Turnkey ships inside `RainCore`.** Unlike Portal and Privy (separate packages), the Turnkey adapter is bundled in `rain-core-ios` for now, so depending on `RainCore` pulls Turnkey's Swift SDK. It will graduate to a standalone `rain-turnkey` module later.
+- **Turnkey ships inside `RainCore`.** Unlike Portal and Privy (separate products), the Turnkey adapter is bundled in `rain-core-ios` for now, so linking `rain-core-ios` pulls Turnkey's Swift SDK. It will graduate to a standalone `rain-turnkey-ios` product later.
 - **No dependency conflicts to work around.** Android needs a Bouncy Castle exclusion (Turnkey's and web3j's crypto artifacts collide); the iOS package graph has no equivalent duplicate-symbol issue. The only packaging quirk is a SwiftPM warning about two `secp256k1.swift` forks (from `Web3.swift` and `web3swift`) resolving to the same package identity; it is a warning today and requires no consumer action.
 - **Fail-fast resolution.** `TurnkeyProvider.create(context:)` probes the wallet (`address()`) so an unusable context fails at `rain.provider(.turnkey)` time rather than on the first business call.

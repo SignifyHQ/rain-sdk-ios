@@ -52,30 +52,38 @@ Or in a `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/SignifyHQ/rain-sdk-ios", from: "1.0.0")
+    .package(url: "https://github.com/SignifyHQ/rain-sdk-ios", from: "4.0.0")
 ],
 targets: [
     .target(name: "YourApp", dependencies: [
-        .product(name: "RainSDK", package: "rain-sdk-ios")
+        .product(name: "rain-portal-ios", package: "rain-sdk-ios")
     ])
 ]
 ```
 
-Today the repo vends the **`RainSDK`** umbrella product (re-exports `RainCore` + `RainPortal`) — use
-it and `import RainCore` / `import RainPortal` as needed. The per-provider modules (`RainCore`,
-`RainPortal`, `RainPrivy`) are published as standalone packages so you can depend on **only the
-providers you use** — an unselected provider's vendor SDK never enters your dependency graph:
+The package vends one product per wallet provider, so you link **only the providers you use** — an
+unselected provider's vendor SDK is never linked into your app:
+
+| Product | Link it for | Import |
+|---|---|---|
+| `rain-portal-ios` | Portal MPC wallets | `import RainPortal` |
+| `rain-privy-ios` | Privy embedded wallets | `import RainPrivy` |
+| `rain-core-ios` | Turnkey (the adapter ships inside core for now), or transaction building with your own wallet | `import RainCore` |
+
+`RainCore` comes transitively with either adapter — you never list it twice.
 
 ```swift
-// Portal-only app: RainCore comes transitively; Privy/Turnkey vendor SDKs are never resolved.
-.package(url: "https://github.com/SignifyHQ/rain-portal-ios", from: "1.0.0"),
-// Or for Privy (pulls the Privy iOS SDK; Portal's vendor SDK is never resolved):
-// .package(url: "https://github.com/SignifyHQ/rain-privy-ios", from: "1.0.0"),
-// Or for Turnkey (the adapter ships inside RainCore for now):
-// .package(url: "https://github.com/SignifyHQ/rain-core-ios", from: "1.0.0"),
+// Portal-only app.
+.product(name: "rain-portal-ios", package: "rain-sdk-ios")
+// Privy-only app.
+// .product(name: "rain-privy-ios", package: "rain-sdk-ios")
+// Turnkey, or wallet-agnostic transaction building.
+// .product(name: "rain-core-ios", package: "rain-sdk-ios")
 ```
 
-New code should depend on the specific modules; `RainSDK` exists for migration only.
+A **`RainSDK`** umbrella product also exists — it re-exports `RainCore` + `RainPortal` so
+`import RainSDK` keeps resolving for 1.x integrators. New code should link the provider products
+directly; `RainSDK` exists for migration only.
 
 ## Migrating from 1.x
 
