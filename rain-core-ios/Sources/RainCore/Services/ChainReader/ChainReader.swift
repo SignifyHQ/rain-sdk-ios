@@ -1,4 +1,5 @@
 import Foundation
+import Web3
 
 /// Provider-agnostic, read-only on-chain query surface.
 ///
@@ -58,4 +59,56 @@ internal protocol ChainReader: Sendable {
   /// Reads an ERC-20 token's `name()`. Returns `nil` if the call reverts or returns
   /// an undecodable payload. Used to enrich tokens not in the registry.
   func getName(chainId: Int, tokenAddress: String) async throws -> String?
+
+  /// Reads `allowance(owner, spender)` — the base units of `owner`'s token balance that
+  /// `spender` may still move. Returned raw because an unlimited approval (uint256 max)
+  /// overflows `Decimal`; scaling is the caller's decision.
+  /// - Parameter atBlock: Block tag to read at; pass a ``MinedReceipt/blockNumber`` to read state
+  ///   that provably includes that transaction.
+  func getERC20Allowance(
+    chainId: Int,
+    tokenAddress: String,
+    owner: String,
+    spender: String,
+    atBlock: String
+  ) async throws -> BigUInt
+
+  /// Reads a transaction's receipt.
+  /// - Returns: `nil` while the transaction is still pending; otherwise its outcome and block.
+  func getTransactionReceipt(
+    chainId: Int,
+    transactionHash: String
+  ) async throws -> MinedReceipt?
+}
+
+extension ChainReader {
+  /// Reads the allowance at the chain head, for callers with no transaction to pin to.
+  func getERC20Allowance(
+    chainId: Int,
+    tokenAddress: String,
+    owner: String,
+    spender: String
+  ) async throws -> BigUInt {
+    try await getERC20Allowance(
+      chainId: chainId,
+      tokenAddress: tokenAddress,
+      owner: owner,
+      spender: spender,
+      atBlock: BlockTag.latest
+    )
+  }
+}
+
+internal enum BlockTag {
+  /// Whatever head the answering node is at — fine standalone, stale for verifying a transaction.
+  static let latest = "latest"
+}
+
+/// A mined transaction's outcome and the block it landed in, so a read can be pinned to that block.
+internal struct MinedReceipt: Equatable, Sendable {
+  /// `true` when the transaction mined successfully, `false` when it mined but reverted.
+  let succeeded: Bool
+
+  /// Hex quantity (e.g. `"0x10"`), carried verbatim so it can be reused as a block tag.
+  let blockNumber: String
 }

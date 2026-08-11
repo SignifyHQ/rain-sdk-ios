@@ -1,4 +1,5 @@
 import Foundation
+import Web3
 
 /// EVM implementation of `ChainReader`.
 ///
@@ -19,6 +20,12 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
     /// Decimals used for native balances. Every chain the SDK targets today uses 18.
     static let defaultNativeDecimals = 18
   }
+
+  /// An EVM transaction hash: 32 bytes of hex behind a `0x`.
+  private static let transactionHashPattern = "^0x[0-9a-fA-F]{64}$"
+
+  /// A JSON-RPC quantity — validated before a node-supplied value is sent back as a block tag.
+  private static let hexQuantityPattern = "^0[xX][0-9a-fA-F]+$"
 
   private let jsonRpcClient: JsonRpcClient
   private let networkConfigResolver: @Sendable (Int) -> NetworkConfig?
@@ -140,7 +147,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
       to: tokenAddress,
       data: "0x" + ERC20Selectors.decimals
     )
-    return EthereumConverter.parseHexToInt(hex)
+    return try EthereumConverter.parseHexToIntStrict(hex)
   }
 
   func getSymbol(chainId: Int, tokenAddress: String) async throws -> String? {
@@ -165,14 +172,94 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
     return EthereumConverter.parseHexToString(hex)
   }
 
-  /// Issues a raw `eth_call` and returns the hex result. For read functions with
+  func getERC20Allowance(
+    chainId: Int,
+    tokenAddress: String,
+    owner: String,
+    spender: String,
+    atBlock: String
+  ) async throws -> BigUInt {
+    let rpcUrl = try resolveRpcUrl(chainId: chainId)
+    try validate(ethereumAddress: tokenAddress, label: "token address")
+    try validate(ethereumAddress: owner, label: "owner address")
+    try validate(ethereumAddress: spender, label: "spender address")
+    let hex = try await ethCall(
+      rpcUrl: rpcUrl,
+      to: tokenAddress,
+      data: ERC20Calldata.allowance(owner: owner, spender: spender),
+      block: atBlock
+    )
+    return try EthereumConverter.parseHexToBigUIntStrict(hex)
+  }
+
+  func getTransactionReceipt(
+    chainId: Int,
+    transactionHash: String
+  ) async throws -> MinedReceipt? {
+    guard transactionHash.range(of: Self.transactionHashPattern, options: .regularExpression) != nil
+    else {
+      throw RainSDKError.invalidConfig(details: "Invalid transaction hash: \(transactionHash)")
+    }
+    let rpcUrl = try resolveRpcUrl(chainId: chainId)
+    let response = try await jsonRpcClient.call(
+      rpcUrl: rpcUrl,
+      method: "eth_getTransactionReceipt",
+      params: [transactionHash]
+    )
+    // A pending transaction has a hash but no receipt, which the node reports as a null result.
+    guard let result = response["result"], !(result is NSNull) else { return nil }
+    guard let receipt = result as? [String: Any] else {
+      throw RainSDKError.internalLogicError(
+        details: "Malformed transaction receipt for \(transactionHash)"
+      )
+    }
+    guard let status = receipt["status"] as? String else {
+      throw RainSDKError.internalLogicError(
+        details: "Transaction receipt for \(transactionHash) carries no status field"
+      )
+    }
+    // Kept, not discarded: without it a caller can only read at whatever head answers next.
+    guard let blockNumber = receipt["blockNumber"] as? String else {
+      throw RainSDKError.internalLogicError(
+        details: "Transaction receipt for \(transactionHash) carries no blockNumber field"
+      )
+    }
+    guard blockNumber.range(of: Self.hexQuantityPattern, options: .regularExpression) != nil else {
+      throw RainSDKError.internalLogicError(
+        details: "Malformed receipt blockNumber for \(transactionHash): \(blockNumber)"
+      )
+    }
+    // Decoded as a quantity rather than matched against literals: nodes are inconsistent about
+    // minimal hex encoding, and a node answering "0x01" would otherwise make a perfectly good
+    // approval receipt read as malformed.
+    let succeeded: Bool
+    switch try EthereumConverter.parseHexToBigUIntStrict(status) {
+    case 1: succeeded = true
+    case 0: succeeded = false
+    default:
+      throw RainSDKError.internalLogicError(
+        details: "Malformed transaction receipt status for \(transactionHash): \(status)"
+      )
+    }
+    return MinedReceipt(succeeded: succeeded, blockNumber: blockNumber)
+  }
+
+  /// Issues a raw `eth_call` at `block` and returns the hex result. For read functions with
   /// pre-encoded `data` (no-arg selectors like `decimals()` / `symbol()`).
-  private func ethCall(rpcUrl: String, to: String, data: String) async throws -> String {
+  ///
+  /// A node that has not reached `block` errors instead of answering from older state — a retryable
+  /// failure, where a stale success would be undetectable.
+  private func ethCall(
+    rpcUrl: String,
+    to: String,
+    data: String,
+    block: String = BlockTag.latest
+  ) async throws -> String {
     let callParams: [String: Any] = ["to": to, "data": data]
     return try await jsonRpcClient.callForHexResult(
       rpcUrl: rpcUrl,
       method: "eth_call",
-      params: [callParams, "latest"]
+      params: [callParams, block]
     )
   }
 

@@ -72,6 +72,28 @@ public actor TokenMetadataStore {
     return enriched.info
   }
 
+  /// A contract token's decimals, or `nil` when they could not be established — the token is not
+  /// in the registry and its on-chain `decimals()` read failed.
+  ///
+  /// Unlike ``tokenInfo(chainId:address:)``, this never substitutes the 18-decimal default.
+  /// Callers that scale a *money amount* must use this: on an approval a guessed 18 against a
+  /// 6-decimal token would silently approve 10^12 times the intended allowance, and `approve`
+  /// has no balance to fail against, so nothing downstream would catch it.
+  public func decimals(chainId: Int, address: String) async -> Int? {
+    let key = address.lowercased()
+    if let known = knownTokens[chainId]?.first(where: { $0.address.lowercased() == key }) {
+      return known.decimals
+    }
+    if let cached = enrichmentCache[chainId]?[key] {
+      return cached.decimals
+    }
+    let enriched = await enrich(chainId: chainId, address: address)
+    guard enriched.decimalsResolved else { return nil }
+
+    enrichmentCache[chainId, default: [:]][key] = enriched.info
+    return enriched.info.decimals
+  }
+
   // MARK: - Enrichment
 
   /// An enrichment result plus whether `decimals` came from the chain or the fallback.

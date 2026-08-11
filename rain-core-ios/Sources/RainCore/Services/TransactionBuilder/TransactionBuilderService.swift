@@ -360,6 +360,67 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     
     return tx.data.hex()
   }
+
+  /// Builds ERC-20 `approve(spender, amount)` transaction data — the wallet-side prerequisite
+  /// for Rain's Auth Pull, where `spender` is the Rain operator.
+  ///
+  /// `amount` is in base units; `BigUInt` max encodes an unlimited allowance and `0` revokes.
+  func buildERC20ApproveData(
+    chainId: Int,
+    contractAddress: String,
+    walletAddress: String,
+    spender: String,
+    amount: BigUInt
+  ) async throws -> String {
+    // `BigUInt` is unbounded but the ABI word it encodes into is not, so a larger value would be
+    // silently truncated into a completely different allowance. Checked here as well as at the
+    // scaling layer, because this entry point also takes base units directly.
+    guard amount <= RainTokenAllowance.unlimitedRawAmount else {
+      throw RainSDKError.invalidAmount(
+        amount: amount.description,
+        reason: "approval amount must fit in uint256"
+      )
+    }
+    let rpcURL = try getRpcURL(chainId: chainId)
+    let ethereumFromAddress = EthereumAddress(hexString: walletAddress)
+
+    let web3 = Web3(rpcURL: rpcURL)
+    let contract = web3.eth.Contract(
+      type: GenericERC20Contract.self,
+      address: EthereumAddress(hexString: contractAddress)
+    )
+
+    guard let ethereumSpenderAddress = EthereumAddress(hexString: spender)
+    else {
+      RainLogger.error("Rain SDK: Error building ERC-20 approve parameters")
+      throw RainSDKError.internalLogicError(details: "Failed to encode ERC-20 approve")
+    }
+
+    let tx = contract
+      .approve(
+        spender: ethereumSpenderAddress,
+        value: amount
+      )
+      .createTransaction(
+        nonce: nil,
+        gasPrice: nil,
+        maxFeePerGas: nil,
+        maxPriorityFeePerGas: nil,
+        gasLimit: nil,
+        from: ethereumFromAddress,
+        value: 0,
+        accessList: [:],
+        transactionType: .legacy
+      )
+
+    guard let tx
+    else {
+      RainLogger.error("Rain SDK: Error building ERC-20 approve. Could not encode approve call")
+      throw RainSDKError.internalLogicError(details: "Failed to encode ERC-20 approve")
+    }
+
+    return tx.data.hex()
+  }
 }
 
 // MARK: - Helpers

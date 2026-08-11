@@ -170,6 +170,96 @@ public protocol RainClient: Sendable {
     decimals: Int?
   ) async throws -> RainTokenTransferResult
 
+  // MARK: - Token approvals (Auth Pull)
+
+  /// The chains this client will accept an Auth Pull approval on, and the only answer that matches
+  /// what the approval methods below enforce.
+  ///
+  /// Empty until `RainSdk.Builder.authPullConfig(_:)` supplies the trusted targets, and narrower
+  /// than ``RainAuthPullChains/supported(for:)`` whenever the configuration is narrower than its
+  /// environment or a chain has no RPC endpoint. Gate host UI on this rather than on the
+  /// environment's chain set, so a chain is never offered that an approval would reject.
+  var authPullChainIds: Set<Int> { get }
+
+  /// Approves `spender` to move up to `amount` of an ERC-20 token from this wallet, and returns
+  /// the resulting transaction hash.
+  ///
+  /// This is the wallet-side prerequisite for Rain's Auth Pull: the Rain operator must be
+  /// approved on the user's wallet before an authorization can pull USDC into their collateral
+  /// contract. Rain executes the pull itself; the SDK only sets the allowance.
+  ///
+  /// Auth Pull is disabled until `RainSdk.Builder.authPullConfig(_:)` supplies the trusted
+  /// operator and token targets. This method rejects any different chain, token, or spender.
+  ///
+  /// - Parameters:
+  ///   - chainId: EVM chain the token lives on. Solana chain IDs throw — SPL has no
+  ///     ERC-20-style allowance.
+  ///   - contractAddress: The ERC-20 token contract (USDC for Auth Pull today).
+  ///   - spender: The address being approved. Source Rain's operator address from Rain rather
+  ///     than hardcoding it — it differs between sandbox and production.
+  ///   - amount: Human-readable allowance (e.g. `250` for 250 USDC). `nil` approves an
+  ///     unlimited (`uint256` max) allowance, so the user never has to re-approve; `0` revokes
+  ///     an existing approval.
+  func approveTokenAllowance(
+    chainId: Int,
+    contractAddress: String,
+    spender: String,
+    amount: Decimal?
+  ) async throws -> RainTokenApprovalResult
+
+  /// Reads the ERC-20 allowance `spender` currently holds over `owner`'s balance.
+  ///
+  /// Call it before approving (to skip a redundant transaction) and after (to confirm the
+  /// approval was mined).
+  ///
+  /// - Parameters:
+  ///   - owner: The wallet whose balance is approved. `nil` reads this client's own wallet, which
+  ///     is the only case that touches the wallet provider at all.
+  func getTokenAllowance(
+    chainId: Int,
+    contractAddress: String,
+    owner: String?,
+    spender: String
+  ) async throws -> RainTokenAllowance
+
+  /// Estimates the total fee (estimated gas × gas price) to submit the approval, in the chain's
+  /// native token. Same parameters as
+  /// ``approveTokenAllowance(chainId:contractAddress:spender:amount:)``; nothing is broadcast and
+  /// no signature is requested.
+  func estimateApprovalFee(
+    chainId: Int,
+    contractAddress: String,
+    spender: String,
+    amount: Decimal?
+  ) async throws -> Decimal
+
+  /// Waits for an approval transaction to mine successfully, then reads back the resulting
+  /// allowance. A submitted transaction hash alone does not make Auth Pull ready.
+  ///
+  /// The returned allowance can legitimately be **lower** than `amount`: USDC decrements the
+  /// allowance on every `transferFrom`, so an authorization that pulls between the receipt and
+  /// this read leaves less than was approved. Compare ``RainTokenAllowance/rawAmount`` (or
+  /// ``RainTokenAllowance/covers(_:)``) against what you need rather than against what you asked
+  /// for. A revoke that left a spendable allowance, and an approval that mined against a
+  /// still-zero allowance, both throw.
+  ///
+  /// - Parameters:
+  ///   - transactionHash: The hash returned by `approveTokenAllowance`.
+  ///   - amount: The allowance that was requested, so the result can be checked against it. `nil`
+  ///     means the unlimited approval.
+  ///   - owner: The wallet whose allowance to read. `nil` reads this client's own wallet.
+  /// - Throws: `RainSDKError.transactionSimulationFailed` when the mined transaction reverted,
+  ///   `.networkError` when confirmation times out, and `.internalLogicError` when the mined
+  ///   allowance contradicts the request.
+  func confirmTokenAllowance(
+    transactionHash: String,
+    chainId: Int,
+    contractAddress: String,
+    spender: String,
+    amount: Decimal?,
+    owner: String?
+  ) async throws -> RainTokenAllowance
+
   // MARK: - Token metadata
 
   /// Registers token metadata so balance and transfer calls can resolve symbol/decimals without an
@@ -256,6 +346,93 @@ public extension RainClient {
       to: to,
       amount: amount,
       decimals: nil
+    )
+  }
+
+  /// Auth Pull disabled, for a conformer that predates the trusted configuration. Defaulted rather
+  /// than required so adding this did not break existing conformers, and `[]` is the safe answer:
+  /// it advertises no chain the approval guard has not been told to accept.
+  var authPullChainIds: Set<Int> { [] }
+
+  /// Approves an **unlimited** allowance for `spender`, so the user never has to re-approve.
+  /// This is what Rain recommends for Auth Pull. Pass an explicit `amount` to cap it, or `0` to
+  /// revoke.
+  ///
+  /// Reduced-arity on purpose: a full-signature extension member would be a self-calling default
+  /// witness.
+  func approveTokenAllowance(
+    chainId: Int,
+    contractAddress: String,
+    spender: String
+  ) async throws -> RainTokenApprovalResult {
+    try await approveTokenAllowance(
+      chainId: chainId,
+      contractAddress: contractAddress,
+      spender: spender,
+      amount: nil
+    )
+  }
+
+  /// Reads the allowance `spender` holds over this client's own wallet.
+  func getTokenAllowance(
+    chainId: Int,
+    contractAddress: String,
+    spender: String
+  ) async throws -> RainTokenAllowance {
+    try await getTokenAllowance(
+      chainId: chainId,
+      contractAddress: contractAddress,
+      owner: nil,
+      spender: spender
+    )
+  }
+
+  /// Estimates the fee for an unlimited approval.
+  func estimateApprovalFee(
+    chainId: Int,
+    contractAddress: String,
+    spender: String
+  ) async throws -> Decimal {
+    try await estimateApprovalFee(
+      chainId: chainId,
+      contractAddress: contractAddress,
+      spender: spender,
+      amount: nil
+    )
+  }
+
+  /// Confirms an approval against this client's own wallet.
+  func confirmTokenAllowance(
+    transactionHash: String,
+    chainId: Int,
+    contractAddress: String,
+    spender: String,
+    amount: Decimal?
+  ) async throws -> RainTokenAllowance {
+    try await confirmTokenAllowance(
+      transactionHash: transactionHash,
+      chainId: chainId,
+      contractAddress: contractAddress,
+      spender: spender,
+      amount: amount,
+      owner: nil
+    )
+  }
+
+  /// Confirms an unlimited approval against this client's own wallet.
+  func confirmTokenAllowance(
+    transactionHash: String,
+    chainId: Int,
+    contractAddress: String,
+    spender: String
+  ) async throws -> RainTokenAllowance {
+    try await confirmTokenAllowance(
+      transactionHash: transactionHash,
+      chainId: chainId,
+      contractAddress: contractAddress,
+      spender: spender,
+      amount: nil,
+      owner: nil
     )
   }
 

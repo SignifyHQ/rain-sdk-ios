@@ -212,6 +212,29 @@ internal final class SolanaChainReader: ChainReader, @unchecked Sendable {
     nil
   }
 
+  /// SPL has no ERC-20 allowance: a delegate is approved on a token account, not by
+  /// (owner, spender) pair on the mint. Throws rather than reporting a misleading zero.
+  func getERC20Allowance(
+    chainId: Int,
+    tokenAddress: String,
+    owner: String,
+    spender: String,
+    atBlock: String
+  ) async throws -> BigUInt {
+    throw RainSDKError.internalLogicError(
+      details: "ERC-20 allowances are not supported on Solana (chainId=\(chainId))"
+    )
+  }
+
+  func getTransactionReceipt(
+    chainId: Int,
+    transactionHash: String
+  ) async throws -> MinedReceipt? {
+    throw RainSDKError.internalLogicError(
+      details: "EVM transaction receipts are not supported on Solana (chainId=\(chainId))"
+    )
+  }
+
   private func validate(solanaAddress address: String) throws {
     let valid = ((try? Base58.decode(address))?.count == 32)
     guard valid else {

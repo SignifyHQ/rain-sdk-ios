@@ -1,7 +1,7 @@
 import Foundation
 
 extension Multicall3 {
-  /// Mainnet Rain chain IDs where Multicall3 is at `canonicalAddress`.
+  /// Rain chain IDs where Multicall3 is at `canonicalAddress`.
   /// Used to batch read native + ERC-20 balances.
   static let canonicallyDeployedChainIds: Set<Int> = [
     1,       // Ethereum
@@ -16,6 +16,8 @@ extension Multicall3 {
     42220,   // Celo
     43114,   // Avalanche
     57073,   // Ink
+    84532,   // Base Sepolia
+    421614,  // Arbitrum Sepolia
   ]
 
   /// True when Multicall3 is known-deployed at `canonicalAddress` on the given chain.

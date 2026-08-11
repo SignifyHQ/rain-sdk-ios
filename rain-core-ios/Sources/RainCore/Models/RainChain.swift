@@ -9,6 +9,13 @@ public enum RainChain {
   public static let avalancheMainnet = 43114
   public static let avalancheTestnet = 43113
 
+  // Auth Pull chains — Rain pulls authorization amounts from the user's wallet on these.
+  // Base / Arbitrum in production, their Sepolia testnets in sandbox.
+  public static let baseMainnet = 8453
+  public static let baseSepolia = 84532
+  public static let arbitrumMainnet = 42161
+  public static let arbitrumSepolia = 421614
+
   public static let solanaMainnet = 900
   public static let solanaTestnet = 902
   public static let solanaDevnet = 901

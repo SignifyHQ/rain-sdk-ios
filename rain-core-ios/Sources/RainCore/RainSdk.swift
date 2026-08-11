@@ -26,6 +26,25 @@ public final class RainSdk: @unchecked Sendable {
   private let rainApiConfig: RainApiConfigStore
   private let rainApiService: RainApiService
 
+  /// Auth Pull targets for this instance, handed to every resolved client so an approval cannot
+  /// target another environment's chains, another token, or another spender.
+  ///
+  /// Narrowed to chains that actually have an RPC endpoint: the allowance read and the approval
+  /// both go out over `rpcEndpoints`, so a configured chain with no endpoint could never work.
+  private let authPullTokenAddresses: [Int: String]
+  private let authPullOperator: String?
+
+  /// The chains Auth Pull is actually enabled on for *this* instance — the configured
+  /// ``RainAuthPullConfig``'s chains intersected with the chains that have an RPC endpoint. Empty
+  /// when no ``Builder/authPullConfig(_:)`` was supplied.
+  ///
+  /// This, not ``RainAuthPullChains/supported(for:)``, is what the approval guard enforces. Gate
+  /// host UI on it: `supported(for:)` answers for an environment, this answers for the SDK the host
+  /// built, and the two differ whenever a config is narrower than its environment, an RPC endpoint
+  /// is missing, or the environment is `.custom` — which `supported(for:)` reports as empty however
+  /// the gateway is configured.
+  public let authPullChainIds: Set<Int>
+
   // Resolved clients are cached by provider id (lazy, resolved-once). We cache the *in-flight
   // resolution Task*, not the finished client, so concurrent first-resolutions of the same id
   // share one Task and `create(context:)` runs exactly once. Boxed in a class so we can identity-
@@ -43,6 +62,7 @@ public final class RainSdk: @unchecked Sendable {
     registrationOrder: [ProviderId],
     registeredTokens: [TokenInfo],
     rainApiEnvironment: RainApiEnvironment,
+    authPullConfig: RainAuthPullConfig?,
     initialRainApiCredentials: (apiKey: String, userId: String)?
   ) {
     self.networkConfigs = networkConfigs
@@ -66,6 +86,12 @@ public final class RainSdk: @unchecked Sendable {
       transactionBuilder: builder,
       evmChainReader: reader
     )
+
+    let trustedTokens = (authPullConfig?.tokenAddresses ?? [:])
+      .filter { endpoints[$0.key] != nil }
+    self.authPullTokenAddresses = trustedTokens
+    self.authPullOperator = authPullConfig?.operatorAddress
+    self.authPullChainIds = Set(trustedTokens.keys)
 
     let apiConfig = RainApiConfigStore(baseURL: rainApiEnvironment.baseURL)
     if let credentials = initialRainApiCredentials {
@@ -114,7 +140,11 @@ public final class RainSdk: @unchecked Sendable {
           transactionBuilder: transactionBuilder,
           tokenStore: tokenStore,
           providerId: descriptor.id,
-          capabilities: descriptor.capabilities
+          capabilities: descriptor.capabilities,
+          chainReader: evmChainReader,
+          authPullChainIds: authPullChainIds,
+          authPullOperator: authPullOperator,
+          authPullTokenAddresses: authPullTokenAddresses
         )
       }
       let newBox = ResolveBox(task)
@@ -349,6 +379,7 @@ public final class RainSdk: @unchecked Sendable {
     private var registrationOrder: [ProviderId] = []
     private var registeredTokens: [TokenInfo] = []
     private var rainApiEnvironment: RainApiEnvironment = .dev
+    private var authPullConfig: RainAuthPullConfig?
     private var rainApiCredentials: (apiKey: String, userId: String)?
 
     public init() {}
@@ -391,6 +422,14 @@ public final class RainSdk: @unchecked Sendable {
       return self
     }
 
+    /// Enables Auth Pull for the exact operator and token contracts in `config`. Without this
+    /// call, approval, allowance read, confirmation, and approval-fee methods fail closed.
+    @discardableResult
+    public func authPullConfig(_ config: RainAuthPullConfig) -> Builder {
+      authPullConfig = config
+      return self
+    }
+
     /// Optionally supplies the Rain program Api-Key and userId at build time — same effect
     /// as calling ``RainSdk/configureRainApi(apiKey:userId:)`` on the built instance.
     @discardableResult
@@ -422,14 +461,89 @@ public final class RainSdk: @unchecked Sendable {
           details: "Invalid Rain API base URL: \(rainApiEnvironment.baseURL.absoluteString)"
         )
       }
+      try validateAuthPullConfig()
       return RainSdk(
         networkConfigs: networkConfigs,
         descriptors: descriptors,
         registrationOrder: registrationOrder,
         registeredTokens: registeredTokens,
         rainApiEnvironment: rainApiEnvironment,
+        authPullConfig: authPullConfig,
         initialRainApiCredentials: rainApiCredentials
       )
+    }
+
+    /// The zero address is syntactically valid and approving it burns the allowance silently, so
+    /// it is rejected alongside malformed input.
+    private static let zeroAddress = "0x0000000000000000000000000000000000000000"
+
+    /// Rejects an Auth Pull configuration that cannot be the one Rain uses: a malformed or zero
+    /// operator or token, an empty target set, an environment mismatch, a chain outside the known
+    /// Auth Pull sets, or no RPC endpoint for any configured chain.
+    private func validateAuthPullConfig() throws {
+      guard let config = authPullConfig else { return }
+
+      guard config.operatorAddress.isValidEthereumAddress else {
+        throw RainSDKError.invalidConfig(
+          details: "Invalid Auth Pull operator: \(config.operatorAddress)"
+        )
+      }
+      guard config.operatorAddress.caseInsensitiveCompare(Self.zeroAddress) != .orderedSame else {
+        throw RainSDKError.invalidConfig(
+          details: "Auth Pull operator must not be the zero address"
+        )
+      }
+      guard !config.tokenAddresses.isEmpty else {
+        throw RainSDKError.invalidConfig(
+          details: "Auth Pull must configure at least one token contract"
+        )
+      }
+
+      let expectedKind: RainAuthPullConfig.Kind
+      switch rainApiEnvironment {
+      case .dev: expectedKind = .sandbox
+      case .production: expectedKind = .production
+      case .custom: expectedKind = .custom
+      }
+      guard config.kind == expectedKind else {
+        throw RainSDKError.invalidConfig(
+          details: "Auth Pull configuration does not match the configured Rain API environment"
+        )
+      }
+
+      // A custom gateway can front either environment, so its chains are checked against both
+      // known sets rather than against an environment answer that is deliberately empty.
+      let allowedChains: Set<Int>
+      if case .custom = rainApiEnvironment {
+        allowedChains = RainAuthPullChains.sandbox.union(RainAuthPullChains.production)
+      } else {
+        allowedChains = RainAuthPullChains.supported(for: rainApiEnvironment)
+      }
+      let unexpected = Set(config.tokenAddresses.keys).subtracting(allowedChains)
+      guard unexpected.isEmpty else {
+        throw RainSDKError.invalidConfig(
+          details: """
+            Auth Pull chains \(unexpected.sorted()) do not match the configured Rain API environment
+            """
+        )
+      }
+
+      for (chainId, address) in config.tokenAddresses {
+        guard address.isValidEthereumAddress,
+              address.caseInsensitiveCompare(Self.zeroAddress) != .orderedSame
+        else {
+          throw RainSDKError.invalidConfig(
+            details: "Invalid Auth Pull token contract for chainId=\(chainId): \(address)"
+          )
+        }
+      }
+
+      let configuredChains = Set(networkConfigs.map(\.chainId))
+      guard !configuredChains.isDisjoint(with: config.tokenAddresses.keys) else {
+        throw RainSDKError.invalidConfig(
+          details: "No RPC endpoint configured for any trusted Auth Pull chain"
+        )
+      }
     }
   }
 }
