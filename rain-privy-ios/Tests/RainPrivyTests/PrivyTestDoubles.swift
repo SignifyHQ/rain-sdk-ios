@@ -135,6 +135,7 @@ final class FakeSolanaAccount: PrivySolanaAccount, @unchecked Sendable {
 final class FakeSigner: PrivyEthereumSigner, @unchecked Sendable {
   private let lock = NSLock()
   private var _events: [String] = []
+  private var _requestParams: [[String]] = []
 
   let address: String
   var requestResult: Result<String, Error>
@@ -156,6 +157,12 @@ final class FakeSigner: PrivyEthereumSigner, @unchecked Sendable {
     return _events
   }
 
+  /// Raw params of each `request` call, so a test can assert calldata reaches Privy unchanged.
+  var requestParams: [[String]] {
+    lock.lock(); defer { lock.unlock() }
+    return _requestParams
+  }
+
   private func record(_ event: String) {
     lock.lock(); defer { lock.unlock() }
     _events.append(event)
@@ -163,6 +170,7 @@ final class FakeSigner: PrivyEthereumSigner, @unchecked Sendable {
 
   func request(_ request: EthereumRpcRequest) async throws -> String {
     record("request:\(request.method)")
+    lock.withLock { _requestParams.append(request.params) }
     if requestDelayNs > 0 {
       try? await Task.sleep(nanoseconds: requestDelayNs)
     }

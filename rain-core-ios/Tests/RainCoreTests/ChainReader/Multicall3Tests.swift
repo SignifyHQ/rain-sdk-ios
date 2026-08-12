@@ -139,7 +139,7 @@ struct Multicall3Tests {
     }
   }
 
-  @Test("canonicallyDeployedChainIds matches every TokenRegistry mainnet chain")
+  @Test("canonicallyDeployedChainIds matches every TokenRegistry chain")
   func testCanonicalChainsMatchTokenRegistry() {
     let registryChainIds = Set(TokenRegistry.tokensByChainId.keys)
     #expect(Multicall3.canonicallyDeployedChainIds == registryChainIds)

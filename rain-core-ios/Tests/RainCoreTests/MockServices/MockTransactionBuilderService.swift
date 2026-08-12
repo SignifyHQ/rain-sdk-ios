@@ -123,6 +123,41 @@ final class MockTransactionBuilderService: TransactionBuilderProtocol {
     return "0xa9059cbb" + String(repeating: "0", count: 128)
   }
 
+  /// Arguments an `approve` encode was asked for. Approval tests assert on these instead of
+  /// re-deriving calldata (the golden suite pins the real encoding).
+  struct ApproveCall: Equatable {
+    let chainId: Int
+    let contractAddress: String
+    let walletAddress: String
+    let spender: String
+    let amount: BigUInt
+  }
+
+  private(set) var approveCalls: [ApproveCall] = []
+  var stubbedApproveData = "0x095ea7b3" + String(repeating: "0", count: 128)
+  /// When set, encoding the approval throws it.
+  var stubbedApproveError: Error?
+
+  func buildERC20ApproveData(
+    chainId: Int,
+    contractAddress: String,
+    walletAddress: String,
+    spender: String,
+    amount: BigUInt
+  ) async throws -> String {
+    approveCalls.append(
+      ApproveCall(
+        chainId: chainId,
+        contractAddress: contractAddress,
+        walletAddress: walletAddress,
+        spender: spender,
+        amount: amount
+      )
+    )
+    if let stubbedApproveError { throw stubbedApproveError }
+    return stubbedApproveData
+  }
+
   func encodeBalanceOfCall(walletAddress: String, chainId: Int) async throws -> String {
     // Mock balanceOf(address) calldata: selector + zero-padded address
     let selector = "70a08231"

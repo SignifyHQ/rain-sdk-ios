@@ -11,6 +11,8 @@ final class StubWalletProvider: RainWalletProvider, @unchecked Sendable {
   var balancesToReturn: [Balance] = []
   var transactionsToReturn: [RainTransaction] = []
   var sendTransactionHashToReturn: String = "0x" + String(repeating: "0", count: 64)
+  /// When set, `sendTransaction` throws it — drives user-rejection and revert paths.
+  var sendTransactionError: Error?
 
   /// Per-chain overrides for `getBalances`. When a chainId has an entry, it takes
   /// precedence over `balancesToReturn`.
@@ -27,6 +29,7 @@ final class StubWalletProvider: RainWalletProvider, @unchecked Sendable {
 
   func sendTransaction(chainId: Int, params: WalletTransactionParams) async throws -> String {
     sendTransactionCalls.append((chainId, params))
+    if let sendTransactionError { throw sendTransactionError }
     return sendTransactionHashToReturn
   }
 

@@ -119,6 +119,18 @@ final class MockTransactionBuilderService: TransactionBuilderProtocol {
     return "0xa9059cbb" + String(repeating: "0", count: 128)
   }
 
+  var stubbedApproveData = "0x095ea7b3" + String(repeating: "0", count: 128)
+
+  func buildERC20ApproveData(
+    chainId: Int,
+    contractAddress: String,
+    walletAddress: String,
+    spender: String,
+    amount: BigUInt
+  ) async throws -> String {
+    stubbedApproveData
+  }
+
   func encodeBalanceOfCall(walletAddress: String, chainId: Int) async throws -> String {
     // Mock balanceOf(address) calldata: selector + zero-padded address
     let selector = "70a08231"

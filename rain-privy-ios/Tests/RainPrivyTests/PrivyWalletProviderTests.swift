@@ -166,6 +166,38 @@ struct PrivyWalletProviderTests {
     #expect(signer.events == ["switch:\(Self.chainId)", "request:eth_sendTransaction"])
   }
 
+  @Test("ERC-20 approve calldata reaches Privy unchanged through the generic send path")
+  func approveCalldataBroadcastsUnchanged() async throws {
+    let host = "send-approve.rpc"
+    StubURLProtocol.setHandler(host: host) { body in
+      body["method"] as? String == "eth_call"
+        ? RpcStub.result("0x")
+        : RpcStub.error(code: -32601, message: "unexpected method")
+    }
+
+    // approve(0x5a6E…8f29, uint256 max) — the Auth Pull approval.
+    let approveCalldata = "0x095ea7b3"
+      + "0000000000000000000000005a6e6b0d5ea051cfff9b3dcc2aa8dac226458f29"
+      + String(repeating: "f", count: 64)
+    let token = "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+
+    let signer = FakeSigner(address: Self.wallet, requestResult: .success("0xAPPROVEHASH"))
+    let manager = PrivyManager(source: FakeWalletSource(wallets: [signer]))
+    let provider = try await Self.makeProvider(host: host, manager: manager)
+
+    let hash = try await provider.sendTransaction(
+      chainId: Self.chainId,
+      params: WalletTransactionParams(
+        from: Self.wallet, to: token, value: "0x0", data: approveCalldata)
+    )
+
+    #expect(hash == "0xAPPROVEHASH")
+    #expect(signer.events == ["switch:\(Self.chainId)", "request:eth_sendTransaction"])
+    let broadcast = try #require(signer.requestParams.first?.first)
+    #expect(broadcast.contains(approveCalldata))
+    #expect(broadcast.contains(token))
+  }
+
   @Test("a failing eth_call simulation surfaces as transactionSimulationFailed without broadcasting")
   func simulationFailureBlocksBroadcast() async throws {
     let host = "send-sim-fail.rpc"
