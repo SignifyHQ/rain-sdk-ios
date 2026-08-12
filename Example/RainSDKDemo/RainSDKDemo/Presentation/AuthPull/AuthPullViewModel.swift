@@ -37,6 +37,11 @@ final class AuthPullViewModel: ObservableObject {
   /// request cannot write over newer state. `Task.isCancelled` alone misses the case where the
   /// request already finished awaiting and is about to publish.
   private var generation = 0
+  /// Which request owns an in-flight flag, per action. Separate from `generation` because that also
+  /// moves on a form edit: gating a flag reset on it strands the flag true whenever a request is
+  /// superseded rather than completed, and the flag is what disables the controls.
+  private var approvalRun = 0
+  private var readRun = 0
 
   init() {
     self.session = .shared
@@ -85,7 +90,8 @@ final class AuthPullViewModel: ObservableObject {
     approvalStatus = nil
     errorText = nil
     isApproving = false
-    // The cancelled read returns before clearing this, so reset it here or the spinner sticks.
+    // Cleared now rather than whenever the superseded read returns, so the new chain's card does not
+    // open on the old chain's spinner.
     isLoadingAllowance = false
     guard supportsAuthPull(chain) else { return }
     refreshAllowance(chain: chain)
@@ -101,7 +107,13 @@ final class AuthPullViewModel: ObservableObject {
 
     readTask?.cancel()
     let requestGeneration = generation
+    readRun += 1
+    let requestRun = readRun
     readTask = Task {
+      // The newest read owns the spinner, and clears it however it ends. `getTokenAllowance` is not
+      // cancellation-aware, so a superseded read still reaches here and must not clear a spinner it
+      // no longer owns.
+      defer { if requestRun == readRun { isLoadingAllowance = false } }
       do {
         let allowance = try await session.requireClient().getTokenAllowance(
           chainId: chain.chainId,
@@ -112,20 +124,21 @@ final class AuthPullViewModel: ObservableObject {
           "AuthPull.allowance",
           "raw=\(allowance.rawAmount) decimals=\(allowance.decimals) unlimited=\(allowance.isUnlimited)"
         )
-        guard requestGeneration == generation else { return }
+        // `readRun` as well as `generation`: two reads started without an intervening form edit
+        // share a generation, and the older one must not publish over the newer one's answer.
+        guard requestRun == readRun, requestGeneration == generation else { return }
         isUnlimitedAllowance = allowance.isUnlimited
         isRevokedAllowance = allowance.isZero
         // An unlimited allowance formats to ~1.16e71 USDC, which is noise — label it instead.
         allowanceText = allowance.isUnlimited ? "Unlimited" : allowance.formatted
       } catch {
         SampleLog.e("AuthPull.allowance", "failed: \(error.localizedDescription)")
-        guard requestGeneration == generation else { return }
+        guard requestRun == readRun, requestGeneration == generation else { return }
         errorText = "Could not read allowance: \(error.localizedDescription)"
         allowanceText = nil
         isUnlimitedAllowance = false
         isRevokedAllowance = false
       }
-      if requestGeneration == generation { isLoadingAllowance = false }
     }
   }
 
@@ -177,7 +190,16 @@ final class AuthPullViewModel: ObservableObject {
       errorText = "Invalid amount"
       return
     }
+    submitApproval(chain: chain, amount: approvalAmount)
+  }
 
+  /// Revokes by approving zero — the same call, with an explicit zero amount.
+  func revoke(chain: WalletChain) {
+    guard validate(chain: chain) else { return }
+    submitApproval(chain: chain, amount: 0)
+  }
+
+  private func submitApproval(chain: WalletChain, amount approvalAmount: Decimal?) {
     SampleLog.i(
       "AuthPull.approve",
       "token=\(tokenAddress) spender=\(operatorAddress) amount=\(approvalAmount.map(String.init(describing:)) ?? "unlimited")"
@@ -187,12 +209,15 @@ final class AuthPullViewModel: ObservableObject {
     estimateTask?.cancel()
     approvalTask?.cancel()
     let requestGeneration = generation
+    approvalRun += 1
+    let requestRun = approvalRun
     isApproving = true
     errorText = nil
     txHash = nil
     approvalStatus = "Submitting approval"
 
     approvalTask = Task {
+      defer { if requestRun == approvalRun { isApproving = false } }
       do {
         let client = try session.requireClient()
         let result = try await client.approveTokenAllowance(
@@ -215,7 +240,6 @@ final class AuthPullViewModel: ObservableObject {
         )
         SampleLog.i("AuthPull.approve", "confirmed allowance=\(confirmed.rawAmount)")
         guard requestGeneration == generation else { return }
-        isApproving = false
         approvalStatus = "Confirmed on-chain"
         allowanceText = confirmed.isUnlimited ? "Unlimited" : confirmed.formatted
         isUnlimitedAllowance = confirmed.isUnlimited
@@ -223,18 +247,10 @@ final class AuthPullViewModel: ObservableObject {
       } catch {
         SampleLog.e("AuthPull.approve", "failed: \(error.localizedDescription)")
         guard requestGeneration == generation else { return }
-        isApproving = false
         approvalStatus = "Approval not confirmed"
         errorText = "Approval failed or was not confirmed: \(error.localizedDescription)"
       }
     }
-  }
-
-  /// Revokes by approving zero — the same call, with an explicit zero amount.
-  func revoke(chain: WalletChain) {
-    isUnlimited = false
-    amount = "0"
-    approve(chain: chain)
   }
 
   // MARK: - Helpers
