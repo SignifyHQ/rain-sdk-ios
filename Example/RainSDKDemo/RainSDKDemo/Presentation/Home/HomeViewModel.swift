@@ -152,7 +152,7 @@ final class HomeViewModel: ObservableObject {
 
   /// Portal holds no Solana account, so it only ever operates on the EVM chains.
   var availableChains: [WalletChain] {
-    WalletChain.allCases.filter { mode != .portal || !$0.isSolana }
+    WalletChain.selectable.filter { mode != .portal || !$0.isSolana }
   }
 
   func onModeChanged(_ mode: WalletMode) {
