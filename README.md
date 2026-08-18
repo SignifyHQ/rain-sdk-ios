@@ -383,6 +383,8 @@ let rain = try RainSdk.builder()
     .register(provider)
     .build()
 
+let client = try await rain.provider(provider.id)
+
 // 1. What can the operator move today?
 let allowance = try await client.getTokenAllowance(
     chainId: RainChain.baseSepolia,

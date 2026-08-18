@@ -73,6 +73,14 @@ struct Erc20ApproveCalldataGoldenTests {
     #expect(fromDecimal == fromBaseUnits)
   }
 
+  @Test("an amount past uint256 max is rejected before encoding")
+  func aboveUint256MaxRejected() async {
+    // The ABI word would silently truncate it into a completely different allowance.
+    await #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+      _ = try await approveCalldata(amount: RainTokenAllowance.unlimitedRawAmount + 1)
+    }
+  }
+
   @Test("unlimitedRawAmount is exactly uint256 max")
   func unlimitedRawAmountIsUint256Max() {
     #expect(RainTokenAllowance.unlimitedRawAmount == BigUInt(2).power(256) - 1)

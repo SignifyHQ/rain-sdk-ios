@@ -38,6 +38,7 @@ module isn't linked simply can't be registered.
 | `providerIds` | `Set<ProviderId>` | Ids of every provider the host registered. |
 | `providers` | `[any RainProvider]` | The registered provider descriptors (registration order), for capability resolution. |
 | `isRainApiConfigured` | `Bool` | True once a Rain Api-Key and userId have been supplied (builder or `configureRainApi`). |
+| `authPullChainIds` | `Set<Int>` | Chains Auth Pull is enabled on for this instance: the configured `RainAuthPullConfig`'s chains intersected with the chains that have an RPC endpoint. Empty when no `authPullConfig(_:)` was supplied. Also exposed on `RainClient`; see [authPullChainIds](#authpullchainids). |
 
 ### Methods
 
@@ -222,7 +223,8 @@ never names a vendor SDK itself.
 | `registerTokens(_ tokens: [TokenInfo])` | Seeds the shared token store with extra token metadata. |
 | `rainApiEnvironment(_ environment: RainApiEnvironment)` | Selects the Rain issuing API environment (default `.dev`). |
 | `rainApiCredentials(apiKey:userId:)` | Optionally supplies the Rain Api-Key / userId at build time. |
-| `build() throws -> RainSdk` | Validates endpoints (fail-fast on a bad URL / chain id) and returns the SDK. Throws `RainSDKError.invalidConfig` on invalid RPC endpoints. Providers are optional: building with none yields a wallet-agnostic `RainSdk`. |
+| `authPullConfig(_ config: RainAuthPullConfig)` | Enables Auth Pull for the exact operator and token contracts in `config` (`.sandbox(operatorAddress:)` / `.production(operatorAddress:)` / `.custom(operatorAddress:tokenAddresses:)`). Without it, the approval, allowance, confirmation, and approval-fee methods fail closed. See [AUTH_PULL.md](AUTH_PULL.md). |
+| `build() throws -> RainSdk` | Validates endpoints (fail-fast on a bad URL / chain id) and returns the SDK. Throws `RainSDKError.invalidConfig` on invalid RPC endpoints, and on an invalid Auth Pull configuration: a malformed or zero operator or token address, an empty token map, an environment mismatch, a chain outside the known Auth Pull sets, or no RPC endpoint for any configured Auth Pull chain. Providers are optional: building with none yields a wallet-agnostic `RainSdk`. |
 
 ### Provider adapters
 
@@ -809,6 +811,8 @@ Bundled providers: **Portal** → `.export`, `.recovery`. **Turnkey** → `.mult
 | **`RainTokenTransferResult`** | `transactionHash` (String): on-chain hash (EVM) or signature (Solana). Returned by `sendNative` and `sendToken`. |
 | **`RainTokenApprovalResult`** | `transactionHash` (String): hash of the ERC-20 `approve` call. Returned by `approveTokenAllowance`. |
 | **`RainTokenAllowance`** | Exact allowance value type; see [RainTokenAllowance](#raintokenallowance). |
+| **`RainAuthPullConfig`** | Trusted Auth Pull targets for one environment: `operatorAddress` plus a `chainId → token contract` map. Built via `.sandbox(operatorAddress:)`, `.production(operatorAddress:)`, or `.custom(operatorAddress:tokenAddresses:)`; passed to `RainSdk.Builder.authPullConfig(_:)`. |
+| **`RainAuthPullChains`** | The Auth Pull chain sets by environment: `.sandbox` (Base Sepolia, Arbitrum Sepolia), `.production` (Base, Arbitrum), `supported(for:)`, `isSupported(chainId:in:)`. Answers for an *environment*; gate UI on `authPullChainIds`, which answers for the built SDK. |
 | **`RainChain`** | Pinned chain IDs: `.baseMainnet` (8453), `.baseSepolia` (84532), `.arbitrumMainnet` (42161), `.arbitrumSepolia` (421614), `.avalancheMainnet` / `.avalancheTestnet`, and the Solana sentinels. |
 | **`RainTransactionParameters`** | `from`, `to`, `value` (hex wei), `data` (hex calldata). Wallet-agnostic parameter bag returned by `buildTransactionParameters`. |
 | **`Token`** | `.native` or `.contract(address:)`; contract equality is case-insensitive. |
