@@ -170,7 +170,8 @@ struct PortalProviderSessionTests {
 
     #expect(hash == "0x" + String(repeating: "a", count: 64))
     #expect(dead.requestCalls.map(\.method) == [.eth_call])
-    #expect(fresh.requestCalls.map(\.method) == [.eth_call, .eth_sendTransaction])
+    // eth_call preflights the send; eth_blockNumber bounds the UserOperation scan that follows it.
+    #expect(fresh.requestCalls.map(\.method) == [.eth_call, .eth_blockNumber, .eth_sendTransaction])
     // onPortalCreated only fires for concrete Portal instances; mocks are not, so none here.
     #expect(created.value == 0)
   }

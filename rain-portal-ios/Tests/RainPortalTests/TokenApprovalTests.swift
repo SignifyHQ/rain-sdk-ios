@@ -72,6 +72,55 @@ struct PortalTokenApprovalTests {
     }
   }
 
+  /// Where the Portal environment has Account Abstraction enabled, `eth_sendTransaction` returns a
+  /// UserOperation hash that no node can answer for. The adapter must hand back the transaction the
+  /// operation was mined in, or every confirmation downstream polls a hash that does not exist.
+  @Test("a UserOperation hash resolves to the transaction it was mined in")
+  func approvalResolvesUserOperationHash() async throws {
+    let minedHash = "0x" + String(repeating: "b", count: 64)
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+    mockPortal.stubUserOperation(
+      chainId: RainChain.baseSepolia,
+      transactionHash: minedHash,
+      succeeded: true
+    )
+    let (manager, portal, builder) = portalManager(portal: mockPortal)
+    builder.stubbedApproveData = "0x095ea7b3deadbeef"
+
+    let result = try await manager.approveTokenAllowance(
+      chainId: RainChain.baseSepolia,
+      contractAddress: TestFixtures.tokenAddress,
+      spender: spender
+    )
+
+    #expect(result.transactionHash == minedHash)
+    #expect(portal.requestCalls.map(\.method).contains(.eth_getLogs))
+  }
+
+  /// An operation can be included and still revert inside the account. The bundler's transaction
+  /// succeeds either way, so the event's own success flag is the only thing that answers.
+  @Test("a reverted UserOperation throws rather than reporting a mined transaction")
+  func approvalRejectsRevertedUserOperation() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+    mockPortal.stubUserOperation(
+      chainId: RainChain.baseSepolia,
+      transactionHash: "0x" + String(repeating: "c", count: 64),
+      succeeded: false
+    )
+    let (manager, _, builder) = portalManager(portal: mockPortal)
+    builder.stubbedApproveData = "0x095ea7b3deadbeef"
+
+    await #expect(throws: RainSDKError.self) {
+      _ = try await manager.approveTokenAllowance(
+        chainId: RainChain.baseSepolia,
+        contractAddress: TestFixtures.tokenAddress,
+        spender: spender
+      )
+    }
+  }
+
   @Test("a Portal failure on the approval is mapped, not leaked")
   func approvalPortalErrorIsMapped() async throws {
     let mockPortal = MockPortal()

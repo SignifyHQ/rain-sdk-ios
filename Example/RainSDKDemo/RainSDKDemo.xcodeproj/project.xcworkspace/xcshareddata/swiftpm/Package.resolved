@@ -114,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/portal-hq/PortalSwift.git",
       "state" : {
-        "revision" : "94022b1a55bde4f588edeb8fab04670f636ec89d",
-        "version" : "7.1.0"
+        "revision" : "3453b7e2fccdd514a6421fea9eba2d183be45856",
+        "version" : "7.3.0"
       }
     },
     {

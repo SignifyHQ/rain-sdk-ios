@@ -105,6 +105,9 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
       throw RainSDKError.transactionSimulationFailed(underlying: error)
     }
 
+    // Read before the submit, so the UserOperation scan below has a lower bound to search from.
+    let submittedFrom = await currentBlockNumber(chainIdString)
+
     let response = try await portal.request(
       chainId: chainIdString,
       method: .eth_sendTransaction,
@@ -115,8 +118,108 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     guard let txHash = response.result as? String else {
       throw RainSDKError.internalLogicError(details: "eth_sendTransaction returned no transaction hash")
     }
-    
-    return txHash
+
+    return try await minedTransactionHash(for: txHash, chainId: chainIdString, fromBlock: submittedFrom)
+  }
+
+  // MARK: - Account abstraction
+
+  /// Where the Portal environment has Account Abstraction enabled on a chain, `eth_sendTransaction`
+  /// returns a UserOperation hash rather than a transaction hash. No node has heard of that hash,
+  /// so a receipt poll on it never terminates. Resolve it through the EntryPoint's
+  /// `UserOperationEvent` and return the hash the operation was actually mined under, keeping the
+  /// port's contract (a hash the chain can answer for) true on both kinds of chain.
+  ///
+  /// A plain transaction is in the mempool the moment it is submitted, so it returns on the first
+  /// pass and never reaches the scan.
+  private func minedTransactionHash(
+    for hash: String,
+    chainId: String,
+    fromBlock: BigUInt?
+  ) async throws -> String {
+    // Without a lower bound there is nothing to scan, so Portal's hash is all this can offer.
+    guard let fromBlock else { return hash }
+
+    for attempt in 0 ..< UserOperationLookup.attempts {
+      if await isKnownTransaction(hash, chainId: chainId) { return hash }
+
+      if let event = await userOperationEvent(hash, chainId: chainId, fromBlock: fromBlock) {
+        guard event.succeeded else {
+          throw RainSDKError.transactionSimulationFailed(
+            underlying: UserOperationReverted(hash: hash, transactionHash: event.transactionHash)
+          )
+        }
+        RainLogger.info("Rain SDK: UserOperation \(hash) mined in transaction \(event.transactionHash)")
+        return event.transactionHash
+      }
+
+      if attempt < UserOperationLookup.attempts - 1 {
+        try await Task.sleep(for: UserOperationLookup.interval)
+      }
+    }
+
+    // Neither shape resolved. Return what Portal gave us rather than failing a submit that may
+    // still land; the caller's own confirmation reports the timeout.
+    RainLogger.warning("Rain SDK: \(hash) did not resolve to a mined transaction")
+    return hash
+  }
+
+  /// Whether the chain knows this hash as a transaction, mined or pending.
+  private func isKnownTransaction(_ hash: String, chainId: String) async -> Bool {
+    guard let response = try? await portal.request(
+      chainId: chainId,
+      method: .eth_getTransactionByHash,
+      params: [hash],
+      options: nil
+    ) else { return false }
+    return (response.result as? EthTransactionResponse)?.result != nil
+  }
+
+  /// Finds the `UserOperationEvent` this hash was emitted under, if it has been included yet.
+  private func userOperationEvent(
+    _ hash: String,
+    chainId: String,
+    fromBlock: BigUInt
+  ) async -> (transactionHash: String, succeeded: Bool)? {
+    let filter: [String: Any] = [
+      "fromBlock": "0x" + String(fromBlock, radix: 16),
+      "toBlock": "latest",
+      // Public RPCs reject an address-less log filter, so name every canonical EntryPoint.
+      "address": UserOperationLookup.entryPoints,
+      "topics": [UserOperationLookup.eventTopic, hash]
+    ]
+    guard let response = try? await portal.request(
+      chainId: chainId,
+      method: .eth_getLogs,
+      params: [filter],
+      options: nil
+    ) else { return nil }
+    guard let log = (response.result as? LogsResponse)?.result?.first,
+          let transactionHash = log.transactionHash else { return nil }
+    return (transactionHash, Self.userOperationSucceeded(log.data))
+  }
+
+  private func currentBlockNumber(_ chainId: String) async -> BigUInt? {
+    guard let response = try? await portal.request(
+      chainId: chainId,
+      method: .eth_blockNumber,
+      params: [],
+      options: nil
+    ) else { return nil }
+    guard let block = BigUInt(response.hexString.dropFirst(2), radix: 16), block > 0 else { return nil }
+    return block
+  }
+
+  /// `UserOperationEvent` data is `(nonce, success, actualGasCost, actualGasUsed)`. An unreadable
+  /// payload counts as success: the operation was mined, and inventing a failure here would mask
+  /// whatever the caller's own confirmation reads back.
+  private static func userOperationSucceeded(_ data: String?) -> Bool {
+    guard let data, data.hasPrefix("0x") else { return true }
+    let words = data.dropFirst(2)
+    guard words.count >= 128 else { return true }
+    let start = words.index(words.startIndex, offsetBy: 64)
+    let end = words.index(start, offsetBy: 64)
+    return words[start ..< end].contains { $0 != "0" }
   }
 
   func signTypedData(
@@ -453,5 +556,30 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     NSDecimalRound(&rounded, &source, 0, .down)
     guard rounded == decimal else { return nil }
     return BigUInt(NSDecimalNumber(decimal: rounded).stringValue, radix: 10)
+  }
+}
+
+private enum UserOperationLookup {
+  /// `UserOperationEvent(bytes32,address,address,uint256,bool,uint256,uint256)`, identical across
+  /// EntryPoint versions. Topic 1 is the UserOperation hash.
+  static let eventTopic = "0x49628fd1471006c1482da88028e9ce4dbb080b815c9b0344d39e5a8e6ec1419f"
+
+  /// Canonical EntryPoint deployments, v0.6 through v0.8.
+  static let entryPoints = [
+    "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
+    "0x0000000071727De22E5E9d8BAf0edAc6f37da032",
+    "0x4337084D9E255Ff0702461CF8895CE9E3b5Ff108"
+  ]
+
+  static let attempts = 20
+  static let interval: Duration = .seconds(1)
+}
+
+private struct UserOperationReverted: LocalizedError {
+  let hash: String
+  let transactionHash: String
+
+  var errorDescription: String? {
+    "UserOperation \(hash) reverted on-chain in transaction \(transactionHash)"
   }
 }

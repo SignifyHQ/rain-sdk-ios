@@ -39,7 +39,7 @@ enum WalletChain: String, CaseIterable, Identifiable {
   var rpcUrl: String {
     switch self {
     case .avalancheFuji: return "https://api.avax-test.network/ext/bc/C/rpc"
-    case .baseSepolia: return "https://sepolia.base.org"
+    case .baseSepolia: return "https://base-sepolia-rpc.publicnode.com"
     case .arbitrumSepolia: return "https://sepolia-rollup.arbitrum.io/rpc"
     case .baseMainnet: return "https://mainnet.base.org"
     case .arbitrumMainnet: return "https://arb1.arbitrum.io/rpc"
