@@ -77,6 +77,9 @@ final class AuthPullViewModel: ObservableObject {
     guard seededChain != chain else { return }
     seededChain = chain
     generation += 1
+    // Retire any in-flight read now: if the new chain does not support Auth Pull no fresh read
+    // will start, and the old chain's answer must not land on this chain's blank card.
+    readRun += 1
     readTask?.cancel()
     estimateTask?.cancel()
     approvalTask?.cancel()
@@ -106,7 +109,6 @@ final class AuthPullViewModel: ObservableObject {
     errorText = nil
 
     readTask?.cancel()
-    let requestGeneration = generation
     readRun += 1
     let requestRun = readRun
     readTask = Task {
@@ -124,16 +126,17 @@ final class AuthPullViewModel: ObservableObject {
           "AuthPull.allowance",
           "raw=\(allowance.rawAmount) decimals=\(allowance.decimals) unlimited=\(allowance.isUnlimited)"
         )
-        // `readRun` as well as `generation`: two reads started without an intervening form edit
-        // share a generation, and the older one must not publish over the newer one's answer.
-        guard requestRun == readRun, requestGeneration == generation else { return }
+        // `readRun` alone gates publication: an allowance read depends on the chain and wallet,
+        // not the amount fields, so an amount edit must not orphan its result — only a newer read
+        // (or a chain switch, which starts one) may supersede it.
+        guard requestRun == readRun else { return }
         isUnlimitedAllowance = allowance.isUnlimited
         isRevokedAllowance = allowance.isZero
         // An unlimited allowance formats to ~1.16e71 USDC, which is noise — label it instead.
         allowanceText = allowance.isUnlimited ? "Unlimited" : allowance.formatted
       } catch {
         SampleLog.e("AuthPull.allowance", "failed: \(error.localizedDescription)")
-        guard requestRun == readRun, requestGeneration == generation else { return }
+        guard requestRun == readRun else { return }
         errorText = "Could not read allowance: \(error.localizedDescription)"
         allowanceText = nil
         isUnlimitedAllowance = false
@@ -205,6 +208,10 @@ final class AuthPullViewModel: ObservableObject {
       "token=\(tokenAddress) spender=\(operatorAddress) amount=\(approvalAmount.map(String.init(describing:)) ?? "unlimited")"
     )
     generation += 1
+    // An approval supersedes any in-flight read; the confirmed allowance is published below. The
+    // superseded read no longer owns the spinner, so clear it here or it never clears.
+    readRun += 1
+    isLoadingAllowance = false
     readTask?.cancel()
     estimateTask?.cancel()
     approvalTask?.cancel()
