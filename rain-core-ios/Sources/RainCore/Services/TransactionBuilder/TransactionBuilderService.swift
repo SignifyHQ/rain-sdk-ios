@@ -22,11 +22,13 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
   
   // MARK: - Salt Generation
   
-  /// Generate random 32-byte salt for EIP-712 domain
+  /// Generate random 32-byte salt for EIP-712 domain.
+  ///
+  /// Uses `SystemRandomNumberGenerator` (CSPRNG-backed on Darwin, cannot fail) rather than
+  /// `SecRandomCopyBytes`, whose failure would otherwise leave an all-zero salt.
   func generateSalt() -> Data {
-    var randomBytes = [UInt8](repeating: 0, count: 32)
-    _ = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
-    return Data(randomBytes)
+    var rng = SystemRandomNumberGenerator()
+    return Data((0..<32).map { _ in UInt8.random(in: .min ... .max, using: &rng) })
   }
   
   // MARK: - Nonce Retrieval

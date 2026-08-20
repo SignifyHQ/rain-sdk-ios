@@ -66,7 +66,9 @@ struct SendTokenTests {
     #expect(stub.sendTransactionCalls.count == 1)
     #expect(stub.sendTransactionCalls[0].chainId == 1)
     #expect(stub.sendTransactionCalls[0].params.from == TestFixtures.walletAddress)
-    #expect(stub.sendTransactionCalls[0].params.to == TestFixtures.recipientAddress)
+    // The manager validates the recipient and forwards its EIP-55 checksummed form.
+    #expect(stub.sendTransactionCalls[0].params.to
+      == (try RainWithdrawAddresses.checksummed(TestFixtures.recipientAddress, label: "to")))
     // Empty data for native transfers.
     #expect(stub.sendTransactionCalls[0].params.data == .empty)
   }

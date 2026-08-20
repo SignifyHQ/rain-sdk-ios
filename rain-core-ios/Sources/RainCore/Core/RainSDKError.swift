@@ -39,6 +39,11 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// RAIN_303: The withdrawal admin signature is not ready yet; retry after `retryAfter` seconds
   case signatureNotReady(status: String, retryAfter: Int?)
 
+  /// RAIN_303: The transaction was accepted by the wallet provider but its hash was not yet
+  /// visible when status polling stopped. NOT a failure — the transaction may still confirm, and
+  /// resending it risks a duplicate transfer. Resume polling with `statusId` instead.
+  case transactionPending(statusId: String)
+
   /// RAIN_304: The contracts endpoint returned no collateral contracts for the configured user
   case noCollateralContracts
   
@@ -113,7 +118,7 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "RAIN_301"
     case .apiError:
       return "RAIN_302"
-    case .signatureNotReady:
+    case .signatureNotReady, .transactionPending:
       return "RAIN_303"
     case .noCollateralContracts:
       return "RAIN_304"
@@ -162,6 +167,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "[\(errorCode)] Rain API error \(statusCode)\(message.map { ": \($0)" } ?? "")."
     case .signatureNotReady(let status, let retryAfter):
       return "[\(errorCode)] Withdrawal signature not ready: status=\(status)\(retryAfter.map { " (retry after \($0)s)" } ?? "")."
+    case .transactionPending(let statusId):
+      return "[\(errorCode)] Transaction submitted but not yet confirmed (statusId=\(statusId)). Not a failure — resume polling with the status id; do not resend."
     case .noCollateralContracts:
       return "[\(errorCode)] No collateral contracts returned for user."
     case .userRejected:
@@ -208,6 +215,7 @@ extension RainSDKError {
     case .networkError: return "networkError"
     case .apiError: return "apiError"
     case .signatureNotReady: return "signatureNotReady"
+    case .transactionPending: return "transactionPending"
     case .noCollateralContracts: return "noCollateralContracts"
     case .userRejected: return "userRejected"
     case .insufficientFunds: return "insufficientFunds"

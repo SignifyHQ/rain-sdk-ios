@@ -360,6 +360,11 @@ Estimates the total fee required to execute a collateral withdrawal transaction.
 Internally builds + signs the EIP-712 payload, then runs `eth_estimateGas` against the withdrawal
 controller; it does not broadcast.
 
+> **This prompts the wallet to sign.** Building the estimate mints a fully signed withdrawal
+> authorization, so the user sees a signature prompt (e.g. Turnkey biometrics) for a fee quote.
+> To quote without a second prompt, call `prepareWithdrawal` once and pass the result to
+> `estimateWithdrawalFee(chainId:prepared:)` below.
+
 - **Returns:** `Decimal`: estimated withdrawal fee in the chain's native token.
 - **Throws:** `RainSDKError` if estimation fails, or if `chainId` is a Solana chain — Solana fee
   estimation is not implemented.
@@ -376,6 +381,23 @@ controller; it does not broadcast.
 
 ---
 
+### estimateWithdrawalFee(chainId:prepared:)
+
+Estimates the total fee for a withdrawal already built by `prepareWithdrawal`, running
+`eth_estimateGas` on the preparation's calldata. Builds and signs nothing new — no wallet prompt —
+so the flow is: prepare once (one signature), quote the fee on the preparation, then submit.
+
+- **Returns:** `Decimal`: estimated withdrawal fee in the chain's native token.
+- **Throws:** `RainSDKError` if estimation fails.
+- **Async:** Yes
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `chainId` | `Int` | Target network chain ID. EVM only. |
+| `prepared` | `RainPreparedWithdrawal` | The withdrawal built by `prepareWithdrawal`. |
+
+---
+
 ### sendNative(chainId:to:amount:)
 
 Sends native tokens (e.g. ETH, AVAX, SOL) from the current wallet. Routed by `chainId`: Solana
@@ -383,6 +405,7 @@ sentinel chain ids (900 / 901 / 902) go through the provider's Solana path when 
 
 - **Returns:** `RainTokenTransferResult`: carrying the transaction hash (EVM) or signature (Solana).
 - **Throws:** `RainSDKError` if the send fails or the provider does not support the chain family.
+  A malformed EVM recipient fails as `invalidRecipient` before anything is broadcast.
 - **Async:** Yes
 
 | Parameter | Type | Description |
@@ -398,7 +421,8 @@ sentinel chain ids (900 / 901 / 902) go through the provider's Solana path when 
 Sends ERC-20 (EVM) or SPL (Solana) tokens from the current wallet. Routed by `chainId`.
 
 - **Returns:** `RainTokenTransferResult`: carrying the transaction hash.
-- **Throws:** `RainSDKError` if the send fails.
+- **Throws:** `RainSDKError` if the send fails. A malformed EVM recipient fails as
+  `invalidRecipient` before anything is broadcast.
 - **On Solana:** supported by the providers that hold a Solana account (Turnkey and Privy; Portal
   throws). `decimals` does not scale the amount — the mint's on-chain value is authoritative, and
   this applies to `sendToken` only; see `withdrawCollateral`, where `decimals` **is** load-bearing —
@@ -647,7 +671,7 @@ programmatic handling.
 | `RAIN_202` | `unauthorized` | Invalid or missing token / permissions. |
 | `RAIN_301` | `networkError(underlying:)` | Network/connectivity failure. |
 | `RAIN_302` | `apiError(statusCode:message:)` | The Rain API returned a non-success HTTP status (other than 401/403 → `unauthorized`). |
-| `RAIN_303` | `signatureNotReady(status:retryAfter:)` | The withdrawal admin signature is not ready yet; retry after `retryAfter` seconds. |
+| `RAIN_303` | `signatureNotReady(status:retryAfter:)` / `transactionPending(statusId:)` | The withdrawal admin signature is not ready yet, retry after `retryAfter` seconds; or a submitted transaction's hash was not yet visible when status polling stopped. `transactionPending` is not a failure: the transaction may still confirm, so resume polling with `statusId` instead of resending. |
 | `RAIN_304` | `noCollateralContracts` | The contracts endpoint returned no collateral contracts for the configured user. |
 | `RAIN_401` | `userRejected` | User cancelled the signing request in the wallet. |
 | `RAIN_402` | `insufficientFunds(required:available:)` | Balance too low for the requested amount or gas. |

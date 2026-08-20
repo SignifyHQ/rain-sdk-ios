@@ -43,6 +43,20 @@ struct TransactionBuildingTests {
     manager(builder: TransactionBuilderService(networkConfigs: configs), configs: configs)
   }
 
+  // MARK: - Salt generation
+
+  @Test("generateSalt returns 32 unpredictable bytes, never all zeros")
+  func testGenerateSaltIsNonZeroAndUnique() {
+    let builder = TransactionBuilderService(networkConfigs: TestFixtures.configs())
+
+    let salts = (0..<100).map { _ in builder.generateSalt() }
+    for salt in salts {
+      #expect(salt.count == 32)
+      #expect(salt.contains { $0 != 0 })
+    }
+    #expect(Set(salts).count == salts.count)
+  }
+
   // MARK: - buildEIP712Message success cases
 
   @Test("buildEIP712Message succeeds with valid inputs and provided nonce")

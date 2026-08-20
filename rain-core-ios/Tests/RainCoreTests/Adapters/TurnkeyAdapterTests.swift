@@ -78,6 +78,50 @@ struct TurnkeyAdapterTests {
     #expect(turnkey.refreshWalletsCallCount == 1)
   }
 
+  @Test("the cached address is dropped when the session organization changes")
+  func testAddressCacheEvictedOnSessionChange() async throws {
+    let mockTurnkey = MockTurnkey()
+    let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
+
+    #expect(try await manager.getWalletAddress() == MockTurnkey.defaultWalletAddress)
+
+    // The host logs out and back in as a different user without rebuilding the SDK.
+    let otherAddress = "0x9999999999999999999999999999999999999999"
+    mockTurnkey.session = MockTurnkey.defaultSession(organizationId: "other-org-id")
+    mockTurnkey.wallets = [MockTurnkey.defaultWallet(address: otherAddress)]
+
+    #expect(try await manager.getWalletAddress() == otherAddress)
+  }
+
+  @Test("the cached address survives while the session organization is unchanged")
+  func testAddressCacheKeptForSameSession() async throws {
+    let mockTurnkey = MockTurnkey()
+    let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
+
+    #expect(try await manager.getWalletAddress() == MockTurnkey.defaultWalletAddress)
+
+    // Same session: mutated wallet state must not be re-read — the cache stays authoritative.
+    mockTurnkey.wallets = [MockTurnkey.defaultWallet(address: "0x9999999999999999999999999999999999999999")]
+
+    #expect(try await manager.getWalletAddress() == MockTurnkey.defaultWalletAddress)
+    #expect(mockTurnkey.refreshWalletsCallCount == 0)
+  }
+
+  @Test("a logged-out session cannot keep using the previous user's cached address")
+  func testAddressCacheEvictedOnLogout() async throws {
+    let mockTurnkey = MockTurnkey()
+    let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
+
+    #expect(try await manager.getWalletAddress() == MockTurnkey.defaultWalletAddress)
+
+    mockTurnkey.session = nil
+    mockTurnkey.wallets = []
+
+    await #expect(throws: RainSDKError.walletUnavailable) {
+      _ = try await manager.getWalletAddress()
+    }
+  }
+
   // MARK: - Balances
 
   @Test("getBalance(.native) with Turnkey parses 1 ETH from a single ether balance")
@@ -386,8 +430,80 @@ struct TurnkeyAdapterTests {
 
     #expect(result.transactionHash == expectedHash)
     #expect(client.ethSendTransactionCalls.count == 1)
-    #expect(client.ethSendTransactionCalls[0].to == TestFixtures.recipientAddress)
+    // The recipient is validated and broadcast in its EIP-55 checksummed form.
+    #expect(client.ethSendTransactionCalls[0].to
+      == (try RainWithdrawAddresses.checksummed(TestFixtures.recipientAddress, label: "to")))
     #expect(client.sendTransactionStatusCalls.count == 1)
+  }
+
+  @Test("sendNative rejects a malformed recipient before touching the network")
+  func testSendNativeInvalidRecipientThrows() async throws {
+    let mockTurnkey = MockTurnkey()
+    let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
+    let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
+
+    await #expect(throws: RainSDKError.invalidRecipient(address: "", reason: "")) {
+      _ = try await manager.sendNative(chainId: 1, to: "0x1234", amount: 1.0)
+    }
+    #expect(client.ethSendTransactionCalls.isEmpty)
+  }
+
+  @Test("sendToken rejects a malformed recipient before touching the network")
+  func testSendTokenInvalidRecipientThrows() async throws {
+    let mockTurnkey = MockTurnkey()
+    let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
+    let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
+
+    await #expect(throws: RainSDKError.invalidRecipient(address: "", reason: "")) {
+      _ = try await manager.sendToken(
+        chainId: 1,
+        contractAddress: TestFixtures.tokenAddress,
+        to: "not-an-address",
+        amount: 100.0,
+        decimals: 6
+      )
+    }
+    #expect(client.ethSendTransactionCalls.isEmpty)
+  }
+
+  @Test("a status-poll timeout surfaces transactionPending with the status id, not a failure")
+  func testSendTransactionPollTimeoutThrowsTransactionPending() async throws {
+    MockURLProtocol.install()
+    defer { MockURLProtocol.reset() }
+    stubSendTransactionRPCs()
+
+    let mockTurnkey = MockTurnkey()
+    let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
+    // Turnkey accepted the submission but never surfaces a hash within the polling window.
+    client.sendTransactionStatusQueue = [.pending()]
+
+    let adapter = TurnkeyWalletProviderAdapter(
+      turnkey: mockTurnkey,
+      networkConfigs: TestFixtures.configs()
+    )
+    adapter.pollingIntervalNanoseconds = 1
+
+    do {
+      _ = try await adapter.sendTransaction(
+        chainId: 1,
+        params: WalletTransactionParams(
+          from: MockTurnkey.defaultWalletAddress,
+          to: TestFixtures.recipientAddress,
+          value: "0x1",
+          data: "0x"
+        )
+      )
+      Issue.record("Expected transactionPending after poll timeout")
+    } catch let error as RainSDKError {
+      guard case .transactionPending(let statusId) = error else {
+        Issue.record("Expected transactionPending, got \(error)")
+        return
+      }
+      #expect(statusId == "send-status-id")
+    }
+    // The transaction WAS handed to Turnkey; the timeout must not look like a pre-broadcast error.
+    #expect(client.ethSendTransactionCalls.count == 1)
+    #expect(client.sendTransactionStatusCalls.count == 30)
   }
 
   @Test("sendToken with Turnkey returns mock tx hash and routes to contract address")
@@ -465,7 +581,7 @@ struct TurnkeyAdapterTests {
     }
   }
 
-  @Test("a zero gas estimate falls back to 21000 rather than submitting gasLimit 0")
+  @Test("a zero gas estimate on a plain transfer falls back to 21000 rather than submitting gasLimit 0")
   func testZeroGasEstimateFallsBackToDefault() async throws {
     MockURLProtocol.install()
     defer { MockURLProtocol.reset() }
@@ -488,6 +604,32 @@ struct TurnkeyAdapterTests {
     let body = try #require(client.ethSendTransactionCalls.first)
     // 21000 fallback, then the same +20% buffer every estimate gets.
     #expect(body.gasLimit == "25200")
+  }
+
+  @Test("a zero gas estimate on a contract call fails loudly instead of sending 21000")
+  func testZeroGasEstimateWithCalldataThrows() async throws {
+    MockURLProtocol.install()
+    defer { MockURLProtocol.reset() }
+    MockURLProtocol.stub(method: "eth_getTransactionCount", result: "0x1")
+    MockURLProtocol.stub(method: "eth_estimateGas", result: "0x0")
+    MockURLProtocol.stub(method: "eth_gasPrice", result: "0x4a817c800")
+
+    let mockTurnkey = MockTurnkey()
+    let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
+    let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
+
+    // An ERC-20 transfer carries calldata, so 21000 would run out of gas on-chain and burn the fee.
+    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+      _ = try await manager.sendToken(
+        chainId: 1,
+        contractAddress: TestFixtures.tokenAddress,
+        to: TestFixtures.recipientAddress,
+        amount: 100.0,
+        decimals: 6
+      )
+    }
+    // The underestimated transaction must never reach Turnkey.
+    #expect(client.ethSendTransactionCalls.isEmpty)
   }
 
   @Test("pollForTransactionHash keeps polling until status returns a hash")
@@ -591,6 +733,44 @@ struct TurnkeyAdapterTests {
         decimals: 18,
         adminSignature: TestFixtures.adminSignature()
       )
+    }
+  }
+
+  @Test("estimateWithdrawalFee(prepared:) estimates on the prepared calldata without another signature")
+  func testEstimateWithdrawalFeePreparedSignsNothing() async throws {
+    MockURLProtocol.install()
+    defer { MockURLProtocol.reset() }
+    MockURLProtocol.stub(method: "eth_estimateGas", result: "0x5208") // 21000
+    MockURLProtocol.stub(method: "eth_gasPrice", result: "0x4a817c800") // 20 gwei
+
+    let (manager, turnkey, builder) = TestManagers.turnkeyManager()
+    builder.mockNonce = BigUInt(1)
+
+    let prepared = try await manager.prepareWithdrawal(
+      chainId: 1,
+      addresses: TestFixtures.defaultWithdrawAddresses,
+      amount: 100.0,
+      decimals: 18,
+      adminSignature: TestFixtures.adminSignature()
+    )
+    let signaturesAfterPrepare = turnkey.signRawPayloadCalls.count
+
+    let fee = try await manager.estimateWithdrawalFee(chainId: 1, prepared: prepared)
+
+    #expect(fee == Decimal(string: "0.00042"))
+    // The quote must reuse the preparation's signed calldata, never mint a second authorization.
+    #expect(turnkey.signRawPayloadCalls.count == signaturesAfterPrepare)
+  }
+
+  @Test("estimateWithdrawalFee(prepared:) rejects a Solana preparation")
+  func testEstimateWithdrawalFeePreparedRejectsSolana() async throws {
+    let (manager, _, _) = TestManagers.turnkeyManager()
+    let prepared = RainPreparedWithdrawal.solana(
+      UnsignedSolanaTransfer(transaction: [1, 2, 3], recentBlockhash: "hash")
+    )
+
+    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+      _ = try await manager.estimateWithdrawalFee(chainId: SolanaChains.mainnet, prepared: prepared)
     }
   }
 
