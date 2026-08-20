@@ -21,9 +21,8 @@ final class MockTransactionBuilderService: TransactionBuilderProtocol {
   }
   
   func generateSalt() -> Data {
-    var randomBytes = [UInt8](repeating: 0, count: 32)
-    _ = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
-    return Data(randomBytes)
+    var rng = SystemRandomNumberGenerator()
+    return Data((0..<32).map { _ in UInt8.random(in: .min ... .max, using: &rng) })
   }
   
   func getLatestNonce(proxyAddress: String, chainId: Int) async throws -> BigUInt {

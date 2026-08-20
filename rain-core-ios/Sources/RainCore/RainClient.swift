@@ -69,6 +69,11 @@ public protocol RainClient: Sendable {
 
   /// Estimates the total fee (gas cost) to execute a collateral withdrawal, in the chain's
   /// native token. EVM only — throws on a Solana chain id.
+  ///
+  /// Builds — and therefore **signs** — a complete withdrawal to estimate against, so the wallet
+  /// prompts for an EIP-712 signature (e.g. Turnkey biometrics) even though nothing broadcasts.
+  /// To quote a fee without a second prompt, call ``prepareWithdrawal(chainId:addresses:amount:decimals:adminSignature:nonce:)``
+  /// once and estimate on the result with ``estimateWithdrawalFee(chainId:prepared:)``.
   func estimateWithdrawalFee(
     chainId: Int,
     addresses: RainWithdrawAddresses,
@@ -76,6 +81,14 @@ public protocol RainClient: Sendable {
     decimals: Int,
     adminSignature: RainAdminSignature,
     nonce: BigUInt?
+  ) async throws -> Decimal
+
+  /// Estimates the total fee (gas cost) for an already-prepared withdrawal, in the chain's native
+  /// token, without building or signing anything new — no wallet prompt. EVM only — throws on a
+  /// Solana preparation.
+  func estimateWithdrawalFee(
+    chainId: Int,
+    prepared: RainPreparedWithdrawal
   ) async throws -> Decimal
 
   // MARK: - Wallet information

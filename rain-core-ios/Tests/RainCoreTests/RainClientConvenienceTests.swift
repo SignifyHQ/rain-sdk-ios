@@ -98,6 +98,10 @@ private final class SpyRainClient: RainClient, @unchecked Sendable {
     adminSignature: RainAdminSignature, nonce: BigUInt?
   ) async throws -> Decimal { fatalError("unused") }
 
+  func estimateWithdrawalFee(
+    chainId: Int, prepared: RainPreparedWithdrawal
+  ) async throws -> Decimal { fatalError("unused") }
+
   func getWalletAddress() async throws -> String { fatalError("unused") }
   func getWalletAddress(chainId: Int) async throws -> String { fatalError("unused") }
 

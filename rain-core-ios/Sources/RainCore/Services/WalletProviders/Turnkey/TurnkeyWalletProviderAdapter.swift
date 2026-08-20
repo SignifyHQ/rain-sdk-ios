@@ -14,7 +14,8 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     /// Turnkey returns a status id, not a Solana signature, so the signature is read back from
     /// the chain as a defensive fallback when the status response carries none.
     static let solanaSignatureLookupAttempts = 8
-    /// Used when `eth_estimateGas` returns zero or an unparseable value.
+    /// Used when `eth_estimateGas` returns zero or an unparseable value for a plain transfer
+    /// (no calldata) — the intrinsic transfer cost. Never applied to contract calls.
     static let fallbackGasLimit = 21_000
   }
 
@@ -41,6 +42,9 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   private var solanaRpcClient: SolanaRpcClient { solanaSupport.solanaRpcClient }
   private var solanaTransferComposer: SolanaTransferComposer { solanaSupport.transferComposer }
 
+  /// Pause between status/signature polls. Overridable in tests so timeout paths finish fast.
+  internal var pollingIntervalNanoseconds: UInt64 = AdapterConstants.pollingIntervalNanoseconds
+
   // Once resolved, each address is stable for the adapter's lifetime, so cache it. EVM and
   // Solana accounts are cached independently — a Solana request never reads the EVM address.
   // Resolution is single-flighted: concurrent first callers share one in-flight Task, so
@@ -49,7 +53,24 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   private var cachedSolanaAddress: String?
   private var addressResolution: Task<String, Error>?
   private var solanaAddressResolution: Task<String, Error>?
+  /// Organization the cached addresses were resolved under. `TurnkeyContext` is a process-wide
+  /// singleton with a logout path, so a host that re-authenticates as another user without
+  /// rebuilding the SDK would otherwise keep reading — and sending from — the previous user's
+  /// addresses.
+  private var cachedSessionOrganizationId: String?
   private let cachedAddressLock = NSLock()
+
+  /// Drops the cached addresses and in-flight resolutions when the Turnkey session's organization
+  /// changes (logout, or re-auth as a different user). Callers must hold `cachedAddressLock`.
+  private func evictAddressCachesIfSessionChanged() {
+    let currentOrganizationId = turnkey.session?.organizationId
+    guard currentOrganizationId != cachedSessionOrganizationId else { return }
+    cachedSessionOrganizationId = currentOrganizationId
+    cachedAddress = nil
+    cachedSolanaAddress = nil
+    addressResolution = nil
+    solanaAddressResolution = nil
+  }
 
   internal init(
     turnkey: TurnkeyContextProtocol,
@@ -107,6 +128,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     resolve: @escaping @Sendable (TurnkeyWalletProviderAdapter) -> String?
   ) async throws -> String {
     let task: Task<String, Error> = cachedAddressLock.withLock {
+      evictAddressCachesIfSessionChanged()
       if let cached = self[keyPath: cache] {
         return Task { cached }
       }
@@ -126,8 +148,12 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     do {
       let resolved = try await task.value
       cachedAddressLock.withLock {
-        self[keyPath: cache] = resolved
-        if self[keyPath: inFlight] == task { self[keyPath: inFlight] = nil }
+        // Cache only while still the current resolution — a session change mid-flight evicted
+        // this task, and its result belongs to the previous session.
+        if self[keyPath: inFlight] == task {
+          self[keyPath: cache] = resolved
+          self[keyPath: inFlight] = nil
+        }
       }
       return resolved
     } catch {
@@ -670,6 +696,9 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   ) async throws -> String {
     let (session, client) = try resolveSessionAndClient()
 
+    // Baseline for the signature recovery below: the wallet's newest signature before this send.
+    let priorSignature = try? await solanaRpcClient.getLatestSignature(chainId: chainId, address: from)
+
     let response = try await client.solSendTransaction(
       TSolSendTransactionBody(
         organizationId: session.organizationId,
@@ -692,13 +721,16 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     }
 
     // Defensive fallback: recover the signature from chain. `getSignaturesForAddress` lags
-    // broadcast slightly, so retry briefly before falling back to the status id.
+    // broadcast slightly, so retry briefly before falling back to the status id. Only a signature
+    // that differs from the pre-send baseline can belong to this send — returning the baseline
+    // itself would report an older, unrelated transaction as this one.
     for attempt in 0..<AdapterConstants.solanaSignatureLookupAttempts {
-      if let signature = try await solanaRpcClient.getLatestSignature(chainId: chainId, address: from) {
+      if let signature = try await solanaRpcClient.getLatestSignature(chainId: chainId, address: from),
+         signature != priorSignature {
         return signature
       }
       if attempt + 1 < AdapterConstants.solanaSignatureLookupAttempts {
-        try await Task.sleep(nanoseconds: AdapterConstants.pollingIntervalNanoseconds)
+        try await Task.sleep(nanoseconds: pollingIntervalNanoseconds)
       }
     }
     return statusId
@@ -774,7 +806,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       }
 
       if attempt + 1 < AdapterConstants.defaultPollingAttempts {
-        try await Task.sleep(nanoseconds: AdapterConstants.pollingIntervalNanoseconds)
+        try await Task.sleep(nanoseconds: pollingIntervalNanoseconds)
       }
     }
     return nil
@@ -885,6 +917,13 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     // `decimalString(fromHex:)` yields "0" (not nil) for a zero or unparseable estimate, so the
     // fallback has to key off the value, not off a failed conversion.
     let parsedGas = BigUInt(decimalString(fromHex: estimateGasHex)) ?? 0
+    // 21,000 is the intrinsic cost of a bare transfer with no calldata; a contract call sent with
+    // it runs out of gas and reverts, burning the fee. Fail loudly instead of underestimating.
+    guard parsedGas > 0 || normalizedData(params.data) == "0x" else {
+      throw RainSDKError.internalLogicError(
+        details: "eth_estimateGas returned no usable gas limit for a contract call"
+      )
+    }
     let estimatedGas = parsedGas > 0 ? parsedGas : BigUInt(AdapterConstants.fallbackGasLimit)
     let bufferedGasLimit = estimatedGas + (estimatedGas / 5)
     let gasLimit = (bufferedGasLimit == 0 ? estimatedGas : bufferedGasLimit).description
@@ -992,13 +1031,14 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       }
 
       if attempt + 1 < Self.AdapterConstants.defaultPollingAttempts {
-        try await Task.sleep(nanoseconds: Self.AdapterConstants.pollingIntervalNanoseconds)
+        try await Task.sleep(nanoseconds: pollingIntervalNanoseconds)
       }
     }
 
-    throw RainSDKError.internalLogicError(
-      details: "Turnkey transaction status polling timed out"
-    )
+    // A poll timeout is not a failure: Turnkey accepted the submission and the transaction may
+    // still confirm. Carrying the status id lets the host resume polling instead of resending,
+    // which would risk a duplicate transfer.
+    throw RainSDKError.transactionPending(statusId: sendTransactionStatusId)
   }
 
   private func isNativeAsset(_ balance: v1AssetBalance, caip2: String) -> Bool {

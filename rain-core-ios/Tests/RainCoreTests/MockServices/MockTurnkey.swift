@@ -27,6 +27,12 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
     static func solanaIncluded(signature: String) -> StatusFixture {
       StatusFixture(txStatus: "TX_STATUS_INCLUDED", solanaSignature: signature)
     }
+
+    /// Solana submission Included on-chain but with no signature in the status response,
+    /// forcing the adapter's recover-from-chain fallback.
+    static func solanaIncludedWithoutSignature() -> StatusFixture {
+      StatusFixture(txStatus: "TX_STATUS_INCLUDED")
+    }
   }
 
   var mockBalances: [v1AssetBalance] = []
@@ -235,21 +241,21 @@ final class MockTurnkey: TurnkeyContextProtocol {
 }
 
 extension MockTurnkey {
-  static func defaultSession() -> Session {
+  static func defaultSession(organizationId: String = "org-id") -> Session {
     decode(
       SessionFixture(
         exp: Date().addingTimeInterval(3600).timeIntervalSince1970,
         publicKey: "pubkey",
         sessionType: .readWrite,
         userId: "user-id",
-        organizationId: "org-id",
+        organizationId: organizationId,
         token: "jwt"
       ),
       as: Session.self
     )
   }
 
-  static func defaultWallet() -> Wallet {
+  static func defaultWallet(address: String = defaultWalletAddress) -> Wallet {
     decode(
       WalletFixture(
         walletId: "wallet-id",
@@ -260,7 +266,7 @@ extension MockTurnkey {
         imported: false,
         accounts: [
           WalletAccount(
-            address: defaultWalletAddress,
+            address: address,
             addressFormat: .address_format_ethereum,
             createdAt: externaldatav1Timestamp(nanos: "0", seconds: "0"),
             curve: .curve_secp256k1,

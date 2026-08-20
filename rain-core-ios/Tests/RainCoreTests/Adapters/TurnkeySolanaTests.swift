@@ -66,6 +66,47 @@ struct TurnkeySolanaTests {
     }
   }
 
+  @Test("sendNative recovers the signature from chain only when it differs from the pre-send baseline")
+  func sendSolanaRecoversNewSignatureFromChain() async throws {
+    let turnkey = dualCurveTurnkey()
+    let client = turnkey.turnkeyClient as! MockTurnkeyClient
+    client.sendTransactionStatusQueue = [.solanaIncludedWithoutSignature()]
+
+    try await MockURLProtocol.withInstalled {
+      MockURLProtocol.interceptedHosts = [Self.host]
+      MockURLProtocol.stub(method: "getLatestBlockhash", result: ["value": ["blockhash": blockhash]])
+      // Pre-send baseline read returns the wallet's older signature; lookups after the send
+      // return the one this transaction landed as.
+      MockURLProtocol.stub(method: "getSignaturesForAddress", results: [
+        [["signature": "old-sig"]],
+        [["signature": "new-sig"]]
+      ])
+      let (manager, _, _) = TestManagers.turnkeyManager(turnkey: turnkey, configs: configs())
+
+      let result = try await manager.sendNative(chainId: Self.chainId, to: recipient, amount: 0.5)
+      #expect(result.transactionHash == "new-sig")
+    }
+  }
+
+  @Test("sendNative never reports a pre-existing signature as this send", .timeLimit(.minutes(1)))
+  func sendSolanaStaleSignatureFallsBackToStatusId() async throws {
+    let turnkey = dualCurveTurnkey()
+    let client = turnkey.turnkeyClient as! MockTurnkeyClient
+    client.sendTransactionStatusQueue = [.solanaIncludedWithoutSignature()]
+
+    try await MockURLProtocol.withInstalled {
+      MockURLProtocol.interceptedHosts = [Self.host]
+      MockURLProtocol.stub(method: "getLatestBlockhash", result: ["value": ["blockhash": blockhash]])
+      // The chain only ever shows a signature that predates this send, so recovery must be
+      // refused and the status id returned instead. Exhausts the retry loop (~7s of real sleeps).
+      MockURLProtocol.stub(method: "getSignaturesForAddress", result: [["signature": "old-sig"]])
+      let (manager, _, _) = TestManagers.turnkeyManager(turnkey: turnkey, configs: configs())
+
+      let result = try await manager.sendNative(chainId: Self.chainId, to: recipient, amount: 0.5)
+      #expect(result.transactionHash == "sol-send-status-id")
+    }
+  }
+
   // MARK: - History
 
   @Test("getTransactions on Solana decodes sol_send activities")
