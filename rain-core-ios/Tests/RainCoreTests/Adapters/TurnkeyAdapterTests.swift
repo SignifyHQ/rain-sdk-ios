@@ -228,7 +228,8 @@ struct TurnkeyAdapterTests {
       turnkey: mockTurnkey,
       networkConfigs: configs,
       walletAddress: walletAddress,
-      chainReader: mockReader
+      chainReader: mockReader,
+      history: ThrowingTurnkeyHistory()
     )
     return (adapter, mockTurnkey, mockReader)
   }
