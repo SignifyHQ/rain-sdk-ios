@@ -95,3 +95,6 @@ iOSInjectionProject/
 # Swift Package Manager
 .swiftpm/
 .netrc
+
+# CI SwiftPM clone cache
+.spm-cache/
