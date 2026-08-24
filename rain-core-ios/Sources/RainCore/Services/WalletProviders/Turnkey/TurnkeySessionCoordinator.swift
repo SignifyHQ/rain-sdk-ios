@@ -213,12 +213,39 @@ internal final class TurnkeySessionCoordinator: @unchecked Sendable {
     if let current = turnkey.session, current.exp - now() > policy.refreshBufferSeconds {
       return current
     }
-    try await performRefreshOrExpire()
+    do {
+      try await performRefresh()
+    } catch is CancellationError {
+      throw CancellationError()
+    } catch {
+      // Only Turnkey rejecting the refresh, or a session already past `exp`, is a death. A
+      // transient failure inside the buffer proceeds on the still-valid session rather than
+      // logging the user out over a network blip.
+      guard !isAuthFailure(error), let current = turnkey.session, current.exp - now() > 0 else {
+        throw expiredError(error)
+      }
+      RainLogger.warning(
+        "Rain SDK: Turnkey proactive refresh failed; proceeding on the current session (\(Int(current.exp - now()))s left): \(error)"
+      )
+      return current
+    }
     guard let refreshed = turnkey.session else { throw expiredError() }
     return refreshed
   }
 
+  /// Single-flighted refresh; a failure surfaces as `RainSDKError.tokenExpired`.
   private func performRefreshOrExpire() async throws {
+    do {
+      try await performRefresh()
+    } catch is CancellationError {
+      throw CancellationError()
+    } catch {
+      throw expiredError(error)
+    }
+  }
+
+  /// Single-flighted refresh through Turnkey; rethrows the vendor error as-is.
+  private func performRefresh() async throws {
     let task: Task<Void, Error> = lock.withLock {
       if let existing = refreshTask { return existing }
       let task = Task { [turnkey, policy] in
@@ -238,7 +265,7 @@ internal final class TurnkeySessionCoordinator: @unchecked Sendable {
       throw CancellationError()
     } catch {
       RainLogger.warning("Rain SDK: Turnkey session refresh failed: \(error)")
-      throw expiredError(error)
+      throw error
     }
   }
 

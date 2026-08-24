@@ -156,6 +156,46 @@ struct TurnkeySessionCoordinatorTests {
     #expect(hookCalls.delays.count == 1)
   }
 
+  @Test("proactive refresh failing on a network error proceeds on the still-valid session")
+  func proactiveRefreshNetworkFailureProceeds() async throws {
+    let turnkey = MockTurnkey(session: MockTurnkey.nearExpirySession(remainingSeconds: 10))
+    turnkey.refreshSessionError = TurnkeySwiftError.failedToRefreshSession(
+      underlying: TurnkeyRequestError.network(URLError(.notConnectedToInternet))
+    )
+    let client = turnkey.turnkeyClient as! MockTurnkeyClient
+    let hookCalls = DelayRecorder()
+    let coordinator = makeCoordinator(
+      turnkey: turnkey,
+      onSessionExpired: { hookCalls.record(1) }
+    )
+
+    _ = try await readActivities(coordinator)
+
+    #expect(turnkey.refreshSessionCallCount == 1)
+    #expect(client.getActivitiesCalls.count == 1)
+    #expect(hookCalls.delays.isEmpty)
+  }
+
+  @Test("proactive refresh rejected by Turnkey expires the near-expiry session")
+  func proactiveRefreshAuthFailureExpires() async throws {
+    let turnkey = MockTurnkey(session: MockTurnkey.nearExpirySession(remainingSeconds: 10))
+    turnkey.refreshSessionError = TurnkeySwiftError.failedToRefreshSession(
+      underlying: TurnkeyRequestError.apiError(statusCode: 401, payload: nil)
+    )
+    let client = turnkey.turnkeyClient as! MockTurnkeyClient
+    let hookCalls = DelayRecorder()
+    let coordinator = makeCoordinator(
+      turnkey: turnkey,
+      onSessionExpired: { hookCalls.record(1) }
+    )
+
+    await #expect(throws: RainSDKError.tokenExpired) {
+      _ = try await self.readActivities(coordinator)
+    }
+    #expect(client.getActivitiesCalls.isEmpty)
+    #expect(hookCalls.delays.count == 1)
+  }
+
   // MARK: - Refresh-on-401 retry
 
   @Test("401 mid-call refreshes the session and retries once")

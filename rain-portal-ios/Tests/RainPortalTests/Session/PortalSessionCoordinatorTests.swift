@@ -426,6 +426,50 @@ struct PortalSessionCoordinatorTests {
     #expect(coordinator.currentState() == .active)
   }
 
+  @Test("installNow failing to rebuild keeps the live session and never fires the hook")
+  func installNowFailureKeepsLiveSession() async throws {
+    let installer = InstallRecorder()
+    let hookCalls = Counter()
+    let attempts = Counter()
+    let coordinator = makeCoordinator(onSessionExpired: { hookCalls.increment() }, installer: installer)
+    _ = try await coordinator.executeRead { "ok" }
+
+    installer.failWith = NSError(domain: "portal", code: 7)
+    do {
+      try await coordinator.installNow("garbage")
+      Issue.record("installNow should have thrown")
+    } catch let error as RainSDKError {
+      guard case .invalidConfig = error else {
+        Issue.record("expected invalidConfig, got \(error)")
+        return
+      }
+    }
+
+    #expect(coordinator.currentState() == .active)
+    #expect(hookCalls.value == 0)
+    #expect(installer.tokens.isEmpty)
+    // The old client is still installed, so calls keep running against it.
+    let result = try await coordinator.executeRead { attempts.increment(); return "still ok" }
+    #expect(result == "still ok")
+    #expect(attempts.value == 1)
+  }
+
+  @Test("installNow failing while expired stays expired without re-firing the hook")
+  func installNowFailureWhileExpired() async throws {
+    let installer = InstallRecorder()
+    let hookCalls = Counter()
+    let coordinator = makeCoordinator(onSessionExpired: { hookCalls.increment() }, installer: installer)
+    await #expect(throws: RainSDKError.tokenExpired) {
+      _ = try await coordinator.executeRead { throw self.unauthorized }
+    }
+    installer.failWith = NSError(domain: "portal", code: 7)
+    await #expect(throws: RainSDKError.self) {
+      try await coordinator.installNow("garbage")
+    }
+    #expect(coordinator.currentState() == .expired)
+    #expect(hookCalls.value == 1)
+  }
+
   @Test("installNow rejects a blank token")
   func installNowBlank() async throws {
     let coordinator = makeCoordinator()

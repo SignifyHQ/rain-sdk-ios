@@ -151,14 +151,17 @@ What every wallet call now does:
    below) instead of burning a round-trip on a guaranteed 401.
 2. **Proactive refresh** — with `autoRefresh` on (the default), a session expired or inside
    `refreshBufferSeconds` of expiry is refreshed through Turnkey's `refreshSession` before the
-   call. Refreshes are single-flighted: concurrent calls share one refresh.
+   call. Refreshes are single-flighted: concurrent calls share one refresh. A proactive
+   refresh that fails for a non-auth reason (a network blip) proceeds on the current session
+   while it is still valid; only Turnkey rejecting the refresh, or a session already past
+   `exp`, is treated as a death.
 3. **Refresh-on-401** — a call rejected with HTTP 401 / `invalidSession` is refreshed and
    retried exactly once. A 401 means Turnkey rejected the request before executing it, so this
    is safe for sends too. A second 401 surfaces as `RainSDKError.tokenExpired`.
 4. **Transient backoff** — idempotent reads (balances, history, transaction-status polls)
    retry HTTP 5xx/429/408 and network failures with exponential backoff. Sends and signing
    are never retried on transient failures.
-5. **Re-auth hook** — when the session dies for good (refresh failed, or Turnkey's own expiry
+5. **Re-auth hook** — when the session dies for good (refresh rejected, or Turnkey's own expiry
    timer cleared it while the app was idle), `onSessionExpired` fires once — even with no Rain
    call in flight, via a passive watcher over Turnkey's auth state.
 
