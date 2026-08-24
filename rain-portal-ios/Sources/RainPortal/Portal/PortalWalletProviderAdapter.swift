@@ -3,21 +3,59 @@ import PortalSwift
 import RainCore
 import Web3
 
+/// Holds the live vendor client so a session-token refresh can replace it in place.
+internal final class PortalClientHandle: @unchecked Sendable {
+  private let lock = NSLock()
+  private var instance: PortalRequestProtocol
+
+  internal init(_ instance: PortalRequestProtocol) {
+    self.instance = instance
+  }
+
+  internal var current: PortalRequestProtocol {
+    lock.withLock { instance }
+  }
+
+  internal func replace(with next: PortalRequestProtocol) {
+    lock.withLock { instance = next }
+  }
+}
+
 /// Portal-based implementation of `RainWalletProvider`. Lives in the `RainPortal` module.
+/// Every call runs through `sessions`.
 internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedDataSignerProvider, RainTransactionFeeEstimatingProvider, @unchecked Sendable {
-  private let portal: PortalRequestProtocol
+  private let handle: PortalClientHandle
   private let tokenStore: TokenMetadataStore
+  private let sessions: PortalSessionCoordinator
+
+  /// Re-read per attempt so a retry after a token refresh uses the rebuilt instance.
+  private var portal: PortalRequestProtocol { handle.current }
+
+  internal convenience init(
+    portal: PortalRequestProtocol,
+    tokenStore: TokenMetadataStore,
+    sessions: PortalSessionCoordinator = PortalSessionCoordinator()
+  ) {
+    self.init(handle: PortalClientHandle(portal), tokenStore: tokenStore, sessions: sessions)
+  }
 
   internal init(
-    portal: PortalRequestProtocol,
-    tokenStore: TokenMetadataStore
+    handle: PortalClientHandle,
+    tokenStore: TokenMetadataStore,
+    sessions: PortalSessionCoordinator = PortalSessionCoordinator()
   ) {
-    self.portal = portal
+    self.handle = handle
     self.tokenStore = tokenStore
+    self.sessions = sessions
   }
 
   public func address(
   ) async throws -> String {
+    try await sessions.executeRead { try await fetchAddress() }
+  }
+
+  /// Unguarded, for balance paths already inside a guarded call (nested guards would re-mint twice).
+  private func fetchAddress() async throws -> String {
     let addresses = try await portal.addresses
     let eip155 = PortalNamespace.eip155
     
@@ -29,6 +67,15 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
   }
 
   public func sendTransaction(
+    chainId: Int,
+    params: WalletTransactionParams
+  ) async throws -> String {
+    try await sessions.executeWrite {
+      try await performSendTransaction(chainId: chainId, params: params)
+    }
+  }
+
+  private func performSendTransaction(
     chainId: Int,
     params: WalletTransactionParams
   ) async throws -> String {
@@ -79,12 +126,14 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
   ) async throws -> String {
     let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
 
-    let response = try await portal.request(
-      chainId: chainIdString,
-      method: .eth_signTypedData_v4,
-      params: [walletAddress, typedData],
-      options: nil
-    )
+    let response = try await sessions.executeWrite {
+      try await portal.request(
+        chainId: chainIdString,
+        method: .eth_signTypedData_v4,
+        params: [walletAddress, typedData],
+        options: nil
+      )
+    }
 
     guard let signature = response.result as? String else {
       throw RainSDKError.internalLogicError(details: "eth_signTypedData_v4 returned no signature")
@@ -105,17 +154,21 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
       data: params.data
     )
 
-    let estimateGas = try await fetchGasData(
-      chainId: chainId,
-      method: .eth_estimateGas,
-      address: walletAddress,
-      params: [ethParam]
-    )
-    let gasPriceWei = try await fetchGasData(
-      chainId: chainId,
-      method: .eth_gasPrice,
-      address: walletAddress
-    )
+    let estimateGas = try await sessions.executeRead {
+      try await fetchGasData(
+        chainId: chainId,
+        method: .eth_estimateGas,
+        address: walletAddress,
+        params: [ethParam]
+      )
+    }
+    let gasPriceWei = try await sessions.executeRead {
+      try await fetchGasData(
+        chainId: chainId,
+        method: .eth_gasPrice,
+        address: walletAddress
+      )
+    }
 
     // Exact wei math: multiply as BigUInt, divide to native units as Decimal.
     return EthereumConverter.baseUnitsToDecimal(
@@ -128,17 +181,23 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     chainId: Int,
     token: Token
   ) async throws -> RainCore.Balance {
-    switch token {
-    case .native:
-      return try await fetchNativeBalance(chainId: chainId)
-    case .contract(let address):
-      return try await fetchContractBalance(chainId: chainId, address: address)
+    try await sessions.executeRead {
+      switch token {
+      case .native:
+        return try await fetchNativeBalance(chainId: chainId)
+      case .contract(let address):
+        return try await fetchContractBalance(chainId: chainId, address: address)
+      }
     }
   }
 
   public func getBalances(
     chainId: Int
   ) async throws -> [RainCore.Balance] {
+    try await sessions.executeRead { try await fetchBalances(chainId: chainId) }
+  }
+
+  private func fetchBalances(chainId: Int) async throws -> [RainCore.Balance] {
     let native = try await fetchNativeBalance(chainId: chainId)
     let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
     let tokenBalances = try await portal.getAssets(chainIdString).tokenBalances ?? []
@@ -165,7 +224,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
 
   /// Fetches the native balance via `eth_getBalance`, preserving exact wei precision.
   private func fetchNativeBalance(chainId: Int) async throws -> RainCore.Balance {
-    let walletAddress = try await address()
+    let walletAddress = try await fetchAddress()
     let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
     let response = try await portal.request(
       chainId: chainIdString,
@@ -187,7 +246,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
 
   /// Fetches a single ERC-20 balance via direct RPC `eth_call` (balanceOf), preserving exact precision.
   private func fetchContractBalance(chainId: Int, address: String) async throws -> RainCore.Balance {
-    let walletAddress = try await self.address()
+    let walletAddress = try await fetchAddress()
     let info = await tokenStore.tokenInfo(chainId: chainId, address: address)
     let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
     let callData = Multicall3.encodeBalanceOf(address: walletAddress)
@@ -265,12 +324,14 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
   ) async throws -> [RainTransaction] {
     let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
     let portalOrder = order?.toPortalOrder
-    let fetchedTransactions = try await portal.getTransactions(
-      chainIdString,
-      limit: limit,
-      offset: offset,
-      order: portalOrder
-    )
+    let fetchedTransactions = try await sessions.executeRead {
+      try await portal.getTransactions(
+        chainIdString,
+        limit: limit,
+        offset: offset,
+        order: portalOrder
+      )
+    }
 
     // Resolve metadata once per distinct contract, then build each row with everything known —
     // rows are immutable, so nothing is patched after construction.

@@ -16,6 +16,9 @@ import RainCore
 ///     `await` points, so the switch+broadcast pair runs under an explicit async lock.
 actor PrivyManager {
   private let source: any PrivyWalletSource
+  /// Guards every Privy call: auth-state check, transient backoff, typed session death.
+  /// `nil` (test default) leaves calls unguarded.
+  private let sessions: PrivySessionCoordinator?
 
   /// Once resolved, the embedded-wallet address is stable for the manager's lifetime.
   private var cachedAddress: String?
@@ -31,12 +34,27 @@ actor PrivyManager {
   private var sendLocked = false
   private var sendWaiters: [CheckedContinuation<Void, Never>] = []
 
-  init(source: any PrivyWalletSource) {
+  init(source: any PrivyWalletSource, sessions: PrivySessionCoordinator? = nil) {
     self.source = source
+    self.sessions = sessions
   }
 
-  init(privy: any Privy) {
-    self.init(source: LivePrivyWalletSource(privy: privy))
+  init(privy: any Privy, sessions: PrivySessionCoordinator? = nil) {
+    self.init(source: LivePrivyWalletSource(privy: privy), sessions: sessions)
+  }
+
+  /// Bumped on every eviction so a resolution that was already in flight when the session
+  /// died cannot write the dead session's account back into the cache.
+  private var evictionEpoch = 0
+
+  /// Drops the cached accounts and in-flight resolutions. Called on session death so a later
+  /// login as a different user can never sign with the previous user's accounts.
+  func evictCachedAccounts() {
+    evictionEpoch += 1
+    cachedAddress = nil
+    addressResolution = nil
+    cachedSolanaAccount = nil
+    solanaAccountResolution = nil
   }
 
   // MARK: - Address
@@ -53,17 +71,26 @@ actor PrivyManager {
     if let addressResolution {
       return try await addressResolution.value
     }
-    let task = Task { [source] in
-      try await Self.resolveWallet(source: source, override: nil).address
+    let epoch = evictionEpoch
+    let task = Task { [source, sessions] in
+      try await Self.guardedRead(sessions) {
+        try await Self.resolveWallet(source: source, override: nil).address
+      }
     }
     addressResolution = task
     do {
       let resolved = try await task.value
-      cachedAddress = resolved
+      // Cache only while no eviction happened mid-flight — this result may belong to a
+      // session that just died.
+      if evictionEpoch == epoch {
+        cachedAddress = resolved
+      }
       return resolved
     } catch {
       // Allow a later caller to retry (e.g. wallet created after this failed probe).
-      addressResolution = nil
+      if evictionEpoch == epoch {
+        addressResolution = nil
+      }
       throw error
     }
   }
@@ -82,17 +109,25 @@ actor PrivyManager {
     if let solanaAccountResolution {
       return try await solanaAccountResolution.value
     }
-    let task = Task { [source] in
-      try await Self.resolveSolanaAccount(source: source)
+    let epoch = evictionEpoch
+    let task = Task { [source, sessions] in
+      try await Self.guardedRead(sessions) {
+        try await Self.resolveSolanaAccount(source: source)
+      }
     }
     solanaAccountResolution = task
     do {
       let resolved = try await task.value
-      cachedSolanaAccount = resolved
+      // Cache only while no eviction happened mid-flight (see `address(override:)`).
+      if evictionEpoch == epoch {
+        cachedSolanaAccount = resolved
+      }
       return resolved
     } catch {
       // Allow a later caller to retry (e.g. Solana wallet created after this failed probe).
-      solanaAccountResolution = nil
+      if evictionEpoch == epoch {
+        solanaAccountResolution = nil
+      }
       throw error
     }
   }
@@ -102,12 +137,14 @@ actor PrivyManager {
   /// Signs EIP-712 typed data via `eth_signTypedData_v4`. Returns the 0x-prefixed signature.
   /// Signing takes no chain state, so it is not serialized with sends.
   func signTypedData(walletAddress: String, typedDataJson: String) async throws -> String {
-    let wallet = try await Self.resolveWallet(source: source, override: walletAddress)
-    let rpcRequest = EthereumRpcRequest(
-      method: "eth_signTypedData_v4",
-      params: [wallet.address, typedDataJson]
-    )
-    return try await request(wallet: wallet, rpcRequest)
+    try await Self.guardedWrite(sessions) { [source] in
+      let wallet = try await Self.resolveWallet(source: source, override: walletAddress)
+      let rpcRequest = EthereumRpcRequest(
+        method: "eth_signTypedData_v4",
+        params: [wallet.address, typedDataJson]
+      )
+      return try await Self.request(wallet: wallet, rpcRequest)
+    }
   }
 
   // MARK: - Send
@@ -121,18 +158,25 @@ actor PrivyManager {
     chainId: Int,
     transaction: EthereumRpcRequest.UnsignedEthTransaction
   ) async throws -> String {
-    let wallet = try await Self.resolveWallet(source: source, override: walletAddress)
+    try await sessions?.preflight()
+    let wallet: any PrivyEthereumSigner
+    do {
+      wallet = try await Self.resolveWallet(source: source, override: walletAddress)
+    } catch {
+      // A user gone at resolve time is a session death too: classify so the hook fires.
+      throw sessions?.classifyFailure(error) ?? error
+    }
     let rpcRequest = try EthereumRpcRequest.ethSendTransaction(transaction: transaction)
 
     await acquireSendLock()
     do {
       await wallet.switchChain(chainId: chainId, rpcUrl: rpcUrl)
-      let hash = try await request(wallet: wallet, rpcRequest)
+      let hash = try await Self.request(wallet: wallet, rpcRequest)
       releaseSendLock()
       return hash
     } catch {
       releaseSendLock()
-      throw error
+      throw sessions?.classifyFailure(error) ?? error
     }
   }
 
@@ -145,6 +189,7 @@ actor PrivyManager {
     caip2: String,
     rpcUrl: String
   ) async throws -> String {
+    try await sessions?.preflight()
     let account = try await solanaAccount()
     do {
       return try await account.signAndSendTransaction(
@@ -155,7 +200,7 @@ actor PrivyManager {
     } catch {
       if error is CancellationError { throw error }
       RainLogger.error("Rain SDK: Privy Solana send failed: \(error)")
-      throw error
+      throw sessions?.classifyFailure(error) ?? error
     }
   }
 
@@ -169,13 +214,18 @@ actor PrivyManager {
     walletAddress: String?,
     params: GetTransactionsParams
   ) async throws -> PrivyTransactionsPage {
-    let wallet = try await Self.resolveWallet(source: source, override: walletAddress)
-    return try await wallet.getTransactions(params)
+    try await Self.guardedRead(sessions) { [source] in
+      let wallet = try await Self.resolveWallet(source: source, override: walletAddress)
+      return try await wallet.getTransactions(params)
+    }
   }
 
   /// One page of Solana history for the embedded Solana account (vs. the Ethereum one).
   func getSolanaTransactions(params: GetTransactionsParams) async throws -> PrivyTransactionsPage {
-    try await solanaAccount().getTransactions(params)
+    let account = try await solanaAccount()
+    return try await Self.guardedRead(sessions) {
+      try await account.getTransactions(params)
+    }
   }
 
   // MARK: - Internals
@@ -186,7 +236,7 @@ actor PrivyManager {
   /// on any `RainSDKError`, so pre-wrapping would bypass ``PrivyErrorMapping`` and hide
   /// user-rejection / insufficient-funds behind a generic `.providerError`.
   /// `CancellationError` is rethrown as-is.
-  private func request(
+  private static func request(
     wallet: any PrivyEthereumSigner,
     _ rpcRequest: EthereumRpcRequest
   ) async throws -> String {
@@ -197,6 +247,24 @@ actor PrivyManager {
       RainLogger.error("Rain SDK: Privy RPC request failed for \(rpcRequest.method): \(error)")
       throw error
     }
+  }
+
+  /// Routes through the coordinator's read guard when one is attached; plain call otherwise.
+  private static func guardedRead<T>(
+    _ sessions: PrivySessionCoordinator?,
+    _ block: () async throws -> T
+  ) async throws -> T {
+    guard let sessions else { return try await block() }
+    return try await sessions.executeRead(block)
+  }
+
+  /// Routes through the coordinator's write guard when one is attached; plain call otherwise.
+  private static func guardedWrite<T>(
+    _ sessions: PrivySessionCoordinator?,
+    _ block: () async throws -> T
+  ) async throws -> T {
+    guard let sessions else { return try await block() }
+    return try await sessions.executeWrite(block)
   }
 
   /// Resolves the embedded Ethereum wallet to sign with. Uses `override` when supplied, otherwise

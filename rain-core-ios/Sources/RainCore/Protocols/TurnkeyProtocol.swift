@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import TurnkeyHttp
 import TurnkeySwift
@@ -31,8 +32,15 @@ internal protocol TurnkeyContextProtocol: AnyObject {
   var wallets: [Wallet] { get }
   var session: Session? { get }
   var turnkeyClient: (any TurnkeyClientProtocol)? { get }
+  var authState: AuthState { get }
+  var authStatePublisher: AnyPublisher<AuthState, Never> { get }
+  var sessionPublisher: AnyPublisher<Session?, Never> { get }
 
   func refreshWallets() async throws
+
+  /// Refreshes the selected session; `nil` `expirationSeconds` uses Turnkey's default TTL.
+  /// Distinctly named so it cannot collide with the vendor's defaulted `refreshSession(...)`.
+  func refreshTurnkeySession(expirationSeconds: String?) async throws
 
   func signRawPayload(
     signWith: String,
@@ -45,5 +53,21 @@ internal protocol TurnkeyContextProtocol: AnyObject {
 extension TurnkeyContext: TurnkeyContextProtocol {
   internal var turnkeyClient: (any TurnkeyClientProtocol)? {
     client
+  }
+
+  internal var authStatePublisher: AnyPublisher<AuthState, Never> {
+    $authState.eraseToAnyPublisher()
+  }
+
+  internal var sessionPublisher: AnyPublisher<Session?, Never> {
+    $session.eraseToAnyPublisher()
+  }
+
+  internal func refreshTurnkeySession(expirationSeconds: String?) async throws {
+    if let expirationSeconds {
+      try await refreshSession(expirationSeconds: expirationSeconds)
+    } else {
+      try await refreshSession()
+    }
   }
 }

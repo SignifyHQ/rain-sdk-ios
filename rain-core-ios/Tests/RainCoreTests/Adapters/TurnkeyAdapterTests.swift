@@ -117,12 +117,26 @@ struct TurnkeyAdapterTests {
     mockTurnkey.session = nil
     mockTurnkey.wallets = []
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    // The cache is evicted and, with no session left, the re-resolve surfaces the typed
+    // re-auth signal rather than a generic wallet-unavailable.
+    await #expect(throws: RainSDKError.tokenExpired) {
       _ = try await manager.getWalletAddress()
     }
   }
 
   // MARK: - Balances
+
+  @Test("getAllBalances surfaces a dead session instead of returning an empty list")
+  func getAllBalancesSurfacesDeadSession() async throws {
+    let mockTurnkey = MockTurnkey(session: nil)
+    let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
+
+    // A dead wallet session affects every chain identically; an empty list here would read
+    // as zero balances rather than as "re-authenticate".
+    await #expect(throws: RainSDKError.tokenExpired) {
+      _ = try await manager.getAllBalances()
+    }
+  }
 
   @Test("getBalance(.native) with Turnkey parses 1 ETH from a single ether balance")
   func testGetNativeBalanceTurnkey() async throws {

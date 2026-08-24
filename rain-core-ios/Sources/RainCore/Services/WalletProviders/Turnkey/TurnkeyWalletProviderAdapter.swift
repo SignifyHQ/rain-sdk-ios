@@ -31,6 +31,8 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   }
 
   private let turnkey: TurnkeyContextProtocol
+  /// Guards every Turnkey call: expiry check, proactive refresh, refresh-on-401, backoff.
+  private let sessions: TurnkeySessionCoordinator
   private let networkConfigsByChainId: [Int: NetworkConfig]
   private let walletAddressOverride: String?
   private let jsonRpcClient: JsonRpcClient
@@ -81,9 +83,11 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     chainReader: ChainReader? = nil,
     solanaSupport: RainSolanaSupport? = nil,
     tokenStore: TokenMetadataStore? = nil,
-    history: (any TurnkeyHistoryProviding)? = nil
+    history: (any TurnkeyHistoryProviding)? = nil,
+    sessionCoordinator: TurnkeySessionCoordinator? = nil
   ) {
     self.turnkey = turnkey
+    self.sessions = sessionCoordinator ?? TurnkeySessionCoordinator(turnkey: turnkey)
     self.networkConfigsByChainId = Dictionary(uniqueKeysWithValues: networkConfigs.map { ($0.chainId, $0) })
     self.walletAddressOverride = walletAddress
     self.jsonRpcClient = jsonRpcClient
@@ -140,7 +144,9 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       }
       let task = Task { [self] in
         if let walletAddress = resolve(self) { return walletAddress }
-        try await turnkey.refreshWallets()
+        // Session-guarded: an expired session surfaces as tokenExpired here rather than as
+        // the vendor's raw refresh-wallets failure.
+        try await sessions.executeRead { _, _ in try await self.turnkey.refreshWallets() }
         if let walletAddress = resolve(self) { return walletAddress }
         throw RainSDKError.walletUnavailable
       }
@@ -193,19 +199,16 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     params: WalletTransactionParams
   ) async throws -> String {
     try requireEVM(chainId: chainId, operation: "sendTransaction")
-    let (session, client) = try resolveSessionAndClient()
-    let sendInput = try await buildTurnkeySendTransactionBody(
-      session: session,
-      chainId: chainId,
-      params: params
-    )
-    let response = try await client.ethSendTransaction(sendInput)
-
-    return try await pollForTransactionHash(
-      client: client,
-      organizationId: session.organizationId,
-      sendTransactionStatusId: response.sendTransactionStatusId
-    )
+    // The body is rebuilt on a refresh-and-retry so the nonce and gas quotes stay fresh.
+    let statusId = try await sessions.executeWrite { session, client in
+      let sendInput = try await self.buildTurnkeySendTransactionBody(
+        session: session,
+        chainId: chainId,
+        params: params
+      )
+      return try await client.ethSendTransaction(sendInput).sendTransactionStatusId
+    }
+    return try await pollForTransactionHash(sendTransactionStatusId: statusId)
   }
 
   public func getBalance(
@@ -272,6 +275,12 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
           mint: mint
         )
       }
+    } catch let cancellation as CancellationError {
+      throw cancellation
+    } catch let error as RainSDKError where error == .tokenExpired {
+      // A dead session must surface, not be masked by the node fallback — the coordinator
+      // already tried a refresh before this error was thrown.
+      throw error
     } catch {
       return try await chainReaderFor(chainId: chainId).getBalance(
         chainId: chainId,
@@ -356,7 +365,17 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     let caip2 = caip2For(chainId: chainId)
     let balances: [v1AssetBalance]
     if SolanaChains.isSolana(chainId) {
-      let turnkeyBalances = try? await fetchBalances(chainId: chainId, walletAddress: walletAddress)
+      let turnkeyBalances: [v1AssetBalance]?
+      do {
+        turnkeyBalances = try await fetchBalances(chainId: chainId, walletAddress: walletAddress)
+      } catch let cancellation as CancellationError {
+        throw cancellation
+      } catch let error as RainSDKError where error == .tokenExpired {
+        // A dead session must surface, not be masked by the node fallback.
+        throw error
+      } catch {
+        turnkeyBalances = nil
+      }
       // Turnkey does not index every cluster: on devnet / testnet it errors, or answers with SOL
       // and no SPL assets at all. Discovering the wallet's token accounts from the node covers
       // both cases; on mainnet, where Turnkey does list SPL assets, its richer metadata wins.
@@ -456,8 +475,10 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       return try await indexedEvmTransactions(chainId: chainId, limit: limit, offset: offset, order: order)
     } catch let cancellation as CancellationError {
       throw cancellation
-    } catch TurnkeySwiftError.invalidSession {
+    } catch let error as RainSDKError where error == .tokenExpired {
       // The activity path needs the same session, so falling back would only fail again.
+      throw error
+    } catch TurnkeySwiftError.invalidSession {
       throw TurnkeySwiftError.invalidSession
     } catch {
       // URLSession surfaces task cancellation as URLError(.cancelled), not CancellationError;
@@ -477,17 +498,16 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     offset: Int?,
     order: RainTransactionOrder?
   ) async throws -> [RainTransaction] {
-    guard let session = turnkey.session else {
-      throw TurnkeySwiftError.invalidSession
-    }
     let walletAddress = try await getAddress(chainId: chainId)
-    let response = try await history.listEthTransactionHistory(
-      organizationId: session.organizationId,
-      sessionPublicKey: session.publicKey,
-      address: walletAddress,
-      caip2: caip2For(chainId: chainId),
-      limit: requestedHistoryLimit(limit: limit, offset: offset)
-    )
+    let response = try await sessions.executeRead { session, _ in
+      try await self.history.listEthTransactionHistory(
+        organizationId: session.organizationId,
+        sessionPublicKey: session.publicKey,
+        address: walletAddress,
+        caip2: self.caip2For(chainId: chainId),
+        limit: self.requestedHistoryLimit(limit: limit, offset: offset)
+      )
+    }
     let rows = (response.transactions ?? []).map { tx in
       (
         Self.rfc3339EpochSeconds(tx.block?.timestamp),
@@ -513,17 +533,16 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     offset: Int?,
     order: RainTransactionOrder?
   ) async throws -> [RainTransaction] {
-    guard let session = turnkey.session else {
-      throw TurnkeySwiftError.invalidSession
-    }
     let walletAddress = try await getAddress(chainId: chainId)
-    let response = try await history.listSolTransactionHistory(
-      organizationId: session.organizationId,
-      sessionPublicKey: session.publicKey,
-      address: walletAddress,
-      caip2: caip2For(chainId: chainId),
-      limit: requestedHistoryLimit(limit: limit, offset: offset)
-    )
+    let response = try await sessions.executeRead { session, _ in
+      try await self.history.listSolTransactionHistory(
+        organizationId: session.organizationId,
+        sessionPublicKey: session.publicKey,
+        address: walletAddress,
+        caip2: self.caip2For(chainId: chainId),
+        limit: self.requestedHistoryLimit(limit: limit, offset: offset)
+      )
+    }
     let rows = (response.transactions ?? []).map { tx in
       (
         Self.rfc3339EpochSeconds(tx.block?.timestamp),
@@ -746,15 +765,16 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     offset: Int?,
     order: RainTransactionOrder?
   ) async throws -> [RainTransaction] {
-    let (session, client) = try resolveSessionAndClient()
     let requestedLimit = min(max((limit ?? 10) + (offset ?? 0), 1), 100)
-    let activitiesResponse = try await client.getActivities(
-      TGetActivitiesBody(
-        organizationId: session.organizationId,
-        filterByType: [.activity_type_eth_send_transaction],
-        paginationOptions: v1Pagination(limit: String(requestedLimit))
+    let activitiesResponse = try await sessions.executeRead { session, client in
+      try await client.getActivities(
+        TGetActivitiesBody(
+          organizationId: session.organizationId,
+          filterByType: [.activity_type_eth_send_transaction],
+          paginationOptions: v1Pagination(limit: String(requestedLimit))
+        )
       )
-    )
+    }
 
     let matchingDrafts = activitiesResponse.activities.compactMap { activity in
       draftTransaction(from: activity, expectedChainId: chainId)
@@ -780,8 +800,6 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
 
     for draft in slicedDrafts {
       let txHash = try? await resolveTransactionHash(
-        client: client,
-        organizationId: session.organizationId,
         sendTransactionStatusId: draft.sendTransactionStatusId
       )
       // A contract call carries calldata; a plain transfer does not.
@@ -837,16 +855,17 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     offset: Int?,
     order: RainTransactionOrder?
   ) async throws -> [RainTransaction] {
-    let (session, client) = try resolveSessionAndClient()
     let caip2 = caip2For(chainId: chainId)
     let requestedLimit = min(max((limit ?? 10) + (offset ?? 0), 1), 100)
-    let activitiesResponse = try await client.getActivities(
-      TGetActivitiesBody(
-        organizationId: session.organizationId,
-        filterByType: [.activity_type_sol_send_transaction],
-        paginationOptions: v1Pagination(limit: String(requestedLimit))
+    let activitiesResponse = try await sessions.executeRead { session, client in
+      try await client.getActivities(
+        TGetActivitiesBody(
+          organizationId: session.organizationId,
+          filterByType: [.activity_type_sol_send_transaction],
+          paginationOptions: v1Pagination(limit: String(requestedLimit))
+        )
       )
-    )
+    }
 
     let drafts: [SolanaActivityDraft] = activitiesResponse.activities.compactMap { activity in
       guard let intent = activity.intent.solSendTransactionIntent,
@@ -995,29 +1014,24 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     from: String,
     unsigned: UnsignedSolanaTransfer
   ) async throws -> String {
-    let (session, client) = try resolveSessionAndClient()
-
     // Baseline for the signature recovery below: the wallet's newest signature before this send.
     let priorSignature = try? await solanaRpcClient.getLatestSignature(chainId: chainId, address: from)
 
-    let response = try await client.solSendTransaction(
-      TSolSendTransactionBody(
-        organizationId: session.organizationId,
-        caip2: caip2For(chainId: chainId),
-        recentBlockhash: unsigned.recentBlockhash,
-        signWith: from,
-        sponsor: false,
-        unsignedTransaction: unsigned.transactionHex
-      )
-    )
-    let statusId = response.sendTransactionStatusId
+    let statusId = try await sessions.executeWrite { session, client in
+      try await client.solSendTransaction(
+        TSolSendTransactionBody(
+          organizationId: session.organizationId,
+          caip2: self.caip2For(chainId: chainId),
+          recentBlockhash: unsigned.recentBlockhash,
+          signWith: from,
+          sponsor: false,
+          unsignedTransaction: unsigned.transactionHex
+        )
+      ).sendTransactionStatusId
+    }
 
     // The Turnkey SDK returns the Solana signature in the send-status response once Included.
-    if let signature = try await pollForSolanaCompletion(
-      client: client,
-      organizationId: session.organizationId,
-      sendTransactionStatusId: statusId
-    ) {
+    if let signature = try await pollForSolanaCompletion(sendTransactionStatusId: statusId) {
       return signature
     }
 
@@ -1067,17 +1081,24 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   /// (populated once the tx is Included), `nil` at a terminal status without it or on timeout
   /// (caller then recovers the signature from chain), and throws on explicit failure.
   private func pollForSolanaCompletion(
-    client: any TurnkeyClientProtocol,
-    organizationId: String,
     sendTransactionStatusId: String
   ) async throws -> String? {
     for attempt in 0..<AdapterConstants.defaultPollingAttempts {
-      let status = try await client.getSendTransactionStatus(
-        TGetSendTransactionStatusBody(
-          organizationId: organizationId,
-          sendTransactionStatusId: sendTransactionStatusId
-        )
-      )
+      // A session dying mid-poll stops the status reads, not the submitted transaction:
+      // returning nil lets the caller recover the signature from chain.
+      let status: TGetSendTransactionStatusResponse
+      do {
+        status = try await sessions.executeRead { session, client in
+          try await client.getSendTransactionStatus(
+            TGetSendTransactionStatusBody(
+              organizationId: session.organizationId,
+              sendTransactionStatusId: sendTransactionStatusId
+            )
+          )
+        }
+      } catch let error as RainSDKError where error == .tokenExpired {
+        return nil
+      }
 
       let normalized = status.txStatus.uppercased()
       if normalized.contains("FAILED") || normalized.contains("REJECTED")
@@ -1119,12 +1140,14 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     typedData: String
   ) async throws -> String {
     try requireEVM(chainId: chainId, operation: "signTypedData")
-    let signature = try await turnkey.signRawPayload(
-      signWith: walletAddress,
-      payload: typedData,
-      encoding: .payload_encoding_eip712,
-      hashFunction: .hash_function_no_op
-    )
+    let signature = try await sessions.executeWrite { _, _ in
+      try await self.turnkey.signRawPayload(
+        signWith: walletAddress,
+        payload: typedData,
+        encoding: .payload_encoding_eip712,
+        hashFunction: .hash_function_no_op
+      )
+    }
 
     return Self.ethereumSignatureHex(from: signature)
   }
@@ -1165,30 +1188,19 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     )
   }
 
-  private func resolveSessionAndClient() throws -> (Session, any TurnkeyClientProtocol) {
-    guard let session = turnkey.session else {
-      throw TurnkeySwiftError.invalidSession
-    }
-
-    guard let client = turnkey.turnkeyClient else {
-      throw TurnkeySwiftError.invalidSession
-    }
-
-    return (session, client)
-  }
-
   private func fetchBalances(
     chainId: Int,
     walletAddress: String
   ) async throws -> [v1AssetBalance] {
-    let (session, client) = try resolveSessionAndClient()
-    let response = try await client.getWalletAddressBalances(
-      TGetWalletAddressBalancesBody(
-        organizationId: session.organizationId,
-        address: walletAddress,
-        caip2: caip2For(chainId: chainId)
+    let response = try await sessions.executeRead { session, client in
+      try await client.getWalletAddressBalances(
+        TGetWalletAddressBalancesBody(
+          organizationId: session.organizationId,
+          address: walletAddress,
+          caip2: self.caip2For(chainId: chainId)
+        )
       )
-    )
+    }
 
     return response.balances ?? []
   }
@@ -1281,35 +1293,44 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   }
 
   private func resolveTransactionHash(
-    client: any TurnkeyClientProtocol,
-    organizationId: String,
     sendTransactionStatusId: String?
   ) async throws -> String? {
     guard let sendTransactionStatusId else {
       return nil
     }
 
-    let status = try await client.getSendTransactionStatus(
-      TGetSendTransactionStatusBody(
-        organizationId: organizationId,
-        sendTransactionStatusId: sendTransactionStatusId
+    let status = try await sessions.executeRead { session, client in
+      try await client.getSendTransactionStatus(
+        TGetSendTransactionStatusBody(
+          organizationId: session.organizationId,
+          sendTransactionStatusId: sendTransactionStatusId
+        )
       )
-    )
+    }
     return status.eth?.txHash
   }
 
   private func pollForTransactionHash(
-    client: any TurnkeyClientProtocol,
-    organizationId: String,
     sendTransactionStatusId: String
   ) async throws -> String {
     for attempt in 0..<Self.AdapterConstants.defaultPollingAttempts {
-      let status = try await client.getSendTransactionStatus(
-        TGetSendTransactionStatusBody(
-          organizationId: organizationId,
-          sendTransactionStatusId: sendTransactionStatusId
-        )
-      )
+      // Session-guarded per poll: a session expiring mid-poll refreshes instead of aborting a
+      // transaction that was already submitted. If the session dies for good, the status id
+      // must survive — losing it here would invite a duplicate send after re-auth. The expiry
+      // hook has already fired by then.
+      let status: TGetSendTransactionStatusResponse
+      do {
+        status = try await sessions.executeRead { session, client in
+          try await client.getSendTransactionStatus(
+            TGetSendTransactionStatusBody(
+              organizationId: session.organizationId,
+              sendTransactionStatusId: sendTransactionStatusId
+            )
+          )
+        }
+      } catch let error as RainSDKError where error == .tokenExpired {
+        throw RainSDKError.transactionPending(statusId: sendTransactionStatusId)
+      }
 
       if let txHash = status.eth?.txHash, !txHash.isEmpty {
         return txHash

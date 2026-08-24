@@ -47,6 +47,16 @@ enum TurnkeyAuthSample {
     _ = TurnkeyContext.shared
   }
 
+  /// `TurnkeyContext` restores the Keychain session asynchronously after configure; wait for it.
+  static func awaitSessionRestore(timeout: TimeInterval = 5) async {
+    guard configuredWith != nil else { return }
+    let deadline = Date().addingTimeInterval(timeout)
+    while Date() < deadline {
+      if TurnkeyContext.shared.session != nil || TurnkeyContext.shared.authState == .unAuthenticated { return }
+      try? await Task.sleep(nanoseconds: 100_000_000)
+    }
+  }
+
   /// True when an authenticated, unexpired session is already loaded. Turnkey restores a
   /// previously-selected session from the Keychain, so this reports whether the OTP step can be
   /// skipped entirely.

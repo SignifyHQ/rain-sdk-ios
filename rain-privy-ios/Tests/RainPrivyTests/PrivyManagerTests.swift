@@ -184,4 +184,38 @@ struct PrivyManagerTests {
       walletAddress: Self.wallet, rpcUrl: Self.rpc, chainId: 1, transaction: tx)
     #expect(hash == "0xHASH")
   }
+
+  @Test("eviction drops cached accounts so the next resolution re-reads Privy")
+  func evictionDropsCaches() async throws {
+    let source = FakeWalletSource(wallets: [FakeSigner(address: Self.wallet)])
+    let manager = PrivyManager(source: source)
+
+    _ = try await manager.address(override: nil)
+    _ = try await manager.address(override: nil)
+    #expect(source.lookups == 1)
+
+    await manager.evictCachedAccounts()
+
+    _ = try await manager.address(override: nil)
+    #expect(source.lookups == 2)
+  }
+
+  @Test("eviction during an in-flight resolution does not repopulate the cache")
+  func evictionMidFlightDoesNotRepopulate() async throws {
+    let source = FakeWalletSource(
+      wallets: [FakeSigner(address: Self.wallet)],
+      lookupDelayNs: 100_000_000
+    )
+    let manager = PrivyManager(source: source)
+
+    // The resolution suspends mid-flight; the eviction (session death) lands while it waits.
+    let inFlight = Task { try await manager.address(override: nil) }
+    try await Task.sleep(nanoseconds: 20_000_000)
+    await manager.evictCachedAccounts()
+    _ = try await inFlight.value
+
+    // The stale result must not have been cached: the next call re-resolves.
+    _ = try await manager.address(override: nil)
+    #expect(source.lookups == 2)
+  }
 }

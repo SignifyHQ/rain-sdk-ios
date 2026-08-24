@@ -35,3 +35,57 @@ list). Resolving `rain.provider(.privy)` probes for an embedded Ethereum wallet 
 `RainSDKError.walletUnavailable` if none is available.
 
 Advertised capabilities: `.export`, `.recovery`, `.multiChain`.
+
+## Session expiry and retry
+
+Privy's session model differs from Turnkey's: the Privy SDK refreshes its own session
+internally before every wallet and indexer call, and exposes no JWT expiry. Rain therefore does
+not schedule refreshes for Privy — hardening is auth-state guarding, a re-auth hook, and
+transient-failure backoff, controlled by `PrivySessionPolicy`:
+
+```swift
+PrivyProvider(
+  PrivyConfig(
+    privy: privy,
+    sessionPolicy: PrivySessionPolicy(
+      maxTransientRetries: 2,   // backoff retries for network failures on reads
+      initialRetryDelay: 0.5,
+      maxRetryDelay: 4
+    ),
+    onSessionExpired: {
+      // Re-auth hook: the session died (Privy's own internal refresh already failed).
+      // Fired once per session death. Route the user back to login.
+    }
+  )
+)
+```
+
+What every wallet call now does:
+
+1. **Auth-state check** — Privy's auth state is consulted before the request: an
+   unauthenticated state throws `RainSDKError.tokenExpired` without a round-trip, and a call
+   racing Privy's async credential restore waits out `.loading` (bounded at ~10s) instead of
+   misreporting expiry.
+2. **Terminal auth failures** — an auth failure that reaches Rain means Privy already tried
+   its own internal refresh, so it surfaces immediately as `RainSDKError.tokenExpired` (never
+   retried) and fires the hook. Privy's `sessionExpired` error code now maps to
+   `.tokenExpired` too.
+3. **Transient backoff** — idempotent reads (address resolution, history) retry network
+   failures with exponential backoff. Sends and signing are never retried.
+4. **Re-auth hook + cache eviction** — when an active session dies, `onSessionExpired` fires
+   once (even with no Rain call in flight, via a passive watcher over Privy's auth-state
+   stream) and the adapter's cached accounts are evicted, so a later login as a different user
+   can never sign with the previous user's wallets.
+
+Observable state: `provider.sessionState` (`AnyPublisher<PrivySessionState, Never>`) and
+`provider.currentSessionState()` report `.loading / .active / .unverified / .unauthenticated`.
+`.unverified` is Privy-specific (a session restored offline that Privy could not verify yet);
+there is no `.expired` state because Privy exposes no expiry timestamp. `provider.refreshSession()`
+is a manual health check that throws `.tokenExpired` on failure.
+
+Resolving the provider always starts the passive watcher (it also drives cache eviction). A
+host that rebuilds the SDK per login should call `provider.close()` on the provider it is
+discarding so a stale watcher cannot fire.
+
+Reference: the example app's `RainSDKService.swift`, `WalletSessionStatus.swift` and `HomeView`'s
+session card.

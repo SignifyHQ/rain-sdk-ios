@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import RainCore
 import RainPortal
@@ -54,6 +55,27 @@ final class RainSDKService: ObservableObject {
   /// Provider behind the last successful initialize; used to gate provider-specific UI.
   @Published private(set) var activeProvider: ActiveProvider = .none
 
+  /// The active provider's `sessionState` as a display model; nil before resolution.
+  @Published private(set) var sessionStatus: WalletSessionStatus?
+
+  /// Typed because the session surface lives on the provider, not on `RainClient`.
+  private enum ProviderHandle {
+    case portal(RainPortal.PortalProvider)
+    case turnkey(TurnkeyProvider)
+    case privy(PrivyProvider)
+
+    func close() {
+      switch self {
+      case .portal(let provider): provider.close()
+      case .turnkey(let provider): provider.close()
+      case .privy(let provider): provider.close()
+      }
+    }
+  }
+
+  private var providerHandle: ProviderHandle?
+  private var sessionSubscription: AnyCancellable?
+
   /// Network the feature screens operate on, selected via the home-screen dropdown.
   @Published var selectedChain: WalletChain = .avalancheFuji
 
@@ -77,18 +99,30 @@ final class RainSDKService: ObservableObject {
     rain?.configureRainApi(apiKey: rainApiKey, userId: rainUserId)
   }
 
-  /// Builds the SDK with the Portal provider and resolves the Portal-backed client.
-  /// Portal holds no Solana account, so it is initialized with the EVM chains only.
-  func initializePortal(sessionToken: String) async throws {
+  /// Builds the SDK with the Portal provider (EVM chains only — Portal holds no Solana account).
+  func initializePortal(
+    sessionToken: String,
+    onSessionTokenNeeded: (@Sendable () async throws -> String?)? = nil,
+    onSessionExpired: (@Sendable () -> Void)? = nil
+  ) async throws {
     RainLogger.isEnabled = true
-    let sdk = try builder(networkConfigs: WalletChain.evmNetworkConfigs)
-      .register(
-        PortalProvider(PortalConfig(sessionToken: sessionToken)) { [portalBox] portal in
-          portalBox.value = portal
-        }
+    closeActiveProvider()
+    // Qualified: PortalSwift exports its own `PortalProvider`.
+    let provider = RainPortal.PortalProvider(
+      PortalConfig(
+        sessionToken: sessionToken,
+        onSessionTokenNeeded: onSessionTokenNeeded,
+        onSessionExpired: onSessionExpired
       )
+    ) { [portalBox] portal in
+      // Re-fired after every token refresh.
+      portalBox.value = portal
+    }
+    let sdk = try builder(networkConfigs: WalletChain.evmNetworkConfigs)
+      .register(provider)
       .build()
     try await resolve(sdk: sdk, providerId: .portal, provider: .portal)
+    bind(.portal(provider), states: provider.sessionState.map(\.status))
   }
 
   /// Ensures this device can sign for the Portal client, running MPC key generation on first
@@ -117,21 +151,88 @@ final class RainSDKService: ObservableObject {
   }
 
   /// Builds the SDK with the Turnkey provider and resolves the Turnkey-backed client.
-  func initializeTurnkey(turnkey: TurnkeyContext, walletAddress: String? = nil) async throws {
+  func initializeTurnkey(
+    turnkey: TurnkeyContext,
+    walletAddress: String? = nil,
+    onSessionExpired: (@Sendable () -> Void)? = nil
+  ) async throws {
     RainLogger.isEnabled = true
+    closeActiveProvider()
+    let provider = TurnkeyProvider(
+      TurnkeyConfig(
+        turnkey: turnkey,
+        walletAddress: walletAddress,
+        onSessionExpired: onSessionExpired
+      )
+    )
     let sdk = try builder(networkConfigs: WalletChain.networkConfigs)
-      .register(TurnkeyProvider(TurnkeyConfig(turnkey: turnkey, walletAddress: walletAddress)))
+      .register(provider)
       .build()
     try await resolve(sdk: sdk, providerId: .turnkey, provider: .turnkey)
+    bind(.turnkey(provider), states: provider.sessionState.map(\.status))
   }
 
   /// Builds the SDK with the Privy provider and resolves the Privy-backed client.
-  func initializePrivy(privy: any Privy, walletAddress: String? = nil) async throws {
+  func initializePrivy(
+    privy: any Privy,
+    walletAddress: String? = nil,
+    onSessionExpired: (@Sendable () -> Void)? = nil
+  ) async throws {
     RainLogger.isEnabled = true
+    closeActiveProvider()
+    let provider = PrivyProvider(
+      PrivyConfig(
+        privy: privy,
+        walletAddress: walletAddress,
+        onSessionExpired: onSessionExpired
+      )
+    )
     let sdk = try builder(networkConfigs: WalletChain.networkConfigs)
-      .register(PrivyProvider(PrivyConfig(privy: privy, walletAddress: walletAddress)))
+      .register(provider)
       .build()
     try await resolve(sdk: sdk, providerId: .privy, provider: .privy)
+    bind(.privy(provider), states: provider.sessionState.map(\.status))
+  }
+
+  // MARK: - Session
+
+  /// Forces a refresh on the active provider; `tokenExpired` means re-auth is required.
+  func refreshSession() async throws {
+    switch providerHandle {
+    case .none:
+      throw RainSDKError.sdkNotInitialized
+    case .turnkey(let provider):
+      try await provider.refreshSession()
+    case .privy(let provider):
+      try await provider.refreshSession()
+    case .portal(let provider):
+      try await provider.refreshSession()
+    }
+  }
+
+  /// Portal only: installs a host-minted token for the same Portal client.
+  func updatePortalSessionToken(_ sessionToken: String) async throws {
+    guard case .portal(let provider) = providerHandle else {
+      throw RainSDKError.sdkNotInitialized
+    }
+    try await provider.updateSessionToken(sessionToken)
+  }
+
+  /// Owns the resolved provider and mirrors its session state onto the main thread.
+  private func bind<P: Publisher>(_ handle: ProviderHandle, states: P)
+  where P.Output == WalletSessionStatus, P.Failure == Never {
+    providerHandle = handle
+    sessionSubscription = states
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] status in self?.sessionStatus = status }
+  }
+
+  /// A discarded provider must never fire its hooks.
+  private func closeActiveProvider() {
+    sessionSubscription = nil
+    sessionStatus = nil
+    providerHandle?.close()
+    providerHandle = nil
   }
 
   /// The built registry, or throws `sdkNotInitialized` if no `initialize*` has run.
@@ -148,6 +249,7 @@ final class RainSDKService: ObservableObject {
 
   /// Drops the built registry and resolved client.
   func reset() {
+    closeActiveProvider()
     client?.reset()
     rain?.reset()
     rain = nil

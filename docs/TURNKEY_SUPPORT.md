@@ -119,6 +119,80 @@ Turnkey-specific errors are mapped into the standard `RainSDKError` hierarchy (s
 
 Network errors raised during direct RPC calls (balances, fee estimation) surface as `RainSDKError.networkError`.
 
+## Session expiry, refresh, and retry
+
+Turnkey sessions are short-lived JWTs (15 minutes by default) that die silently once expired.
+Rain hardens every Turnkey-backed call against this, controlled by `TurnkeySessionPolicy`:
+
+```swift
+TurnkeyProvider(
+  TurnkeyConfig(
+    turnkey: turnkeyContext,
+    sessionPolicy: TurnkeySessionPolicy(
+      refreshBufferSeconds: 60,        // refresh when < 60s of lifetime remain
+      autoRefresh: true,               // let Rain call Turnkey's refreshSession itself
+      refreshExpirationSeconds: nil,   // TTL for refreshed sessions (nil = Turnkey default)
+      maxTransientRetries: 2,          // backoff retries for 5xx/429/network on reads
+      initialRetryDelay: 0.5,
+      maxRetryDelay: 4
+    ),
+    onSessionExpired: {
+      // Re-auth hook: the session died and could not be refreshed. Fired once per
+      // session death, off the main thread. Route the user back to login.
+    }
+  )
+)
+```
+
+What every wallet call now does:
+
+1. **Expiry check** — the session's JWT `exp` is checked before the request. An
+   already-expired session throws `RainSDKError.tokenExpired` (or is refreshed first, see
+   below) instead of burning a round-trip on a guaranteed 401.
+2. **Proactive refresh** — with `autoRefresh` on (the default), a session expired or inside
+   `refreshBufferSeconds` of expiry is refreshed through Turnkey's `refreshSession` before the
+   call. Refreshes are single-flighted: concurrent calls share one refresh.
+3. **Refresh-on-401** — a call rejected with HTTP 401 / `invalidSession` is refreshed and
+   retried exactly once. A 401 means Turnkey rejected the request before executing it, so this
+   is safe for sends too. A second 401 surfaces as `RainSDKError.tokenExpired`.
+4. **Transient backoff** — idempotent reads (balances, history, transaction-status polls)
+   retry HTTP 5xx/429/408 and network failures with exponential backoff. Sends and signing
+   are never retried on transient failures.
+5. **Re-auth hook** — when the session dies for good (refresh failed, or Turnkey's own expiry
+   timer cleared it while the app was idle), `onSessionExpired` fires once — even with no Rain
+   call in flight, via a passive watcher over Turnkey's auth state.
+
+With `autoRefresh: false` Rain never touches the session: expired sessions and 401s surface
+as `RainSDKError.tokenExpired` immediately and refresh/re-auth is entirely the host's job.
+
+### Observing session state
+
+`TurnkeyProvider` exposes the session as seen at the Rain boundary:
+
+```swift
+let provider = TurnkeyProvider(TurnkeyConfig(turnkey: turnkeyContext))
+
+provider.currentSessionState()  // .loading | .active(expiresAt:) | .expired | .unauthenticated
+
+let cancellable = provider.sessionState.sink { state in
+  if state == .expired || state == .unauthenticated {
+    // show re-login UI
+  }
+}
+
+try await provider.refreshSession()  // manual refresh; throws .tokenExpired when it fails
+```
+
+`sessionState` emits on every Turnkey auth/session change and additionally re-checks when an
+active session passes its expiry instant, so a silent death is observable without polling.
+
+When `onSessionExpired` is set, resolving the provider starts a passive watcher over the
+process-wide Turnkey singleton. A host that rebuilds the SDK per login should call
+`provider.close()` on the provider it is discarding so a stale watcher cannot fire.
+
+Reference: the example app's `RainSDKService.swift`, `WalletSessionStatus.swift` and `HomeView`'s
+session card.
+
 ## Registering alongside Portal or Privy
 
 Adapters are not mutually exclusive. Register several on the same builder and resolve each to its own `RainClient`: one SDK instance, independent provider-bound clients:

@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 @testable import RainCore
 import TurnkeySwift
@@ -174,7 +175,7 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
   }
 }
 
-final class MockTurnkey: TurnkeyContextProtocol {
+final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
   struct SignRawPayloadCall: Sendable {
     let signWith: String
     let payload: String
@@ -185,13 +186,38 @@ final class MockTurnkey: TurnkeyContextProtocol {
   static let defaultWalletAddress = "0x1234567890123456789012345678901234567890"
 
   var wallets: [Wallet] = []
-  var session: Session?
   var turnkeyClient: (any TurnkeyClientProtocol)?
   var refreshWalletsCallCount = 0
   var signRawPayloadCalls: [SignRawPayloadCall] = []
 
+  // Backed by subjects so coordinator/state tests can observe assignments like production
+  // code observes the Turnkey singleton's @Published state.
+  private let sessionSubject: CurrentValueSubject<Session?, Never>
+  var session: Session? {
+    get { sessionSubject.value }
+    set { sessionSubject.send(newValue) }
+  }
+
+  var sessionPublisher: AnyPublisher<Session?, Never> { sessionSubject.eraseToAnyPublisher() }
+
+  let authStateSubject: CurrentValueSubject<AuthState, Never>
+  var authState: AuthState {
+    get { authStateSubject.value }
+    set { authStateSubject.send(newValue) }
+  }
+
+  var authStatePublisher: AnyPublisher<AuthState, Never> { authStateSubject.eraseToAnyPublisher() }
+
   /// Runs inside `refreshWallets` (e.g. to populate `wallets` after a simulated delay).
   var onRefreshWallets: (() async throws -> Void)?
+
+  var refreshSessionCallCount = 0
+  /// TTLs passed to `refreshTurnkeySession`, `nil` meaning "Turnkey default".
+  var refreshSessionCalls: [String?] = []
+  /// Error to throw from `refreshTurnkeySession`.
+  var refreshSessionError: Error?
+  /// Runs after a recorded `refreshTurnkeySession` call — install the refreshed session here.
+  var onRefreshSession: (() -> Void)?
 
   var mockSignature = SignRawPayloadResult(
     r: String(repeating: "1", count: 64),
@@ -208,13 +234,25 @@ final class MockTurnkey: TurnkeyContextProtocol {
     client: (any TurnkeyClientProtocol)? = MockTurnkeyClient()
   ) {
     self.wallets = wallets
-    self.session = session
+    self.sessionSubject = CurrentValueSubject(session)
+    self.authStateSubject = CurrentValueSubject(
+      session != nil ? .authenticated : .unAuthenticated
+    )
     self.turnkeyClient = client
   }
 
   func refreshWallets() async throws {
     refreshWalletsCallCount += 1
     try await onRefreshWallets?()
+  }
+
+  func refreshTurnkeySession(expirationSeconds: String?) async throws {
+    refreshSessionCallCount += 1
+    refreshSessionCalls.append(expirationSeconds)
+    if let refreshSessionError {
+      throw refreshSessionError
+    }
+    onRefreshSession?()
   }
 
   func signRawPayload(
@@ -242,9 +280,26 @@ final class MockTurnkey: TurnkeyContextProtocol {
 
 extension MockTurnkey {
   static func defaultSession(organizationId: String = "org-id") -> Session {
+    session(expiringIn: 3600, organizationId: organizationId)
+  }
+
+  /// A session whose JWT expiry has already passed.
+  static func expiredSession(organizationId: String = "org-id") -> Session {
+    session(expiringIn: -60, organizationId: organizationId)
+  }
+
+  /// A session inside the coordinator's refresh buffer but not yet expired.
+  static func nearExpirySession(remainingSeconds: TimeInterval = 10) -> Session {
+    session(expiringIn: remainingSeconds)
+  }
+
+  static func session(
+    expiringIn seconds: TimeInterval,
+    organizationId: String = "org-id"
+  ) -> Session {
     decode(
       SessionFixture(
-        exp: Date().addingTimeInterval(3600).timeIntervalSince1970,
+        exp: Date().addingTimeInterval(seconds).timeIntervalSince1970,
         publicKey: "pubkey",
         sessionType: .readWrite,
         userId: "user-id",
