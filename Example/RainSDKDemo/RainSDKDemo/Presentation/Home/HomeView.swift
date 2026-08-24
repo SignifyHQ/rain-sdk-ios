@@ -26,9 +26,17 @@ struct HomeView: View {
           case .privy: privySection
           }
 
-          if viewModel.isRecovered {
+          // Stays visible when the session is dead so the hidden feature grid is explained.
+          if let status = sdkService.sessionStatus {
+            sessionSection(status)
+          }
+
+          let sessionUsable = sdkService.sessionStatus?.health != .dead
+          if viewModel.isRecovered && sessionUsable {
             chainSelector
             featureGrid
+          }
+          if viewModel.isRecovered {
             clearSessionButton
           }
 
@@ -53,7 +61,8 @@ struct HomeView: View {
       }
     }
     .pickerStyle(.segmented)
-    .disabled(viewModel.isInitialized)
+    // Locked while a provider is resolved so the session card always describes `mode`.
+    .disabled(viewModel.isInitialized || sdkService.sessionStatus != nil)
   }
 
   // MARK: - Rain API
@@ -188,6 +197,62 @@ struct HomeView: View {
     }
   }
 
+  // MARK: - Session state
+
+  /// `sessionState`, `refreshSession()` and, for Portal, `updateSessionToken(_:)`.
+  private func sessionSection(_ status: WalletSessionStatus) -> some View {
+    card("Wallet Session") {
+      HStack(spacing: 8) {
+        Circle()
+          .fill(indicatorColor(for: status.health))
+          .frame(width: 12, height: 12)
+        Text(status.label)
+          .font(.body)
+          .fontWeight(.semibold)
+      }
+      if let detail = status.detail {
+        Text(detail)
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
+
+      // Portal's refresh goes through onSessionTokenNeeded, which needs a replacement token.
+      let canRefresh = !viewModel.isLoading
+        && (viewModel.mode != .portal || viewModel.canUpdatePortalToken)
+      secondaryButton(title: "Refresh session", enabled: canRefresh) {
+        await viewModel.refreshSession()
+      }
+
+      if viewModel.mode == .portal {
+        Text(
+          "Replacement token: \"Update token\" installs it now (updateSessionToken); "
+            + "Refresh and any rejected call take it via onSessionTokenNeeded."
+        )
+        .font(.caption)
+        .foregroundColor(.secondary)
+
+        labeledField(
+          title: "Replacement session token",
+          placeholder: "Enter a freshly minted token",
+          text: $viewModel.replacementPortalToken
+        )
+
+        secondaryButton(title: "Update token", enabled: viewModel.canUpdatePortalToken) {
+          await viewModel.updatePortalSessionToken()
+        }
+      }
+    }
+  }
+
+  private func indicatorColor(for health: SessionHealth) -> Color {
+    switch health {
+    case .healthy: return .green
+    case .transitional: return .yellow
+    case .dead: return .red
+    case .unknown: return .gray
+    }
+  }
+
   // MARK: - Chain selector
 
   private var chainSelector: some View {
@@ -310,6 +375,25 @@ struct HomeView: View {
         .textInputAutocapitalization(.never)
         .disableAutocorrection(true)
     }
+  }
+
+  /// Outlined variant of `actionButton`.
+  private func secondaryButton(
+    title: String,
+    enabled: Bool,
+    action: @escaping () async -> Void
+  ) -> some View {
+    Button {
+      hideKeyboard()
+      Task { await action() }
+    } label: {
+      Text(title)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.accentColor))
+    }
+    .disabled(!enabled)
+    .opacity(enabled ? 1 : 0.6)
   }
 
   private func actionButton(

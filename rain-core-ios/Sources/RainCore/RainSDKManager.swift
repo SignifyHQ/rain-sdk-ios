@@ -270,14 +270,26 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
   func getAllBalances() async throws -> [Balance] {
     let chainIds = networkConfigs.map(\.chainId)
     let provider = walletProvider
-    return await withTaskGroup(of: [Balance].self) { group in
+    // A chain that fails contributes no entries rather than failing the whole call, so one
+    // bad RPC endpoint doesn't hide the others. A dead wallet session is the exception: it
+    // affects every chain identically, and swallowing it would return an empty list a host
+    // could mistake for zero balances.
+    return try await withThrowingTaskGroup(of: [Balance].self) { group in
       for chainId in chainIds {
         group.addTask {
-          (try? await provider.getBalances(chainId: chainId)) ?? []
+          do {
+            return try await provider.getBalances(chainId: chainId)
+          } catch let cancellation as CancellationError {
+            throw cancellation
+          } catch let error as RainSDKError where error == .tokenExpired {
+            throw error
+          } catch {
+            return []
+          }
         }
       }
       var output: [Balance] = []
-      for await balances in group {
+      for try await balances in group {
         output.append(contentsOf: balances)
       }
       return output

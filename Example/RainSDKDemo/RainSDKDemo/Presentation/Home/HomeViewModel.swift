@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import RainCore
 
@@ -23,6 +24,8 @@ final class HomeViewModel: ObservableObject {
 
   // Portal
   @Published var sessionToken = ""
+  /// Portal only: installed by "Update token" or handed to `onSessionTokenNeeded`.
+  @Published var replacementPortalToken = ""
 
   // Turnkey
   @Published var turnkeyOrgId = ""
@@ -47,9 +50,99 @@ final class HomeViewModel: ObservableObject {
   @Published private(set) var isLoading = false
   @Published private(set) var statusText = "Ready"
 
+  private var cancellables = Set<AnyCancellable>()
+
   init() {
     self.session = .shared
-    isInitialized = session.isInitialized
+    mode = SessionStore.provider.map(WalletMode.init) ?? .turnkey
+    seedFields()
+    // didSet does not fire inside init, so push explicitly.
+    pushRainApiCredentials()
+
+    // Portal Refreshing→Active means onSessionTokenNeeded consumed the replacement.
+    session.$sessionStatus
+      .scan((previous: WalletSessionStatus?.none, current: WalletSessionStatus?.none)) { ($0.current, $1) }
+      .sink { [weak self] transition in
+        guard let self, mode == .portal,
+              transition.previous?.health == .transitional,
+              transition.current?.health == .healthy,
+              !replacementPortalToken.trimmed.isEmpty else { return }
+        sessionToken = replacementPortalToken.trimmed
+        SessionStore.portalSessionToken = sessionToken
+        replacementPortalToken = ""
+      }
+      .store(in: &cancellables)
+
+    if session.isInitialized { markResumed() } else { Task { await resumeIfPossible() } }
+  }
+
+  // MARK: - Resume
+
+  /// The SDK outlived this view model: reflect its state without re-initializing.
+  private func markResumed() {
+    isInitialized = true
+    isRecovered = true
+    turnkeySessionActive = mode == .turnkey
+    privySessionActive = mode == .privy
+    statusText = "Session resumed"
+  }
+
+  /// Replays the saved provider through the same paths the buttons use; falls back to the manual screen.
+  private func resumeIfPossible() async {
+    guard let provider = SessionStore.provider else { return }
+    isLoading = true
+    statusText = "Resuming \(provider.rawValue.capitalized) session..."
+    switch provider {
+    case .portal:
+      isLoading = false
+      if sessionToken.trimmed.isEmpty { statusText = "Ready" } else { await initializeSdk() }
+    case .turnkey:
+      await TurnkeyAuthSample.awaitSessionRestore()
+      guard TurnkeyAuthSample.hasActiveSession() else {
+        return resumeFallback("Saved Turnkey session expired — log in again")
+      }
+      guard await TurnkeyAuthSample.activeSessionEmail().matches(turnkeyEmail) else {
+        return resumeFallback("Saved Turnkey session belongs to another email — log in again")
+      }
+      turnkeySessionActive = true
+      isLoading = false
+      await initializeRainWithTurnkey()
+    case .privy:
+      guard await PrivyAuthSample.shared.hasActiveSession() else {
+        return resumeFallback("Saved Privy session expired — log in again")
+      }
+      guard await PrivyAuthSample.shared.activeSessionEmail().matches(privyEmail) else {
+        return resumeFallback("Saved Privy session belongs to another email — log in again")
+      }
+      privySessionActive = true
+      isLoading = false
+      await initializeRainWithPrivy()
+    }
+  }
+
+  /// Fields start from the last working values; empty on first run.
+  private func seedFields() {
+    rainApiKey = SessionStore.rainApiKey
+    userId = SessionStore.rainUserId
+    sessionToken = SessionStore.portalSessionToken
+    turnkeyOrgId = SessionStore.turnkeyOrgId
+    turnkeyAuthProxyConfigId = SessionStore.turnkeyAuthProxyConfigId
+    turnkeyEmail = SessionStore.turnkeyEmail
+    privyAppId = SessionStore.privyAppId
+    privyAppClientId = SessionStore.privyAppClientId
+    privyEmail = SessionStore.privyEmail
+  }
+
+  private func resumeFallback(_ message: String) {
+    SampleLog.i("Resume", message)
+    isLoading = false
+    statusText = message
+  }
+
+  private func persistRainCredentials(_ provider: SessionStore.Provider) {
+    SessionStore.provider = provider
+    SessionStore.rainApiKey = rainApiKey.trimmed
+    SessionStore.rainUserId = userId.trimmed
   }
 
   var selectedChain: WalletChain {
@@ -86,7 +179,27 @@ final class HomeViewModel: ObservableObject {
     statusText = "Initializing Portal..."
 
     do {
-      try await session.initializePortal(sessionToken: token)
+      try await session.initializePortal(
+        sessionToken: token,
+        // A host mints a new token for the SAME Portal client here; this demo has no backend,
+        // so it returns the typed replacement (read on the main actor) or nil (declines).
+        onSessionTokenNeeded: { [weak self] in
+          let replacement = await MainActor.run { self?.replacementPortalToken.trimmed ?? "" }
+          guard !replacement.isEmpty else {
+            SampleLog.w("Portal.session", "onSessionTokenNeeded: no replacement token, declining")
+            return nil
+          }
+          SampleLog.i("Portal.session", "onSessionTokenNeeded: supplying replacement token")
+          return replacement
+        },
+        // Recovery is "Update token" or Clear Session; the feature grid hides meanwhile.
+        onSessionExpired: { [weak self] in
+          SampleLog.w("Portal.session", "Portal session token rejected, new token required")
+          Task { @MainActor [weak self] in
+            self?.statusText = "Portal session expired — enter a replacement token"
+          }
+        }
+      )
 
       // A freshly-created Portal client has no wallet; generate one before any screen asks
       // for an address. MPC keygen takes a few seconds on first run.
@@ -99,6 +212,8 @@ final class HomeViewModel: ObservableObject {
       )
       // Recovery (the Portal backup share) is no longer available via the Rain API, so a
       // successful init goes straight to the feature grid instead of gating on recovery.
+      persistRainCredentials(.portal)
+      SessionStore.portalSessionToken = token
       isInitialized = session.isInitialized
       isRecovered = true
       statusText = "SDK Initialized Successfully!"
@@ -106,6 +221,46 @@ final class HomeViewModel: ObservableObject {
       SampleLog.e("Portal.init", "failed: \(error.localizedDescription)")
       isInitialized = false
       statusText = "Error: \(error.localizedDescription)"
+    }
+    isLoading = false
+  }
+
+  // MARK: - Session
+
+  var canUpdatePortalToken: Bool {
+    !replacementPortalToken.trimmed.isEmpty && !isLoading
+  }
+
+  func refreshSession() async {
+    SampleLog.i("Session", "manual refreshSession() on \(mode.rawValue)")
+    isLoading = true
+    statusText = "Refreshing session..."
+    do {
+      try await session.refreshSession()
+      statusText = "Session refreshed"
+    } catch {
+      SampleLog.e("Session", "refresh failed: \(error.localizedDescription)")
+      statusText = "Session refresh failed: \(error.localizedDescription)"
+    }
+    isLoading = false
+  }
+
+  /// Portal only: installs the replacement token in place — no SDK rebuild.
+  func updatePortalSessionToken() async {
+    let token = replacementPortalToken.trimmed
+    guard !token.isEmpty else { return }
+    SampleLog.i("Portal.session", "updateSessionToken(\(SampleLog.maskToken(token)))")
+    isLoading = true
+    statusText = "Installing new Portal session token..."
+    do {
+      try await session.updatePortalSessionToken(token)
+      SessionStore.portalSessionToken = token
+      sessionToken = token
+      replacementPortalToken = ""
+      statusText = "Portal session token updated"
+    } catch {
+      SampleLog.e("Portal.session", "updateSessionToken failed: \(error.localizedDescription)")
+      statusText = "Token update failed: \(error.localizedDescription)"
     }
     isLoading = false
   }
@@ -131,6 +286,11 @@ final class HomeViewModel: ObservableObject {
     }
     let email = turnkeyEmail.trimmed
     SampleLog.i("Turnkey.otpInit", "starting email-OTP flow email=\(SampleLog.maskEmail(email))")
+    // Saved before configure so a relaunch (the only way to change ids) picks up the new values.
+    SessionStore.provider = .turnkey
+    SessionStore.turnkeyOrgId = turnkeyOrgId.trimmed
+    SessionStore.turnkeyAuthProxyConfigId = turnkeyAuthProxyConfigId.trimmed
+    SessionStore.turnkeyEmail = email
     isLoading = true
     statusText = "Initializing Turnkey..."
 
@@ -219,8 +379,24 @@ final class HomeViewModel: ObservableObject {
         statusText = "Provisioned Turnkey wallets, initializing Rain..."
       }
 
-      try await session.initializeTurnkey(turnkey: TurnkeyAuthSample.context)
+      try await session.initializeTurnkey(
+        turnkey: TurnkeyAuthSample.context,
+        // Restart the OTP flow; a fresh login revives the provider (it watches the process-wide
+        // Turnkey singleton), so Rain is not re-initialized.
+        onSessionExpired: { [weak self] in
+          SampleLog.w("Turnkey.session", "Turnkey session expired, re-auth required")
+          Task { @MainActor [weak self] in
+            guard let self else { return }
+            turnkeySessionActive = false
+            turnkeyOtpId = nil
+            turnkeyOtpEncryptionBundle = nil
+            turnkeyOtpCode = ""
+            statusText = "Turnkey session expired — log in again"
+          }
+        }
+      )
       await logResolvedAddresses(area: "Turnkey.rainInit")
+      persistRainCredentials(.turnkey)
       isInitialized = session.isInitialized
       isRecovered = true
       statusText = "Rain initialized with Turnkey — wallet ready"
@@ -253,11 +429,15 @@ final class HomeViewModel: ObservableObject {
     }
     let email = privyEmail.trimmed
     SampleLog.i("Privy.otpInit", "starting email-OTP flow email=\(SampleLog.maskEmail(email))")
+    SessionStore.provider = .privy
+    SessionStore.privyAppId = privyAppId.trimmed
+    SessionStore.privyAppClientId = privyAppClientId.trimmed
+    SessionStore.privyEmail = email
     isLoading = true
     statusText = "Initializing Privy..."
 
     do {
-      PrivyAuthSample.shared.initialize(
+      try PrivyAuthSample.shared.initialize(
         appId: privyAppId.trimmed,
         appClientId: privyAppClientId.trimmed
       )
@@ -337,8 +517,23 @@ final class HomeViewModel: ObservableObject {
         statusText = "Provisioned Privy wallets, initializing Rain..."
       }
 
-      try await session.initializePrivy(privy: PrivyAuthSample.shared.privy)
+      try await session.initializePrivy(
+        privy: PrivyAuthSample.shared.privy,
+        // Restart the OTP flow; a fresh login revives the provider (it watches the process-wide
+        // Privy singleton), so Rain is not re-initialized.
+        onSessionExpired: { [weak self] in
+          SampleLog.w("Privy.session", "Privy session expired, re-auth required")
+          Task { @MainActor [weak self] in
+            guard let self else { return }
+            privySessionActive = false
+            privyOtpSent = false
+            privyOtpCode = ""
+            statusText = "Privy session expired — log in again"
+          }
+        }
+      )
       await logResolvedAddresses(area: "Privy.rainInit")
+      persistRainCredentials(.privy)
       isInitialized = session.isInitialized
       isRecovered = true
       statusText = "Rain initialized with Privy — wallet ready"
@@ -349,29 +544,24 @@ final class HomeViewModel: ObservableObject {
     isLoading = false
   }
 
-  // MARK: - Session
+  // MARK: - Reset
 
   func clearSession() async {
     SampleLog.i("Home", "clearing session (provider logout + UI reset)")
+    // Close the provider first so its watcher does not report the logout as a death.
+    session.reset()
+    SessionStore.clear()
     // Real logout so the next run requires fresh auth (and resume detects no session).
     TurnkeyAuthSample.logout()
     await PrivyAuthSample.shared.logout()
-    session.reset()
 
-    // Every input resets (the provider choice is kept), so the next run starts from scratch.
-    rainApiKey = ""
-    userId = ""
-    sessionToken = ""
-    turnkeyOrgId = ""
-    turnkeyAuthProxyConfigId = ""
-    turnkeyEmail = ""
+    // Inputs reset (the provider choice is kept).
+    seedFields()
+    replacementPortalToken = ""
     turnkeyOtpId = nil
     turnkeyOtpCode = ""
     turnkeyOtpEncryptionBundle = nil
     turnkeySessionActive = false
-    privyAppId = ""
-    privyAppClientId = ""
-    privyEmail = ""
     privyOtpSent = false
     privyOtpCode = ""
     privySessionActive = false
@@ -395,5 +585,22 @@ final class HomeViewModel: ObservableObject {
       area,
       "success — isInitialized=\(session.isInitialized) evm=\(evm ?? "nil") sol=\(solana ?? "nil")"
     )
+  }
+}
+
+private extension WalletMode {
+  init(_ provider: SessionStore.Provider) {
+    switch provider {
+    case .portal: self = .portal
+    case .turnkey: self = .turnkey
+    case .privy: self = .privy
+    }
+  }
+}
+
+private extension Optional where Wrapped == String {
+  func matches(_ email: String) -> Bool {
+    guard let value = self else { return false }
+    return value.trimmed.caseInsensitiveCompare(email.trimmed) == .orderedSame
   }
 }

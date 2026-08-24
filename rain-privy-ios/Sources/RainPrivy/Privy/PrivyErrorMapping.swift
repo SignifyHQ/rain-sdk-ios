@@ -18,8 +18,9 @@ enum PrivyErrorMapping {
   }
 
   /// Returns a classified `RainSDKError` for a Privy vendor error, or `nil` for anything this
-  /// adapter doesn't own (so core's built-in fallbacks still run).
-  private static func map(_ error: Error) -> RainSDKError? {
+  /// adapter doesn't own (so core's built-in fallbacks still run). Internal (not private) so
+  /// the session coordinator can classify auth failures without re-stating vendor shapes.
+  static func map(_ error: Error) -> RainSDKError? {
     guard let privyError = error as? PrivyError else { return nil }
     switch privyError.errorCode {
     case .authenticationFailure(let reason):
@@ -38,7 +39,7 @@ enum PrivyErrorMapping {
     error: PrivyError
   ) -> RainSDKError {
     switch reason {
-    case .notLoggedIn, .invalidJwt:
+    case .notLoggedIn, .invalidJwt, .sessionExpired:
       return .tokenExpired
     case .passkeyUserCancelled:
       return .userRejected

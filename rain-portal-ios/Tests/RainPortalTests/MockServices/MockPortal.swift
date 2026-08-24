@@ -25,6 +25,9 @@ final class MockPortal: PortalRequestProtocol {
   /// Mock result for getTransactions. Returned as-is when getTransactions is called.
   var mockFetchedTransactions: [FetchedTransaction] = []
 
+  /// When set, `addresses` throws it (e.g. an expired-session `PortalRequestsError.unauthorized`).
+  var addressesError: Error?
+
   init() {
     // Set default mock address
     mockAddresses[PortalNamespace.eip155] = "0x1234567890123456789012345678901234567890"
@@ -33,6 +36,7 @@ final class MockPortal: PortalRequestProtocol {
   /// Mock addresses property that matches PortalRequestProtocol
   var addresses: [PortalNamespace: String?] {
     get async throws {
+      if let addressesError { throw addressesError }
       var result: [PortalNamespace: String?] = [:]
       for (key, value) in mockAddresses {
         result[key] = value
@@ -134,6 +138,7 @@ final class MockPortal: PortalRequestProtocol {
     mockErrors = [:]
     mockAssetsResponse = nil
     mockFetchedTransactions = []
+    addressesError = nil
     requestCalls = []
   }
 }

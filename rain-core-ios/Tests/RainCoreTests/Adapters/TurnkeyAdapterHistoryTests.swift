@@ -649,7 +649,7 @@ struct TurnkeyAdapterHistoryTests {
     #expect(client.getActivitiesCalls.isEmpty)
   }
 
-  @Test("missing session throws invalidSession without consulting the activity log")
+  @Test("missing session throws tokenExpired without consulting the activity log")
   func missingSessionThrows() async throws {
     let mockTurnkey = MockTurnkey(session: nil)
     let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
@@ -657,9 +657,9 @@ struct TurnkeyAdapterHistoryTests {
 
     do {
       _ = try await adapter.getTransactions(chainId: 1, limit: nil, offset: nil, order: nil)
-      Issue.record("expected invalidSession")
-    } catch TurnkeySwiftError.invalidSession {
-      // Expected: the session error surfaces directly.
+      Issue.record("expected tokenExpired")
+    } catch let error as RainSDKError where error == .tokenExpired {
+      // Expected: the session error surfaces directly as the typed Rain error.
     }
     #expect(client.getActivitiesCalls.isEmpty)
   }

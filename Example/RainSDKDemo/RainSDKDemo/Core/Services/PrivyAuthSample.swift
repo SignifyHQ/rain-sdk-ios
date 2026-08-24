@@ -14,6 +14,9 @@ final class PrivyAuthSample {
   /// Privy must be a single instance for the app's lifetime; hold it here after init.
   private var instance: (any Privy)?
 
+  /// Snapshot of the ids Privy was initialized with, to detect edits made afterwards.
+  private var configuredWith: (appId: String, appClientId: String)?
+
   private init() {}
 
   /// Hand this to `RainSDKService.initializePrivy(privy:)` once auth is complete.
@@ -24,9 +27,21 @@ final class PrivyAuthSample {
     return instance
   }
 
-  /// Initializes the Privy singleton (idempotent — reuses the existing instance).
-  func initialize(appId: String, appClientId: String) {
-    guard instance == nil else { return }
+  /// Initializes the Privy singleton. Idempotent; editing the ids afterwards throws, because
+  /// Privy cannot be reconfigured without relaunching the app.
+  func initialize(appId: String, appClientId: String) throws {
+    let snapshot = (appId: appId, appClientId: appClientId)
+    if let configuredWith {
+      guard configuredWith == snapshot else {
+        throw NSError(
+          domain: "RainSDKDemo.Privy", code: -1,
+          userInfo: [NSLocalizedDescriptionKey:
+            "Privy is already configured with different values this session. Fully kill the app "
+            + "and relaunch to change the App ID or App Client ID."])
+      }
+      return
+    }
+    configuredWith = snapshot
     SampleLog.d(
       "PrivyAuth",
       "init appId=\(SampleLog.maskToken(appId)) clientId=\(SampleLog.maskToken(appClientId))"

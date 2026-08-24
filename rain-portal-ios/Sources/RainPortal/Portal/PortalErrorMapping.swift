@@ -59,6 +59,20 @@ enum PortalErrorMapping {
     return nil
   }
 
+  /// HTTP 5xx, or 408/429 (which Portal only surfaces as the `"<status> - …"` prefix of `.clientError`).
+  static func isTransient(_ error: Error) -> Bool {
+    guard let requestError = error as? PortalRequestsError else { return false }
+    switch requestError {
+    case .internalServerError:
+      return true
+    case .clientError(let message, _):
+      let status = Int(message.components(separatedBy: " - ").first ?? "")
+      return status == 408 || status == 429
+    case .couldNotParseHttpResponse, .redirectError, .unauthorized:
+      return false
+    }
+  }
+
   private static func mapPortalRpcError(_ error: PortalRpcError) -> RainSDKError {
     // Code `3` is returned for "execution reverted" (not declared by PortalSwift). Only send and
     // fee-estimation flows can surface it here: contract-balance reads wrap Portal errors into

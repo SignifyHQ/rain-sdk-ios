@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import PrivySDK
 import RainCore
@@ -15,9 +16,25 @@ public struct PrivyConfig: Sendable {
   /// Ethereum wallet.
   public let walletAddress: String?
 
-  public init(privy: any Privy, walletAddress: String? = nil) {
+  /// Auth-guard and transient-retry behavior for every wallet call.
+  public let sessionPolicy: PrivySessionPolicy
+
+  /// Re-auth hook: invoked once per session death when the Privy session dies — whether that
+  /// is discovered during a wallet call or by the passive session watcher. Not necessarily on
+  /// the main thread; hop to the main actor before touching UI, and never call back into the
+  /// SDK synchronously from it. Restart authentication from here.
+  public let onSessionExpired: (@Sendable () -> Void)?
+
+  public init(
+    privy: any Privy,
+    walletAddress: String? = nil,
+    sessionPolicy: PrivySessionPolicy = PrivySessionPolicy(),
+    onSessionExpired: (@Sendable () -> Void)? = nil
+  ) {
     self.privy = privy
     self.walletAddress = walletAddress
+    self.sessionPolicy = sessionPolicy
+    self.onSessionExpired = onSessionExpired
   }
 }
 
@@ -45,9 +62,17 @@ public struct PrivyConfig: Sendable {
 /// ```
 public struct PrivyProvider: RainProvider {
   private let config: PrivyConfig
+  private let coordinator: PrivySessionCoordinator
 
   public init(_ config: PrivyConfig) {
     self.config = config
+    // Stores references only — the vendor singleton is not touched until `create`, so a
+    // provider built purely to read `id`/`capabilities` stays inert.
+    self.coordinator = PrivySessionCoordinator(
+      auth: LivePrivyAuthSource(privy: config.privy),
+      policy: config.sessionPolicy,
+      onSessionExpired: config.onSessionExpired
+    )
     // Register Privy's error mapping with core once, so Privy vendor errors classify into
     // RainSDKError cases without RainCore importing PrivySDK.
     PrivyErrorMapping.registerOnce()
@@ -58,9 +83,45 @@ public struct PrivyProvider: RainProvider {
   /// Privy holds an exportable embedded key with a recovery flow, over EVM and Solana.
   public var capabilities: Set<Capability> { [.export, .recovery, .multiChain] }
 
+  /// The Privy session as seen at the Rain boundary, over time. Emits on every Privy
+  /// auth-state change, so a host can react to a session dying silently without waiting for a
+  /// wallet call to fail.
+  public var sessionState: AnyPublisher<PrivySessionState, Never> {
+    coordinator.sessionStates
+  }
+
+  /// Snapshot of `sessionState` right now.
+  public func currentSessionState() -> PrivySessionState {
+    coordinator.currentState()
+  }
+
+  /// Forces a Privy session refresh (`PrivyUser.refresh`). Rarely needed — Privy refreshes
+  /// its own session before every call — but available for hosts that want an explicit health
+  /// check. Throws `RainSDKError.tokenExpired` when the session cannot be refreshed — the
+  /// host must re-authenticate.
+  public func refreshSession() async throws {
+    try await coordinator.refreshNow()
+  }
+
+  /// Stops the passive session watcher. Call when discarding this provider (e.g. rebuilding
+  /// the SDK for a new login) so a stale provider stops observing the process-wide Privy
+  /// singleton and can never fire its expiry hook again.
+  public func close() {
+    coordinator.stopMonitoring()
+  }
+
   public func create(context: ProviderContext) async throws -> any RainWalletProvider {
+    // Always watch: beyond the optional host hook, the watcher drives cached-account eviction
+    // on session death so a re-login can never sign with the previous user's accounts.
+    coordinator.startMonitoring()
+
+    let manager = PrivyManager(privy: config.privy, sessions: coordinator)
+    coordinator.onSessionDeath {
+      Task { await manager.evictCachedAccounts() }
+    }
+
     let provider = PrivyWalletProvider(
-      manager: PrivyManager(privy: config.privy),
+      manager: manager,
       rpcEndpoints: context.rpcEndpoints,
       tokenStore: context.tokenStore,
       solanaSupport: context.solanaSupport,
