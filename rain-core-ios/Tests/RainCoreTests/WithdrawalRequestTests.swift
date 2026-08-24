@@ -12,7 +12,7 @@ struct WithdrawalRequestTests {
 
   @Test("withdrawCollateral signs the caller-supplied nonce instead of re-reading the chain")
   func testWithdrawCollateralUsesProvidedNonce() async throws {
-    MockURLProtocol.install()
+    await MockURLProtocol.install()
     defer { MockURLProtocol.reset() }
     stubSendTransactionRPCs()
 
@@ -39,7 +39,7 @@ struct WithdrawalRequestTests {
 
   @Test("withdrawCollateral reads the nonce from the chain when the caller passes nil")
   func testWithdrawCollateralFallsBackToChainNonce() async throws {
-    MockURLProtocol.install()
+    await MockURLProtocol.install()
     defer { MockURLProtocol.reset() }
     stubSendTransactionRPCs()
 
@@ -186,7 +186,7 @@ struct WithdrawalRequestTests {
 
   @Test("prepareWithdrawal returns the exact calldata withdrawCollateral broadcasts")
   func testPrepareWithdrawalMatchesBroadcastBytes() async throws {
-    MockURLProtocol.install()
+    await MockURLProtocol.install()
     defer { MockURLProtocol.reset() }
     stubSendTransactionRPCs()
 
