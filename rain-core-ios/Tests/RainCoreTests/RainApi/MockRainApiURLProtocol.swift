@@ -30,7 +30,7 @@ final class MockRainApiURLProtocol: URLProtocol {
   /// Per-path-suffix response queues; the last entry repeats once the queue drains.
   nonisolated(unsafe) private static var stubs: [(suffix: String, responses: [StubResponse])] = []
   nonisolated(unsafe) private(set) static var recorded: [URLRequest] = []
-  nonisolated(unsafe) private static let serialSemaphore = DispatchSemaphore(value: 1)
+  private static let serialGate = AsyncGate()
 
   /// A URLSession whose requests are all served by this protocol.
   static func makeSession() -> URLSession {
@@ -39,21 +39,17 @@ final class MockRainApiURLProtocol: URLProtocol {
     return URLSession(configuration: config)
   }
 
-  /// Acquires the serialization semaphore. Split into a synchronous function (like
-  /// `MockURLProtocol.install()`) because `DispatchSemaphore.wait()` can't be called
-  /// directly from an async context. `DispatchSemaphore` (unlike `NSLock`) isn't
-  /// thread-affine, so waiting and signalling on different threads is fine.
-  private static func acquire() { serialSemaphore.wait() }
+  private static func acquire() async { await serialGate.acquire() }
 
   private static func release() {
     stubs.removeAll()
     recorded.removeAll()
-    serialSemaphore.signal()
+    serialGate.release()
   }
 
   /// Serializes stub state across concurrently-running tests and guarantees cleanup.
   static func withStubs<T>(_ body: () async throws -> T) async rethrows -> T {
-    acquire()
+    await acquire()
     defer { release() }
     return try await body()
   }

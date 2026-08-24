@@ -8,7 +8,7 @@ import Foundation
 /// Tests using this protocol should run serialized — see `.serialized` on the suite.
 ///
 /// Usage:
-///   MockURLProtocol.install()
+///   await MockURLProtocol.install()
 ///   defer { MockURLProtocol.reset() }
 ///   MockURLProtocol.stub(method: "eth_gasPrice", result: "0x4a817c800")
 final class MockURLProtocol: URLProtocol {
@@ -24,15 +24,12 @@ final class MockURLProtocol: URLProtocol {
   nonisolated(unsafe) private static var errors: [String: Error] = [:]
   /// Recorded JSON-RPC method names in call order.
   nonisolated(unsafe) private(set) static var recordedMethods: [String] = []
-  /// Process-wide semaphore so suites that share the global `URLProtocol` registration
-  /// don't trample each other's stubs when Swift Testing runs suites in parallel.
-  /// Unlike `NSLock`, `DispatchSemaphore` isn't thread-affine — `wait()` and `signal()`
-  /// can run on different threads, which matters because Swift Testing test bodies hop
-  /// across the cooperative pool around every `await`.
-  nonisolated(unsafe) private static let serialSemaphore = DispatchSemaphore(value: 1)
+  /// Process-wide gate so suites sharing the global `URLProtocol` registration don't trample
+  /// each other's stubs when Swift Testing runs suites in parallel. Suspends, never blocks.
+  private static let serialGate = AsyncGate()
 
-  static func install() {
-    serialSemaphore.wait()
+  static func install() async {
+    await serialGate.acquire()
     URLProtocol.registerClass(MockURLProtocol.self)
   }
 
@@ -42,14 +39,14 @@ final class MockURLProtocol: URLProtocol {
     errors.removeAll()
     recordedMethods.removeAll()
     interceptedHosts = defaultInterceptedHosts
-    serialSemaphore.signal()
+    serialGate.release()
   }
 
   /// Idiomatic scope helper — guarantees `reset()` runs even if the body throws, so
   /// a test failure inside the block doesn't strand the semaphore and deadlock the
   /// next installer. Prefer this over manual `install() / defer { reset() }`.
   static func withInstalled<T>(_ body: () async throws -> T) async rethrows -> T {
-    install()
+    await install()
     defer { reset() }
     return try await body()
   }

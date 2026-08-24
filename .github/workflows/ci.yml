@@ -70,8 +70,7 @@ jobs:
           echo "udid=$udid" >> "$GITHUB_OUTPUT"
 
       # Split from the test run so a compile hang and a test hang are distinguishable, and so
-      # neither can burn the whole job budget. -jobs 2 keeps three test targets from
-      # type-checking Swift Testing macros concurrently on a 3-core, 7 GB runner.
+      # neither can burn the whole job budget.
       - name: Build for testing
         timeout-minutes: 25
         run: |
@@ -83,7 +82,6 @@ jobs:
             -derivedDataPath build/DerivedData \
             -clonedSourcePackagesDirPath .spm-cache \
             -skipMacroValidation \
-            -jobs 2 \
             2>&1 | tee build/build.log | xcbeautify --renderer github-actions
 
       - name: Run tests
