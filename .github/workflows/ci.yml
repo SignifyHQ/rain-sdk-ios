@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, 'feature/**', 'release/**']
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  package-tests:
+    name: Package tests (iOS Simulator)
+    # Fallback if the org lacks the macos-26 image: runs-on: macos-15, xcode-version: '16.4',
+    # destination name 'iPhone 16 Pro'. swift-tools-version 6.1 needs Xcode >= 16.3.
+    runs-on: macos-26
+    timeout-minutes: 60
+    env:
+      SCHEME: RainSDK-Package
+      DESTINATION: platform=iOS Simulator,name=iPhone 17 Pro,OS=latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26'
+
+      - name: Print toolchain and simulators
+        run: |
+          xcodebuild -version
+          swift --version
+          xcrun simctl list devices available | grep iPhone
+
+      - name: Install xcbeautify
+        run: brew install xcbeautify
+
+      - name: Cache SwiftPM checkouts
+        uses: actions/cache@v4
+        with:
+          path: .spm-cache
+          key: spm-${{ runner.os }}-${{ hashFiles('Package.resolved') }}
+          restore-keys: spm-${{ runner.os }}-
+
+      - name: Run package tests
+        run: |
+          set -o pipefail
+          mkdir -p build
+          xcodebuild test \
+            -scheme "$SCHEME" \
+            -destination "$DESTINATION" \
+            -clonedSourcePackagesDirPath .spm-cache \
+            -resultBundlePath build/RainSDK.xcresult \
+            2>&1 | tee build/xcodebuild.log | xcbeautify --renderer github-actions
+
+      # Swift Testing reports per-target "Test run with N tests" lines; xcodebuild's own
+      # "Executed N tests" counter only covers XCTest and reads 0 here.
+      - name: Summarize Swift Testing results
+        if: always()
+        run: |
+          {
+            echo "## Swift Testing (${DESTINATION})"
+            echo
+            echo '```'
+            grep -E "Test run with [0-9]+ tests? .*(passed|failed)" build/xcodebuild.log \
+              | sed -E 's/^.*(Test run with)/\1/' | sort -u || echo "no Swift Testing summary lines found"
+            echo '```'
+            echo
+            echo "Skipped (env-gated):"
+            echo '```'
+            grep -oE 'Test "[^"]*" skipped.*' build/xcodebuild.log | sort -u || echo "none"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          runs=$(grep -cE "Test run with [0-9]+ tests? .*passed" build/xcodebuild.log || true)
+          echo "passed test-run lines: $runs"
+          test "$runs" -ge 1
+
+      - name: Upload result bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: RainSDK.xcresult
+          path: |
+            build/RainSDK.xcresult
+            build/xcodebuild.log
+          if-no-files-found: warn
