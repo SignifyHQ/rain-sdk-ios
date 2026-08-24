@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main, 'feature/**', 'release/**']
+    branches: [main, 'release/**']
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -16,12 +16,15 @@ jobs:
   package-tests:
     name: Package tests (iOS Simulator)
     # Fallback if the org lacks the macos-26 image: runs-on: macos-15, xcode-version: '16.4',
-    # destination name 'iPhone 16 Pro'. swift-tools-version 6.1 needs Xcode >= 16.3.
+    # SIM_NAME 'iPhone 16 Pro'. swift-tools-version 6.1 needs Xcode >= 16.3.
     runs-on: macos-26
-    timeout-minutes: 60
+    timeout-minutes: 45
     env:
       SCHEME: RainSDK-Package
-      DESTINATION: platform=iOS Simulator,name=iPhone 17 Pro,OS=latest
+      SIM_NAME: iPhone 17 Pro
+      # Stream xcodebuild's output instead of block-buffering it, so a hang shows the last
+      # thing it was actually doing rather than 50 minutes of silence.
+      NSUnbufferedIO: 'YES'
     steps:
       - uses: actions/checkout@v4
 
@@ -30,11 +33,11 @@ jobs:
         with:
           xcode-version: '26'
 
-      - name: Print toolchain and simulators
+      - name: Print toolchain
         run: |
           xcodebuild -version
           swift --version
-          xcrun simctl list devices available | grep iPhone
+          sysctl -n hw.ncpu hw.memsize
 
       - name: Install xcbeautify
         run: brew install xcbeautify
@@ -46,45 +49,78 @@ jobs:
           key: spm-${{ runner.os }}-${{ hashFiles('Package.resolved') }}
           restore-keys: spm-${{ runner.os }}-
 
-      - name: Run package tests
+      # Boot the simulator up front and address it by UDID. A destination resolved by name can
+      # sit waiting on a simulator that never comes up, with no output and no error.
+      - name: Boot simulator
+        id: sim
+        timeout-minutes: 6
+        run: |
+          set -euo pipefail
+          udid=$(xcrun simctl list devices available \
+            | grep -m1 "^ *${SIM_NAME} (" \
+            | sed -E 's/.*\(([0-9A-Fa-f-]{36})\).*/\1/')
+          if [ -z "$udid" ]; then
+            echo "::error::No available simulator named '${SIM_NAME}'"
+            xcrun simctl list devices available | grep iPhone || true
+            exit 1
+          fi
+          echo "Booting ${SIM_NAME} ($udid)"
+          xcrun simctl boot "$udid" || true
+          xcrun simctl bootstatus "$udid" -b
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+
+      # Split from the test run so a compile hang and a test hang are distinguishable, and so
+      # neither can burn the whole job budget. -jobs 2 keeps three test targets from
+      # type-checking Swift Testing macros concurrently on a 3-core, 7 GB runner.
+      - name: Build for testing
+        timeout-minutes: 25
         run: |
           set -o pipefail
           mkdir -p build
-          xcodebuild test \
+          xcodebuild build-for-testing \
             -scheme "$SCHEME" \
-            -destination "$DESTINATION" \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath build/DerivedData \
             -clonedSourcePackagesDirPath .spm-cache \
-            -resultBundlePath build/RainSDK.xcresult \
-            2>&1 | tee build/xcodebuild.log | xcbeautify --renderer github-actions
+            -skipMacroValidation \
+            -jobs 2 \
+            2>&1 | tee build/build.log | xcbeautify --renderer github-actions
+
+      - name: Run tests
+        timeout-minutes: 12
+        run: |
+          set -o pipefail
+          xcodebuild test-without-building \
+            -scheme "$SCHEME" \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath build/DerivedData \
+            2>&1 | tee build/test.log | xcbeautify --renderer github-actions
 
       # Swift Testing reports per-target "Test run with N tests" lines; xcodebuild's own
       # "Executed N tests" counter only covers XCTest and reads 0 here.
       - name: Summarize Swift Testing results
         if: always()
         run: |
+          if [ ! -s build/test.log ]; then
+            echo "::error::No test log — the run never reached the test phase. Check the build step."
+            exit 1
+          fi
           {
-            echo "## Swift Testing (${DESTINATION})"
+            echo "## Swift Testing (${SIM_NAME})"
             echo
             echo '```'
-            grep -E "Test run with [0-9]+ tests? .*(passed|failed)" build/xcodebuild.log \
+            grep -E "Test run with [0-9]+ tests? .*(passed|failed)" build/test.log \
               | sed -E 's/^.*(Test run with)/\1/' | sort -u || echo "no Swift Testing summary lines found"
             echo '```'
             echo
             echo "Skipped (env-gated):"
             echo '```'
-            grep -oE 'Test "[^"]*" skipped.*' build/xcodebuild.log | sort -u || echo "none"
+            grep -oE 'Test "[^"]*" skipped.*' build/test.log | sort -u || echo "none"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
-          runs=$(grep -cE "Test run with [0-9]+ tests? .*passed" build/xcodebuild.log || true)
+          runs=$(grep -cE "Test run with [0-9]+ tests? .*passed" build/test.log || true)
           echo "passed test-run lines: $runs"
-          test "$runs" -ge 1
-
-      - name: Upload result bundle
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: RainSDK.xcresult
-          path: |
-            build/RainSDK.xcresult
-            build/xcodebuild.log
-          if-no-files-found: warn
+          if [ "$runs" -lt 1 ]; then
+            echo "::error::No test target reported a passing run — see the failures above."
+            exit 1
+          fi
