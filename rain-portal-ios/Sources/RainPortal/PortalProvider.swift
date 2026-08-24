@@ -133,6 +133,7 @@ public struct PortalProvider: RainProvider {
   }
 
   /// Installs a host-minted token (same Portal client) and rebuilds the client around it.
+  /// Throws `.invalidConfig` when the token cannot be installed; the current client stays live.
   public func updateSessionToken(_ sessionToken: String) async throws {
     guard state.resolved() != nil else { throw RainSDKError.sdkNotInitialized }
     try await coordinator.installNow(sessionToken)

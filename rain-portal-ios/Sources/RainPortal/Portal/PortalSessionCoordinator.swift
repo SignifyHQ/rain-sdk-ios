@@ -79,17 +79,25 @@ internal final class PortalSessionCoordinator: @unchecked Sendable {
   }
 
   /// Installs a host-minted token; waits out an in-flight refresh rather than joining it, so the
-  /// host's token is actually the one installed.
+  /// host's token is actually the one installed. A token that cannot be installed throws
+  /// `.invalidConfig` and leaves the current client, state and hook untouched — Portal never
+  /// rejected the installed token, so this is not a session death.
   internal func installNow(_ token: String) async throws {
     guard !token.trimmingCharacters(in: .whitespaces).isEmpty else {
       throw RainSDKError.invalidConfig(details: "Portal session token must not be empty")
     }
     let outcome = await runSingleFlight(joinExisting: false) {
+      let previous = self.stateSubject.value
       let outcome = await self.installOutcome(token)
-      if case .dead = outcome { self.lock.withLock { self.failedRefreshes += 1 } }
+      if case .dead = outcome { self.stateSubject.send(previous) }
       return outcome
     }
-    if case .dead(let cause) = outcome { throw expiredError(cause) }
+    if case .dead(let cause) = outcome {
+      let reason = cause.map { "\($0)" } ?? "unknown error"
+      throw RainSDKError.invalidConfig(
+        details: "Portal session token could not be installed: \(reason)"
+      )
+    }
   }
 
   private func execute<T>(idempotent: Bool, _ block: () async throws -> T) async throws -> T {

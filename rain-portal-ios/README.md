@@ -67,7 +67,8 @@ PortalProvider(
 Observing: `provider.sessionState` (`AnyPublisher<PortalSessionState, Never>`) and
 `provider.currentSessionState()` report `.unknown / .active / .refreshing / .expired`, driven by
 call outcomes (Portal has nothing to watch passively). `provider.refreshSession()` forces a
-re-mint + rebuild, `provider.updateSessionToken(_:)` installs a host-minted token, and
+re-mint + rebuild, `provider.updateSessionToken(_:)` installs a host-minted token (a token that
+cannot be installed throws `.invalidConfig` and leaves the current client untouched), and
 `provider.close()` silences a provider you are discarding.
 
 Reference: the example app's `RainSDKService.swift`, `WalletSessionStatus.swift` and `HomeView`'s
