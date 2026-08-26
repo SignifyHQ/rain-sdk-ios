@@ -77,15 +77,8 @@ enum PrivyErrorMapping {
     }
   }
 
-  /// Keyword classification for Privy's free-text RPC error messages.
+  /// Classifies Privy's free-text RPC error messages by core's shared vendor-phrase standard.
   private static func classify(message: String, fallback: PrivyError) -> RainSDKError {
-    let lower = message.lowercased()
-    if lower.contains("reject") || lower.contains("denied") || lower.contains("cancel") {
-      return .userRejected
-    }
-    if lower.contains("insufficient") {
-      return .insufficientFunds(required: "unknown", available: "unknown")
-    }
-    return .providerError(underlying: fallback)
+    RainSDKError.fromVendorMessage(message) ?? .providerError(underlying: fallback)
   }
 }
