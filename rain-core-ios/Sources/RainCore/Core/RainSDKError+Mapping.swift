@@ -70,27 +70,65 @@ extension RainSDKError {
     return .providerError(underlying: error)
   }
 
-  /// Classifies an untyped vendor error by its message.
-  ///
-  /// A bare "user" mention is deliberately not enough: "User doesn't have an embedded wallet" is
-  /// not a rejection.
+  /// Classifies an untyped vendor error by its message, or by EIP-1193 code 4001 when the error
+  /// carries one.
   private static func mapByKeyword(_ error: Error) -> RainSDKError? {
     // Task cancellation is not a wallet-UI rejection, and its type name would match "cancel".
     if error is CancellationError { return nil }
 
+    // EIP-1193 / wallet-standard "User Rejected Request".
+    if (error as NSError).code == userRejectedCode { return .userRejected }
+
     // Both renderings: localizedDescription for LocalizedError/NSError prose, and the debug
     // description — a plain Swift error's localizedDescription is a generic placeholder.
-    let message = (String(describing: error) + " " + (error as NSError).localizedDescription)
-      .lowercased()
-    guard !message.isEmpty else { return nil }
+    return fromVendorMessage(String(describing: error) + " " + (error as NSError).localizedDescription)
+  }
 
-    if ["reject", "denied", "cancel"].contains(where: message.contains) {
+  /// EIP-1193 `userRejectedRequest`; Solana wallet-standard reuses the same code.
+  private static let userRejectedCode = 4001
+
+  /// Phrases that classify a vendor message. Every entry is at least two words so a lone
+  /// "rejected", "cancelled" or "insufficient" never classifies on its own: "Transaction
+  /// cancelled" or "User doesn't have an embedded wallet" are not user rejections.
+  static let userRejectedPhrases: [String] = [
+    "user rejected", "user denied", "user cancelled", "user canceled", "user declined",
+    "rejected by user", "denied by user", "cancelled by user", "canceled by user",
+    "rejected by the user", "denied by the user", "cancelled by the user", "canceled by the user",
+  ]
+  static let insufficientFundsPhrases: [String] = [
+    "insufficient funds", "insufficient balance", "insufficient lamports",
+    // Solana: "Attempt to debit an account but found no record of a prior credit".
+    "found no record of a prior credit",
+  ]
+
+  /// Classifies free-text vendor prose into `.userRejected` / `.insufficientFunds`, or `nil` when
+  /// the message matches neither. Shared with adapters so every vendor is held to one standard.
+  public static func fromVendorMessage(_ message: String) -> RainSDKError? {
+    let text = normalizedVendorText(message)
+    guard !text.isEmpty else { return nil }
+    if text.range(of: #"\bcode\W{0,3}4001\b|[\[(]4001[\])]"#, options: .regularExpression) != nil {
       return .userRejected
     }
-    if message.contains("insufficient") {
+    if userRejectedPhrases.contains(where: text.contains) {
+      return .userRejected
+    }
+    if insufficientFundsPhrases.contains(where: text.contains) {
       return .insufficientFunds(required: "unknown", available: "unknown")
     }
     return nil
+  }
+
+  /// Lowercases and splits camelCase so an enum case like `userRejectedSignature` reads as prose.
+  private static func normalizedVendorText(_ message: String) -> String {
+    var out = ""
+    out.reserveCapacity(message.count + 8)
+    var previousWasLower = false
+    for ch in message {
+      if ch.isUppercase, previousWasLower { out.append(" ") }
+      out.append(ch)
+      previousWasLower = ch.isLowercase
+    }
+    return out.lowercased()
   }
 
   private static func mapTurnkeySwiftError(_ error: TurnkeySwiftError) -> RainSDKError {

@@ -204,23 +204,49 @@ struct ErrorMappingTests {
   }
 
   // MARK: - Untyped vendor prose
+  //
+  // Standard: a message classifies only on a phrase of at least two words (or EIP-1193 code
+  // 4001). A lone "rejected" / "cancelled" / "insufficient" is not enough.
 
-  @Test("from(_:) maps a rejection message to userRejected")
-  func testRejectionKeywordsMapToUserRejected() {
+  @Test("from(_:) maps a user-rejection phrase to userRejected")
+  func testRejectionPhrasesMapToUserRejected() {
     for message in [
       "User rejected the request",
+      "User denied transaction signature",
+      "User cancelled signing",
+      "User canceled signing",
+      "User declined the request",
+      "Signature rejected by user",
+      "Request denied by user",
+      "Transaction cancelled by user",
       "Request denied by the user",
-      "Transaction cancelled",
     ] {
       let mapped = RainSDKError.from(underlying: VendorProseError(message))
       #expect(mapped == RainSDKError.userRejected, "expected userRejected for: \(message)")
     }
   }
 
-  @Test("from(_:) maps an insufficient-funds message to insufficientFunds")
-  func testInsufficientKeywordMapsToInsufficientFunds() {
-    let mapped = RainSDKError.from(underlying: VendorProseError("insufficient funds for gas * price + value"))
-    #expect(mapped.errorCode == "RAIN_402")
+  @Test("from(_:) maps EIP-1193 code 4001 to userRejected")
+  func testCode4001MapsToUserRejected() {
+    for message in ["code: 4001, message: nope", "RPC error [4001]", "Provider error (4001)"] {
+      let mapped = RainSDKError.from(underlying: VendorProseError(message))
+      #expect(mapped == RainSDKError.userRejected, "expected userRejected for: \(message)")
+    }
+    let coded = NSError(domain: "vendor", code: 4001, userInfo: nil)
+    #expect(RainSDKError.from(underlying: coded) == RainSDKError.userRejected)
+  }
+
+  @Test("from(_:) maps an insufficient-funds phrase to insufficientFunds")
+  func testInsufficientPhrasesMapToInsufficientFunds() {
+    for message in [
+      "insufficient funds for gas * price + value",
+      "Insufficient balance for transfer",
+      "Transfer: insufficient lamports 100, need 5000",
+      "Attempt to debit an account but found no record of a prior credit.",
+    ] {
+      let mapped = RainSDKError.from(underlying: VendorProseError(message))
+      #expect(mapped.errorCode == "RAIN_402", "expected RAIN_402 for: \(message)")
+    }
   }
 
   @Test("from(_:) leaves an unrecognized message as providerError")
@@ -231,16 +257,25 @@ struct ErrorMappingTests {
     }
   }
 
-  @Test("from(_:) does not read a bare 'user' mention as a rejection")
-  func testBareUserMentionIsNotARejection() {
-    let mapped = RainSDKError.from(underlying: VendorProseError("User doesn't have an embedded wallet"))
-    if case .providerError = mapped {} else {
-      Issue.record("expected providerError, got \(mapped)")
+  @Test("from(_:) does not classify on a single word")
+  func testSingleWordDoesNotClassify() {
+    for message in [
+      "User doesn't have an embedded wallet",
+      "Transaction cancelled",
+      "request was denied",
+      "Rejected: nonce too low",
+      "insufficient permissions for this operation",
+      "nonce 4001 too low",
+    ] {
+      let mapped = RainSDKError.from(underlying: VendorProseError(message))
+      if case .providerError = mapped {} else {
+        Issue.record("expected providerError for: \(message), got \(mapped)")
+      }
     }
   }
 
-  // Plain Swift errors (no LocalizedError) render a generic localizedDescription, so keyword
-  // classification must also read the debug description.
+  // Plain Swift errors (no LocalizedError) render a generic localizedDescription, so
+  // classification must also read the debug description, splitting camelCase case names.
 
   @Test("from(_:) classifies a plain Swift error whose case text says insufficient funds")
   func testPlainErrorInsufficientFunds() {
@@ -254,7 +289,7 @@ struct ErrorMappingTests {
   @Test("from(_:) classifies a plain Swift error whose case text says the user rejected")
   func testPlainErrorUserRejection() {
     #expect(RainSDKError.from(underlying: PlainVendorError.userRejectedSignature) == RainSDKError.userRejected)
-    #expect(RainSDKError.from(underlying: PlainVendorError.prose("request was denied")) == RainSDKError.userRejected)
+    #expect(RainSDKError.from(underlying: PlainVendorError.prose("denied by user")) == RainSDKError.userRejected)
   }
 
   @Test("from(_:) does not classify Task cancellation as a user rejection")
