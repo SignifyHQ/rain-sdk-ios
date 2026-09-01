@@ -1,327 +1,286 @@
+import Combine
 import Foundation
-import UIKit
-import RainSDK
-import Web3
-import Web3Core
-import web3swift
+import RainCore
+import RainPortal
+import RainPrivy
 import PortalSwift
+import PrivySDK
+import TurnkeySwift
 
-/// Service class for managing Rain SDK operations
+/// App-side holder around the modular SDK.
+///
+/// The demo picks a provider at runtime (Portal, Turnkey, or Privy), so it builds the ``RainSdk``
+/// lazily once the user supplies credentials and then keeps the resolved ``RainClient`` here.
+/// Screens read `rain` / `client` directly — there is no wrapper layer over the SDK surface.
+/// Setup failures the demo can explain better than the vendor error can.
+enum PortalWalletSetupError: LocalizedError {
+  case walletNotOnThisDevice
+
+  var errorDescription: String? {
+    switch self {
+    case .walletNotOnThisDevice:
+      return "This Portal client already has a wallet, but its signing share is not on this "
+        + "device. Recover it from a backup, or use a client ID dedicated to this device."
+    }
+  }
+}
+
 @MainActor
-class RainSDKService: ObservableObject {
-  // MARK: - Singleton
-  
-  /// Shared instance of the service
+final class RainSDKService: ObservableObject {
   static let shared = RainSDKService()
-  
-  // MARK: - Properties
-  
-  /// The Rain SDK manager instance
-  private let sdkManager = RainSDKManager()
-  
-  /// Current initialization state
-  @Published var isInitialized = false
-  
-  // MARK: - Initialization
-  
-  private init() {}
-  
-  /// Current error state
-  @Published var error: RainSDKError?
-  
-  /// Current initialization status message
-  @Published var statusMessage: String = "Not initialized"
-  
-  // MARK: - Initialization
-  
-  /// Initialize the SDK with Portal token and network configurations
-  /// - Parameters:
-  ///   - portalToken: Portal session token
-  ///   - networkConfigs: Array of network configurations
-  func initialize(portalToken: String, networkConfigs: [NetworkConfig]) async {
-    statusMessage = "Initializing..."
-    error = nil
-    
-    do {
-      // Enable logging for demo
-      RainLogger.isEnabled = true
-      
-      try await sdkManager.initializePortal(
-        portalSessionToken: portalToken,
-        networkConfigs: networkConfigs
-      )
-      
-      // Fetch the wallet address to ensure the session token is valid
-      print("Rain SDK: wallet address \(try await sdkManager.getWalletAddress())")
-      
-      isInitialized = true
-      statusMessage = "Initialized successfully with \(networkConfigs.count) network(s)"
-      error = nil
-    } catch let sdkError as RainSDKError {
-      isInitialized = false
-      error = sdkError
-      statusMessage = "Initialization failed: \(sdkError.errorCode)"
-    } catch {
-      isInitialized = false
-      self.error = RainSDKError.providerError(underlying: error)
-      statusMessage = "Initialization failed: Unknown error"
-    }
-  }
-  
-  /// Initialize the SDK in wallet-agnostic mode (without Portal token)
-  /// - Parameters:
-  ///   - networkConfigs: Array of network configurations
-  func initializeWalletAgnostic(networkConfigs: [NetworkConfig]) async {
-    statusMessage = "Initializing (wallet-agnostic)..."
-    error = nil
-    
-    do {
-      // Enable logging for demo
-      RainLogger.isEnabled = true
-      
-      try await sdkManager.initialize(networkConfigs: networkConfigs)
-      
-      isInitialized = true
-      statusMessage = "Initialized successfully (wallet-agnostic) with \(networkConfigs.count) network(s)"
-      error = nil
-    } catch let sdkError as RainSDKError {
-      isInitialized = false
-      error = sdkError
-      statusMessage = "Initialization failed: \(sdkError.errorCode)"
-    } catch {
-      isInitialized = false
-      self.error = RainSDKError.providerError(underlying: error)
-      statusMessage = "Initialization failed: Unknown error"
-    }
-  }
-  
-  // MARK: - Transaction Building Methods
-  
-  /// Build EIP-712 message
-  func buildEIP712Message(
-    chainId: Int,
-    collateralProxyAddress: String,
-    walletAddress: String,
-    tokenAddress: String,
-    amount: Decimal,
-    decimals: Int,
-    recipientAddress: String,
-    nonce: BigUInt?
-  ) async throws -> (String, String) {
-    let assetAddresses = EIP712AssetAddresses(
-      proxyAddress: collateralProxyAddress,
-      recipientAddress: recipientAddress,
-      tokenAddress: tokenAddress
-    )
-    return try await sdkManager.buildEIP712Message(
-      chainId: chainId,
-      walletAddress: walletAddress,
-      assetAddresses: assetAddresses,
-      amount: amount,
-      decimals: decimals,
-      nonce: nonce
-    )
-  }
-  
-  /// Build withdraw transaction data
-  func buildWithdrawTransactionData(
-    chainId: Int,
-    contractAddress: String,
-    proxyAddress: String,
-    tokenAddress: String,
-    amount: Decimal,
-    decimals: Int,
-    recipientAddress: String,
-    expiresAt: String,
-    signatureData: Data,
-    adminSalt: Data,
-    adminSignature: Data
-  ) async throws -> String {
-    let assetAddresses = WithdrawAssetAddresses(
-      contractAddress: contractAddress,
-      proxyAddress: proxyAddress,
-      recipientAddress: recipientAddress,
-      tokenAddress: tokenAddress
-    )
-    return try await sdkManager.buildWithdrawTransactionData(
-      chainId: chainId,
-      assetAddresses: assetAddresses,
-      amount: amount,
-      decimals: decimals,
-      expiresAt: expiresAt,
-      salt: adminSalt,
-      signatureData: signatureData,
-      adminSalt: adminSalt,
-      adminSignature: adminSignature
-    )
-  }
-  
-  // MARK: - Wallet Address & QR
 
-  /// Returns the current wallet address from the wallet provider.
-  func getWalletAddress() async throws -> String {
-    try await sdkManager.getWalletAddress()
+  enum ActiveProvider {
+    case none
+    case portal
+    case turnkey
+    case privy
   }
 
-  /// Generates a QR code image (PNG) encoding the current wallet address.
-  func generateWalletAddressQRCode(
-    dimension: Int = 256,
-    backgroundColor: CGColor? = nil,
-    foregroundColor: CGColor? = nil
-  ) async throws -> Data {
-    try await sdkManager.generateWalletAddressQRCode(
-      dimension: dimension,
-      backgroundColor: backgroundColor,
-      foregroundColor: foregroundColor
-    )
+  /// The built SDK registry (Rain API + wallet-agnostic building). Nil before initialization.
+  private(set) var rain: RainSdk?
+
+  /// The provider-backed client (address, balances, send, withdraw). Nil before initialization.
+  private(set) var client: RainClient?
+
+  /// Holds the `Portal` for provider-only APIs (wallet generation, backup/recover). Boxed because
+  /// the hook fires synchronously off the main actor — an actor hop would land too late.
+  private final class PortalBox: @unchecked Sendable {
+    var value: Portal?
   }
 
-  /// Fetches the native token balance (e.g. ETH, AVAX) for the current wallet on the given network.
-  func getNativeBalance(chainId: Int) async throws -> Double {
-    try await sdkManager.getNativeBalance(chainId: chainId)
-  }
+  private let portalBox = PortalBox()
 
-  /// Fetches the ERC-20 balance for a single token via direct RPC `eth_call` (balanceOf).
-  func getERC20Balance(chainId: Int, tokenAddress: String, decimals: Int? = nil) async throws -> Double {
-    try await sdkManager.getERC20Balance(chainId: chainId, tokenAddress: tokenAddress, decimals: decimals)
-  }
+  @Published private(set) var isInitialized = false
 
-  /// Fetches all balances (native + ERC-20) for the current wallet on the given network. Native balance uses key "".
-  func getBalances(chainId: Int) async throws -> [String: Double] {
-    try await sdkManager.getBalances(chainId: chainId)
-  }
+  /// Provider behind the last successful initialize; used to gate provider-specific UI.
+  @Published private(set) var activeProvider: ActiveProvider = .none
 
-  /// Fetches transaction history for the current wallet on the given network.
-  func getTransactions(
-    chainId: Int,
-    limit: Int? = nil,
-    offset: Int? = nil,
-    order: WalletTransactionOrder? = nil
-  ) async throws -> [WalletTransaction] {
-    try await sdkManager.getTransactions(
-      chainId: chainId,
-      limit: limit,
-      offset: offset,
-      order: order
-    )
-  }
+  /// The active provider's `sessionState` as a display model; nil before resolution.
+  @Published private(set) var sessionStatus: WalletSessionStatus?
 
-  /// Sends native tokens (e.g. ETH, AVAX) from the current wallet.
-  func sendNativeToken(chainId: Int, to: String, amount: Decimal) async throws -> String {
-    try await sdkManager.sendNativeToken(chainId: chainId, to: to, amount: amount)
-  }
+  /// Typed because the session surface lives on the provider, not on `RainClient`.
+  private enum ProviderHandle {
+    case portal(RainPortal.PortalProvider)
+    case turnkey(TurnkeyProvider)
+    case privy(PrivyProvider)
 
-  /// Sends ERC-20 tokens from the current wallet.
-  func sendERC20Token(
-    chainId: Int,
-    contractAddress: String,
-    to: String,
-    amount: Decimal,
-    decimals: Int
-  ) async throws -> String {
-    try await sdkManager.sendERC20Token(
-      chainId: chainId,
-      contractAddress: contractAddress,
-      to: to,
-      amount: amount,
-      decimals: decimals
-    )
-  }
-
-  // MARK: - Portal Withdraw
-
-  /// Execute collateral withdrawal via Portal (build, sign, submit). Requires Portal to be initialized.
-  func withdrawCollateral(
-    chainId: Int,
-    contractAddress: String,
-    proxyAddress: String,
-    tokenAddress: String,
-    recipientAddress: String,
-    amount: Decimal,
-    decimals: Int,
-    salt: String,
-    signature: String,
-    expiresAt: String,
-    nonce: BigUInt?
-  ) async throws -> String {
-    let assetAddresses = WithdrawAssetAddresses(
-      contractAddress: contractAddress,
-      proxyAddress: proxyAddress,
-      recipientAddress: recipientAddress,
-      tokenAddress: tokenAddress
-    )
-    return try await sdkManager.withdrawCollateral(
-      chainId: chainId,
-      assetAddresses: assetAddresses,
-      amount: amount,
-      decimals: decimals,
-      salt: salt,
-      signature: signature,
-      expiresAt: expiresAt,
-      nonce: nonce
-    )
-  }
-
-  // MARK: - Portal Withdraw View Model
-
-  /// Returns a new Portal Withdraw demo view model for use in navigation or other screens.
-  func makePortalWithdrawDemoViewModel() -> PortalWithdrawDemoViewModel {
-    PortalWithdrawDemoViewModel()
-  }
-
-  // MARK: - Portal Access
-
-  /// Check if SDK is initialized
-  var hasPortal: Bool {
-    do {
-      _ = try sdkManager.portal
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  /// Recovers the Portal wallet from backup.
-  /// - Parameters:
-  ///   - backupMethod: `.iCloud` or `.PIN` (password).
-  ///   - password: Required when backupMethod is `.PIN` (password); passed to `portal.setPassword` before recover.
-  ///   - cipherText: Encrypted backup data (e.g. from iCloud or password storage).
-  func recover(
-    backupMethod: BackupMethods,
-    password: String? = nil,
-    cipherText: String
-  ) async throws {
-    let portal = try getPortal()
-
-    if let password, backupMethod == .Password {
-      try portal.setPassword(password)
-    }
-
-    do {
-      _ = try await portal.recoverWallet(backupMethod, withCipherText: cipherText) { status in
-        print("Rain SDK: Recover status: \(status)")
+    func close() {
+      switch self {
+      case .portal(let provider): provider.close()
+      case .turnkey(let provider): provider.close()
+      case .privy(let provider): provider.close()
       }
-      print("Rain SDK: Wallet recover success")
-    } catch {
-      print("Rain SDK: Recover failed - \(error.localizedDescription)")
-      throw RainSDKError.providerError(underlying: error)
     }
   }
 
-  private func getPortal() throws -> Portal {
-    do {
-      return try sdkManager.portal
-    } catch {
+  private var providerHandle: ProviderHandle?
+  private var sessionSubscription: AnyCancellable?
+
+  /// Network the feature screens operate on, selected via the home-screen dropdown.
+  @Published var selectedChain: WalletChain = .avalancheFuji
+
+  // Rain API credentials entered on the home screen. Stashed here because the SDK is built
+  // lazily — applied via the builder at build time and pushed through configureRainApi when
+  // the SDK already exists.
+  private var rainApiKey = ""
+  private var rainUserId = ""
+
+  private init() {}
+
+  /// True once an Api-Key and userId are available (SDK built or not).
+  var isRainApiConfigured: Bool {
+    rain?.isRainApiConfigured ?? (!rainApiKey.isEmpty && !rainUserId.isEmpty)
+  }
+
+  /// Stores the Rain Api-Key + userId and forwards them to the SDK when it exists.
+  func configureRainApi(apiKey: String, userId: String) {
+    rainApiKey = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
+    rainUserId = userId.trimmingCharacters(in: .whitespacesAndNewlines)
+    rain?.configureRainApi(apiKey: rainApiKey, userId: rainUserId)
+  }
+
+  /// Builds the SDK with the Portal provider (EVM chains only — Portal holds no Solana account).
+  func initializePortal(
+    sessionToken: String,
+    onSessionTokenNeeded: (@Sendable () async throws -> String?)? = nil,
+    onSessionExpired: (@Sendable () -> Void)? = nil
+  ) async throws {
+    RainLogger.isEnabled = true
+    closeActiveProvider()
+    // Qualified: PortalSwift exports its own `PortalProvider`.
+    let provider = RainPortal.PortalProvider(
+      PortalConfig(
+        sessionToken: sessionToken,
+        onSessionTokenNeeded: onSessionTokenNeeded,
+        onSessionExpired: onSessionExpired
+      )
+    ) { [portalBox] portal in
+      // Re-fired after every token refresh.
+      portalBox.value = portal
+    }
+    let sdk = try builder(networkConfigs: WalletChain.evmNetworkConfigs)
+      .register(provider)
+      .build()
+    try await resolve(sdk: sdk, providerId: .portal, provider: .portal)
+    bind(.portal(provider), states: provider.sessionState.map(\.status))
+  }
+
+  /// Ensures this device can sign for the Portal client, running MPC key generation on first
+  /// use. Returns true if a wallet was created, false if one was already usable here.
+  ///
+  /// A newly-provisioned Portal client has no wallet, and nothing in the Rain surface creates
+  /// one — every address lookup would fail with `walletUnavailable` until this runs.
+  @discardableResult
+  func ensurePortalWallet() async throws -> Bool {
+    guard let portal = portalBox.value else { throw RainSDKError.sdkNotInitialized }
+
+    // Two independent facts: the signing share lives in this device's keychain, the wallet
+    // itself lives on the Portal client. Creating on a client that already has one fails.
+    let onDevice = try await portal.isWalletOnDevice()
+    let onClient = try await portal.doesWalletExist()
+    SampleLog.d("Portal.wallet", "ensurePortalWallet onDevice=\(onDevice) onClient=\(onClient)")
+
+    if onDevice { return false }
+    if onClient { throw PortalWalletSetupError.walletNotOnThisDevice }
+
+    let created = try await portal.createWallet { status in
+      SampleLog.d("Portal.wallet", "keygen status=\(status.status)")
+    }
+    SampleLog.i("Portal.wallet", "created wallet eth=\(created.ethereum)")
+    return true
+  }
+
+  /// Builds the SDK with the Turnkey provider and resolves the Turnkey-backed client.
+  func initializeTurnkey(
+    turnkey: TurnkeyContext,
+    walletAddress: String? = nil,
+    onSessionExpired: (@Sendable () -> Void)? = nil
+  ) async throws {
+    RainLogger.isEnabled = true
+    closeActiveProvider()
+    let provider = TurnkeyProvider(
+      TurnkeyConfig(
+        turnkey: turnkey,
+        walletAddress: walletAddress,
+        onSessionExpired: onSessionExpired
+      )
+    )
+    let sdk = try builder(networkConfigs: WalletChain.networkConfigs)
+      .register(provider)
+      .build()
+    try await resolve(sdk: sdk, providerId: .turnkey, provider: .turnkey)
+    bind(.turnkey(provider), states: provider.sessionState.map(\.status))
+  }
+
+  /// Builds the SDK with the Privy provider and resolves the Privy-backed client.
+  func initializePrivy(
+    privy: any Privy,
+    walletAddress: String? = nil,
+    onSessionExpired: (@Sendable () -> Void)? = nil
+  ) async throws {
+    RainLogger.isEnabled = true
+    closeActiveProvider()
+    let provider = PrivyProvider(
+      PrivyConfig(
+        privy: privy,
+        walletAddress: walletAddress,
+        onSessionExpired: onSessionExpired
+      )
+    )
+    let sdk = try builder(networkConfigs: WalletChain.networkConfigs)
+      .register(provider)
+      .build()
+    try await resolve(sdk: sdk, providerId: .privy, provider: .privy)
+    bind(.privy(provider), states: provider.sessionState.map(\.status))
+  }
+
+  // MARK: - Session
+
+  /// Forces a refresh on the active provider; `tokenExpired` means re-auth is required.
+  func refreshSession() async throws {
+    switch providerHandle {
+    case .none:
+      throw RainSDKError.sdkNotInitialized
+    case .turnkey(let provider):
+      try await provider.refreshSession()
+    case .privy(let provider):
+      try await provider.refreshSession()
+    case .portal(let provider):
+      try await provider.refreshSession()
+    }
+  }
+
+  /// Portal only: installs a host-minted token for the same Portal client.
+  func updatePortalSessionToken(_ sessionToken: String) async throws {
+    guard case .portal(let provider) = providerHandle else {
       throw RainSDKError.sdkNotInitialized
     }
+    try await provider.updateSessionToken(sessionToken)
   }
-  
-  // MARK: - Reset
-  
-  /// Reset the SDK state
+
+  /// Owns the resolved provider and mirrors its session state onto the main thread.
+  private func bind<P: Publisher>(_ handle: ProviderHandle, states: P)
+  where P.Output == WalletSessionStatus, P.Failure == Never {
+    providerHandle = handle
+    sessionSubscription = states
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] status in self?.sessionStatus = status }
+  }
+
+  /// A discarded provider must never fire its hooks.
+  private func closeActiveProvider() {
+    sessionSubscription = nil
+    sessionStatus = nil
+    providerHandle?.close()
+    providerHandle = nil
+  }
+
+  /// The built registry, or throws `sdkNotInitialized` if no `initialize*` has run.
+  func requireRain() throws -> RainSdk {
+    guard let rain else { throw RainSDKError.sdkNotInitialized }
+    return rain
+  }
+
+  /// The resolved provider client, or throws `sdkNotInitialized` before initialization.
+  func requireClient() throws -> RainClient {
+    guard let client else { throw RainSDKError.sdkNotInitialized }
+    return client
+  }
+
+  /// Drops the built registry and resolved client.
   func reset() {
+    closeActiveProvider()
+    client?.reset()
+    rain?.reset()
+    rain = nil
+    client = nil
+    portalBox.value = nil
     isInitialized = false
-    error = nil
-    statusMessage = "Reset"
+    activeProvider = .none
+  }
+
+  // MARK: - Building
+
+  /// Shared builder setup: RPC endpoints, the Rain API credentials, and token naming.
+  ///
+  /// An SPL mint carries no on-chain symbol (and Turnkey's asset index skips devnet), while on
+  /// EVM the built-in registry is mainnet-only — so the testnet tokens this demo expects are
+  /// registered here, the same mechanism host apps use.
+  private func builder(networkConfigs: [NetworkConfig]) -> RainSdk.Builder {
+    let builder = RainSdk.builder()
+      .rpcEndpoints(networkConfigs)
+      .registerTokens(WalletChain.allCases.map(\.defaultTokenInfo))
+    if !rainApiKey.isEmpty && !rainUserId.isEmpty {
+      builder.rainApiCredentials(apiKey: rainApiKey, userId: rainUserId)
+    }
+    return builder
+  }
+
+  private func resolve(sdk: RainSdk, providerId: ProviderId, provider: ActiveProvider) async throws {
+    let resolved = try await sdk.provider(providerId)
+    rain = sdk
+    client = resolved
+    isInitialized = resolved.isInitialized
+    activeProvider = provider
   }
 }
