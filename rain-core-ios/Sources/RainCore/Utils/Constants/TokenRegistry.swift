@@ -17,11 +17,10 @@ import Foundation
 /// based on the canonical issuer's documentation at time of authoring.
 ///
 /// **Multicall3 status**
-/// Chains where Multicall3 is deployed at the canonical address are listed in
-/// `Multicall3.canonicallyDeployedChainIds` — those use the batched `aggregate3` path.
-/// Any chain not in that set uses the parallel `eth_call` fallback. The two lists
-/// (this registry and the canonical-deployment set) must stay in sync; `Multicall3Tests`
-/// enforces that.
+/// Chains with a known Multicall3 deployment are listed in `Multicall3.deployments` — those use
+/// the batched `aggregate3` path. Any chain not in that map uses the parallel `eth_call`
+/// fallback. The two lists (this registry and the deployment map) must stay in sync;
+/// `Multicall3Tests` enforces that.
 internal enum TokenRegistry {
   /// Tokens grouped by EIP-155 chain ID.
   static let tokensByChainId: [Int: [TokenInfo]] = [

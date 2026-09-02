@@ -55,10 +55,10 @@ struct RainAuthPullChainsTests {
   }
 
   /// Allowance reads batch through Multicall3 where it is deployed; all four qualify.
-  @Test("every Auth Pull chain has a canonical Multicall3 deployment")
+  @Test("every Auth Pull chain has a Multicall3 deployment")
   func everyChainHasMulticall3() {
     for chainId in RainAuthPullChains.sandbox.union(RainAuthPullChains.production) {
-      #expect(Multicall3.isCanonicallyDeployed(on: chainId), "chain \(chainId)")
+      #expect(Multicall3.address(on: chainId) != nil, "chain \(chainId)")
     }
   }
 

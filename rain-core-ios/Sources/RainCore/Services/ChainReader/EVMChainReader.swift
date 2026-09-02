@@ -5,8 +5,8 @@ import Web3
 ///
 /// **Primary path** — Multicall3 (`aggregate3`) for batched balance reads, so a wallet
 /// holding N tokens on a chain costs one RPC round-trip regardless of N. Used when
-/// `Multicall3.isCanonicallyDeployed(on:)` returns true for the target chain (static
-/// list from https://www.multicall3.com/deployments).
+/// `Multicall3.address(on:)` knows a deployment for the target chain (static list from
+/// https://www.multicall3.com/deployments; zkSync Era is at a non-canonical address).
 ///
 /// **Fallback** — parallel `eth_call` (`balanceOf`) and `eth_getBalance`, used on
 /// chains outside the static deployment list.
@@ -92,10 +92,11 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
   ) async throws -> [Balance] {
     let rpcUrl = try resolveRpcUrl(chainId: chainId)
     try validate(ethereumAddress: walletAddress, label: "wallet address")
-    if Multicall3.isCanonicallyDeployed(on: chainId) {
+    if let multicallAddress = Multicall3.address(on: chainId) {
       return try await fetchViaMulticall3(
         rpcUrl: rpcUrl,
         chainId: chainId,
+        multicallAddress: multicallAddress,
         walletAddress: walletAddress,
         tokens: tokens
       )
@@ -268,6 +269,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
   private func fetchViaMulticall3(
     rpcUrl: String,
     chainId: Int,
+    multicallAddress: String,
     walletAddress: String,
     tokens: [TokenInfo]
   ) async throws -> [Balance] {
@@ -275,7 +277,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
     // per-token failures are logged and omitted from the result (see decode loop below).
     var calls: [Multicall3.Call3] = [
       Multicall3.Call3(
-        target: Multicall3.canonicalAddress,
+        target: multicallAddress,
         allowFailure: true,
         callData: Multicall3.encodeGetEthBalance(address: walletAddress)
       )
@@ -292,7 +294,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
 
     let aggregateCallData = Multicall3.encodeAggregate3(calls)
     let callParams: [String: Any] = [
-      "to": Multicall3.canonicalAddress,
+      "to": multicallAddress,
       "data": aggregateCallData
     ]
     let hex = try await jsonRpcClient.callForHexResult(

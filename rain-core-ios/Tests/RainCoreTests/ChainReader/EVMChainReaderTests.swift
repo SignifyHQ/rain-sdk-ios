@@ -15,9 +15,9 @@ struct EVMChainReaderTests {
   private let spenderAddress = "0x5a6E6b0d5Ea051CfFF9b3dcC2Aa8Dac226458f29"
   private let rpcUrl = "https://mainnet.infura.io/v3/test"
   private let txHash = "0x" + String(repeating: "ab", count: 32)
-  /// Chain ID that's in `Multicall3.canonicallyDeployedChainIds` — picks the Multicall3 path.
+  /// Chain ID in `Multicall3.deployments` at the canonical address — picks the Multicall3 path.
   private let canonicalChainId = 1
-  /// Chain ID not in `Multicall3.canonicallyDeployedChainIds` — picks the parallel path.
+  /// Chain ID not in `Multicall3.deployments` — picks the parallel path.
   private let nonCanonicalChainId = 11_155_111 // Sepolia (testnet; not in production allowlist)
 
   private func makeReader(chainId: Int = 1) -> EVMChainReader {
@@ -405,7 +405,32 @@ struct EVMChainReaderTests {
       #expect(balances.first { $0.token == .native }?.decimalAmount == 1.0)
       // Static deployment list — no eth_getCode probe.
       #expect(MockURLProtocol.recordedMethods == ["eth_call"])
+      #expect(multicallTarget() == Multicall3.canonicalAddress)
     }
+  }
+
+  /// The canonical address has no code on zkSync Era; batching there must go to its own deployment.
+  @Test("getBalances on zkSync Era targets the zkSync Multicall3 address, not the canonical one")
+  func testGetBalancesZkSyncEraUsesChainSpecificDeployment() async throws {
+    try await MockURLProtocol.withInstalled {
+      let zkSyncEra = 324
+      let response = encodedAggregate3Response(tuples: [
+        (success: true, returnData: paddedUint256(value: "0de0b6b3a7640000"))
+      ])
+      MockURLProtocol.stub(method: "eth_call", result: response)
+
+      let reader = makeReader(chainId: zkSyncEra)
+      let balances = try await reader.getBalances(chainId: zkSyncEra, walletAddress: walletAddress, tokens: [])
+      #expect(balances.count == 1)
+      #expect(MockURLProtocol.recordedMethods == ["eth_call"])
+      #expect(multicallTarget() == Multicall3.zkSyncEraAddress)
+      #expect(multicallTarget() != Multicall3.canonicalAddress)
+    }
+  }
+
+  /// The `to` of the one `eth_call` an aggregate3 batch issues.
+  private func multicallTarget() -> String? {
+    (MockURLProtocol.recordedParams.last?.first as? [String: Any])?["to"] as? String
   }
 
   @Test("getBalances batches native + tokens into a single Multicall3 call")

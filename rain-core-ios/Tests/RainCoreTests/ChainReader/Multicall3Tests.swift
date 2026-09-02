@@ -139,9 +139,19 @@ struct Multicall3Tests {
     }
   }
 
-  @Test("canonicallyDeployedChainIds matches every TokenRegistry chain")
-  func testCanonicalChainsMatchTokenRegistry() {
+  @Test("deployedChainIds matches every TokenRegistry chain")
+  func testDeploymentsMatchTokenRegistry() {
     let registryChainIds = Set(TokenRegistry.tokensByChainId.keys)
-    #expect(Multicall3.canonicallyDeployedChainIds == registryChainIds)
+    #expect(Multicall3.deployedChainIds == registryChainIds)
+  }
+
+  /// zkSync Era cannot host the canonical CREATE2 deployment; every other chain uses it.
+  @Test("zkSync Era resolves to its own Multicall3 address, all other chains to the canonical one")
+  func testZkSyncEraDeploymentAddress() {
+    #expect(Multicall3.address(on: 324) == "0xF9cda624FBC7e059355ce98a31693d299FACd963")
+    for (chainId, address) in Multicall3.deployments where chainId != 324 {
+      #expect(address == Multicall3.canonicalAddress, "chain \(chainId)")
+    }
+    #expect(Multicall3.address(on: 11_155_111) == nil)
   }
 }
