@@ -221,9 +221,9 @@ on USDC today; both become live questions if Auth Pull adds an asset.
 ### 4. Confirm
 
 `transactionHash` means submitted, not mined. Use `confirmTokenAllowance` before treating the user
-as ready; it polls for a successful receipt (up to 60s) and reads back the resulting allowance at the
-block that receipt landed in, so a load-balanced endpoint answering from a replica that is still
-behind cannot confirm against pre-approval state:
+as ready; it polls for a successful receipt (up to 60s, retrying transient RPC failures along the
+way) and reads back the resulting allowance at the block that receipt landed in, so a load-balanced
+endpoint answering from a replica that is still behind cannot confirm against pre-approval state:
 
 ```swift
 let updated = try await client.confirmTokenAllowance(
@@ -290,7 +290,8 @@ provider is asked for one thing: the wallet address to read the allowance *for*,
 |---|---|---|
 | `RAIN_102` | `invalidConfig(details:)` | Auth Pull is not configured, the target differs from the trusted token/operator, malformed input, wrong chain/environment, or the token reports `decimals` outside 0...77. Local configuration failures occur before wallet access. |
 | `RAIN_102` | `tokenNotFound(token:chainId:)` | The token's decimals could not be established (not in the registry and its `decimals()` read failed), so a capped amount cannot be scaled safely. Never raised for an unlimited approval. |
-| `RAIN_301` | `networkError(underlying:)` | `confirmTokenAllowance` exhausted its 60s poll window. Not confirmed yet — re-read the allowance, don't re-approve. |
+| `RAIN_301` | `networkError(underlying:)` | A network failure on an RPC read, or a mined approval whose allowance could not be read back within the 60s window. |
+| `RAIN_303` | `transactionPending(statusId:)` | `confirmTokenAllowance` exhausted its 60s window without a receipt; `statusId` is the transaction hash. Not confirmed yet — re-read the allowance or confirm again, don't re-approve. |
 | `RAIN_401` | `userRejected` | The user declined the signature in the wallet UI. |
 | `RAIN_402` | `insufficientFunds(required:available:)` | Not enough native gas to submit the approval. |
 | `RAIN_403` | `transactionSimulationFailed(underlying:)` | Preflight simulation reverted (providers that simulate), or `confirmTokenAllowance` found a mined receipt that reverted. |

@@ -76,6 +76,8 @@ final class MockChainReader: ChainReader, @unchecked Sendable {
   var stubbedReceiptBlockNumber: String = "0x10"
   /// When set, the receipt read throws it.
   var stubbedReceiptError: Error? = nil
+  /// Consumed one entry per receipt read; a non-nil entry is thrown. Models a node blip mid-poll.
+  var stubbedReceiptFailures: [Error?] = []
 
   private(set) var balancesCalls: [BalancesCall] = []
   private(set) var getBalanceCalls: [SingleBalanceCall] = []
@@ -192,6 +194,9 @@ final class MockChainReader: ChainReader, @unchecked Sendable {
     transactionHash: String
   ) async throws -> MinedReceipt? {
     receiptCalls.append(ReceiptCall(chainId: chainId, transactionHash: transactionHash))
+    if !stubbedReceiptFailures.isEmpty, let failure = stubbedReceiptFailures.removeFirst() {
+      throw failure
+    }
     if let stubbedReceiptError { throw stubbedReceiptError }
     let status = stubbedReceiptStatuses.isEmpty
       ? stubbedReceiptStatus

@@ -122,7 +122,8 @@ enum TestManagers {
     registeredTokens: [TokenInfo] = [],
     authPullChainIds: Set<Int> = RainAuthPullChains.sandbox,
     authPullTokenAddresses: [Int: String]? = nil,
-    reader: MockChainReader = MockChainReader()
+    reader: MockChainReader = MockChainReader(),
+    approvalConfirmationInterval: Duration = .seconds(1)
   ) -> (RainSdkManager, StubWalletProvider, MockChainReader, MockTransactionBuilderService) {
     let stub = StubWalletProvider()
     let builder = MockTransactionBuilderService(networkConfigs: configs)
@@ -138,7 +139,8 @@ enum TestManagers {
       authPullChainIds: authPullChainIds,
       authPullOperator: TestFixtures.authPullOperator,
       authPullTokenAddresses: authPullTokenAddresses
-        ?? TestFixtures.authPullTokens(for: authPullChainIds)
+        ?? TestFixtures.authPullTokens(for: authPullChainIds),
+      approvalConfirmationInterval: approvalConfirmationInterval
     )
     return (manager, stub, reader, builder)
   }

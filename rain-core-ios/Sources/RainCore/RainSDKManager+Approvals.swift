@@ -16,7 +16,7 @@ import Web3
 // operation whose damage is invisible afterwards: `approve` succeeds against any address, needs no
 // balance, and mines a real allowance whatever it names.
 extension RainSdkManager {
-  private enum ApprovalConfirmation {
+  enum ApprovalConfirmation {
     static let attempts = 60
     static let interval: Duration = .seconds(1)
   }
@@ -139,10 +139,26 @@ extension RainSdkManager {
 
       for attempt in 0..<ApprovalConfirmation.attempts {
         if receipt == nil {
-          let mined = try await chainReader.getTransactionReceipt(
-            chainId: chainId,
-            transactionHash: transactionHash
-          )
+          // The approval is already out, so a failed read is a reason to try again, not a verdict
+          // on the transaction. Only a malformed hash or missing endpoint (`invalidConfig`) is final.
+          let mined: MinedReceipt?
+          do {
+            mined = try await chainReader.getTransactionReceipt(
+              chainId: chainId,
+              transactionHash: transactionHash
+            )
+          } catch is CancellationError {
+            throw CancellationError()
+          } catch {
+            if let rainError = error as? RainSDKError, case .invalidConfig = rainError {
+              throw rainError
+            }
+            RainLogger.warning(
+              "Rain SDK: Receipt read for \(transactionHash) failed; retrying: \(error)"
+            )
+            lastReadFailure = error
+            mined = nil
+          }
           if let mined, !mined.succeeded {
             throw RainSDKError.transactionSimulationFailed(
               underlying: approvalFailure(
@@ -190,16 +206,23 @@ extension RainSdkManager {
         }
 
         if attempt < ApprovalConfirmation.attempts - 1 {
-          try await Task.sleep(for: ApprovalConfirmation.interval)
+          try await Task.sleep(for: approvalConfirmationInterval)
         }
       }
 
       guard let mined = receipt else {
-        throw RainSDKError.networkError(
-          underlying: approvalFailure(
-            "Timed out waiting for approval transaction \(transactionHash) to be mined"
-          )
+        // Not a failure: the approval may still mine. The hash is what the host resumes from —
+        // re-read the allowance or confirm again, never re-approve.
+        RainLogger.warning(
+          "Rain SDK: Approval \(transactionHash) was not confirmed within the window"
+            + (lastReadFailure.map { "; last read failure: \($0)" } ?? "")
         )
+        throw RainSDKError.transactionPending(statusId: transactionHash)
+      }
+      // Mined, but the allowance never read back. Surface the node's own failure where there is
+      // one; a generic timeout would hide why every read at that block failed.
+      if let cause = lastReadFailure as? RainSDKError {
+        throw cause
       }
       throw RainSDKError.networkError(
         underlying: approvalFailure(

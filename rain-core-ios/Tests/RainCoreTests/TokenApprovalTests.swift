@@ -611,6 +611,140 @@ struct TokenApprovalTests {
     #expect(reader.allowanceCalls.count == 1)
   }
 
+  // MARK: - Confirmation survives node blips and reports the right thing on timeout
+
+  /// The approval is already out: one failed receipt read is a retry, not a hard error.
+  @Test("a receipt read that fails mid-poll is retried")
+  func receiptReadFailureIsRetried() async throws {
+    let reader = MockChainReader()
+    reader.stubbedReceiptStatus = true
+    reader.stubbedAllowance = BigUInt(250_000_000)
+    reader.stubbedReceiptFailures = [URLError(.networkConnectionLost)]
+    let (manager, _, _, _) = TestManagers.approvalManager(
+      registeredTokens: [usdcInfo],
+      reader: reader,
+      approvalConfirmationInterval: .milliseconds(1)
+    )
+
+    let allowance = try await manager.confirmTokenAllowance(
+      transactionHash: "0x" + String(repeating: "6", count: 64),
+      chainId: chainId,
+      contractAddress: usdc,
+      spender: spender,
+      amount: 250
+    )
+
+    #expect(allowance.rawAmount == BigUInt(250_000_000))
+    #expect(reader.receiptCalls.count == 2)
+    #expect(reader.allowanceCalls.count == 1)
+  }
+
+  /// A malformed hash is a verdict on the input, not a node blip: it must not burn the window.
+  @Test("an invalid hash is rejected at once rather than retried for the whole window")
+  func invalidHashIsNotRetried() async throws {
+    let reader = MockChainReader()
+    reader.stubbedReceiptFailures = [RainSDKError.invalidConfig(details: "Invalid transaction hash")]
+    let (manager, _, _, _) = TestManagers.approvalManager(
+      registeredTokens: [usdcInfo],
+      reader: reader,
+      approvalConfirmationInterval: .milliseconds(1)
+    )
+
+    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+      _ = try await manager.confirmTokenAllowance(
+        transactionHash: "0x" + String(repeating: "7", count: 64),
+        chainId: chainId,
+        contractAddress: usdc,
+        spender: spender,
+        amount: 250
+      )
+    }
+    #expect(reader.receiptCalls.count == 1)
+  }
+
+  /// Not mined by the end of the window is pending, not failure: the host resumes from the hash
+  /// (re-read or confirm again) instead of re-approving.
+  @Test("an approval that never mines surfaces as transactionPending carrying the hash")
+  func unminedApprovalIsPending() async throws {
+    let hash = "0x" + String(repeating: "8", count: 64)
+    let reader = MockChainReader()
+    reader.stubbedReceiptStatus = nil
+    let (manager, _, _, _) = TestManagers.approvalManager(
+      registeredTokens: [usdcInfo],
+      reader: reader,
+      approvalConfirmationInterval: .milliseconds(1)
+    )
+
+    do {
+      _ = try await manager.confirmTokenAllowance(
+        transactionHash: hash,
+        chainId: chainId,
+        contractAddress: usdc,
+        spender: spender,
+        amount: 250
+      )
+      Issue.record("expected transactionPending")
+    } catch RainSDKError.transactionPending(let statusId) {
+      #expect(statusId == hash)
+    }
+    #expect(reader.receiptCalls.count == RainSdkManager.ApprovalConfirmation.attempts)
+    #expect(reader.allowanceCalls.isEmpty)
+  }
+
+  /// Receipt reads that fail for the whole window are still pending, not a network verdict.
+  @Test("receipt reads that keep failing end in transactionPending, not networkError")
+  func persistentReceiptFailuresEndPending() async throws {
+    let reader = MockChainReader()
+    reader.stubbedReceiptError = URLError(.timedOut)
+    let (manager, _, _, _) = TestManagers.approvalManager(
+      registeredTokens: [usdcInfo],
+      reader: reader,
+      approvalConfirmationInterval: .milliseconds(1)
+    )
+
+    await #expect(throws: RainSDKError.transactionPending(statusId: "")) {
+      _ = try await manager.confirmTokenAllowance(
+        transactionHash: "0x" + String(repeating: "9", count: 64),
+        chainId: chainId,
+        contractAddress: usdc,
+        spender: spender,
+        amount: 250
+      )
+    }
+    #expect(reader.receiptCalls.count == RainSdkManager.ApprovalConfirmation.attempts)
+  }
+
+  /// A host that cancels a confirm mid-poll must see the cancellation, never a pending or network
+  /// error dressed up from it.
+  @Test("cancelling a confirm mid-poll propagates the cancellation, not a timeout")
+  func cancellationPropagates() async throws {
+    let reader = MockChainReader()
+    reader.stubbedReceiptStatus = nil
+    let (manager, _, _, _) = TestManagers.approvalManager(
+      registeredTokens: [usdcInfo],
+      reader: reader,
+      approvalConfirmationInterval: .milliseconds(50)
+    )
+    let (chainId, usdc, spender) = (chainId, usdc, spender)
+
+    let task = Task {
+      try await manager.confirmTokenAllowance(
+        transactionHash: "0x" + String(repeating: "c", count: 64),
+        chainId: chainId,
+        contractAddress: usdc,
+        spender: spender,
+        amount: 250
+      )
+    }
+    try await Task.sleep(for: .milliseconds(20))
+    task.cancel()
+
+    await #expect(throws: CancellationError.self) {
+      _ = try await task.value
+    }
+    #expect(reader.receiptCalls.count < RainSdkManager.ApprovalConfirmation.attempts)
+  }
+
   @Test("confirmation rejects a reverted receipt without reading the allowance")
   func confirmationRejectsRevertedReceipt() async throws {
     let (manager, _, reader, _) = TestManagers.approvalManager(registeredTokens: [usdcInfo])

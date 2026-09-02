@@ -552,13 +552,18 @@ transaction hash alone means submitted, not ready: use this before treating the 
 Auth Pull.
 
 Polls `eth_getTransactionReceipt` once a second for up to 60 seconds, then reads the allowance
-through the same path as `getTokenAllowance`.
+through the same path as `getTokenAllowance`, pinned to the block the receipt landed in. Transient
+RPC failures on either read (a 429, a timeout, a node that has not reached the block yet) are
+retried within the window rather than ending the confirmation.
 
 - **Returns:** `RainTokenAllowance` — the allowance actually in place after the transaction mined.
-- **Throws:** `RainSDKError`. A reverted receipt throws `transactionSimulationFailed`; an exhausted
-  poll window throws `networkError` (not confirmed *yet* — re-read the allowance rather than
-  re-approving). `internalLogicError` is thrown only when the mined allowance contradicts the
-  request: a revoke that left a spendable allowance, or an approval whose allowance is still zero.
+- **Throws:** `RainSDKError`. A reverted receipt throws `transactionSimulationFailed`. A window that
+  expires with no receipt throws `transactionPending` with the transaction hash as `statusId` (not
+  confirmed *yet* — re-read the allowance or confirm again rather than re-approving). A receipt that
+  mined but whose allowance could not be read back within the window rethrows the last read failure
+  (`networkError` when it was not already a `RainSDKError`). `invalidConfig` for a malformed hash is
+  final and is not retried. `internalLogicError` is thrown only when the mined allowance contradicts
+  the request: a revoke that left a spendable allowance, or an approval whose allowance is still zero.
 - **Async:** Yes
 
 | Parameter | Type | Description |

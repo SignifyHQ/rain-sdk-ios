@@ -37,6 +37,9 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
   /// The trusted token contract per Auth Pull chain: the only token an approval may target.
   let authPullTokenAddresses: [Int: String]
 
+  /// Delay between `confirmTokenAllowance` polls. Injectable so tests can drive the whole window.
+  let approvalConfirmationInterval: Duration
+
   init(
     walletProvider: any RainWalletProvider,
     networkConfigs: [NetworkConfig],
@@ -47,11 +50,13 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     chainReader: ChainReader? = nil,
     authPullChainIds: Set<Int> = [],
     authPullOperator: String? = nil,
-    authPullTokenAddresses: [Int: String] = [:]
+    authPullTokenAddresses: [Int: String] = [:],
+    approvalConfirmationInterval: Duration = ApprovalConfirmation.interval
   ) {
     self.authPullChainIds = authPullChainIds
     self.authPullOperator = authPullOperator
     self.authPullTokenAddresses = authPullTokenAddresses
+    self.approvalConfirmationInterval = approvalConfirmationInterval
     self.walletProvider = walletProvider
     self.networkConfigs = networkConfigs
     self.transactionBuilderService = transactionBuilder
