@@ -27,8 +27,8 @@ public actor TokenMetadataStore {
     }
   }
 
-  /// Adds host-supplied tokens. A token replaces any existing entry with the same
-  /// address (case-insensitive) on the same chain.
+  /// Adds host-supplied tokens. A token replaces an earlier host registration with the same
+  /// address (case-insensitive) on the same chain. Built-in registry tokens are never replaced.
   public func register(_ tokens: [TokenInfo]) {
     for token in tokens {
       Self.upsert(token, into: &knownTokens)
@@ -138,6 +138,17 @@ public actor TokenMetadataStore {
 
   private static func upsert(_ token: TokenInfo, into store: inout [Int: [TokenInfo]]) {
     let key = token.address.lowercased()
+    // The registry is the trusted source for its own tokens: a host-supplied `decimals` for one
+    // would rescale every balance and approval against it, so the registration is dropped.
+    if let trusted = TokenRegistry.tokens(for: token.chainId).first(where: { $0.address.lowercased() == key }) {
+      if trusted != token {
+        RainLogger.warning(
+          "Rain SDK: Ignoring registration of \(token.address) on chain \(token.chainId): "
+            + "built-in token \(trusted.symbol ?? "?") (\(trusted.decimals) decimals) cannot be overridden"
+        )
+      }
+      return
+    }
     var list = store[token.chainId] ?? []
     if let index = list.firstIndex(where: { $0.address.lowercased() == key }) {
       list[index] = token

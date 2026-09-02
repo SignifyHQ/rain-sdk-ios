@@ -90,7 +90,9 @@ the provider from scratch. Build a new `RainSdk` via `builder()` to change confi
 #### registerTokens(_ tokens: [TokenInfo])
 
 Registers additional tokens on the live token store so their metadata (decimals / symbol / name)
-resolves without an on-chain lookup. Also available on the builder (`Builder.registerTokens`).
+resolves without an on-chain lookup. Built-in registry tokens are trusted and cannot be overridden:
+a registration naming one is ignored with a warning. Also available on the builder
+(`Builder.registerTokens`).
 
 ---
 
@@ -745,7 +747,7 @@ registration. Also available on `RainSdk` and on the builder.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `tokens` | `[TokenInfo]` | Token metadata to register. Re-registering an address replaces its entry. |
+| `tokens` | `[TokenInfo]` | Token metadata to register. Re-registering a host-added address replaces its entry; built-in registry tokens are trusted and cannot be overridden. |
 
 ---
 

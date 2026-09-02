@@ -263,7 +263,8 @@ public protocol RainClient: Sendable {
   // MARK: - Token metadata
 
   /// Registers token metadata so balance and transfer calls can resolve symbol/decimals without an
-  /// on-chain read. Additive: re-registering an address replaces its entry.
+  /// on-chain read. Additive: re-registering a host-added address replaces its entry; built-in
+  /// registry tokens are trusted and cannot be overridden.
   func registerTokens(_ tokens: [TokenInfo])
 }
 

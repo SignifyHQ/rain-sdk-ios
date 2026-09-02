@@ -227,7 +227,9 @@ RainSdk.builder()
 ```
 
 Unregistered contract tokens are still resolved automatically by reading `decimals()` /
-`symbol()` on-chain once, then cached.
+`symbol()` on-chain once, then cached. Built-in tokens are trusted: a registration for an address
+the SDK already ships is ignored, so a wrong `decimals` cannot rescale a known token's balances or
+approvals.
 
 ### 7. Send tokens
 
