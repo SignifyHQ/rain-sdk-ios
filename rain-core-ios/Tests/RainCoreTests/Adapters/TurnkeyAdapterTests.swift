@@ -548,6 +548,43 @@ struct TurnkeyAdapterTests {
     #expect(client.ethSendTransactionCalls[0].to == TestFixtures.tokenAddress)
   }
 
+  @Test("approveTokenAllowance with Turnkey broadcasts arbitrary ERC-20 approve calldata")
+  func testApproveTokenAllowanceTurnkey() async throws {
+    await MockURLProtocol.install()
+    defer { MockURLProtocol.reset() }
+    stubSendTransactionRPCs()
+
+    let mockTurnkey = MockTurnkey()
+    let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
+    let expectedHash = "0x" + String(repeating: "c", count: 64)
+    client.sendTransactionStatusQueue = [.broadcasted(hash: expectedHash)]
+
+    // Broadcast routing, not the trusted-target guard: trust the arbitrary token this test sends
+    // so the assertion is about what reached Turnkey.
+    let (manager, _, builder) = TestManagers.turnkeyManager(
+      turnkey: mockTurnkey,
+      configs: TestFixtures.configs(
+        chainId: RainChain.baseSepolia,
+        rpcUrl: "https://sepolia.base.org"
+      ),
+      authPullChainIds: [RainChain.baseSepolia],
+      authPullTokenAddresses: [RainChain.baseSepolia: TestFixtures.tokenAddress]
+    )
+    builder.stubbedApproveData = "0x095ea7b3deadbeef"
+
+    let result = try await manager.approveTokenAllowance(
+      chainId: RainChain.baseSepolia,
+      contractAddress: TestFixtures.tokenAddress,
+      spender: TestFixtures.authPullOperator
+    )
+
+    #expect(result.transactionHash == expectedHash)
+    #expect(client.ethSendTransactionCalls.count == 1)
+    // The approval targets the token contract; the spender is encoded in the calldata.
+    #expect(client.ethSendTransactionCalls[0].to == TestFixtures.tokenAddress)
+    #expect(builder.approveCalls[0].amount == RainTokenAllowance.unlimitedRawAmount)
+  }
+
   @Test("sendNative with Turnkey throws when ethSendTransaction fails")
   func testSendNativeTokenTurnkeyEthSendError() async throws {
     await MockURLProtocol.install()

@@ -12,7 +12,11 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
   let walletProvider: any RainWalletProvider
   private let networkConfigs: [NetworkConfig]
   let transactionBuilderService: TransactionBuilderProtocol
-  private let tokenStore: TokenMetadataStore
+  let tokenStore: TokenMetadataStore
+
+  /// Read-only chain access for state the wallet provider does not expose — today, ERC-20
+  /// allowances. Balances still route through the provider, which may have a faster native API.
+  let chainReader: ChainReader
 
   let providerId: ProviderId
   let capabilities: Set<Capability>
@@ -21,18 +25,43 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
   /// cluster endpoints every other Solana read uses.
   let solanaWithdrawComposer: SolanaCollateralWithdrawComposer
 
+  /// Chains an Auth Pull approval may target: the host's ``RainAuthPullConfig`` narrowed to the
+  /// chains that have an RPC endpoint. Held as a resolved set rather than the environment itself so
+  /// the approval guard has one thing to check and no opinion about API hosts, and surfaced on
+  /// ``RainClient`` so host UI can gate on exactly what the guard enforces.
+  let authPullChainIds: Set<Int>
+
+  /// Rain's operator for the configured environment: the only spender an approval may name.
+  let authPullOperator: String?
+
+  /// The trusted token contract per Auth Pull chain: the only token an approval may target.
+  let authPullTokenAddresses: [Int: String]
+
+  /// Delay between `confirmTokenAllowance` polls. Injectable so tests can drive the whole window.
+  let approvalConfirmationInterval: Duration
+
   init(
     walletProvider: any RainWalletProvider,
     networkConfigs: [NetworkConfig],
     transactionBuilder: TransactionBuilderProtocol,
     tokenStore: TokenMetadataStore,
     providerId: ProviderId,
-    capabilities: Set<Capability>
+    capabilities: Set<Capability>,
+    chainReader: ChainReader? = nil,
+    authPullChainIds: Set<Int> = [],
+    authPullOperator: String? = nil,
+    authPullTokenAddresses: [Int: String] = [:],
+    approvalConfirmationInterval: Duration = ApprovalConfirmation.interval
   ) {
+    self.authPullChainIds = authPullChainIds
+    self.authPullOperator = authPullOperator
+    self.authPullTokenAddresses = authPullTokenAddresses
+    self.approvalConfirmationInterval = approvalConfirmationInterval
     self.walletProvider = walletProvider
     self.networkConfigs = networkConfigs
     self.transactionBuilderService = transactionBuilder
     self.tokenStore = tokenStore
+    self.chainReader = chainReader ?? EVMChainReader(networkConfigs: networkConfigs)
     self.providerId = providerId
     self.capabilities = capabilities
     self.solanaWithdrawComposer = SolanaCollateralWithdrawComposer(

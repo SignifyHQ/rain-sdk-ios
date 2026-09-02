@@ -36,6 +36,7 @@ your dependency graph.
 - **Balances** — get native, ERC-20, and SPL token balances for the current wallet.
 - **Transaction history** — get transactions for the current wallet with optional pagination and sort order (`WalletTransaction`, `WalletTransactionOrder`).
 - **Send tokens** — send native, ERC-20, or SPL tokens from the current wallet.
+- **Auth Pull approvals** — approve Rain's operator to spend the user's USDC, read the allowance back, confirm it on chain, and estimate the approval fee. See [Auth Pull](docs/AUTH_PULL.md).
 - **Exact money handling** — public money APIs are `Decimal`; base-unit conversion is exact and rejects an amount finer than the token's scale rather than truncating it.
 
 ## Installation
@@ -226,7 +227,9 @@ RainSdk.builder()
 ```
 
 Unregistered contract tokens are still resolved automatically by reading `decimals()` /
-`symbol()` on-chain once, then cached.
+`symbol()` on-chain once, then cached. Built-in tokens are trusted: a registration for an address
+the SDK already ships is ignored, so a wrong `decimals` cannot rescale a known token's balances or
+approvals.
 
 ### 7. Send tokens
 
@@ -368,7 +371,64 @@ for tx in txs {
 }
 ```
 
-### 13. QR code generation
+### 13. Auth Pull: approve the Rain operator
+
+Auth Pull draws a card authorization's amount straight from the user's wallet into their Rain
+collateral contract. The wallet-side prerequisite is an ERC-20 allowance for Rain's operator — that
+part is the SDK's; the pull itself is Rain's.
+
+```swift
+let rain = try RainSdk.builder()
+    .rpcEndpoints(rpcEndpoints)
+    .rainApiEnvironment(.dev)
+    .authPullConfig(.sandbox(operatorAddress: rainOperatorAddress))
+    .register(provider)
+    .build()
+
+let client = try await rain.provider(provider.id)
+
+// 1. What can the operator move today?
+let allowance = try await client.getTokenAllowance(
+    chainId: RainChain.baseSepolia,
+    contractAddress: usdcAddress,
+    spender: rainOperatorAddress   // per environment; read it from Rain
+)
+guard !allowance.covers(expectedSpend) else { return }
+
+// 2. What will the approval cost?
+let fee = try await client.estimateApprovalFee(
+    chainId: RainChain.baseSepolia, contractAddress: usdcAddress, spender: rainOperatorAddress)
+
+// 3. Approve. Omitting `amount` approves an unlimited allowance, so the user never re-approves;
+//    pass a Decimal to cap it, or 0 to revoke.
+let result = try await client.approveTokenAllowance(
+    chainId: RainChain.baseSepolia, contractAddress: usdcAddress, spender: rainOperatorAddress)
+print(result.transactionHash)
+
+// 4. A hash means submitted, not ready. Wait for a successful receipt, then read the allowance that
+//    actually landed — it can be lower than approved if an authorization already pulled against it.
+let confirmed = try await client.confirmTokenAllowance(
+    transactionHash: result.transactionHash,
+    chainId: RainChain.baseSepolia,
+    contractAddress: usdcAddress,
+    spender: rainOperatorAddress
+)
+```
+
+Sandbox runs on Base Sepolia and Arbitrum Sepolia, production on Base and Arbitrum; USDC on all four
+is in the built-in token registry. Auth Pull remains disabled until `authPullConfig(_:)` supplies
+Rain's trusted operator and canonical token targets, and the SDK rejects any different chain, token,
+or spender before a wallet prompt. `.custom` fails closed unless it receives an explicit custom Auth
+Pull configuration.
+
+Gate your UI on `rain.authPullChainIds` (also on `RainClient`), which is what the approval guard
+enforces: the configuration narrowed to chains with an RPC endpoint.
+`RainAuthPullChains.supported(for:)` answers for an environment and is the wider set — use it only
+before an SDK exists. `RainTokenAllowance.rawAmount` is the exact base-unit value and the one to
+compare against; `decimalAmount` is for display and rounds past 38 significant digits, so gate on
+`isUnlimited` before rendering a number. Full guide: [Auth Pull](docs/AUTH_PULL.md).
+
+### 14. QR code generation
 
 Returns PNG `Data` encoding any address — pass `nil` (or omit it) for the wallet's own address.
 
@@ -389,7 +449,8 @@ let large = try await client.generateAddressQRCode(
 let image = UIImage(data: walletPNG)
 ```
 
-For a short overview of all public methods, see [Method overview](docs/METHODS.md).
+For a short overview of all public methods, see [Method overview](docs/METHODS.md). For the Auth
+Pull approval flow end to end, see [Auth Pull](docs/AUTH_PULL.md).
 
 ## License
 

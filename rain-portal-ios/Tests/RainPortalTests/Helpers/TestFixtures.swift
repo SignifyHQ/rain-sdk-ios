@@ -52,7 +52,10 @@ enum TestManagers {
   static func portalManager(
     portal: MockPortal? = nil,
     builder: MockTransactionBuilderService? = nil,
-    configs: [NetworkConfig] = TestFixtures.configs()
+    configs: [NetworkConfig] = TestFixtures.configs(),
+    authPullChainIds: Set<Int> = [],
+    authPullOperator: String? = nil,
+    authPullTokenAddresses: [Int: String] = [:]
   ) -> (RainSdkManager, MockPortal, MockTransactionBuilderService) {
     let resolvedPortal = portal ?? {
       let p = MockPortal()
@@ -71,7 +74,10 @@ enum TestManagers {
       transactionBuilder: resolvedBuilder,
       tokenStore: tokenStore,
       providerId: .portal,
-      capabilities: [.export, .recovery]
+      capabilities: [.export, .recovery],
+      authPullChainIds: authPullChainIds,
+      authPullOperator: authPullOperator,
+      authPullTokenAddresses: authPullTokenAddresses
     )
     return (manager, resolvedPortal, resolvedBuilder)
   }

@@ -25,6 +25,21 @@ public enum EthereumConverter {
     return Int(cleanHex, radix: 16) ?? 0
   }
 
+  /// Strict decoder for ABI uint values that must fit in a non-negative `Int`.
+  ///
+  /// The lenient ``parseHexToInt(_:)`` reads a malformed payload as 0, which for a `decimals()`
+  /// response is indistinguishable from a real 0-decimal token and silently rescales every amount
+  /// derived from it.
+  public static func parseHexToIntStrict(_ hex: String) throws -> Int {
+    let value = try parseHexToBigUIntStrict(hex)
+    guard let narrowed = Int(exactly: value) else {
+      throw RainSDKError.internalLogicError(
+        details: "Hex value does not fit in a non-negative Int: \(hex)"
+      )
+    }
+    return narrowed
+  }
+
   /// Decodes an ABI-encoded string returned by `eth_call` (e.g. from ERC-20 `symbol()`).
   ///
   /// ABI string layout (each slot = 32 bytes = 64 hex chars):

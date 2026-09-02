@@ -27,8 +27,8 @@ public actor TokenMetadataStore {
     }
   }
 
-  /// Adds host-supplied tokens. A token replaces any existing entry with the same
-  /// address (case-insensitive) on the same chain.
+  /// Adds host-supplied tokens. A token replaces an earlier host registration with the same
+  /// address (case-insensitive) on the same chain. Built-in registry tokens are never replaced.
   public func register(_ tokens: [TokenInfo]) {
     for token in tokens {
       Self.upsert(token, into: &knownTokens)
@@ -70,6 +70,28 @@ public actor TokenMetadataStore {
 
     enrichmentCache[chainId, default: [:]][key] = enriched.info
     return enriched.info
+  }
+
+  /// A contract token's decimals, or `nil` when they could not be established — the token is not
+  /// in the registry and its on-chain `decimals()` read failed.
+  ///
+  /// Unlike ``tokenInfo(chainId:address:)``, this never substitutes the 18-decimal default.
+  /// Callers that scale a *money amount* must use this: on an approval a guessed 18 against a
+  /// 6-decimal token would silently approve 10^12 times the intended allowance, and `approve`
+  /// has no balance to fail against, so nothing downstream would catch it.
+  public func decimals(chainId: Int, address: String) async -> Int? {
+    let key = address.lowercased()
+    if let known = knownTokens[chainId]?.first(where: { $0.address.lowercased() == key }) {
+      return known.decimals
+    }
+    if let cached = enrichmentCache[chainId]?[key] {
+      return cached.decimals
+    }
+    let enriched = await enrich(chainId: chainId, address: address)
+    guard enriched.decimalsResolved else { return nil }
+
+    enrichmentCache[chainId, default: [:]][key] = enriched.info
+    return enriched.info.decimals
   }
 
   // MARK: - Enrichment
@@ -116,6 +138,17 @@ public actor TokenMetadataStore {
 
   private static func upsert(_ token: TokenInfo, into store: inout [Int: [TokenInfo]]) {
     let key = token.address.lowercased()
+    // The registry is the trusted source for its own tokens: a host-supplied `decimals` for one
+    // would rescale every balance and approval against it, so the registration is dropped.
+    if let trusted = TokenRegistry.tokens(for: token.chainId).first(where: { $0.address.lowercased() == key }) {
+      if trusted != token {
+        RainLogger.warning(
+          "Rain SDK: Ignoring registration of \(token.address) on chain \(token.chainId): "
+            + "built-in token \(trusted.symbol ?? "?") (\(trusted.decimals) decimals) cannot be overridden"
+        )
+      }
+      return
+    }
     var list = store[token.chainId] ?? []
     if let index = list.firstIndex(where: { $0.address.lowercased() == key }) {
       list[index] = token

@@ -85,6 +85,57 @@ struct TokenMetadataStoreTests {
     #expect(reader.symbolCalls.isEmpty)
   }
 
+  /// A wrong `decimals` on a known token would rescale its balances and approvals by orders of
+  /// magnitude, so the registry stays authoritative for the addresses it ships.
+  @Test("a registration cannot override a built-in token's metadata")
+  func testRegisterCannotOverrideRegistryToken() async throws {
+    let reader = MockChainReader()
+    let store = TokenMetadataStore(chainReader: reader)
+
+    await store.register([
+      TokenInfo(chainId: 1, address: TestFixtures.usdcAddress, symbol: "USDX", decimals: 18, name: "Not USDC")
+    ])
+
+    let info = await store.tokenInfo(chainId: 1, address: TestFixtures.usdcAddress)
+    #expect(info.symbol == "USDC")
+    #expect(info.decimals == 6)
+    #expect(await store.decimals(chainId: 1, address: TestFixtures.usdcAddress) == 6)
+    let entries = await store.registeredTokens(for: 1)
+    #expect(entries.filter { $0.address.lowercased() == TestFixtures.usdcAddress.lowercased() }.count == 1)
+    #expect(reader.decimalsCalls.isEmpty)
+  }
+
+  @Test("a seed token cannot override a built-in token's metadata either")
+  func testSeedCannotOverrideRegistryToken() async throws {
+    let reader = MockChainReader()
+    let store = TokenMetadataStore(
+      chainReader: reader,
+      seedTokens: [TokenInfo(chainId: 1, address: TestFixtures.usdcAddress.lowercased(), symbol: "USDC", decimals: 18, name: nil)]
+    )
+
+    #expect(await store.decimals(chainId: 1, address: TestFixtures.usdcAddress) == 6)
+    #expect(reader.decimalsCalls.isEmpty)
+  }
+
+  @Test("a host-registered token can still be re-registered")
+  func testHostTokenCanBeReplaced() async throws {
+    let reader = MockChainReader()
+    let store = TokenMetadataStore(chainReader: reader)
+
+    await store.register([
+      TokenInfo(chainId: 1, address: Self.unknownToken, symbol: "FOO", decimals: 12, name: nil)
+    ])
+    await store.register([
+      TokenInfo(chainId: 1, address: Self.unknownToken.uppercased(), symbol: "FOO", decimals: 8, name: "Foo")
+    ])
+
+    let info = await store.tokenInfo(chainId: 1, address: Self.unknownToken)
+    #expect(info.decimals == 8)
+    #expect(info.name == "Foo")
+    let entries = await store.registeredTokens(for: 1)
+    #expect(entries.filter { $0.address.lowercased() == Self.unknownToken }.count == 1)
+  }
+
   @Test("seedTokens resolve without enrichment")
   func testSeedTokensResolveWithoutEnrichment() async throws {
     let reader = MockChainReader()

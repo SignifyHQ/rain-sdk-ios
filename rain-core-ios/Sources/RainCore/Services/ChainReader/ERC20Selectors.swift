@@ -14,4 +14,10 @@ internal enum ERC20Selectors {
 
   /// `decimals()`
   static let decimals = "313ce567"
+
+  /// `allowance(address,address)`
+  static let allowance = "dd62ed3e"
+
+  /// `approve(address,uint256)`
+  static let approve = "095ea7b3"
 }

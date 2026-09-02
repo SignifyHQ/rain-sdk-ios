@@ -1,4 +1,5 @@
 import Foundation
+import Web3
 @testable import RainCore
 
 /// Test double for `ChainReader`. Records every call and returns canned values.
@@ -34,6 +35,19 @@ final class MockChainReader: ChainReader, @unchecked Sendable {
     let tokenAddress: String
   }
 
+  struct AllowanceCall: Equatable {
+    let chainId: Int
+    let tokenAddress: String
+    let owner: String
+    let spender: String
+    let atBlock: String
+  }
+
+  struct ReceiptCall: Equatable {
+    let chainId: Int
+    let transactionHash: String
+  }
+
   var stubbedBalances: [Balance] = []
   var stubbedSingleBalance: Balance? = nil
   var stubbedNative: Decimal = 0
@@ -41,6 +55,17 @@ final class MockChainReader: ChainReader, @unchecked Sendable {
   var stubbedDecimals: Int = 18
   var stubbedSymbol: String? = nil
   var stubbedName: String? = nil
+  var stubbedAllowance: BigUInt = 0
+  /// When set, the allowance read throws it.
+  var stubbedAllowanceError: Error? = nil
+  /// Allowance per block tag; a read whose `atBlock` is absent here falls back to
+  /// ``stubbedAllowance``.
+  var stubbedAllowanceByBlock: [String: BigUInt] = [:]
+  var stubbedReceiptStatus: Bool? = true
+  /// Consumed one entry per receipt read before falling back to ``stubbedReceiptStatus``.
+  var stubbedReceiptStatuses: [Bool?] = []
+  /// Block the mined receipt reports — the tag a confirmation read is expected to pin to.
+  var stubbedReceiptBlockNumber: String = "0x10"
 
   private(set) var balancesCalls: [BalancesCall] = []
   private(set) var getBalanceCalls: [SingleBalanceCall] = []
@@ -49,6 +74,8 @@ final class MockChainReader: ChainReader, @unchecked Sendable {
   private(set) var decimalsCalls: [MetadataCall] = []
   private(set) var symbolCalls: [MetadataCall] = []
   private(set) var nameCalls: [MetadataCall] = []
+  private(set) var allowanceCalls: [AllowanceCall] = []
+  private(set) var receiptCalls: [ReceiptCall] = []
 
   func getNativeBalance(chainId: Int, walletAddress: String) async throws -> Decimal {
     nativeCalls.append(NativeCall(chainId: chainId, walletAddress: walletAddress))
@@ -122,5 +149,36 @@ final class MockChainReader: ChainReader, @unchecked Sendable {
   func getName(chainId: Int, tokenAddress: String) async throws -> String? {
     nameCalls.append(MetadataCall(chainId: chainId, tokenAddress: tokenAddress))
     return stubbedName
+  }
+
+  func getERC20Allowance(
+    chainId: Int,
+    tokenAddress: String,
+    owner: String,
+    spender: String,
+    atBlock: String
+  ) async throws -> BigUInt {
+    allowanceCalls.append(
+      AllowanceCall(
+        chainId: chainId,
+        tokenAddress: tokenAddress,
+        owner: owner,
+        spender: spender,
+        atBlock: atBlock
+      )
+    )
+    if let stubbedAllowanceError { throw stubbedAllowanceError }
+    return stubbedAllowanceByBlock[atBlock] ?? stubbedAllowance
+  }
+
+  func getTransactionReceipt(
+    chainId: Int,
+    transactionHash: String
+  ) async throws -> MinedReceipt? {
+    receiptCalls.append(ReceiptCall(chainId: chainId, transactionHash: transactionHash))
+    let status = stubbedReceiptStatuses.isEmpty
+      ? stubbedReceiptStatus
+      : stubbedReceiptStatuses.removeFirst()
+    return status.map { MinedReceipt(succeeded: $0, blockNumber: stubbedReceiptBlockNumber) }
   }
 }

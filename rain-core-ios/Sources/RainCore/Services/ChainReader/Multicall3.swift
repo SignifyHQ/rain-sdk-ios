@@ -6,9 +6,9 @@ import Foundation
 ///
 /// Pure functions — no I/O — so unit tests can lock in calldata against fixtures.
 public enum Multicall3 {
-  /// Canonical Multicall3 deployment address (https://www.multicall3.com), deployed
-  /// at the same address on most major EVM chains. The list of chains where this
-  /// address is known-deployed lives in `Multicall3+Deployments.swift`.
+  /// Canonical Multicall3 deployment address (https://www.multicall3.com), deployed at the
+  /// same address on most major EVM chains. Per-chain addresses (zkSync Era differs) live in
+  /// `Multicall3+Deployments.swift`.
   static let canonicalAddress = "0xcA11bde05977b3631167028862bE2a173976CA11"
 
   // Multicall3-specific function selectors (first 4 bytes of keccak256(signature)).

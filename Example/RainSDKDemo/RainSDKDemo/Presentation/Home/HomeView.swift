@@ -291,6 +291,7 @@ struct HomeView: View {
         featureCard(emoji: "💰", label: "Balances") { BalancesView() }
         featureCard(emoji: "📤", label: "Send Tokens") { SendTokensView() }
         featureCard(emoji: "🏦", label: "Withdraw") { CollateralWithdrawView() }
+        featureCard(emoji: "🔐", label: "Auth Pull") { AuthPullView() }
         featureCard(emoji: "📜", label: "History") { TransactionHistoryView() }
       }
     }

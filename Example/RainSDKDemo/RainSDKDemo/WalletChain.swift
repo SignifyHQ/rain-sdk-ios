@@ -7,6 +7,9 @@ import RainCore
 enum WalletChain: String, CaseIterable, Identifiable {
   case avalancheFuji
   case baseSepolia
+  case arbitrumSepolia
+  case baseMainnet
+  case arbitrumMainnet
   case solanaDevnet
 
   var id: String { rawValue }
@@ -15,6 +18,9 @@ enum WalletChain: String, CaseIterable, Identifiable {
     switch self {
     case .avalancheFuji: return "EVM · Avalanche Fuji"
     case .baseSepolia: return "EVM · Base Sepolia"
+    case .arbitrumSepolia: return "EVM · Arbitrum Sepolia"
+    case .baseMainnet: return "EVM · Base"
+    case .arbitrumMainnet: return "EVM · Arbitrum"
     case .solanaDevnet: return "Solana · Devnet"
     }
   }
@@ -22,7 +28,10 @@ enum WalletChain: String, CaseIterable, Identifiable {
   var chainId: Int {
     switch self {
     case .avalancheFuji: return RainChain.avalancheTestnet
-    case .baseSepolia: return 84532
+    case .baseSepolia: return RainChain.baseSepolia
+    case .arbitrumSepolia: return RainChain.arbitrumSepolia
+    case .baseMainnet: return RainChain.baseMainnet
+    case .arbitrumMainnet: return RainChain.arbitrumMainnet
     case .solanaDevnet: return RainChain.solanaDevnet // 901, Rain's Solana devnet chain ID
     }
   }
@@ -30,7 +39,10 @@ enum WalletChain: String, CaseIterable, Identifiable {
   var rpcUrl: String {
     switch self {
     case .avalancheFuji: return "https://api.avax-test.network/ext/bc/C/rpc"
-    case .baseSepolia: return "https://sepolia.base.org"
+    case .baseSepolia: return "https://base-sepolia-rpc.publicnode.com"
+    case .arbitrumSepolia: return "https://sepolia-rollup.arbitrum.io/rpc"
+    case .baseMainnet: return "https://mainnet.base.org"
+    case .arbitrumMainnet: return "https://arb1.arbitrum.io/rpc"
     case .solanaDevnet: return "https://api.devnet.solana.com"
     }
   }
@@ -38,7 +50,7 @@ enum WalletChain: String, CaseIterable, Identifiable {
   var nativeSymbol: String {
     switch self {
     case .avalancheFuji: return "AVAX"
-    case .baseSepolia: return "ETH"
+    case .baseSepolia, .arbitrumSepolia, .baseMainnet, .arbitrumMainnet: return "ETH"
     case .solanaDevnet: return "SOL"
     }
   }
@@ -57,6 +69,9 @@ enum WalletChain: String, CaseIterable, Identifiable {
     switch self {
     case .avalancheFuji: return "0x5425890298aed601595a70AB815c96711a31Bc65" // Fuji USDC
     case .baseSepolia: return "0x036CbD53842c5426634e7929541eC2318f3dCF7e"   // Base Sepolia USDC
+    case .arbitrumSepolia: return "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d" // Arbitrum Sepolia USDC
+    case .baseMainnet: return "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"   // Base USDC
+    case .arbitrumMainnet: return "0xaf88d065e77c8cC2239327C5EDb3A432268e5831" // Arbitrum USDC
     case .solanaDevnet: return "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU" // Devnet USDC mint
     }
   }
@@ -81,11 +96,37 @@ enum WalletChain: String, CaseIterable, Identifiable {
     )
   }
 
+  /// Whether Rain's Auth Pull runs on this chain *in the environment this build is configured for*.
+  /// Read from the SDK rather than restated here. Approvals are ERC-20, so Solana is out either way.
+  ///
+  /// This is the picker's answer, and it has to exist before any SDK does — the chain list is built
+  /// at startup, the SDK only after the user supplies credentials. Once a client exists it is the
+  /// stricter authority (`RainClient.authPullChainIds`), since a host's `RainAuthPullConfig` and
+  /// RPC map can be narrower than the environment; the Auth Pull screen gates on that instead.
+  var supportsAuthPull: Bool {
+    RainAuthPullChains.isSupported(chainId: chainId, in: SampleEnvironment.rainApi)
+  }
+
+  /// Rain's Auth Pull operator for the configured environment. See ``SampleEnvironment``.
+  var defaultAuthPullOperator: String {
+    supportsAuthPull ? SampleEnvironment.authPullOperator : ""
+  }
+
+  /// An Auth Pull chain belonging to the environment this build is *not* configured for.
+  ///
+  /// Hidden from the picker: an approval there is rejected by the SDK, and on mainnet a send or an
+  /// approval would move real funds against an operator Rain does not use in that environment.
+  var isForeignAuthPullChain: Bool {
+    let everyAuthPullChain = RainAuthPullChains.sandbox.union(RainAuthPullChains.production)
+    return everyAuthPullChain.contains(chainId) && !supportsAuthPull
+  }
+
   /// Block-explorer name, e.g. for a "View on Snowtrace" label.
   var explorerName: String {
     switch self {
     case .avalancheFuji: return "Snowtrace"
-    case .baseSepolia: return "Basescan"
+    case .baseSepolia, .baseMainnet: return "Basescan"
+    case .arbitrumSepolia, .arbitrumMainnet: return "Arbiscan"
     case .solanaDevnet: return "Solana Explorer"
     }
   }
@@ -94,6 +135,9 @@ enum WalletChain: String, CaseIterable, Identifiable {
     switch self {
     case .avalancheFuji: return "https://testnet.snowtrace.io"
     case .baseSepolia: return "https://sepolia.basescan.org"
+    case .arbitrumSepolia: return "https://sepolia.arbiscan.io"
+    case .baseMainnet: return "https://basescan.org"
+    case .arbitrumMainnet: return "https://arbiscan.io"
     case .solanaDevnet: return "https://explorer.solana.com"
     }
   }
@@ -129,9 +173,22 @@ enum WalletChain: String, CaseIterable, Identifiable {
       && address.dropFirst(2).allSatisfy { $0.isHexDigit }
   }
 
-  /// Every chain's NetworkConfig, for initializing the SDK with all chains at once.
+  /// The chains this build offers, which is every case minus the other environment's Auth Pull
+  /// chains. Use this for anything user-facing; ``allCases`` stays the lookup table, so a contract
+  /// on a hidden chain still resolves a name.
+  static var selectable: [WalletChain] {
+    allCases.filter { !$0.isForeignAuthPullChain }
+  }
+
+  /// The first Auth Pull chain this build offers, for seeding the Auth Pull form before the user
+  /// has picked a chain.
+  static var firstAuthPullChain: WalletChain? {
+    selectable.first { $0.supportsAuthPull }
+  }
+
+  /// Every selectable chain's NetworkConfig, for initializing the SDK with all chains at once.
   static var networkConfigs: [NetworkConfig] {
-    allCases.map {
+    selectable.map {
       NetworkConfig(chainId: $0.chainId, rpcUrl: $0.rpcUrl, networkName: $0.displayName)
     }
   }

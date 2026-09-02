@@ -269,7 +269,11 @@ final class RainSDKService: ObservableObject {
   private func builder(networkConfigs: [NetworkConfig]) -> RainSdk.Builder {
     let builder = RainSdk.builder()
       .rpcEndpoints(networkConfigs)
-      .registerTokens(WalletChain.allCases.map(\.defaultTokenInfo))
+      .registerTokens(WalletChain.selectable.map(\.defaultTokenInfo))
+      // Selects the Rain API host, and with it which Auth Pull configuration is accepted.
+      .rainApiEnvironment(SampleEnvironment.rainApi)
+      // Auth Pull stays disabled until the trusted operator and token targets are supplied.
+      .authPullConfig(SampleEnvironment.authPullConfig)
     if !rainApiKey.isEmpty && !rainUserId.isEmpty {
       builder.rainApiCredentials(apiKey: rainApiKey, userId: rainUserId)
     }

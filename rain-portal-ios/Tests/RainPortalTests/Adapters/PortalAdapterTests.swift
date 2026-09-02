@@ -186,9 +186,8 @@ struct PortalAdapterTests {
     )
 
     #expect(result.transactionHash == mockTxHash)
-    #expect(mockPortal.requestCalls.count == 2)
-    #expect(mockPortal.requestCalls[0].method == .eth_call) // preflight simulation
-    #expect(mockPortal.requestCalls[1].method == .eth_sendTransaction)
+    // eth_call preflights the send; eth_blockNumber bounds the UserOperation scan that follows it.
+    #expect(mockPortal.requestCalls.map(\.method) == [.eth_call, .eth_blockNumber, .eth_sendTransaction])
   }
 
   @Test("sendToken with Portal returns mock tx hash and routes calldata via eth_sendTransaction")
@@ -209,9 +208,7 @@ struct PortalAdapterTests {
     )
 
     #expect(result.transactionHash == mockTxHash)
-    #expect(mockPortal.requestCalls.count == 2)
-    #expect(mockPortal.requestCalls[0].method == .eth_call)
-    #expect(mockPortal.requestCalls[1].method == .eth_sendTransaction)
+    #expect(mockPortal.requestCalls.map(\.method) == [.eth_call, .eth_blockNumber, .eth_sendTransaction])
   }
 
   @Test("sendNative with Portal maps send failures to providerError")
@@ -324,14 +321,13 @@ struct PortalAdapterTests {
     )
 
     #expect(txHash == mockTxHash)
-    #expect(mockPortal.requestCalls.count == 3)
-    #expect(mockPortal.requestCalls[0].method == .eth_signTypedData_v4)
-    #expect(mockPortal.requestCalls[1].method == .eth_call)
-    #expect(mockPortal.requestCalls[2].method == .eth_sendTransaction)
+    #expect(mockPortal.requestCalls.map(\.method) == [
+      .eth_signTypedData_v4, .eth_call, .eth_blockNumber, .eth_sendTransaction
+    ])
 
     #expect(mockPortal.requestCalls[0].chainId == chainIdString)
     #expect(mockPortal.requestCalls[0].params.count == 2)
-    #expect(mockPortal.requestCalls[2].params.count == 1)
+    #expect(mockPortal.requestCalls[3].params.count == 1)
   }
 
   @Test("estimateWithdrawalFee with Portal returns gasPrice × gasLimit fee")

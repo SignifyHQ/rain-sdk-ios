@@ -42,6 +42,100 @@ struct RainClientConvenienceTests {
     #expect(call.offset == 5)
     #expect(call.order == .DESC)
   }
+
+  @Test("approveTokenAllowance(chainId:contractAddress:spender:) means unlimited")
+  func approvalConvenienceDefaultsToUnlimited() async throws {
+    let spy = SpyRainClient()
+    let client: any RainClient = spy
+
+    _ = try await client.approveTokenAllowance(
+      chainId: 8453,
+      contractAddress: "0xtoken",
+      spender: "0xoperator"
+    )
+
+    let call = try #require(spy.approvalCalls.first)
+    #expect(call.amount == nil)
+  }
+
+  @Test("the amount-carrying approval reaches the client unchanged")
+  func approvalConvenienceForwardsAmount() async throws {
+    let spy = SpyRainClient()
+    let client: any RainClient = spy
+
+    _ = try await client.approveTokenAllowance(
+      chainId: 8453,
+      contractAddress: "0xtoken",
+      spender: "0xoperator",
+      amount: 250
+    )
+
+    let call = try #require(spy.approvalCalls.first)
+    #expect(call.amount == 250)
+  }
+
+  @Test("getTokenAllowance(chainId:contractAddress:spender:) reads the client's own wallet")
+  func allowanceConvenienceDefaultsToOwnWallet() async throws {
+    let spy = SpyRainClient()
+    let client: any RainClient = spy
+
+    _ = try await client.getTokenAllowance(
+      chainId: 8453,
+      contractAddress: "0xtoken",
+      spender: "0xoperator"
+    )
+
+    let call = try #require(spy.allowanceCalls.first)
+    #expect(call.owner == nil)
+  }
+
+  @Test("the fee-estimate overloads forward the same defaults as the approval ones")
+  func approvalFeeConvenienceForwards() async throws {
+    let spy = SpyRainClient()
+    let client: any RainClient = spy
+
+    _ = try await client.estimateApprovalFee(
+      chainId: 8453,
+      contractAddress: "0xtoken",
+      spender: "0xoperator"
+    )
+    _ = try await client.estimateApprovalFee(
+      chainId: 8453,
+      contractAddress: "0xtoken",
+      spender: "0xoperator",
+      amount: 10
+    )
+
+    #expect(spy.approvalFeeCalls.count == 2)
+    #expect(spy.approvalFeeCalls[0].amount == nil)
+    #expect(spy.approvalFeeCalls[1].amount == 10)
+  }
+
+  @Test("the confirmation overloads default to this client's own wallet")
+  func confirmConvenienceDefaultsToOwnWallet() async throws {
+    let spy = SpyRainClient()
+    let client: any RainClient = spy
+
+    _ = try await client.confirmTokenAllowance(
+      transactionHash: "0xhash",
+      chainId: 8453,
+      contractAddress: "0xtoken",
+      spender: "0xoperator"
+    )
+    _ = try await client.confirmTokenAllowance(
+      transactionHash: "0xhash",
+      chainId: 8453,
+      contractAddress: "0xtoken",
+      spender: "0xoperator",
+      amount: 250
+    )
+
+    #expect(spy.confirmCalls.count == 2)
+    #expect(spy.confirmCalls[0].owner == nil)
+    #expect(spy.confirmCalls[0].amount == nil)
+    #expect(spy.confirmCalls[1].owner == nil)
+    #expect(spy.confirmCalls[1].amount == 250)
+  }
 }
 
 /// Minimal conformance: records `getTransactions` calls; everything unused traps.
@@ -53,16 +147,61 @@ private final class SpyRainClient: RainClient, @unchecked Sendable {
     let order: RainTransactionOrder?
   }
 
+  struct ApprovalCall {
+    let chainId: Int
+    let contractAddress: String
+    let spender: String
+    let amount: Decimal?
+  }
+
+  struct AllowanceCall {
+    let chainId: Int
+    let contractAddress: String
+    let owner: String?
+    let spender: String
+  }
+
+  struct ConfirmCall {
+    let transactionHash: String
+    let chainId: Int
+    let contractAddress: String
+    let spender: String
+    let amount: Decimal?
+    let owner: String?
+  }
+
   private let lock = NSLock()
   private var _getTransactionsCalls: [GetTransactionsCall] = []
+  private var _approvalCalls: [ApprovalCall] = []
+  private var _approvalFeeCalls: [ApprovalCall] = []
+  private var _allowanceCalls: [AllowanceCall] = []
+  private var _confirmCalls: [ConfirmCall] = []
+
   var getTransactionsCalls: [GetTransactionsCall] {
     lock.lock(); defer { lock.unlock() }
     return _getTransactionsCalls
+  }
+  var approvalCalls: [ApprovalCall] {
+    lock.lock(); defer { lock.unlock() }
+    return _approvalCalls
+  }
+  var approvalFeeCalls: [ApprovalCall] {
+    lock.lock(); defer { lock.unlock() }
+    return _approvalFeeCalls
+  }
+  var allowanceCalls: [AllowanceCall] {
+    lock.lock(); defer { lock.unlock() }
+    return _allowanceCalls
+  }
+  var confirmCalls: [ConfirmCall] {
+    lock.lock(); defer { lock.unlock() }
+    return _confirmCalls
   }
 
   var providerId: ProviderId { ProviderId("spy") }
   var capabilities: Set<Capability> { [] }
   var isInitialized: Bool { true }
+  var authPullChainIds: Set<Int> { [8453] }
   func reset() {}
 
   func getTransactions(
@@ -124,6 +263,68 @@ private final class SpyRainClient: RainClient, @unchecked Sendable {
   func sendToken(
     chainId: Int, contractAddress: String, to: String, amount: Decimal, decimals: Int?
   ) async throws -> RainTokenTransferResult { fatalError("unused") }
+
+  func approveTokenAllowance(
+    chainId: Int, contractAddress: String, spender: String, amount: Decimal?
+  ) async throws -> RainTokenApprovalResult {
+    lock.withLock {
+      _approvalCalls.append(
+        ApprovalCall(chainId: chainId, contractAddress: contractAddress, spender: spender, amount: amount)
+      )
+    }
+    return RainTokenApprovalResult(transactionHash: "0xspy")
+  }
+
+  func getTokenAllowance(
+    chainId: Int, contractAddress: String, owner: String?, spender: String
+  ) async throws -> RainTokenAllowance {
+    lock.withLock {
+      _allowanceCalls.append(
+        AllowanceCall(chainId: chainId, contractAddress: contractAddress, owner: owner, spender: spender)
+      )
+    }
+    return RainTokenAllowance(
+      chainId: chainId,
+      tokenAddress: contractAddress,
+      owner: owner ?? "0x",
+      spender: spender,
+      rawAmount: 0,
+      decimals: 6
+    )
+  }
+
+  func estimateApprovalFee(
+    chainId: Int, contractAddress: String, spender: String, amount: Decimal?
+  ) async throws -> Decimal {
+    lock.withLock {
+      _approvalFeeCalls.append(
+        ApprovalCall(chainId: chainId, contractAddress: contractAddress, spender: spender, amount: amount)
+      )
+    }
+    return 0
+  }
+
+  func confirmTokenAllowance(
+    transactionHash: String, chainId: Int, contractAddress: String, spender: String,
+    amount: Decimal?, owner: String?
+  ) async throws -> RainTokenAllowance {
+    lock.withLock {
+      _confirmCalls.append(
+        ConfirmCall(
+          transactionHash: transactionHash, chainId: chainId, contractAddress: contractAddress,
+          spender: spender, amount: amount, owner: owner
+        )
+      )
+    }
+    return RainTokenAllowance(
+      chainId: chainId,
+      tokenAddress: contractAddress,
+      owner: owner ?? "0x",
+      spender: spender,
+      rawAmount: RainTokenAllowance.unlimitedRawAmount,
+      decimals: 6
+    )
+  }
 
   func registerTokens(_ tokens: [TokenInfo]) {}
 }

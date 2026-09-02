@@ -1,5 +1,5 @@
 {
-  "originHash" : "82bd9277a6b43022718eb17c72c6ef4117b90d0c0707cb0ab184fa65d67936fb",
+  "originHash" : "7fe79f5d395adcb2b1f8a88b4d9d09b78c2b31960b8b6698a274d2aca6cd6c9a",
   "pins" : [
     {
       "identity" : "anycodable",
@@ -114,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/portal-hq/PortalSwift.git",
       "state" : {
-        "revision" : "94022b1a55bde4f588edeb8fab04670f636ec89d",
-        "version" : "7.1.0"
+        "revision" : "3453b7e2fccdd514a6421fea9eba2d183be45856",
+        "version" : "7.3.0"
       }
     },
     {

@@ -126,6 +126,39 @@ final class MockPortal: PortalRequestProtocol {
     }
   }
   
+  /// Stubs the RPC pair the adapter uses to resolve a UserOperation hash: a block number to scan
+  /// from, and the EntryPoint log the operation was emitted in.
+  func stubUserOperation(chainId: Int, transactionHash: String, succeeded: Bool) {
+    let chainIdString = "eip155:\(chainId)"
+    setMockResponse(
+      chainId: chainIdString,
+      method: .eth_blockNumber,
+      result: PortalProviderRpcResponse(jsonrpc: "2.0", result: "0x10")
+    )
+    // UserOperationEvent data: nonce, success, actualGasCost, actualGasUsed.
+    let zeroWord = String(repeating: "0", count: 64)
+    let successWord = String(repeating: "0", count: 63) + (succeeded ? "1" : "0")
+    setMockResponse(
+      chainId: chainIdString,
+      method: .eth_getLogs,
+      result: LogsResponse(
+        result: [
+          Log(
+            transactionHash: transactionHash,
+            address: nil,
+            blockHash: nil,
+            blockNumber: nil,
+            data: "0x" + zeroWord + successWord + zeroWord + zeroWord,
+            logIndex: nil,
+            removed: nil,
+            topics: nil,
+            transactionIndex: nil
+          )
+        ]
+      )
+    )
+  }
+
   /// Helper to set mock address
   func setMockAddress(_ address: String, forNamespace namespace: PortalNamespace = PortalNamespace.eip155) {
     mockAddresses[namespace] = address

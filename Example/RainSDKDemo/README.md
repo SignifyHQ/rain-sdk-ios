@@ -1,7 +1,8 @@
 # Rain SDK Demo App (iOS)
 
 A SwiftUI sample that exercises the public Rain SDK surface with a real wallet provider: connect a
-wallet, read balances, send tokens, withdraw collateral, and list transaction history.
+wallet, read balances, send tokens, withdraw collateral, approve Rain's Auth Pull operator, and list
+transaction history.
 
 ---
 
@@ -28,6 +29,7 @@ wallet, read balances, send tokens, withdraw collateral, and list transaction hi
 | **Balances** 💰 | Collateral balances (Rain API) and the wallet's own native + auto-discovered token balances (`getBalance`, `getTokenBalances`) |
 | **Send Tokens** 📤 | `sendNative` and `sendToken` (ERC-20 on EVM, SPL on Solana) |
 | **Withdraw** 🏦 | `fetchAdminSignature` + `withdrawCollateral` (build, sign, submit), incl. Withdraw Maximum |
+| **Auth Pull** 🔐 | `getTokenAllowance`, `approveTokenAllowance` (unlimited / capped / revoke), `confirmTokenAllowance`, and `estimateApprovalFee` against the trusted operator and token the SDK was built with (see `SampleEnvironment.authPullConfig`) |
 | **History** 📜 | `getTransactions(chainId:limit:offset:order:)`, latest 20 newest-first, with SEND / RECEIVE / SELF labels |
 
 Every feature screen reads the chain picked in the **Active wallet** dropdown on Home, so switching
@@ -36,10 +38,14 @@ networks needs no re-initialization: the SDK is built with all chains' RPC endpo
 
 ## Networks
 
-`WalletChain` defines the three demo networks — Avalanche Fuji, Base Sepolia, and Solana devnet —
-along with each one's RPC URL, native symbol, explorer links, default token / recipient, and address
-validation. Portal holds no Solana account, so selecting Portal restricts the dropdown to the EVM
-chains.
+`WalletChain` defines the four demo networks — Avalanche Fuji, Base Sepolia, Arbitrum Sepolia, and
+Solana devnet — along with each one's RPC URL, native symbol, explorer links, default token /
+recipient, and address validation. Portal holds no Solana account, so selecting Portal restricts the
+dropdown to the EVM chains.
+
+Auth Pull runs on Base Sepolia and Arbitrum Sepolia in sandbox; the Auth Pull screen gates on the
+resolved client's `authPullChainIds` and disables itself on the other two. Get testnet USDC from the [Circle faucet](https://faucet.circle.com/),
+and native gas from the usual chain faucet.
 
 ## Providers
 
@@ -84,6 +90,7 @@ RainSDKDemo/
 │   ├── WalletInfo/                 # Wallet & QR
 │   ├── Balances/
 │   ├── SendTokens/
+│   ├── AuthPull/                   # Allowance display + operator approval
 │   ├── TransactionHistory/
 │   └── CollateralWithdraw/         # Withdraw + Portal recover popup
 └── Utils/                          # Formatting and keyboard helpers

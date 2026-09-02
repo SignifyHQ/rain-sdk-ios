@@ -17,11 +17,10 @@ import Foundation
 /// based on the canonical issuer's documentation at time of authoring.
 ///
 /// **Multicall3 status**
-/// Chains where Multicall3 is deployed at the canonical address are listed in
-/// `Multicall3.canonicallyDeployedChainIds` — those use the batched `aggregate3` path.
-/// Any chain not in that set uses the parallel `eth_call` fallback. The two lists
-/// (this registry and the canonical-deployment set) must stay in sync; `Multicall3Tests`
-/// enforces that.
+/// Chains with a known Multicall3 deployment are listed in `Multicall3.deployments` — those use
+/// the batched `aggregate3` path. Any chain not in that map uses the parallel `eth_call`
+/// fallback. The two lists (this registry and the deployment map) must stay in sync;
+/// `Multicall3Tests` enforces that.
 internal enum TokenRegistry {
   /// Tokens grouped by EIP-155 chain ID.
   static let tokensByChainId: [Int: [TokenInfo]] = [
@@ -103,6 +102,14 @@ internal enum TokenRegistry {
       TokenInfo(chainId: 43114, address: "0x5E817F2AbCCB9095585D26c2a3ce234a440574Fc", symbol: "FRNT", decimals: 18, name: "FRNT"),
       TokenInfo(chainId: 43114, address: "0xFd56187DCe1A7c5Ad5aaE9cA3A8827267e69E58a", symbol: "TenantToken", decimals: 18, name: "TenantToken (Raindrop)"),
     ],
+    // Base Sepolia — Auth Pull sandbox
+    84532: [
+      TokenInfo(chainId: 84532, address: "0x036CbD53842c5426634e7929541eC2318f3dCF7e", symbol: "USDC", decimals: 6, name: "USDC"),
+    ],
+    // Arbitrum Sepolia — Auth Pull sandbox
+    421614: [
+      TokenInfo(chainId: 421614, address: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d", symbol: "USDC", decimals: 6, name: "USDC"),
+    ],
     // Ink
     57073: [
       TokenInfo(chainId: 57073, address: "0x2D270e6886d130D724215A266106e6832161EAEd", symbol: "USDC", decimals: 6, name: "USDC"),
@@ -132,6 +139,8 @@ internal enum TokenRegistry {
     42220: NativeCurrency(symbol: "CELO", name: "Celo"),
     43114: NativeCurrency(symbol: "AVAX", name: "Avalanche"),
     57073: NativeCurrency(symbol: "ETH", name: "Ether"),
+    84532: NativeCurrency(symbol: "ETH", name: "Ether"),
+    421614: NativeCurrency(symbol: "ETH", name: "Ether"),
     // Solana clusters (Rain chain IDs — see RainChain). SOL has 9 decimals, not 18.
     RainChain.solanaMainnet: NativeCurrency(symbol: "SOL", name: "Solana", decimals: 9),
     RainChain.solanaTestnet: NativeCurrency(symbol: "SOL", name: "Solana", decimals: 9),

@@ -94,4 +94,23 @@ protocol TransactionBuilderProtocol {
     toAddress: String,
     amount: BigUInt
   ) async throws -> String
+
+  /// Builds ERC-20 `approve(spender, amount)` transaction data — the wallet-side prerequisite
+  /// for Rain's Auth Pull.
+  ///
+  /// - Parameters:
+  ///   - chainId: The chain identifier (used to resolve RPC URL).
+  ///   - contractAddress: The ERC-20 token contract address.
+  ///   - walletAddress: The approving (from) address.
+  ///   - spender: The address being approved to move the token — Rain's operator for Auth Pull.
+  ///   - amount: Allowance in the token's base units. `BigUInt` max means unlimited, `0` revokes.
+  /// - Returns: Hex-encoded calldata (prefixed with "0x") for the approve call.
+  /// - Throws: RainSDKError if RPC URL or addresses are invalid, or if encoding fails.
+  func buildERC20ApproveData(
+    chainId: Int,
+    contractAddress: String,
+    walletAddress: String,
+    spender: String,
+    amount: BigUInt
+  ) async throws -> String
 }
