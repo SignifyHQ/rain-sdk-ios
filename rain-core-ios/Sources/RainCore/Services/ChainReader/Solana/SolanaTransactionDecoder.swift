@@ -8,7 +8,7 @@ import Foundation
 /// Reverses the builder's wire format: compact-u16 signature count + zero-filled signatures +
 /// message (header, account keys, blockhash, instructions). Returns `nil` if the bytes aren't a
 /// decodable transaction containing the transfer being looked for.
-internal enum SolanaTransactionDecoder {
+@_spi(RainAdapter) public enum SolanaTransactionDecoder {
   private static let publicKeyLength = 32
   private static let signatureLength = 64
   private static let systemProgramId = [UInt8](repeating: 0, count: 32)
@@ -19,10 +19,10 @@ internal enum SolanaTransactionDecoder {
   /// Associated Token Account program tags that create an account (`Create` / `CreateIdempotent`).
   private static let ataCreateTags: Set<UInt8> = [0, 1]
 
-  struct Transfer: Equatable {
-    let from: String
-    let to: String
-    let lamports: UInt64
+  @_spi(RainAdapter) public struct Transfer: Equatable, Sendable {
+    public let from: String
+    public let to: String
+    public let lamports: UInt64
   }
 
   /// An SPL token transfer recovered from an unsigned transaction.
@@ -31,19 +31,19 @@ internal enum SolanaTransactionDecoder {
   /// account carries its owner, so `destinationOwner` is `nil` otherwise and the caller resolves
   /// it (or displays the token account). `decimals` and `mint` are `nil` for the bare `Transfer`
   /// instruction, which carries neither.
-  struct TokenTransfer: Equatable {
-    let owner: String
-    let source: String
-    let destination: String
-    let destinationOwner: String?
-    let mint: String?
-    let rawAmount: UInt64
-    let decimals: UInt8?
+  @_spi(RainAdapter) public struct TokenTransfer: Equatable, Sendable {
+    public let owner: String
+    public let source: String
+    public let destination: String
+    public let destinationOwner: String?
+    public let mint: String?
+    public let rawAmount: UInt64
+    public let decimals: UInt8?
   }
 
   /// Decodes the unsigned transaction (hex, or base64 as a fallback). Returns `nil` on any
   /// parse failure or if the transaction isn't a System transfer.
-  static func decodeTransfer(_ unsignedTransaction: String) -> Transfer? {
+  @_spi(RainAdapter) public static func decodeTransfer(_ unsignedTransaction: String) -> Transfer? {
     guard let message = decodeMessage(unsignedTransaction) else { return nil }
 
     for instruction in message.instructions {
@@ -63,7 +63,7 @@ internal enum SolanaTransactionDecoder {
 
   /// Decodes an SPL token transfer (`TransferChecked`, or the bare `Transfer`) out of the same
   /// blob. Returns `nil` when the transaction carries neither.
-  static func decodeTokenTransfer(_ unsignedTransaction: String) -> TokenTransfer? {
+  @_spi(RainAdapter) public static func decodeTokenTransfer(_ unsignedTransaction: String) -> TokenTransfer? {
     guard let message = decodeMessage(unsignedTransaction) else { return nil }
 
     let tokenPrograms = [SolanaPrograms.splToken, SolanaPrograms.token2022]

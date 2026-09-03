@@ -14,7 +14,7 @@ import Web3
 /// Implementations exist per chain family. `EVMChainReader` covers all EIP-155 chains
 /// via JSON-RPC. A future Solana/Stellar reader can conform alongside it; until then,
 /// `chainId: Int` matches the rest of the SDK's EVM-centric typing.
-internal protocol ChainReader: Sendable {
+@_spi(RainAdapter) public protocol ChainReader: Sendable {
   /// Native balance (e.g. ETH on Ethereum, AVAX on Avalanche).
   /// - Returns: Balance in human-readable form (e.g. `1.5` for 1.5 ETH), as an exact `Decimal`.
   func getNativeBalance(chainId: Int, walletAddress: String) async throws -> Decimal
@@ -105,7 +105,7 @@ internal enum BlockTag {
 }
 
 /// A mined transaction's outcome and the block it landed in, so a read can be pinned to that block.
-internal struct MinedReceipt: Equatable, Sendable {
+@_spi(RainAdapter) public struct MinedReceipt: Equatable, Sendable {
   /// `true` when the transaction mined successfully, `false` when it mined but reverted.
   let succeeded: Bool
 

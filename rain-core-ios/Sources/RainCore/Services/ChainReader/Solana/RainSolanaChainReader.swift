@@ -28,10 +28,11 @@ public struct RainSolanaSupport: Sendable {
     SolanaChains.isSolana(chainId)
   }
 
-  // In-core seams so adapters inside RainCore reuse this stack instead of building their own.
-  internal var chainReader: ChainReader { reader }
-  internal var solanaRpcClient: SolanaRpcClient { rpcClient }
-  internal var transferComposer: SolanaTransferComposer { composer }
+  // Adapter seams (SPI): Rain's own adapter modules reuse this stack instead of building their
+  // own. Reach them via `@_spi(RainAdapter) import RainCore`; not API for host apps.
+  @_spi(RainAdapter) public var chainReader: ChainReader { reader }
+  @_spi(RainAdapter) public var solanaRpcClient: SolanaRpcClient { rpcClient }
+  @_spi(RainAdapter) public var transferComposer: SolanaTransferComposer { composer }
 
   // MARK: - Transfers
 
