@@ -1,7 +1,7 @@
 import Testing
 import Foundation
 import PrivySDK
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 @testable import RainPrivy
 
 /// Auth Pull approvals through `RainSdkManager` backed by the Privy provider — the same seam the

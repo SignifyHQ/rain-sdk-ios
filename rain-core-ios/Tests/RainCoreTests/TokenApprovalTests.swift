@@ -1,7 +1,7 @@
 import Testing
 import Foundation
 import Web3
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 
 /// Manager-level contract for the Auth Pull approval surface: what gets encoded, what gets
 /// broadcast, what is read back, and which failures surface as which typed error.

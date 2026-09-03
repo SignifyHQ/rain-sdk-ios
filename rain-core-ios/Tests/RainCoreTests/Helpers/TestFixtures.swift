@@ -1,5 +1,5 @@
 import Foundation
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 
 // MARK: - Shared test fixtures
 

@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 
 /// The public Solana surface out-of-core adapters (e.g. RainPrivy) build on.
 @Suite("RainSolanaChainReader", .serialized)

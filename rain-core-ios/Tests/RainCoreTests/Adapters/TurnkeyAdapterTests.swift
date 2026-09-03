@@ -3,7 +3,7 @@ import Foundation
 import TurnkeySwift
 import TurnkeyTypes
 import Web3
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 
 /// Tests that stub `URLSession.shared` via `MockURLProtocol` run serialized to avoid
 /// interfering with each other's stubs (the protocol registration is global).

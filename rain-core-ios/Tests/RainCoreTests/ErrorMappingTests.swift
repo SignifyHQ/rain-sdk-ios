@@ -8,6 +8,10 @@ import TurnkeySwift
 /// `PortalProvider` (so RainCore never imports PortalSwift); those cases live in `RainPortalTests`.
 @Suite("RainSDKError Mapping Tests")
 struct ErrorMappingTests {
+  /// Turnkey mapping now registers via TurnkeyErrorMapping (like Portal/Privy);
+  /// tests exercising RainSDKError.from with Turnkey errors must ensure it ran.
+  init() { TurnkeyErrorMapping.registerOnce() }
+
 
   @Test("from(_:) returns RainSDKError unchanged when input is already a RainSDKError")
   func testRainSDKErrorPassthrough() {

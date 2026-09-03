@@ -56,6 +56,9 @@ public struct TurnkeyProvider: RainProvider {
   private let coordinator: TurnkeySessionCoordinator
 
   public init(_ config: TurnkeyConfig) {
+    // Turnkey vendor errors classify via core's extensible mapper (like Portal / Privy);
+    // registering here guarantees the mapper is live before any Turnkey-backed call can fail.
+    TurnkeyErrorMapping.registerOnce()
     self.config = config
     self.coordinator = TurnkeySessionCoordinator(
       turnkey: config.turnkey,
