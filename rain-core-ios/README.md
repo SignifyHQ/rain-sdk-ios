@@ -8,20 +8,24 @@ Contains:
 - The **`RainProvider`** descriptor + **`RainSdk`** builder/registry (`RainSdk.builder().register(…).build()`, resolve via `provider(_:)` / `first { }`).
 - The **`Capability`** model and **`ProviderId`**.
 - All Rain domain logic — EIP-712 message building, collateral withdraw flow, transaction orchestration, chain readers, token metadata store.
-- The **Turnkey adapter** (`TurnkeyProvider` / `TurnkeyConfig`), bundled here for now. It will graduate to a standalone `rain-turnkey` module later; the seam is identical to an out-of-core adapter.
 
-`RainCore` has **no Portal or Privy dependency**. Its only wallet-vendor dependency is Turnkey.
+`RainCore` has **no wallet-vendor dependencies** — Turnkey, Portal, and Privy each ship as their
+own adapter product (`rain-turnkey-ios`, `rain-portal-ios`, `rain-privy-ios`), and every adapter
+re-exports `RainCore`. Link `rain-core-ios` alone for wallet-agnostic building or a custom
+`RainWalletProvider`:
 
 ```swift
 import RainCore
 
+// Wallet-agnostic: build EIP-712 messages / withdraw calldata with no provider resolved.
 let rain = try RainSdk.builder()
     .rpcEndpoints([43114: "https://avalanche-c-chain-rpc.publicnode.com"])
-    .register(TurnkeyProvider(TurnkeyConfig(turnkey: turnkeyContext)))
     .build()
 
-let client = try await rain.provider(.turnkey)
-let address = try await client.getWalletAddress()
+let (message, salt) = try await rain.buildEIP712Message(
+    chainId: 43114, walletAddress: "0x…", assetAddresses: addresses,
+    amount: 100, decimals: 6, nonce: nil
+)
 ```
 
 To add Portal, depend on `RainPortal` (which pulls `RainCore` transitively). To add Privy, depend on `RainPrivy`.

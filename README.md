@@ -11,19 +11,21 @@ Works on EVM chains and Solana.
 
 The SDK is **modular** (ports & adapters): a vendor-free **`RainCore`** plus one adapter module per
 wallet provider. Link only the providers you use — an unselected provider's vendor SDK never enters
-your dependency graph.
+your dependency graph. Each adapter re-exports `RainCore`, so one import per provider is enough.
 
 | Module        | Contains                                                                 |
 |---------------|--------------------------------------------------------------------------|
-| `RainCore`    | The `RainWalletProvider` port, capability model, provider registry (`RainSdk`), all Rain domain logic, **and the Turnkey adapter** (`TurnkeyProvider`, for now). |
+| `RainCore`    | The `RainWalletProvider` port, capability model, provider registry (`RainSdk`), and all Rain domain logic. No wallet vendor SDKs. |
+| `RainTurnkey` | The Turnkey adapter (`TurnkeyProvider`); depends on `RainCore` + Turnkey's Swift SDK. |
 | `RainPortal`  | The Portal MPC adapter (`PortalProvider`); depends on `RainCore` + `PortalSwift`. |
 | `RainPrivy`   | The Privy embedded-key adapter (`PrivyProvider`); depends on `RainCore` + the Privy iOS SDK (`Privy`). Custody (sign/send) routes through Privy's EIP-1193 embedded wallet; balance/fee reads use Rain's configured RPC. |
-| `RainSDK`     | Backward-compat umbrella that re-exports `RainCore` + `RainPortal` (migration only; prefer the specific modules). Deliberately excludes `RainPrivy` — 1.x had no Privy support, so no existing `import RainSDK` depends on it, and including it would pull Privy's vendor SDK into every umbrella consumer. |
+
+The 1.x `RainSDK` umbrella module has been removed — link the provider product you use.
 
 ## Features
 
 - **Portal wallet integration** — Register a `PortalProvider` with a Portal session token; resolve a `RainClient` and use the connected MPC wallet for signing and sending transactions. See [rain-portal-ios/README.md](rain-portal-ios/README.md#session-expiry-and-retry) for session refresh and retry behavior.
-- **Turnkey wallet integration** — Register a `TurnkeyProvider` with an authenticated `TurnkeyContext` (passkeys / auth proxy / OAuth / OTP handled outside Rain by the Turnkey Swift SDK).
+- **Turnkey wallet integration** — Register a `TurnkeyProvider` with an authenticated `TurnkeyContext` (passkeys / auth proxy / OAuth / OTP handled outside Rain by the Turnkey Swift SDK). Ships in its own `rain-turnkey-ios` module.
 - **Privy wallet integration** — Register a `PrivyProvider` with an authenticated `Privy` singleton (auth + embedded-wallet provisioning handled outside Rain by the Privy iOS SDK); custody routes through Privy's EIP-1193 embedded wallet.
 - **Pluggable providers** — Bring your own `RainWalletProvider` behind a `RainProvider` descriptor and register it; resolve providers by id or by `Capability`.
 - **Wallet-agnostic utilities** — EIP-712 message + withdraw calldata building are available straight off `RainSdk` with no provider resolved — use them with your own wallet or backend.
@@ -53,7 +55,7 @@ Or in a `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/SignifyHQ/rain-sdk-ios", from: "4.0.0")
+    .package(url: "https://github.com/SignifyHQ/rain-sdk-ios", from: "5.0.0")
 ],
 targets: [
     .target(name: "YourApp", dependencies: [
@@ -67,29 +69,38 @@ unselected provider's vendor SDK is never linked into your app:
 
 | Product | Link it for | Import |
 |---|---|---|
+| `rain-turnkey-ios` | Turnkey wallets | `import RainTurnkey` |
 | `rain-portal-ios` | Portal MPC wallets | `import RainPortal` |
 | `rain-privy-ios` | Privy embedded wallets | `import RainPrivy` |
-| `rain-core-ios` | Turnkey (the adapter ships inside core for now), or transaction building with your own wallet | `import RainCore` |
+| `rain-core-ios` | Transaction building with your own wallet, or a custom `RainWalletProvider` | `import RainCore` |
 
-`RainCore` comes transitively with either adapter — you never list it twice.
+`RainCore` comes transitively with every adapter — you never list it twice — and each adapter
+re-exports it, so the adapter import alone surfaces the full SDK (`RainSdk`, `RainClient`, models,
+errors).
 
 ```swift
+// Turnkey-only app.
+.product(name: "rain-turnkey-ios", package: "rain-sdk-ios")
 // Portal-only app.
-.product(name: "rain-portal-ios", package: "rain-sdk-ios")
+// .product(name: "rain-portal-ios", package: "rain-sdk-ios")
 // Privy-only app.
 // .product(name: "rain-privy-ios", package: "rain-sdk-ios")
-// Turnkey, or wallet-agnostic transaction building.
+// Wallet-agnostic transaction building only.
 // .product(name: "rain-core-ios", package: "rain-sdk-ios")
 ```
 
-A **`RainSDK`** umbrella product also exists — it re-exports `RainCore` + `RainPortal` so
-`import RainSDK` keeps resolving for 1.x integrators. New code should link the provider products
-directly; `RainSDK` exists for migration only.
+The 1.x **`RainSDK`** umbrella product has been removed. If you were importing `RainSDK`, link the
+provider product(s) you actually use and import those modules instead.
 
-## Migrating from 1.x
+## Migrating from earlier versions
 
-v2 is a **source-breaking** release. The `RainSDK` umbrella keeps `import RainSDK` resolving
-(module-level compatibility), but the 1.x entry point was replaced — there are no shims for it:
+**From v2–v4:** the `RainSDK` umbrella module was removed, and the Turnkey adapter moved from
+`RainCore` to its own `rain-turnkey-ios` product. `import RainSDK` no longer resolves — link the
+provider product(s) you use and import those modules. Turnkey apps add `rain-turnkey-ios` and
+`import RainTurnkey`; the Turnkey API itself (`TurnkeyProvider`, `TurnkeyConfig`, `.turnkey`,
+session surface) is unchanged.
+
+**From 1.x:** the 1.x entry point was replaced — there are no shims for it:
 
 | 1.x | v2 |
 |---|---|
@@ -119,8 +130,7 @@ in `RainCore` and `RainPortal`).
 Register a `PortalProvider` and resolve a `RainClient`.
 
 ```swift
-import RainCore
-import RainPortal
+import RainPortal   // re-exports RainCore
 
 let rain = try RainSdk.builder()
     .rpcEndpoints([
@@ -143,7 +153,7 @@ OAuth / OTP), then hand the authenticated `TurnkeyContext` to Rain:
 - Passkeys: `https://docs.turnkey.com/sdks/swift/register-passkey`
 
 ```swift
-import RainCore
+import RainTurnkey   // re-exports RainCore
 import TurnkeySwift
 
 let rain = try RainSdk.builder()

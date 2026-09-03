@@ -6,8 +6,7 @@ Depends on `RainCore` + `PortalSwift`. Linking `RainPortal` is all a Portal-only
 `RainCore` comes transitively, and Turnkey's / Privy's vendor SDKs never enter the dependency graph.
 
 ```swift
-import RainCore
-import RainPortal
+import RainPortal   // re-exports RainCore
 
 let rain = try RainSdk.builder()
     .rpcEndpoints([43114: "https://avalanche-c-chain-rpc.publicnode.com"])
