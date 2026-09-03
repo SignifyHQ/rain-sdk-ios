@@ -1,7 +1,7 @@
 import Testing
 import Foundation
 import Web3
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 
 @Suite("SolanaConverter")
 struct SolanaConverterTests {

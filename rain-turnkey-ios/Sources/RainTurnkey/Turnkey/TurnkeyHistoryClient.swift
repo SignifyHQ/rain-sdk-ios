@@ -1,6 +1,7 @@
 import Foundation
 import TurnkeyHttp
 import TurnkeyStamper
+import RainCore
 
 /// Turnkey's indexed transaction-history queries (`list_eth_transaction_history` /
 /// `list_sol_transaction_history`). These cover the wallet's full on-chain history, receives

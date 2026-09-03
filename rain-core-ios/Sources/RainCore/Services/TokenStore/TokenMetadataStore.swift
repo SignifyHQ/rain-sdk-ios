@@ -19,7 +19,7 @@ public actor TokenMetadataStore {
   /// Tokens discovered and enriched at runtime, keyed by chain ID then lowercased address.
   private var enrichmentCache: [Int: [String: TokenInfo]] = [:]
 
-  init(chainReader: ChainReader, seedTokens: [TokenInfo] = []) {
+  @_spi(RainAdapter) public init(chainReader: ChainReader, seedTokens: [TokenInfo] = []) {
     self.chainReader = chainReader
     self.knownTokens = TokenRegistry.tokensByChainId
     for token in seedTokens {

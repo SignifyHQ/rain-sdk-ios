@@ -11,8 +11,7 @@ singleton at app start, log the user in, ensure an embedded Ethereum wallet exis
 (`user.createEthereumWallet()`), then hand the singleton to Rain.
 
 ```swift
-import RainCore
-import RainPrivy
+import RainPrivy   // re-exports RainCore
 
 // Host app: authenticate with the Privy iOS SDK and ensure an embedded Ethereum wallet exists.
 

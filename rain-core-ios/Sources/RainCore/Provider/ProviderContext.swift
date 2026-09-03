@@ -20,12 +20,13 @@ public final class ProviderContext: @unchecked Sendable {
   /// out-of-core adapters.
   public let solanaSupport: RainSolanaSupport
 
-  /// Wallet-agnostic transaction builder. In-core adapters only (internal);
-  /// widen when Turnkey graduates to rain-turnkey.
+  /// Wallet-agnostic transaction builder. In-core use only (internal); nothing outside core
+  /// needs it today.
   internal let transactionBuilder: TransactionBuilderProtocol
 
-  /// EVM chain reader (multicall, RPC reads). In-core adapters only (internal).
-  internal let evmChainReader: ChainReader
+  /// EVM chain reader (multicall, RPC reads). SPI: for Rain's own adapter modules
+  /// (`@_spi(RainAdapter) import RainCore`), not API for host apps.
+  @_spi(RainAdapter) public let evmChainReader: ChainReader
 
   internal init(
     rpcEndpoints: [Int: String],

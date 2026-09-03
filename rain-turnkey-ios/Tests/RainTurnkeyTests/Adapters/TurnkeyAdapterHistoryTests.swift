@@ -1,7 +1,8 @@
 import Testing
 import Foundation
 import TurnkeySwift
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
+@testable import RainTurnkey
 
 /// Tests the adapter's indexed-history path: mapping of Turnkey's history rows onto
 /// `RainTransaction`, request parameters, ordering/slicing, and the activity-log fallback.

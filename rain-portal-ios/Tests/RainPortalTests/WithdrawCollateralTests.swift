@@ -2,7 +2,7 @@ import Testing
 import Foundation
 import PortalSwift
 import Web3
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 @testable import RainPortal
 
 /// Manager-contract tests for withdrawCollateral / estimateWithdrawalFee: error wrapping, input

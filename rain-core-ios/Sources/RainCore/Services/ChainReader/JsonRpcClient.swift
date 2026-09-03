@@ -8,11 +8,11 @@ import Foundation
 ///
 /// Stays small on purpose — wire format and error mapping match what
 /// `TurnkeyWalletProviderAdapter.rpcRequest` did historically.
-internal final class JsonRpcClient: Sendable {
+@_spi(RainAdapter) public final class JsonRpcClient: Sendable {
   private let session: URLSession
   private let timeout: TimeInterval
 
-  internal init(
+  @_spi(RainAdapter) public init(
     session: URLSession = .shared,
     timeout: TimeInterval = 10
   ) {
@@ -79,7 +79,7 @@ internal final class JsonRpcClient: Sendable {
 
   /// Convenience wrapper that extracts the `result` field as a String.
   /// Throws `.internalLogicError` if the field is missing or not a string.
-  internal func callForHexResult(
+  @_spi(RainAdapter) public func callForHexResult(
     rpcUrl: String,
     method: String,
     params: [Any]

@@ -1,5 +1,6 @@
 import Foundation
 @testable import RainCore
+@testable import RainTurnkey
 
 /// Configurable stand-in for `TurnkeyHistoryProviding`. Records every call and answers with the
 /// configured responses, or throws `error` when set.

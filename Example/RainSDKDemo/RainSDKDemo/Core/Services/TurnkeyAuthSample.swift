@@ -1,5 +1,6 @@
 import Foundation
 import TurnkeySwift
+import RainTurnkey
 
 /// Sample-app glue that drives Turnkey's Swift SDK end-to-end (configure, email OTP, wallet
 /// provisioning) so the host app can hand a ready `TurnkeyContext` to

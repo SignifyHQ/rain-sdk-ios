@@ -1,6 +1,7 @@
 import Testing
 import Foundation
 @testable import RainCore
+@testable import RainTurnkey
 
 /// Tests the raw stamped REST client for Turnkey's history queries. The transport and stamp
 /// seams are stubbed, so no test touches the network or the keychain.

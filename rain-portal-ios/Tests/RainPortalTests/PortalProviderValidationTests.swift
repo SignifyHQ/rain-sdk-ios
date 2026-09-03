@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 @testable import RainPortal
 
 /// Validation tests for `PortalProvider` — the Portal-specific init checks that moved out of the

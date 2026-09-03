@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 
 @Suite("RainApiService Tests", .serialized)
 struct RainApiServiceTests {

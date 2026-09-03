@@ -7,7 +7,7 @@ import Web3
 ///
 /// Covers the three calls the Solana wallet path needs: the native balance, a recent blockhash
 /// for an outgoing transfer, and the signature of a just-submitted transfer.
-internal final class SolanaRpcClient: Sendable {
+@_spi(RainAdapter) public final class SolanaRpcClient: Sendable {
   private let jsonRpcClient: JsonRpcClient
   private let networkConfigResolver: @Sendable (Int) -> NetworkConfig?
 
@@ -72,19 +72,19 @@ internal final class SolanaRpcClient: Sendable {
 
   /// An SPL mint: its scale, and the token program that owns it (classic SPL Token or
   /// Token-2022 — the two derive different associated token accounts).
-  struct MintInfo: Sendable, Equatable {
-    let address: String
-    let decimals: Int
-    let tokenProgramId: String
+  @_spi(RainAdapter) public struct MintInfo: Sendable, Equatable {
+    public let address: String
+    public let decimals: Int
+    public let tokenProgramId: String
   }
 
   /// An SPL token account: which mint it holds, for whom, and how much.
-  struct TokenAccount: Sendable, Equatable {
-    let address: String
-    let mint: String
-    let owner: String
-    let rawAmount: BigUInt
-    let decimals: Int
+  @_spi(RainAdapter) public struct TokenAccount: Sendable, Equatable {
+    public let address: String
+    public let mint: String
+    public let owner: String
+    public let rawAmount: BigUInt
+    public let decimals: Int
   }
 
   /// Outcome of a `simulateTransaction` dry run. `error` is `nil` when the transaction would
@@ -164,7 +164,7 @@ internal final class SolanaRpcClient: Sendable {
   ///
   /// The owning program matters twice over: it is the program a transfer must be addressed to, and
   /// it is a seed of the associated-token-account address.
-  func getMintInfo(chainId: Int, mint: String) async throws -> MintInfo? {
+  @_spi(RainAdapter) public func getMintInfo(chainId: Int, mint: String) async throws -> MintInfo? {
     guard let account = try await getAccountInfo(chainId: chainId, address: mint) else { return nil }
     guard SolanaPrograms.isTokenProgram(account.ownerProgram), account.parsedType == "mint" else {
       return nil
@@ -177,7 +177,7 @@ internal final class SolanaRpcClient: Sendable {
   }
 
   /// The SPL token account at `address`, or `nil` when it does not exist or is not one.
-  func getTokenAccount(chainId: Int, address: String) async throws -> TokenAccount? {
+  @_spi(RainAdapter) public func getTokenAccount(chainId: Int, address: String) async throws -> TokenAccount? {
     guard let account = try await getAccountInfo(chainId: chainId, address: address) else { return nil }
     guard SolanaPrograms.isTokenProgram(account.ownerProgram),
           account.parsedType == "account",
@@ -284,7 +284,7 @@ internal final class SolanaRpcClient: Sendable {
 
   /// The most recent transaction signature involving `address`, or `nil` if none. Used as a
   /// defensive fallback when Turnkey's status response carries no Solana signature.
-  func getLatestSignature(chainId: Int, address: String) async throws -> String? {
+  @_spi(RainAdapter) public func getLatestSignature(chainId: Int, address: String) async throws -> String? {
     let rpcUrl = try resolveRpcUrl(chainId: chainId)
     let response = try await jsonRpcClient.call(
       rpcUrl: rpcUrl,

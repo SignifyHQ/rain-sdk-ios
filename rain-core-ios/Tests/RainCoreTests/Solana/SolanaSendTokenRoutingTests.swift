@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 
 /// Pins what `RainSdkManager.sendToken` hands the Solana port. The `decimals` it passes is not
 /// authoritative — the adapter reads the mint — but it is pinned so a host-written

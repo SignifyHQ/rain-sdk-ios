@@ -1,7 +1,7 @@
 import Testing
 import Foundation
 import Web3
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 
 /// Tests for the EVM chain-read layer.
 /// Stubs `URLSession.shared` via `MockURLProtocol` — must run serialized.

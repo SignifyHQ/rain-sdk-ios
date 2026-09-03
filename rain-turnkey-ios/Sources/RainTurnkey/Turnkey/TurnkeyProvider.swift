@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import TurnkeySwift
+@_spi(RainAdapter) import RainCore
 
 /// Configuration for the Turnkey provider. Turnkey authentication (passkeys / auth proxy / OAuth /
 /// OTP) happens **outside** Rain — the host drives Turnkey's Swift SDK and hands the authenticated
@@ -56,6 +57,9 @@ public struct TurnkeyProvider: RainProvider {
   private let coordinator: TurnkeySessionCoordinator
 
   public init(_ config: TurnkeyConfig) {
+    // Turnkey vendor errors classify via core's extensible mapper (like Portal / Privy);
+    // registering here guarantees the mapper is live before any Turnkey-backed call can fail.
+    TurnkeyErrorMapping.registerOnce()
     self.config = config
     self.coordinator = TurnkeySessionCoordinator(
       turnkey: config.turnkey,

@@ -6,17 +6,16 @@ import PackageDescription
 // MARK: - Rain SDK (modular)
 //
 // One package, one product per wallet provider — a client links only the providers it uses:
-//   • rain-core-ios   — vendor-free port + registry + Rain domain logic + the Turnkey adapter
-//   • rain-portal-ios — the Portal MPC adapter (RainCore + PortalSwift)
-//   • rain-privy-ios  — the Privy embedded-key adapter (RainCore + the Privy iOS SDK)
+//   • rain-core-ios    — vendor-free port + registry + Rain domain logic (no wallet vendor SDKs)
+//   • rain-turnkey-ios — the Turnkey adapter (RainCore + tkhq/swift-sdk)
+//   • rain-portal-ios  — the Portal MPC adapter (RainCore + PortalSwift)
+//   • rain-privy-ios   — the Privy embedded-key adapter (RainCore + the Privy iOS SDK)
 //
 // Products are named for the SDK (`rain-portal-ios`), matching the Android artifact ids; the
-// importable module keeps its Swift name (`import RainPortal`).
+// importable module keeps its Swift name (`import RainPortal`). Each adapter re-exports
+// `RainCore`, so one import per provider is enough.
 //
-// `RainSDK` is a **migration umbrella**: it re-exports `RainCore` + `RainPortal`, so
-// `import RainSDK` keeps resolving. Module-level compatibility only — v2 replaces the 1.x
-// `RainSDKManager` entry point with `RainSdk.builder()` (source-breaking; see README
-// "Migrating from 1.x"). It will be deprecated once clients have moved to the provider products.
+// The 1.x `RainSDK` migration umbrella has been removed — link the provider product you use.
 
 let package = Package(
   name: "RainSDK",
@@ -29,16 +28,16 @@ let package = Package(
       targets: ["RainCore"]
     ),
     .library(
+      name: "rain-turnkey-ios",
+      targets: ["RainTurnkey"]
+    ),
+    .library(
       name: "rain-portal-ios",
       targets: ["RainPortal"]
     ),
     .library(
       name: "rain-privy-ios",
       targets: ["RainPrivy"]
-    ),
-    .library(
-      name: "RainSDK",
-      targets: ["RainSDK"]
     ),
   ],
   dependencies: [
@@ -50,13 +49,10 @@ let package = Package(
     .package(url: "https://github.com/privy-io/privy-ios", from: "2.14.0"),
   ],
   targets: [
-    // Turnkey is bundled inside core for now (the Turnkey adapter lives here). No Portal / Privy.
+    // Vendor-free core: no wallet vendor SDKs on this target.
     .target(
       name: "RainCore",
       dependencies: [
-        .product(name: "TurnkeySwift", package: "swift-sdk"),
-        .product(name: "TurnkeyHttp", package: "swift-sdk"),
-        .product(name: "TurnkeyTypes", package: "swift-sdk"),
         .product(name: "QRCode", package: "QRCode"),
         .product(name: "Web3", package: "Web3.swift"),
         .product(name: "Web3PromiseKit", package: "Web3.swift"),
@@ -72,6 +68,22 @@ let package = Package(
       name: "RainCoreTests",
       dependencies: ["RainCore"],
       path: "rain-core-ios/Tests/RainCoreTests"
+    ),
+
+    .target(
+      name: "RainTurnkey",
+      dependencies: [
+        "RainCore",
+        .product(name: "TurnkeySwift", package: "swift-sdk"),
+        .product(name: "TurnkeyHttp", package: "swift-sdk"),
+        .product(name: "TurnkeyTypes", package: "swift-sdk"),
+      ],
+      path: "rain-turnkey-ios/Sources/RainTurnkey"
+    ),
+    .testTarget(
+      name: "RainTurnkeyTests",
+      dependencies: ["RainTurnkey"],
+      path: "rain-turnkey-ios/Tests/RainTurnkeyTests"
     ),
 
     .target(
@@ -104,15 +116,5 @@ let package = Package(
       path: "rain-privy-ios/Tests/RainPrivyTests"
     ),
 
-    .target(
-      name: "RainSDK",
-      dependencies: ["RainCore", "RainPortal"],
-      path: "Sources/RainSDK"
-    ),
-    .testTarget(
-      name: "RainSDKTests",
-      dependencies: ["RainSDK"],
-      path: "Tests/RainSDKTests"
-    ),
   ]
 )

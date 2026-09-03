@@ -1,6 +1,6 @@
 # Turnkey Support
 
-Rain SDK for iOS supports [Turnkey](https://turnkey.com) as a wallet provider, alongside the Portal MPC and Privy adapters. Turnkey ships as the `TurnkeyProvider` adapter, which currently lives inside the `rain-core-ios` module (`RainCore`). Turnkey authentication (passkeys, OAuth, OTP, auth proxy) happens **outside** Rain: the host app uses the official [Turnkey Swift SDK](https://docs.turnkey.com/sdks/swift/getting-started) to authenticate the user and then hands the live `TurnkeyContext` to Rain via `TurnkeyConfig` for wallet operations.
+Rain SDK for iOS supports [Turnkey](https://turnkey.com) as a wallet provider, alongside the Portal MPC and Privy adapters. Turnkey ships as the `TurnkeyProvider` adapter in its own `rain-turnkey-ios` module (`RainTurnkey`), like the other providers. Turnkey authentication (passkeys, OAuth, OTP, auth proxy) happens **outside** Rain: the host app uses the official [Turnkey Swift SDK](https://docs.turnkey.com/sdks/swift/getting-started) to authenticate the user and then hands the live `TurnkeyContext` to Rain via `TurnkeyConfig` for wallet operations.
 
 ## Requirements
 
@@ -10,7 +10,7 @@ Rain SDK for iOS supports [Turnkey](https://turnkey.com) as a wallet provider, a
 
 ## Adding the dependency
 
-The Turnkey products ship transitively with `rain-core-ios`, so consumers don't need to add them explicitly. Internally Rain pins:
+Link the `rain-turnkey-ios` product and `import RainTurnkey` (which re-exports `RainCore`). The Turnkey vendor products ship transitively with it. Internally Rain pins:
 
 ```
 https://github.com/tkhq/swift-sdk.git (exact 4.0.0)
@@ -37,7 +37,7 @@ Turnkey's Swift guides for the pre-register half:
 The example app's `RainSDKService.swift` (`Example/RainSDKDemo/RainSDKDemo/Core/Services/RainSDKService.swift`) shows the full hand-off: it accepts a `TurnkeyContext` whose `authState == .authenticated`, builds the SDK, and resolves the client:
 
 ```swift
-import RainCore
+import RainTurnkey   // re-exports RainCore
 import TurnkeySwift
 
 let rain = try RainSdk.builder()
@@ -201,8 +201,8 @@ session card.
 Adapters are not mutually exclusive. Register several on the same builder and resolve each to its own `RainClient`: one SDK instance, independent provider-bound clients:
 
 ```swift
-import RainCore
 import RainPortal
+import RainTurnkey
 
 let rain = try RainSdk.builder()
     .rpcEndpoints(endpoints)
@@ -218,6 +218,6 @@ Each client is bound to its provider for its lifetime; there is no "active provi
 
 ## iOS-specific integration notes
 
-- **Turnkey ships inside `RainCore`.** Unlike Portal and Privy (separate products), the Turnkey adapter is bundled in `rain-core-ios` for now, so linking `rain-core-ios` pulls Turnkey's Swift SDK. It will graduate to a standalone `rain-turnkey-ios` product later.
+- **Turnkey ships as its own product.** Like Portal and Privy, the adapter lives in `rain-turnkey-ios` — linking `rain-core-ios` (or another provider's product) never pulls Turnkey's Swift SDK.
 - **No dependency conflicts to work around.** Android needs a Bouncy Castle exclusion (Turnkey's and web3j's crypto artifacts collide); the iOS package graph has no equivalent duplicate-symbol issue. The only packaging quirk is a SwiftPM warning about two `secp256k1.swift` forks (from `Web3.swift` and `web3swift`) resolving to the same package identity; it is a warning today and requires no consumer action.
 - **Fail-fast resolution.** `TurnkeyProvider.create(context:)` probes the wallet (`address()`) so an unusable context fails at `rain.provider(.turnkey)` time rather than on the first business call.

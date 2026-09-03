@@ -2,7 +2,7 @@ import Testing
 import Foundation
 import Web3
 import Web3Core
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 
 /// Wallet-agnostic transaction-building tests. In the modular API these methods live on
 /// ``RainSdk`` (public) and, bound to a resolved client's shared services, on ``RainSdkManager``

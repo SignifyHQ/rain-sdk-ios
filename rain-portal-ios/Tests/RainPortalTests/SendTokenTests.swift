@@ -2,7 +2,7 @@ import Testing
 import Foundation
 import Web3
 @testable import PortalSwift
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 @testable import RainPortal
 
 /// Manager-contract tests for send APIs: error wrapping, provider routing, decimals resolution.

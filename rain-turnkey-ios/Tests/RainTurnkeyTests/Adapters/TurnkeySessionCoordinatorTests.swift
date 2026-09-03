@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 @testable import RainCore
+@testable import RainTurnkey
 import Testing
 import TurnkeyHttp
 import TurnkeySwift
@@ -8,6 +9,10 @@ import TurnkeyTypes
 
 @Suite("TurnkeySessionCoordinator")
 struct TurnkeySessionCoordinatorTests {
+  /// Turnkey mapping now registers via TurnkeyErrorMapping (like Portal/Privy);
+  /// tests exercising RainSDKError.from with Turnkey errors must ensure it ran.
+  init() { TurnkeyErrorMapping.registerOnce() }
+
 
   private final class DelayRecorder: @unchecked Sendable {
     private let lock = NSLock()

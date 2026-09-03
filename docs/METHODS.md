@@ -2,13 +2,12 @@
 
 Reference for the Rain SDK public API. The SDK is **modular**: `rain-core-ios` (`RainCore`) carries
 the vendor-free port, registry, and domain logic; each wallet provider ships as its own adapter
-(`PortalProvider`, `PrivyProvider`, and so on; the Turnkey adapter lives inside `RainCore` for now). You
+(`TurnkeyProvider`, `PortalProvider`, `PrivyProvider`). You
 assemble a `RainSdk` with a builder, register the provider adapters your app ships, then resolve a
 `RainClient` per provider.
 
 ```swift
-import RainCore
-import RainPortal
+import RainPortal   // each adapter re-exports RainCore
 
 let rain = try RainSdk.builder()
     .rpcEndpoints([43114: "https://avalanche-c-chain-rpc.publicnode.com"])
@@ -235,7 +234,7 @@ Each adapter is a `RainProvider` descriptor that owns its vendor SDK as a privat
 | Adapter | Module | Config | Notes |
 |---------|--------|--------|-------|
 | `PortalProvider(PortalConfig(sessionToken:sessionPolicy:onSessionTokenNeeded:onSessionExpired:), onPortalCreated:)` | `rain-portal-ios` | `sessionToken: String`, `sessionPolicy: PortalSessionPolicy`, `onSessionTokenNeeded: (() async throws -> String?)?`, `onSessionExpired: (() -> Void)?` | Portal MPC signer (EVM). Advertises `.export`, `.recovery`. The optional `onPortalCreated` hook hands the host the underlying `Portal` instance for Portal-specific APIs (backup / recover) and is re-fired after every session-token refresh. See [rain-portal-ios/README.md](../rain-portal-ios/README.md#session-expiry-and-retry) for session refresh and retry behavior. |
-| `TurnkeyProvider(TurnkeyConfig(turnkey:walletAddress:sessionPolicy:onSessionExpired:))` | `rain-core-ios` | `turnkey: TurnkeyContext`, `walletAddress: String?`, `sessionPolicy: TurnkeySessionPolicy`, `onSessionExpired: (() -> Void)?` | Turnkey P-256 signer (EVM + Solana). Advertises `.multiChain`, `.biometricGate`. See [TURNKEY_SUPPORT.md](TURNKEY_SUPPORT.md). |
+| `TurnkeyProvider(TurnkeyConfig(turnkey:walletAddress:sessionPolicy:onSessionExpired:))` | `rain-turnkey-ios` | `turnkey: TurnkeyContext`, `walletAddress: String?`, `sessionPolicy: TurnkeySessionPolicy`, `onSessionExpired: (() -> Void)?` | Turnkey P-256 signer (EVM + Solana). Advertises `.multiChain`, `.biometricGate`. See [TURNKEY_SUPPORT.md](TURNKEY_SUPPORT.md). |
 | `PrivyProvider(PrivyConfig(privy:walletAddress:sessionPolicy:onSessionExpired:))` | `rain-privy-ios` | `privy: any Privy`, `walletAddress: String?`, `sessionPolicy: PrivySessionPolicy`, `onSessionExpired: (() -> Void)?` | Privy embedded-key signer (EVM + Solana). Advertises `.export`, `.recovery`, `.multiChain`. EVM custody routes through Privy's EIP-1193 embedded wallet; balance/fee reads use Rain's configured RPC. See [rain-privy-ios/README.md](../rain-privy-ios/README.md#session-expiry-and-retry). |
 
 #### Platform differences (Portal)

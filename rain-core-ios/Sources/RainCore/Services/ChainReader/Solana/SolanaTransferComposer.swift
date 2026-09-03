@@ -27,7 +27,7 @@ public struct UnsignedSolanaTransfer: Sendable {
 /// provider signs: address validation, mint resolution, associated-token-account derivation and
 /// creation, balance and fee checks, and a simulation dry run for SPL transfers. Providers only
 /// sign and broadcast the result, so the checks cannot drift between them.
-internal struct SolanaTransferComposer: Sendable {
+@_spi(RainAdapter) public struct SolanaTransferComposer: Sendable {
   /// Base fee for a single-signature Solana transaction.
   private static let feeLamports: UInt64 = 5_000
   /// Rent-exempt minimum for a 165-byte SPL token account (~0.00204 SOL), paid by the sender when
@@ -44,7 +44,7 @@ internal struct SolanaTransferComposer: Sendable {
 
   /// A native SOL transfer. `amount` is converted exactly; sub-lamport precision is rejected
   /// rather than truncated.
-  func composeNative(
+  @_spi(RainAdapter) public func composeNative(
     chainId: Int,
     from fromAddress: String,
     to toAddress: String,
@@ -79,7 +79,7 @@ internal struct SolanaTransferComposer: Sendable {
   /// that owns it both receives the transfer and seeds the token-account derivation. The transfer
   /// is simulated against the cluster while still unsigned, so a failure surfaces as a typed error
   /// rather than as a broadcast that quietly fails on chain.
-  func composeSPLToken(
+  @_spi(RainAdapter) public func composeSPLToken(
     chainId: Int,
     from fromAddress: String,
     mintAddress: String,

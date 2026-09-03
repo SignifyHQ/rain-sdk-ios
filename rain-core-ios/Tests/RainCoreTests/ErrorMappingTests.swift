@@ -1,13 +1,12 @@
 import Testing
 import Foundation
-import TurnkeyHttp
-import TurnkeySwift
 @testable import RainCore
 
 /// Turnkey + generic error-mapping cases. Portal error mapping is registered at runtime by
 /// `PortalProvider` (so RainCore never imports PortalSwift); those cases live in `RainPortalTests`.
 @Suite("RainSDKError Mapping Tests")
 struct ErrorMappingTests {
+
 
   @Test("from(_:) returns RainSDKError unchanged when input is already a RainSDKError")
   func testRainSDKErrorPassthrough() {
@@ -37,59 +36,6 @@ struct ErrorMappingTests {
       // OK
     } else {
       Issue.record("Expected .providerError, got \(mapped)")
-    }
-  }
-
-  @Test("from(_:) maps TurnkeySwiftError.invalidSession to tokenExpired")
-  func testTurnkeyInvalidSessionMapsToTokenExpired() {
-    let mapped = RainSDKError.from(underlying: TurnkeySwiftError.invalidSession)
-    #expect(mapped == RainSDKError.tokenExpired)
-  }
-
-  @Test("from(_:) unwraps TurnkeySwiftError.failedToSignPayload and classifies the inner error")
-  func testTurnkeyFailedToSignPayloadUnwraps() {
-    let inner = NSError(domain: NSURLErrorDomain, code: NSURLErrorNotConnectedToInternet, userInfo: nil)
-    let mapped = RainSDKError.from(underlying: TurnkeySwiftError.failedToSignPayload(underlying: inner))
-
-    if case .networkError = mapped {
-      // OK — recursed into NSURLError mapping.
-    } else {
-      Issue.record("Expected .networkError, got \(mapped)")
-    }
-  }
-
-  @Test("from(_:) maps TurnkeyRequestError.apiError 401 to tokenExpired")
-  func testTurnkeyApiError401() {
-    let mapped = RainSDKError.from(underlying: TurnkeyRequestError.apiError(statusCode: 401, payload: nil))
-    #expect(mapped == RainSDKError.tokenExpired)
-  }
-
-  @Test("from(_:) maps TurnkeyRequestError.apiError 403 to unauthorized")
-  func testTurnkeyApiError403() {
-    let mapped = RainSDKError.from(underlying: TurnkeyRequestError.apiError(statusCode: 403, payload: nil))
-    #expect(mapped == RainSDKError.unauthorized)
-  }
-
-  @Test("from(_:) maps TurnkeyRequestError.network to networkError")
-  func testTurnkeyRequestNetworkMapsToNetworkError() {
-    let underlying = NSError(domain: NSURLErrorDomain, code: -1009, userInfo: nil)
-    let mapped = RainSDKError.from(underlying: TurnkeyRequestError.network(underlying))
-
-    if case .networkError = mapped {
-      // OK
-    } else {
-      Issue.record("Expected .networkError, got \(mapped)")
-    }
-  }
-
-  @Test("from(_:) maps TurnkeyRequestError.invalidResponse to internalLogicError")
-  func testTurnkeyInvalidResponseMapsToInternalLogicError() {
-    let mapped = RainSDKError.from(underlying: TurnkeyRequestError.invalidResponse)
-
-    if case .internalLogicError = mapped {
-      // OK
-    } else {
-      Issue.record("Expected .internalLogicError, got \(mapped)")
     }
   }
 

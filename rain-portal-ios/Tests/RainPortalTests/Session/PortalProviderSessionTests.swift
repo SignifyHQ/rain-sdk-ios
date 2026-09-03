@@ -1,6 +1,6 @@
 import Foundation
 @testable import PortalSwift
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 @testable import RainPortal
 import Testing
 

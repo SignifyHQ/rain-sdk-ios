@@ -1,6 +1,6 @@
 import Foundation
 import Web3
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 
 /// Test double for `ChainReader`. Records every call and returns canned values.
 /// Used to assert that the Turnkey adapter delegates to the chain reader for

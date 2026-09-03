@@ -1,6 +1,6 @@
 import Foundation
 import PortalSwift
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 @testable import RainPortal
 
 // MARK: - Shared test fixtures (duplicated into the portal test target)
