@@ -1,5 +1,6 @@
 import Foundation
 @_spi(RainAdapter) @testable import RainCore
+@testable import RainTurnkey
 
 // MARK: - Shared test fixtures
 
@@ -66,10 +67,53 @@ enum TestFixtures {
 //
 // The monolith's `RainSDKManager()` + `initialize*`/`setWalletProvider` lifecycle no longer
 // exists. A `RainSdkManager` (the concrete `RainClient`) is now always constructed already bound
-// to a resolved `RainWalletProvider`. These factories build a manager directly around a stub —
-// the same seam the registry uses when resolving a provider.
+// to a resolved `RainWalletProvider`. These factories build a manager directly around a stub or a
+// Turnkey adapter — the same seam the registry uses when resolving a provider.
 
 enum TestManagers {
+  /// Returns a manager backed by a Turnkey mock context and a mock transaction builder.
+  static func turnkeyManager(
+    turnkey: MockTurnkey? = nil,
+    builder: MockTransactionBuilderService? = nil,
+    configs: [NetworkConfig] = TestFixtures.configs(),
+    walletAddress: String? = nil,
+    registeredTokens: [TokenInfo] = [],
+    authPullChainIds: Set<Int> = RainAuthPullChains.sandbox,
+    authPullTokenAddresses: [Int: String]? = nil,
+    // Indexed history fails like a feature-gated org by default, so tests that don't stub it
+    // cover the activity-log path deterministically.
+    history: TurnkeyHistoryProviding = ThrowingTurnkeyHistory()
+  ) -> (RainSdkManager, MockTurnkey, MockTransactionBuilderService) {
+    let resolvedTurnkey = turnkey ?? MockTurnkey()
+    let resolvedBuilder = builder ?? MockTransactionBuilderService(networkConfigs: configs)
+    let reader = EVMChainReader(networkConfigs: configs)
+    let tokenStore = TokenMetadataStore(
+      chainReader: reader,
+      seedTokens: registeredTokens
+    )
+    let adapter = TurnkeyWalletProviderAdapter(
+      turnkey: resolvedTurnkey,
+      networkConfigs: configs,
+      walletAddress: walletAddress,
+      chainReader: reader,
+      tokenStore: tokenStore,
+      history: history
+    )
+    let manager = RainSdkManager(
+      walletProvider: adapter,
+      networkConfigs: configs,
+      transactionBuilder: resolvedBuilder,
+      tokenStore: tokenStore,
+      providerId: .turnkey,
+      capabilities: [.multiChain, .biometricGate],
+      authPullChainIds: authPullChainIds,
+      authPullOperator: TestFixtures.authPullOperator,
+      authPullTokenAddresses: authPullTokenAddresses
+        ?? TestFixtures.authPullTokens(for: authPullChainIds)
+    )
+    return (manager, resolvedTurnkey, resolvedBuilder)
+  }
+
   /// Returns a manager bound to a `StubWalletProvider` with the chain reader and transaction
   /// builder mocked out — the seam the approval flow needs, since it both encodes calldata and
   /// reads allowances off chain.

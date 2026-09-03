@@ -2,6 +2,7 @@ import Testing
 import Foundation
 import Web3
 @_spi(RainAdapter) @testable import RainCore
+@testable import RainTurnkey
 
 /// End-to-end composition test against real devnet fixtures: the account data, addresses,
 /// signature, and salt are the ones from the first successful withdrawal on devnet

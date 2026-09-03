@@ -2,6 +2,7 @@ import Combine
 import Foundation
 import TurnkeyHttp
 import TurnkeySwift
+import RainCore
 
 /// Guards every Turnkey call behind session-expiry checks, proactive refresh, refresh-on-401
 /// retry, and transient-failure backoff, per `TurnkeySessionPolicy`. Mirrors the CST handling

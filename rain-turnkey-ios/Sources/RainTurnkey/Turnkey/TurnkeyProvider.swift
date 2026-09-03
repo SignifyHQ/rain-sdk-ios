@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import TurnkeySwift
+@_spi(RainAdapter) import RainCore
 
 /// Configuration for the Turnkey provider. Turnkey authentication (passkeys / auth proxy / OAuth /
 /// OTP) happens **outside** Rain — the host drives Turnkey's Swift SDK and hands the authenticated

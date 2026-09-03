@@ -2,6 +2,7 @@ import AuthenticationServices
 import Foundation
 import TurnkeyHttp
 import TurnkeySwift
+import RainCore
 
 /// Registers Turnkey vendor-error mapping with `RainCore`'s extensible error mapper, so Turnkey
 /// errors classify into `RainSDKError` cases without RainCore importing the Turnkey SDK.

@@ -2,6 +2,7 @@ import Foundation
 import RainCore
 import RainPortal
 import RainPrivy
+import RainTurnkey
 
 /// Coarse health of the wallet session, for colouring the home screen's session card.
 enum SessionHealth {

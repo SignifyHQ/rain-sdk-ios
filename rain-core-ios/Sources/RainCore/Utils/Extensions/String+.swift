@@ -26,7 +26,7 @@ extension String {
   }
 
   /// Returns the string with a leading `"0x"` or `"0X"` prefix removed.
-  var strippingHexPrefix: String {
+  @_spi(RainAdapter) public var strippingHexPrefix: String {
     (hasPrefix("0x") || hasPrefix("0X")) ? String(dropFirst(2)) : self
   }
 

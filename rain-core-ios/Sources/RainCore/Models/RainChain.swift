@@ -24,4 +24,7 @@ public enum RainChain {
   /// can route Solana chains.
   public static func isSolana(_ chainId: Int) -> Bool { SolanaChains.isSolana(chainId) }
   public static func solanaCaip2(for chainId: Int) -> String? { SolanaChains.caip2(for: chainId) }
+
+  /// SOL native currency (9 decimals). SPI for Rain's own adapter modules.
+  @_spi(RainAdapter) public static var solanaNativeCurrency: NativeCurrency { SolanaChains.nativeCurrency }
 }

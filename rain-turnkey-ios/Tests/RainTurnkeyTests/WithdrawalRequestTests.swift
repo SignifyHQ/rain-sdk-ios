@@ -2,6 +2,7 @@ import Testing
 import Foundation
 import Web3
 @testable import RainCore
+@testable import RainTurnkey
 
 /// Covers the withdrawal request contract: the caller's nonce reaches the signed EIP-712 payload,
 /// and parameters that cannot produce a valid transaction are rejected before any network call.

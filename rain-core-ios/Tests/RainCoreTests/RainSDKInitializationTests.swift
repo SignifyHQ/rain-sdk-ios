@@ -200,13 +200,4 @@ struct SDKInitializationTests {
     _ = try await sdk.provider(.turnkey)
   }
 
-  // MARK: - Turnkey test seam
-
-  @Test("Turnkey-backed manager resolves the wallet address")
-  func testTurnkeyManagerResolvesAddress() async throws {
-    let (manager, _, _) = TestManagers.turnkeyManager()
-
-    let walletAddress = try await manager.getWalletAddress()
-    #expect(walletAddress == MockTurnkey.defaultWalletAddress)
-  }
 }

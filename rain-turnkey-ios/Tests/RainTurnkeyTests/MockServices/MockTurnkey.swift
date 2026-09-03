@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 @testable import RainCore
+@testable import RainTurnkey
 import TurnkeySwift
 import TurnkeyTypes
 

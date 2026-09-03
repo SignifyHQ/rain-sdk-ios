@@ -3,11 +3,23 @@ import TurnkeyHttp
 import TurnkeySwift
 import TurnkeyTypes
 import Web3
+@_spi(RainAdapter) import RainCore
 
 /// Turnkey-based implementation of `RainWalletProvider`.
 /// Used when the SDK is initialized with `initializeTurnkey(...)`.
 internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTypedDataSignerProvider, RainTransactionFeeEstimatingProvider, RainSolanaTransfersProvider, @unchecked Sendable {
   private enum AdapterConstants {
+    /// Chains for which the Turnkey `get-balances` API returns data.
+    /// On any other chain, balance reads fall through to `ChainReader`.
+    /// Source: https://docs.turnkey.com/api-reference/queries/get-balances
+    static let turnkeySupportedChains: Set<Int> = [
+      1,        // Ethereum Mainnet
+      11155111, // Sepolia
+      8453,     // Base Mainnet
+      84532,    // Base Sepolia
+      137,      // Polygon Mainnet
+      80002     // Polygon Amoy
+    ]
     static let defaultNativeDecimals = 18
     static let defaultPollingAttempts = 30
     static let pollingIntervalNanoseconds: UInt64 = 1_000_000_000
@@ -80,7 +92,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     networkConfigs: [NetworkConfig],
     walletAddress: String? = nil,
     jsonRpcClient: JsonRpcClient = JsonRpcClient(),
-    chainReader: ChainReader? = nil,
+    chainReader: ChainReader,
     solanaSupport: RainSolanaSupport? = nil,
     tokenStore: TokenMetadataStore? = nil,
     history: (any TurnkeyHistoryProviding)? = nil,
@@ -91,20 +103,18 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     self.networkConfigsByChainId = Dictionary(uniqueKeysWithValues: networkConfigs.map { ($0.chainId, $0) })
     self.walletAddressOverride = walletAddress
     self.jsonRpcClient = jsonRpcClient
-    let resolvedReader = chainReader ?? EVMChainReader(
-      jsonRpcClient: jsonRpcClient,
-      networkConfigs: networkConfigs
-    )
-    self.chainReader = resolvedReader
+    // Required (no EVMChainReader fallback): that type is core-internal, and `TurnkeyProvider`
+    // always hands in the shared reader from `ProviderContext`.
+    self.chainReader = chainReader
     self.solanaSupport = solanaSupport ?? RainSolanaSupport(networkConfigs: networkConfigs)
-    self.tokenStore = tokenStore ?? TokenMetadataStore(chainReader: resolvedReader)
+    self.tokenStore = tokenStore ?? TokenMetadataStore(chainReader: chainReader)
     self.history = history ?? TurnkeyHistoryClient()
   }
 
   /// The reader for `chainId`'s chain family — the Solana reader for Solana clusters, the
   /// EVM reader otherwise.
   private func chainReaderFor(chainId: Int) -> ChainReader {
-    SolanaChains.isSolana(chainId) ? solanaChainReader : chainReader
+    RainChain.isSolana(chainId) ? solanaChainReader : chainReader
   }
 
   /// CAIP-2 for `chainId`: EIP-155 for EVM, genesis-hash form for Solana clusters.
@@ -115,7 +125,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   /// True when Turnkey's `get-balances` API covers this chain (EVM allowlist or any Solana
   /// cluster). On any other chain, balance reads fall through to the injected `ChainReader`.
   private func usesTurnkeyForBalances(chainId: Int) -> Bool {
-    Constants.turnkeySupportedChains.contains(chainId) || SolanaChains.isSolana(chainId)
+    AdapterConstants.turnkeySupportedChains.contains(chainId) || RainChain.isSolana(chainId)
   }
 
   public func address() async throws -> String {
@@ -177,7 +187,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   /// every other chain shares the Ethereum account. Internal balance / send paths use this so
   /// a Solana request never reads or signs with the EVM address.
   public func getAddress(chainId: Int) async throws -> String {
-    SolanaChains.isSolana(chainId) ? try await solanaAddress() : try await address()
+    RainChain.isSolana(chainId) ? try await solanaAddress() : try await address()
   }
 
   private func solanaAddress() async throws -> String {
@@ -219,7 +229,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
 
     // Solana has its own balance policy (Turnkey-first with an RPC fallback),
     // so it branches out before the EVM logic below.
-    if SolanaChains.isSolana(chainId) {
+    if RainChain.isSolana(chainId) {
       return try await solanaBalance(chainId: chainId, walletAddress: walletAddress, token: token)
     }
 
@@ -364,7 +374,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
 
     let caip2 = caip2For(chainId: chainId)
     let balances: [v1AssetBalance]
-    if SolanaChains.isSolana(chainId) {
+    if RainChain.isSolana(chainId) {
       let turnkeyBalances: [v1AssetBalance]?
       do {
         turnkeyBalances = try await fetchBalances(chainId: chainId, walletAddress: walletAddress)
@@ -416,7 +426,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     raw: BigUInt,
     balance: v1AssetBalance?
   ) async -> Balance {
-    if SolanaChains.isSolana(chainId) {
+    if RainChain.isSolana(chainId) {
       return Balance(
         token: .contract(address: tokenAddress),
         chainId: chainId,
@@ -469,7 +479,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     order: RainTransactionOrder?
   ) async throws -> [RainTransaction] {
     do {
-      if SolanaChains.isSolana(chainId) {
+      if RainChain.isSolana(chainId) {
         return try await indexedSolanaTransactions(chainId: chainId, limit: limit, offset: offset, order: order)
       }
       return try await indexedEvmTransactions(chainId: chainId, limit: limit, offset: offset, order: order)
@@ -486,7 +496,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       if Task.isCancelled { throw error }
       RainLogger.warning("Rain SDK: Turnkey indexed history unavailable, falling back to activities: \(error)")
     }
-    if SolanaChains.isSolana(chainId) {
+    if RainChain.isSolana(chainId) {
       return try await solanaTransactionsFromActivities(chainId: chainId, limit: limit, offset: offset, order: order)
     }
     return try await evmTransactionsFromActivities(chainId: chainId, limit: limit, offset: offset, order: order)
@@ -918,7 +928,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     from draft: SolanaActivityDraft
   ) async -> RainTransaction {
     var value = draft.lamports.map { SolanaConverter.lamportsToSol($0) }
-    var asset: String? = SolanaChains.nativeCurrency.symbol
+    var asset: String? = RainChain.solanaNativeCurrency.symbol
     var category = RainTransactionCategory.external
     var tokenAddress: String?
     var rawValue: String?
@@ -1182,7 +1192,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   /// Rejects Solana chain ids on the EVM-only paths; Solana transfers go through `sendNative` /
   /// `sendToken`.
   private func requireEVM(chainId: Int, operation: String) throws {
-    guard SolanaChains.isSolana(chainId) else { return }
+    guard RainChain.isSolana(chainId) else { return }
     throw RainSDKError.invalidConfig(
       details: "Turnkey provider does not support \(operation) on Solana; use sendNative for SOL transfers"
     )
