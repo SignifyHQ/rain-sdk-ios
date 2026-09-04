@@ -67,7 +67,7 @@ enum TestFixtures {
 //
 // The monolith's `RainSDKManager()` + `initialize*`/`setWalletProvider` lifecycle no longer
 // exists. A `RainSdkManager` (the concrete `RainClient`) is now always constructed already bound
-// to a resolved `RainWalletProvider`. These factories build a manager directly around a stub or a
+// to a resolved `WalletProvider`. These factories build a manager directly around a stub or a
 // Turnkey adapter — the same seam the registry uses when resolving a provider.
 
 enum TestManagers {

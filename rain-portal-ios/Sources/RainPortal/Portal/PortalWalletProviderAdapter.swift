@@ -21,9 +21,9 @@ internal final class PortalClientHandle: @unchecked Sendable {
   }
 }
 
-/// Portal-based implementation of `RainWalletProvider`. Lives in the `RainPortal` module.
+/// Portal-based implementation of `WalletProvider`. Lives in the `RainPortal` module.
 /// Every call runs through `sessions`.
-internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedDataSignerProvider, RainTransactionFeeEstimatingProvider, @unchecked Sendable {
+internal final class PortalWalletProviderAdapter: WalletProvider, RainTypedDataSignerProvider, RainTransactionFeeEstimatingProvider, @unchecked Sendable {
   private let handle: PortalClientHandle
   private let tokenStore: TokenMetadataStore
   private let sessions: PortalSessionCoordinator

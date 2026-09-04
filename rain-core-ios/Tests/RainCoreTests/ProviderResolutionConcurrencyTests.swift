@@ -5,7 +5,7 @@ import Foundation
 /// Regression tests for `RainSdk.provider(_:)` lazy resolution.
 ///
 /// The registry must resolve each provider id exactly once even under a burst of concurrent
-/// first-resolutions: `RainProvider.create(context:)` may fire vendor side effects (Portal's
+/// first-resolutions: `ProviderDescriptor.create(context:)` may fire vendor side effects (Portal's
 /// `onPortalCreated` hook, Turnkey's wallet probe), so a double-create is a real defect. The old
 /// implementation called `create()` outside the cache lock, so two concurrent misses both created;
 /// the fix caches the in-flight resolution `Task` so all callers await one `create()`.
@@ -18,9 +18,9 @@ struct ProviderResolutionConcurrencyTests {
     func increment() { count += 1 }
   }
 
-  /// `RainProvider` whose `create()` bumps a shared counter and sleeps briefly to widen the race
+  /// `ProviderDescriptor` whose `create()` bumps a shared counter and sleeps briefly to widen the race
   /// window, then returns a fresh `StubWalletProvider`. Optionally fails to exercise retry.
-  private final class CountingProvider: RainProvider, @unchecked Sendable {
+  private final class CountingProvider: ProviderDescriptor, @unchecked Sendable {
     let id: ProviderId
     let counter: CreateCounter
     let failFirst: Bool
@@ -35,7 +35,7 @@ struct ProviderResolutionConcurrencyTests {
 
     var capabilities: Set<Capability> { [] }
 
-    func create(context: ProviderContext) async throws -> any RainWalletProvider {
+    func create(context: ProviderContext) async throws -> any WalletProvider {
       await counter.increment()
       try? await Task.sleep(nanoseconds: 20_000_000) // 20ms — widen the concurrent-miss window
       if failFirst {

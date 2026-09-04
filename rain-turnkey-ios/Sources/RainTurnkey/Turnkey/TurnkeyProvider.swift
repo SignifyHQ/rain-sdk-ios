@@ -41,7 +41,7 @@ public struct TurnkeyConfig: @unchecked Sendable {
 /// Registrable descriptor for the Turnkey wallet provider.
 ///
 /// Turnkey is bundled inside `RainCore` for now (it will graduate to a standalone `rain-turnkey`
-/// module later). It implements `RainProvider` like any adapter, but relies on the core-internal
+/// module later). It implements `ProviderDescriptor` like any adapter, but relies on the core-internal
 /// `ProviderContext` EVM chain reader that out-of-core adapters cannot reach yet — that must be
 /// widened when the module is extracted.
 ///
@@ -52,7 +52,7 @@ public struct TurnkeyConfig: @unchecked Sendable {
 ///     .build()
 /// let client = try await rain.provider(.turnkey)
 /// ```
-public struct TurnkeyProvider: RainProvider {
+public struct TurnkeyProvider: ProviderDescriptor {
   private let config: TurnkeyConfig
   private let coordinator: TurnkeySessionCoordinator
 
@@ -98,7 +98,7 @@ public struct TurnkeyProvider: RainProvider {
     coordinator.stopMonitoring()
   }
 
-  public func create(context: ProviderContext) async throws -> any RainWalletProvider {
+  public func create(context: ProviderContext) async throws -> any WalletProvider {
     // The watcher only exists to drive the host's re-auth hook; without one there is nothing
     // to notify and no reason to hold a subscription on the Turnkey singleton.
     if config.onSessionExpired != nil {

@@ -5,7 +5,7 @@ import Web3
 /// Provider-agnostic stub for manager-contract tests. Returns configured values and
 /// records calls — use when a test only needs to prove the manager routes to the
 /// provider and returns the provider's result, without invoking Portal- or Turnkey-specific behavior.
-final class StubWalletProvider: RainWalletProvider, @unchecked Sendable {
+final class StubWalletProvider: WalletProvider, @unchecked Sendable {
   var addressToReturn: String = TestFixtures.walletAddress
   var balanceToReturn: Balance?
   var balancesToReturn: [Balance] = []

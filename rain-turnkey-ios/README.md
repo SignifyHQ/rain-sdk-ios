@@ -29,7 +29,7 @@ let client = try await rain.provider(.turnkey)
 ```
 
 This module owns everything Turnkey-specific: the `TurnkeyProvider` descriptor, the
-`TurnkeyWalletProviderAdapter` (mapping Turnkey onto `RainWalletProvider`), the session
+`TurnkeyWalletProviderAdapter` (mapping Turnkey onto `WalletProvider`), the session
 coordinator and `TurnkeySessionPolicy` (expiry checks, proactive refresh, refresh-on-401,
 transient retry, the `onSessionExpired` hook), the indexed transaction-history client, and
 Turnkey error mapping (registered with `RainCore` at runtime so core stays Turnkey-free).

@@ -233,17 +233,17 @@ enum TestTokenStore {
     var store: TokenMetadataStore?
   }
 
-  private struct CapturingProvider: RainProvider {
+  private struct CapturingProvider: ProviderDescriptor {
     let box: Box
     var id: ProviderId { ProviderId("test-capture") }
     var capabilities: Set<Capability> { [] }
-    func create(context: ProviderContext) async throws -> any RainWalletProvider {
+    func create(context: ProviderContext) async throws -> any WalletProvider {
       box.store = context.tokenStore
       return NullWalletProvider()
     }
   }
 
-  private struct NullWalletProvider: RainWalletProvider {
+  private struct NullWalletProvider: WalletProvider {
     func address() async throws -> String { throw RainSDKError.walletUnavailable }
     func sendTransaction(chainId: Int, params: WalletTransactionParams) async throws -> String {
       throw RainSDKError.walletUnavailable

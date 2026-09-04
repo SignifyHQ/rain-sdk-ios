@@ -3,7 +3,7 @@ import PrivySDK
 import RainCore
 import Web3
 
-/// Privy-backed `RainWalletProvider`.
+/// Privy-backed `WalletProvider`.
 ///
 /// Custody (signing, broadcasting) goes through Privy's EIP-1193 embedded wallet via
 /// ``PrivyManager``; balance and fee reads run through ``PrivyRpcClient`` against Rain's
@@ -20,7 +20,7 @@ import Web3
 /// pre-indexer behavior. Solana history reads the embedded Solana account's own indexer entries —
 /// Privy's server-side chain enum covers only mainnet, so devnet / testnet return empty like an
 /// unindexed EVM chain.
-internal final class PrivyWalletProvider: RainWalletProvider, RainTypedDataSignerProvider, RainTransactionFeeEstimatingProvider, RainSolanaTransfersProvider, @unchecked Sendable {
+internal final class PrivyWalletProvider: WalletProvider, RainTypedDataSignerProvider, RainTransactionFeeEstimatingProvider, RainSolanaTransfersProvider, @unchecked Sendable {
   /// Upper bound on simultaneous per-token balance RPC calls in ``getBalances(chainId:)``. Without
   /// it a large token registry would fan out one connection per token at once.
   private static let maxConcurrentBalanceReads = 8

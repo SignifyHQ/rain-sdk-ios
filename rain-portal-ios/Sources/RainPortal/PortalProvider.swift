@@ -46,7 +46,7 @@ public struct PortalConfig: @unchecked Sendable {
 ///     .build()
 /// let client = try await rain.provider(.portal)
 /// ```
-public struct PortalProvider: RainProvider {
+public struct PortalProvider: ProviderDescriptor {
   /// Builds a vendor client for a token and RPC config; concrete `Portal` in production.
   internal typealias PortalFactory =
     @Sendable (_ sessionToken: String, _ rpcConfig: [String: String]) throws -> PortalRequestProtocol
@@ -144,7 +144,7 @@ public struct PortalProvider: RainProvider {
     coordinator.stop()
   }
 
-  public func create(context: ProviderContext) async throws -> any RainWalletProvider {
+  public func create(context: ProviderContext) async throws -> any WalletProvider {
     guard !config.sessionToken.isEmpty else {
       throw RainSDKError.unauthorized
     }

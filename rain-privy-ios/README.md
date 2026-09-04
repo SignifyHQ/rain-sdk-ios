@@ -24,7 +24,7 @@ let client = try await rain.provider(.privy)
 ```
 
 This module owns everything Privy-specific: the `PrivyProvider` descriptor, the
-`PrivyWalletProvider` (mapping Privy onto `RainWalletProvider`), the Privy RPC client used for
+`PrivyWalletProvider` (mapping Privy onto `WalletProvider`), the Privy RPC client used for
 balance / fee reads against Rain's configured endpoints, and Privy error mapping (registered with
 `RainCore` at runtime so core stays Privy-free).
 

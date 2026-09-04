@@ -4,7 +4,7 @@ import Foundation
 /// degrade gracefully instead of assuming every provider can do everything.
 ///
 /// Design discipline (per the modular architecture proposal): prefer expressing a new provider
-/// need as an optional `Capability` over widening the `RainWalletProvider` port with a new
+/// need as an optional `Capability` over widening the `WalletProvider` port with a new
 /// required method. A bloated port re-couples every provider.
 public enum Capability: String, Sendable, CaseIterable, Codable {
   /// Provider can export the private key / seed.
