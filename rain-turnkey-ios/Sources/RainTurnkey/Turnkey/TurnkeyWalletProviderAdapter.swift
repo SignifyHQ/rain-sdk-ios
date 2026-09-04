@@ -5,9 +5,9 @@ import TurnkeyTypes
 import Web3
 @_spi(RainAdapter) import RainCore
 
-/// Turnkey-based implementation of `RainWalletProvider`.
+/// Turnkey-based implementation of `WalletProvider`.
 /// Used when the SDK is initialized with `initializeTurnkey(...)`.
-internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTypedDataSignerProvider, RainTransactionFeeEstimatingProvider, RainSolanaTransfersProvider, @unchecked Sendable {
+internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedDataSignerProvider, RainTransactionFeeEstimatingProvider, RainSolanaTransfersProvider, @unchecked Sendable {
   private enum AdapterConstants {
     /// Chains for which the Turnkey `get-balances` API returns data.
     /// On any other chain, balance reads fall through to `ChainReader`.

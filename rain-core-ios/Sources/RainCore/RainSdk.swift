@@ -13,7 +13,7 @@ import Web3
 public final class RainSdk: @unchecked Sendable {
   private let networkConfigs: [NetworkConfig]
   private let rpcEndpoints: [Int: String]
-  private let descriptors: [ProviderId: RainProvider]
+  private let descriptors: [ProviderId: ProviderDescriptor]
   private let registrationOrder: [ProviderId]
 
   // Shared, vendor-free infrastructure, built once and reused across every resolved provider.
@@ -58,7 +58,7 @@ public final class RainSdk: @unchecked Sendable {
 
   fileprivate init(
     networkConfigs: [NetworkConfig],
-    descriptors: [ProviderId: RainProvider],
+    descriptors: [ProviderId: ProviderDescriptor],
     registrationOrder: [ProviderId],
     registeredTokens: [TokenInfo],
     rainApiEnvironment: RainApiEnvironment,
@@ -107,7 +107,7 @@ public final class RainSdk: @unchecked Sendable {
   public var providerIds: Set<ProviderId> { Set(descriptors.keys) }
 
   /// All registered provider descriptors, in registration order.
-  public var providers: [any RainProvider] { registrationOrder.compactMap { descriptors[$0] } }
+  public var providers: [any ProviderDescriptor] { registrationOrder.compactMap { descriptors[$0] } }
 
   // MARK: - Resolution
 
@@ -128,7 +128,7 @@ public final class RainSdk: @unchecked Sendable {
       if let existing = resolveBoxes[id] { return existing }
       let task = Task<RainClient, Error> { [self] in
         let descriptor = descriptors[id]!
-        let walletProvider: any RainWalletProvider
+        let walletProvider: any WalletProvider
         do {
           walletProvider = try await descriptor.create(context: providerContext)
         } catch {
@@ -197,7 +197,7 @@ public final class RainSdk: @unchecked Sendable {
   /// `rain.first { $0.capabilities.contains(.export) }`.
   ///
   /// - Throws: `RainSDKError.providerNotRegistered` if no registered provider matches.
-  public func first(where predicate: (any RainProvider) -> Bool) async throws -> RainClient {
+  public func first(where predicate: (any ProviderDescriptor) -> Bool) async throws -> RainClient {
     for id in registrationOrder {
       guard let descriptor = descriptors[id] else { continue }
       if predicate(descriptor) {
@@ -375,7 +375,7 @@ public final class RainSdk: @unchecked Sendable {
   /// Fluent builder for `RainSdk`.
   public final class Builder {
     private var networkConfigs: [NetworkConfig] = []
-    private var descriptors: [ProviderId: RainProvider] = [:]
+    private var descriptors: [ProviderId: ProviderDescriptor] = [:]
     private var registrationOrder: [ProviderId] = []
     private var registeredTokens: [TokenInfo] = []
     private var rainApiEnvironment: RainApiEnvironment = .dev
@@ -400,7 +400,7 @@ public final class RainSdk: @unchecked Sendable {
 
     /// Registers a provider descriptor, keyed by its `id`. Re-registering an id replaces it.
     @discardableResult
-    public func register(_ provider: any RainProvider) -> Builder {
+    public func register(_ provider: any ProviderDescriptor) -> Builder {
       if descriptors[provider.id] == nil {
         registrationOrder.append(provider.id)
       }

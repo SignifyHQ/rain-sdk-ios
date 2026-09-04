@@ -17,7 +17,7 @@ let client = try await rain.provider(.portal)
 ```
 
 This module owns everything Portal-specific: the `PortalProvider` descriptor, the
-`PortalWalletProviderAdapter` (mapping Portal onto `RainWalletProvider`), Portal ↔ Rain model
+`PortalWalletProviderAdapter` (mapping Portal onto `WalletProvider`), Portal ↔ Rain model
 mappers, and Portal error mapping (registered with `RainCore` at runtime so core stays Portal-free).
 
 Advertised capabilities: `.export`, `.recovery`.

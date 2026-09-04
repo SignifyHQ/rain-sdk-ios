@@ -35,7 +35,7 @@ module isn't linked simply can't be registered.
 | Property | Type | Description |
 |----------|------|-------------|
 | `providerIds` | `Set<ProviderId>` | Ids of every provider the host registered. |
-| `providers` | `[any RainProvider]` | The registered provider descriptors (registration order), for capability resolution. |
+| `providers` | `[any ProviderDescriptor]` | The registered provider descriptors (registration order), for capability resolution. |
 | `isRainApiConfigured` | `Bool` | True once a Rain Api-Key and userId have been supplied (builder or `configureRainApi`). |
 | `authPullChainIds` | `Set<Int>` | Chains Auth Pull is enabled on for this instance: the configured `RainAuthPullConfig`'s chains intersected with the chains that have an RPC endpoint. Empty when no `authPullConfig(_:)` was supplied. Also exposed on `RainClient`; see [authPullChainIds](#authpullchainids). |
 
@@ -73,7 +73,7 @@ let exporter = try await rain.first { $0.capabilities.contains(.export) }
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `predicate` | `(any RainProvider) -> Bool` | Match tested against each registered provider descriptor. |
+| `predicate` | `(any ProviderDescriptor) -> Bool` | Match tested against each registered provider descriptor. |
 
 #### reset()
 
@@ -220,7 +220,7 @@ never names a vendor SDK itself.
 |--------|-------------|
 | `rpcEndpoints(_ configs: [NetworkConfig])` | Sets the network configurations every provider shares. **Required.** |
 | `rpcEndpoints(_ map: [Int: String])` | Same, from a `chainId → RPC URL` map (parity with Android). |
-| `register(_ provider: any RainProvider)` | Registers a provider adapter (e.g. `PortalProvider`, `TurnkeyProvider`, `PrivyProvider`). Re-registering the same id replaces the prior one. |
+| `register(_ provider: any ProviderDescriptor)` | Registers a provider adapter (e.g. `PortalProvider`, `TurnkeyProvider`, `PrivyProvider`). Re-registering the same id replaces the prior one. |
 | `registerTokens(_ tokens: [TokenInfo])` | Seeds the shared token store with extra token metadata. |
 | `rainApiEnvironment(_ environment: RainApiEnvironment)` | Selects the Rain issuing API environment (default `.dev`). |
 | `rainApiCredentials(apiKey:userId:)` | Optionally supplies the Rain Api-Key / userId at build time. |
@@ -229,7 +229,7 @@ never names a vendor SDK itself.
 
 ### Provider adapters
 
-Each adapter is a `RainProvider` descriptor that owns its vendor SDK as a private dependency.
+Each adapter is a `ProviderDescriptor` that owns its vendor SDK as a private dependency.
 
 | Adapter | Module | Config | Notes |
 |---------|--------|--------|-------|
@@ -251,7 +251,7 @@ Two differences are vendor-shaped and intentional:
   constructor **requires** a legacy `legacyEthChainId`, so its adapter must supply one. PortalSwift
   7.x takes no such parameter, so iOS's `PortalConfig` omits it. Vendor-imposed, not a parity gap.
 
-**Bring your own provider:** implement the `RainWalletProvider` port and a `RainProvider`
+**Bring your own provider:** implement the `WalletProvider` port and a `ProviderDescriptor`
 descriptor (with your own `ProviderId`), then `register(...)` it. Core needs no change; the
 wallet-agnostic building methods are available regardless of which provider you register.
 
@@ -806,8 +806,8 @@ Bundled providers: **Portal** → `.export`, `.recovery`. **Turnkey** → `.mult
 |------|-------------|
 | **`ProviderId`** | Struct wrapping a provider id string. Well-known constants: `.portal`, `.turnkey`, `.privy`. Host apps can ship a custom id. |
 | **`Capability`** | Enum: `.export`, `.recovery`, `.multiChain`, `.biometricGate`. |
-| **`RainProvider`** | Registrable provider descriptor: `id`, `capabilities`, and an async `create(context:)` that materializes the `RainWalletProvider`. Implemented by `PortalProvider`, `TurnkeyProvider`, `PrivyProvider`, and host-supplied providers. |
-| **`RainWalletProvider`** | The port each adapter implements. Public so hosts can ship their own wallet stack. |
+| **`ProviderDescriptor`** | Registrable provider descriptor: `id`, `capabilities`, and an async `create(context:)` that materializes the `WalletProvider`. Implemented by `PortalProvider`, `TurnkeyProvider`, `PrivyProvider`, and host-supplied providers. |
+| **`WalletProvider`** | The port each adapter implements. Public so hosts can ship their own wallet stack. |
 | **`NetworkConfig`** | `chainId`, `rpcUrl`, optional `networkName`. Also constructible from an `eip155:<chainId>` string. |
 | **`RainWithdrawAddresses`** | `proxyAddress`, `controllerAddress`, `tokenAddress`, `recipientAddress`. Has `validated()` for checksumming. |
 | **`RainEIP712Message`** | `message`, `salt`, `saltHex`. Returned by `buildEIP712Message`. |

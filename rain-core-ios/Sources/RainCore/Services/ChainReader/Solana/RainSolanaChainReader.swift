@@ -1,7 +1,7 @@
 import Foundation
 
 /// Cross-module surface of the core Solana stack for out-of-core wallet adapters (Privy, Portal).
-/// Public for the same reason as `RainWalletProvider`: adapters ship as separate packages, so
+/// Public for the same reason as `WalletProvider`: adapters ship as separate packages, so
 /// `internal` would wall them off. Not API for host apps — they get one from `ProviderContext`.
 ///
 /// Bundles transfer composition (with all preflights and simulation — see

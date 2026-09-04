@@ -3,7 +3,7 @@ import Foundation
 
 /// Stub for manager-contract tests on the Solana routes. Records what the manager hands the
 /// adapter, so tests can pin the `decimals` the port receives without composing a transaction.
-final class StubSolanaWalletProvider: RainWalletProvider, RainSolanaTransfersProvider, @unchecked Sendable {
+final class StubSolanaWalletProvider: WalletProvider, RainSolanaTransfersProvider, @unchecked Sendable {
   var addressToReturn: String = TestFixtures.walletAddress
   var solanaAddressToReturn: String = "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
   var signatureToReturn: String = String(repeating: "1", count: 88)
@@ -51,7 +51,7 @@ final class StubSolanaWalletProvider: RainWalletProvider, RainSolanaTransfersPro
     return signatureToReturn
   }
 
-  // MARK: - RainWalletProvider
+  // MARK: - WalletProvider
 
   func address() async throws -> String { addressToReturn }
 

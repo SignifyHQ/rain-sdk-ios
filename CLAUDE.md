@@ -9,7 +9,7 @@ Modular, ports & adapters. One SPM package (internal name `RainSDK`), one produc
 clients link only the providers they use. Every adapter `@_exported import`s RainCore, so one
 import per provider suffices. The 1.x `RainSDK` umbrella module has been REMOVED.
 
-- `RainCore` (`rain-core-ios`) — vendor-free hexagon: `RainWalletProvider` port, `RainProvider`
+- `RainCore` (`rain-core-ios`) — vendor-free hexagon: `WalletProvider` port, `ProviderDescriptor`
   descriptors, `Capability` model, `RainSdk` builder/registry (caches in-flight resolution Tasks),
   `RainClient` (impl `RainSdkManager`), transaction building, EIP-712, EVM chain reader
   (JSON-RPC + Multicall3), Solana stack (sentinel ids 900/901/902), token store, Rain issuing API
@@ -33,10 +33,20 @@ import per provider suffices. The 1.x `RainSDK` umbrella module has been REMOVED
   adapter's test target duplicates the helpers it needs (TestFixtures, MockChainReader,
   MockURLProtocol, etc.).
 
+## Naming (renamed 2026-09-04, PR A of the RainWallet work)
+
+The `RainWallet*` namespace belongs exclusively to the upcoming Rain-branded module. Renames:
+port `RainWalletProvider` -> `WalletProvider`; descriptor protocol
+`RainProvider` -> `ProviderDescriptor` (NO typealias — the name is reserved for the new module's
+descriptor struct). No typealiases at all: both renames are clean breaks in the v5 release.
+
 ## Planned next
 
 `rain-wallet-ios` / `RainWallet`: Rain-branded provider on top of RainTurnkey with embedded Rain
-org id + auth-proxy config id; wallet-neutral naming throughout; auth INSIDE the SDK — email OTP
-only (decided). `TurnkeyContext` is a process-wide singleton, so RainWallet and BYO RainTurnkey
-are mutually exclusive in one app. Naming: the port owns `RainWalletProvider`, so the descriptor
-needs another name (e.g. `RainWalletProviderDescriptor`); id `ProviderId.rain`.
+org id + auth-proxy config id (placeholders first); wallet-neutral naming; auth INSIDE the SDK —
+email OTP only (decided) via Turnkey's auth proxy. Public surface: `RainWallet` auth façade,
+`RainWalletConfig`, descriptor struct `RainProvider`, id `ProviderId.rain`, neutral session
+surface (`RainWalletSessionState`, publisher, refreshSession). RainWallet @_exported imports
+RainCore only — NEVER RainTurnkey (no Turnkey symbol on a bare `import RainWallet`). Needs
+`TurnkeyErrorMapping.registerOnce` widened to @_spi. `TurnkeyContext` is a process-wide singleton
+⇒ RainWallet and BYO RainTurnkey mutually exclusive; guard in `RainSdk.build()`.

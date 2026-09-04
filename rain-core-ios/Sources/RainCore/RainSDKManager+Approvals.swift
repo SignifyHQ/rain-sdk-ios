@@ -8,7 +8,7 @@ import Web3
 // pull itself is Rain's, not the SDK's.
 //
 // Approvals ride the same generic pipeline as any other send — calldata from
-// `TransactionBuilderService`, broadcast through `RainWalletProvider.sendTransaction` — so
+// `TransactionBuilderService`, broadcast through `WalletProvider.sendTransaction` — so
 // provider-specific behaviour (Portal/Privy simulation, biometric prompts) applies unchanged.
 //
 // Every method here refuses to run until the host supplies a `RainAuthPullConfig`, and then

@@ -9,12 +9,12 @@ import Foundation
 @Suite("SDK Initialization Tests")
 struct SDKInitializationTests {
 
-  /// Minimal `RainProvider` so the builder has something to register — resolving it yields a
+  /// Minimal `ProviderDescriptor` so the builder has something to register — resolving it yields a
   /// `StubWalletProvider`. Lets these tests exercise builder validation without a vendor SDK.
-  private struct StubProvider: RainProvider {
+  private struct StubProvider: ProviderDescriptor {
     var id: ProviderId = .turnkey
     var capabilities: Set<Capability> = []
-    func create(context: ProviderContext) async throws -> any RainWalletProvider {
+    func create(context: ProviderContext) async throws -> any WalletProvider {
       StubWalletProvider()
     }
   }

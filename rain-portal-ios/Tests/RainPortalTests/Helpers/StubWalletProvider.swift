@@ -4,7 +4,7 @@ import Web3
 
 /// Provider-agnostic stub for manager-contract tests. Duplicated into the portal test target
 /// (test targets can't share code across packages).
-final class StubWalletProvider: RainWalletProvider, @unchecked Sendable {
+final class StubWalletProvider: WalletProvider, @unchecked Sendable {
   var addressToReturn: String = TestFixtures.walletAddress
   var balanceToReturn: Balance?
   var balancesToReturn: [Balance] = []
