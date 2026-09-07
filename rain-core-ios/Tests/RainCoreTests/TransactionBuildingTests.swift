@@ -417,8 +417,12 @@ struct TransactionBuildingTests {
 
   /// Integration test: hits Avalanche Fuji RPC to read the on-chain nonce.
   /// Verifies the call succeeds, the value fits uint256, and consecutive reads are stable.
-  /// Known tradeoff (accepted for now): this is intentionally a live-network dependency.
-  @Test("getLatestNonce reads a stable uint256 from a live Fuji contract")
+  /// Intentionally a live-network dependency, so it is env-gated: set RAIN_LIVE_TESTS=1 to run
+  /// it locally. CI skips it (runners flake on TLS/egress to public RPCs).
+  @Test(
+    "getLatestNonce reads a stable uint256 from a live Fuji contract",
+    .enabled(if: ProcessInfo.processInfo.environment["RAIN_LIVE_TESTS"] == "1")
+  )
   func testGetLatestNonceFromRealContract() async throws {
     let chainId = 43113
     let contractAddress = "0x5a022623280AA5E922A4D9BB3024fA7D70D7e789"
