@@ -85,13 +85,18 @@ jobs:
             2>&1 | tee build/build.log | xcbeautify --renderer github-actions
 
       - name: Run tests
-        timeout-minutes: 12
+        timeout-minutes: 15
         run: |
           set -o pipefail
+          # Same cloned-packages path as the build step: without it, test-without-building
+          # re-resolves the whole package graph into the default location and can burn the
+          # entire step budget on "Checking out ..." before running a single test.
           xcodebuild test-without-building \
             -scheme "$SCHEME" \
             -destination "id=${{ steps.sim.outputs.udid }}" \
             -derivedDataPath build/DerivedData \
+            -clonedSourcePackagesDirPath .spm-cache \
+            -disableAutomaticPackageResolution \
             2>&1 | tee build/test.log | xcbeautify --renderer github-actions
 
       # Swift Testing reports per-target "Test run with N tests" lines; xcodebuild's own
