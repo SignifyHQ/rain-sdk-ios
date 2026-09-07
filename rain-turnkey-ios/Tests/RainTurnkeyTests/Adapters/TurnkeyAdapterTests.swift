@@ -563,12 +563,11 @@ struct TurnkeyAdapterTests {
 
     // Broadcast routing, not the trusted-target guard: trust the arbitrary token this test sends
     // so the assertion is about what reached Turnkey.
+    // The default fixture RPC URL's host is the one MockURLProtocol intercepts — a live RPC URL
+    // here would send the adapter's eth_* calls to the real network (flaky/timeouts on CI).
     let (manager, _, builder) = TestManagers.turnkeyManager(
       turnkey: mockTurnkey,
-      configs: TestFixtures.configs(
-        chainId: RainChain.baseSepolia,
-        rpcUrl: "https://sepolia.base.org"
-      ),
+      configs: TestFixtures.configs(chainId: RainChain.baseSepolia),
       authPullChainIds: [RainChain.baseSepolia],
       authPullTokenAddresses: [RainChain.baseSepolia: TestFixtures.tokenAddress]
     )
