@@ -256,6 +256,65 @@ final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
     onRefreshSession?()
   }
 
+  // MARK: Managed auth seams
+
+  struct SendOtpCall: Equatable { let contact: String; let otpType: OtpType }
+  struct CompleteOtpCall: Equatable {
+    let otpId: String
+    let otpCode: String
+    let otpEncryptionTargetBundle: String
+    let contact: String
+    let otpType: OtpType
+  }
+  struct CreateWalletCall { let walletName: String; let accounts: [WalletAccountParams]; let mnemonicLength: Int }
+
+  var sendOtpCalls: [SendOtpCall] = []
+  var sendOtpError: Error?
+  var stubbedOtpChallenge = OtpChallenge(otpId: "otp-id", encryptionTargetBundle: "bundle")
+
+  var completeOtpCalls: [CompleteOtpCall] = []
+  var completeOtpError: Error?
+  /// Runs after a successful `completeOtp` — install the new session / authState here.
+  var onCompleteOtp: (() -> Void)?
+
+  var clearStoredSessionCallCount = 0
+  var createWalletCalls: [CreateWalletCall] = []
+  var createWalletError: Error?
+
+  func sendOtp(contact: String, otpType: OtpType) async throws -> OtpChallenge {
+    sendOtpCalls.append(SendOtpCall(contact: contact, otpType: otpType))
+    if let sendOtpError { throw sendOtpError }
+    return stubbedOtpChallenge
+  }
+
+  func completeOtp(
+    otpId: String,
+    otpCode: String,
+    otpEncryptionTargetBundle: String,
+    contact: String,
+    otpType: OtpType
+  ) async throws {
+    completeOtpCalls.append(CompleteOtpCall(
+      otpId: otpId, otpCode: otpCode, otpEncryptionTargetBundle: otpEncryptionTargetBundle,
+      contact: contact, otpType: otpType
+    ))
+    if let completeOtpError { throw completeOtpError }
+    onCompleteOtp?()
+  }
+
+  func clearStoredSession() {
+    clearStoredSessionCallCount += 1
+    session = nil
+    authState = .unAuthenticated
+  }
+
+  func createTurnkeyWallet(walletName: String, accounts: [WalletAccountParams], mnemonicLength: Int) async throws {
+    createWalletCalls.append(CreateWalletCall(
+      walletName: walletName, accounts: accounts, mnemonicLength: mnemonicLength
+    ))
+    if let createWalletError { throw createWalletError }
+  }
+
   func signRawPayload(
     signWith: String,
     payload: String,

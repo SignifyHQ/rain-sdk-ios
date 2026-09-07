@@ -1,6 +1,6 @@
 # Turnkey Support
 
-Rain SDK for iOS supports [Turnkey](https://turnkey.com) as a wallet provider, alongside the Portal MPC and Privy adapters. Turnkey ships as the `TurnkeyProvider` adapter in its own `rain-turnkey-ios` module (`RainTurnkey`), like the other providers. Turnkey authentication (passkeys, OAuth, OTP, auth proxy) happens **outside** Rain: the host app uses the official [Turnkey Swift SDK](https://docs.turnkey.com/sdks/swift/getting-started) to authenticate the user and then hands the live `TurnkeyContext` to Rain via `TurnkeyConfig` for wallet operations.
+Rain SDK for iOS supports [Turnkey](https://turnkey.com) as a wallet provider, alongside the Portal MPC and Privy adapters. Turnkey ships as the `TurnkeyProvider` adapter in its own `rain-turnkey-ios` module (`RainTurnkey`), like the other providers. Authentication has two modes. **Managed** (recommended): construct `TurnkeyConfig(organizationId:authProxyConfigId:)` and the SDK owns the email-OTP flow via Turnkey's auth proxy — `sendLoginCode` / `confirmLoginCode` / `logout` / `authState` on `TurnkeyProvider`, including EVM + Solana wallet provisioning on first login. **Bring-your-own**: the host app uses the official [Turnkey Swift SDK](https://docs.turnkey.com/sdks/swift/getting-started) to authenticate (passkeys, OAuth, OTP, auth proxy) and hands the live `TurnkeyContext` to Rain via `TurnkeyConfig(turnkey:)`.
 
 ## Requirements
 

@@ -6,7 +6,6 @@ import RainPortal
 import RainPrivy
 import PortalSwift
 import PrivySDK
-import TurnkeySwift
 
 /// App-side holder around the modular SDK.
 ///
@@ -151,21 +150,37 @@ final class RainSDKService: ObservableObject {
     return true
   }
 
-  /// Builds the SDK with the Turnkey provider and resolves the Turnkey-backed client.
-  func initializeTurnkey(
-    turnkey: TurnkeyContext,
-    walletAddress: String? = nil,
+  /// The managed Turnkey provider, created by ``prepareTurnkey(organizationId:authProxyConfigId:onSessionExpired:)``.
+  /// Authentication (`sendLoginCode` / `confirmLoginCode`) runs on it before Rain is initialized.
+  private(set) var turnkeyProvider: TurnkeyProvider?
+
+  /// Creates the managed Turnkey provider. The SDK owns Turnkey configuration and the email-OTP
+  /// flow from here on — the demo never touches the vendor SDK.
+  @discardableResult
+  func prepareTurnkey(
+    organizationId: String,
+    authProxyConfigId: String,
     onSessionExpired: (@Sendable () -> Void)? = nil
-  ) async throws {
+  ) -> TurnkeyProvider {
     RainLogger.isEnabled = true
-    closeActiveProvider()
     let provider = TurnkeyProvider(
       TurnkeyConfig(
-        turnkey: turnkey,
-        walletAddress: walletAddress,
+        organizationId: organizationId,
+        authProxyConfigId: authProxyConfigId,
         onSessionExpired: onSessionExpired
       )
     )
+    turnkeyProvider = provider
+    return provider
+  }
+
+  /// Builds the SDK with the prepared (and authenticated) Turnkey provider and resolves the
+  /// Turnkey-backed client.
+  func initializeTurnkey() async throws {
+    guard let provider = turnkeyProvider else {
+      throw RainSDKError.invalidConfig(details: "Call prepareTurnkey before initializeTurnkey")
+    }
+    closeActiveProvider()
     let sdk = try builder(networkConfigs: WalletChain.networkConfigs)
       .register(provider)
       .build()

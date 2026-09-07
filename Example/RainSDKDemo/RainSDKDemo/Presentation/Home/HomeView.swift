@@ -103,27 +103,27 @@ struct HomeView: View {
         placeholder: "your-turnkey-parent-org-id",
         text: $viewModel.turnkeyOrgId
       )
-      .disabled(viewModel.turnkeyOtpId != nil)
+      .disabled(viewModel.turnkeyOtpSent)
 
       labeledField(
         title: "Auth Proxy Config ID",
         placeholder: "auth proxy config id",
         text: $viewModel.turnkeyAuthProxyConfigId
       )
-      .disabled(viewModel.turnkeyOtpId != nil)
+      .disabled(viewModel.turnkeyOtpSent)
 
       labeledField(title: "Email", placeholder: "you@example.com", text: $viewModel.turnkeyEmail)
-        .disabled(viewModel.turnkeyOtpId != nil)
+        .disabled(viewModel.turnkeyOtpSent)
 
       actionButton(
-        title: viewModel.turnkeyOtpId != nil ? "OTP sent" : "Init Turnkey & Send OTP",
+        title: viewModel.turnkeyOtpSent ? "OTP sent" : "Init Turnkey & Send OTP",
         enabled: viewModel.canSendTurnkeyOtp,
         isLoading: viewModel.isLoading
       ) {
         await viewModel.sendTurnkeyOtp()
       }
 
-      if viewModel.turnkeyOtpId != nil {
+      if viewModel.turnkeyOtpSent {
         labeledField(title: "OTP Code", placeholder: "123456", text: $viewModel.turnkeyOtpCode)
           .disabled(viewModel.turnkeySessionActive)
 

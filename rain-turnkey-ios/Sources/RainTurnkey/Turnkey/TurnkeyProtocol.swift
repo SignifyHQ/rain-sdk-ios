@@ -28,6 +28,13 @@ internal protocol TurnkeyClientProtocol {
 
 extension TurnkeyClient: TurnkeyClientProtocol {}
 
+/// An in-flight OTP: the id and TEE-signed encryption bundle from `sendOtp`, needed to complete
+/// the flow. Module-owned so test doubles can construct it.
+internal struct OtpChallenge: Sendable, Equatable {
+  let otpId: String
+  let encryptionTargetBundle: String
+}
+
 internal protocol TurnkeyContextProtocol: AnyObject {
   var wallets: [Wallet] { get }
   var session: Session? { get }
@@ -48,6 +55,33 @@ internal protocol TurnkeyContextProtocol: AnyObject {
     encoding: PayloadEncoding,
     hashFunction: HashFunction
   ) async throws -> SignRawPayloadResult
+
+  // MARK: Managed auth (email OTP via the auth proxy)
+
+  /// Starts an OTP flow. Distinctly named so it cannot collide with the vendor's `initOtp`, and
+  /// returns a module-owned value so mocks need not construct the vendor's result type.
+  func sendOtp(contact: String, otpType: OtpType) async throws -> OtpChallenge
+
+  /// Completes the OTP flow (signup-or-login). Distinctly named and fixed-arity so it cannot
+  /// collide with the vendor's defaulted `completeOtp(...)`.
+  func completeOtp(
+    otpId: String,
+    otpCode: String,
+    otpEncryptionTargetBundle: String,
+    contact: String,
+    otpType: OtpType
+  ) async throws
+
+  /// Clears the stored default session (logout / pre-login cleanup). Safe no-op when none exists.
+  func clearStoredSession()
+
+  /// Creates a wallet with the given accounts on the authenticated account. Distinctly named so
+  /// it cannot collide with the vendor's defaulted `createWallet(...)`.
+  func createTurnkeyWallet(
+    walletName: String,
+    accounts: [WalletAccountParams],
+    mnemonicLength: Int
+  ) async throws
 }
 
 extension TurnkeyContext: TurnkeyContextProtocol {
@@ -69,5 +103,43 @@ extension TurnkeyContext: TurnkeyContextProtocol {
     } else {
       try await refreshSession()
     }
+  }
+
+  internal func sendOtp(contact: String, otpType: OtpType) async throws -> OtpChallenge {
+    let result = try await initOtp(contact: contact, otpType: otpType)
+    return OtpChallenge(otpId: result.otpId, encryptionTargetBundle: result.otpEncryptionTargetBundle)
+  }
+
+  internal func completeOtp(
+    otpId: String,
+    otpCode: String,
+    otpEncryptionTargetBundle: String,
+    contact: String,
+    otpType: OtpType
+  ) async throws {
+    _ = try await completeOtp(
+      otpId: otpId,
+      otpCode: otpCode,
+      otpEncryptionTargetBundle: otpEncryptionTargetBundle,
+      contact: contact,
+      otpType: otpType,
+      invalidateExisting: true
+    )
+  }
+
+  internal func clearStoredSession() {
+    clearSession(for: TurnkeySwift.Constants.Session.defaultSessionKey)
+  }
+
+  internal func createTurnkeyWallet(
+    walletName: String,
+    accounts: [WalletAccountParams],
+    mnemonicLength: Int
+  ) async throws {
+    _ = try await createWallet(
+      walletName: walletName,
+      accounts: accounts,
+      mnemonicLength: Int32(mnemonicLength)
+    )
   }
 }

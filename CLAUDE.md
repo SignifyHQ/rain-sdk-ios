@@ -2,6 +2,10 @@
 
 ## Git
 - Never commit or push changes unless explicitly asked.
+- Commit messages: single line only, no body.
+
+## Build & test
+- Test command: `xcodebuild -scheme RainSDK-Package -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test` (always use the iPhone 17 Pro simulator).
 
 ## Architecture (post Turnkey extraction, 2026-09-03)
 
@@ -20,8 +24,11 @@ import per provider suffices. The 1.x `RainSDK` umbrella module has been REMOVED
   `RainPrivy` (`rain-privy-ios`) — Privy embedded wallet (EIP-1193 custody, reads via Rain RPC).
 - Adapters follow one shape: descriptor + config, wallet adapter over the vendor SDK, session
   coordinator/policy (`onSessionExpired`), error mapping registered via
-  `RainSDKError.registerErrorMapper` from the provider's init. Auth happens OUTSIDE Rain; the host
-  hands in an authenticated vendor object.
+  `RainSDKError.registerErrorMapper` from the provider's init. Portal/Privy: auth happens OUTSIDE
+  Rain (host hands in an authenticated vendor object). Turnkey has two modes: BYO (same), and
+  MANAGED — `TurnkeyConfig(organizationId:authProxyConfigId:)`, SDK configures the TurnkeyContext
+  singleton (one-shot per process, TurnkeyManagedConfigurator) and TurnkeyProvider exposes email-OTP
+  auth (sendLoginCode/confirmLoginCode/logout/authState) + EVM/Solana wallet provisioning on login.
 - SPI convention: adapter modules reach core internals via `@_spi(RainAdapter) import RainCore`
   (`ChainReader`/`MinedReceipt`, `ProviderContext.evmChainReader`, `RainSolanaSupport` seams,
   `SolanaRpcClient`, `SolanaTransferComposer`, `JsonRpcClient`, `SolanaTransactionDecoder`,
@@ -42,11 +49,21 @@ descriptor struct). No typealiases at all: both renames are clean breaks in the 
 
 ## Planned next
 
-`rain-wallet-ios` / `RainWallet`: Rain-branded provider on top of RainTurnkey with embedded Rain
-org id + auth-proxy config id (placeholders first); wallet-neutral naming; auth INSIDE the SDK —
-email OTP only (decided) via Turnkey's auth proxy. Public surface: `RainWallet` auth façade,
-`RainWalletConfig`, descriptor struct `RainProvider`, id `ProviderId.rain`, neutral session
-surface (`RainWalletSessionState`, publisher, refreshSession). RainWallet @_exported imports
-RainCore only — NEVER RainTurnkey (no Turnkey symbol on a bare `import RainWallet`). Needs
-`TurnkeyErrorMapping.registerOnce` widened to @_spi. `TurnkeyContext` is a process-wide singleton
-⇒ RainWallet and BYO RainTurnkey mutually exclusive; guard in `RainSdk.build()`.
+Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and RainWallet:
+
+- PR B1 (DONE 2026-09-07), RainTurnkey managed auth: `TurnkeyConfig` gains a managed init (`organizationId` +
+  `authProxyConfigId`) alongside the existing BYO authenticated-context init (kept, non-breaking).
+  Managed mode: the SDK calls `TurnkeyContext.configure` itself (singleton, process-guarded) and
+  `TurnkeyProvider` exposes auth — email OTP only: `sendLoginCode(email:)` / `confirmLoginCode(_:)`
+  (initOtp → verifyOtp + completeOtp, login-or-signup), `logout()`, `authState` publisher mapped to
+  a Rain-owned enum. Auth calls in BYO mode throw invalidConfig. TurnkeyContextProtocol + MockTurnkey
+  grow the auth seams. Demo app's TurnkeyAuthSample dissolves into this feature.
+- PR B2, `rain-wallet-ios` / `RainWallet`: pure renaming layer over managed RainTurnkey — NO
+  embedded ids; `RainWalletConfig(organizationId:authConfigId:)` is host-supplied (Rain issues the
+  values to partners). Descriptor struct `RainProvider`, id `ProviderId.rain`, neutral session
+  surface (`RainWalletSessionState`, publisher, refreshSession). RainWallet @_exported imports
+  RainCore only — NEVER RainTurnkey (no Turnkey symbol on a bare `import RainWallet`). Mutual
+  exclusion guard in `RainSdk.build()` (.rain + .turnkey cannot both register — one TurnkeyContext
+  per process). Vendor concealment is naming-level only (no embedded config anymore). Demo app
+  gains a RainWallet provider option (4th tab/flow: org id + auth config id entry, email OTP via
+  the RainWallet methods, then the standard wallet screens), linking rain-wallet-ios.

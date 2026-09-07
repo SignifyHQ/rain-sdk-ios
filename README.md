@@ -25,7 +25,7 @@ The 1.x `RainSDK` umbrella module has been removed — link the provider product
 ## Features
 
 - **Portal wallet integration** — Register a `PortalProvider` with a Portal session token; resolve a `RainClient` and use the connected MPC wallet for signing and sending transactions. See [rain-portal-ios/README.md](rain-portal-ios/README.md#session-expiry-and-retry) for session refresh and retry behavior.
-- **Turnkey wallet integration** — Register a `TurnkeyProvider` with an authenticated `TurnkeyContext` (passkeys / auth proxy / OAuth / OTP handled outside Rain by the Turnkey Swift SDK). Ships in its own `rain-turnkey-ios` module.
+- **Turnkey wallet integration** — Managed mode: configure with your Turnkey org id + auth-proxy config id and the SDK runs email-OTP auth itself (`sendLoginCode` / `confirmLoginCode`), provisioning EVM + Solana wallets on first login. Or bring your own authenticated `TurnkeyContext`. Ships in its own `rain-turnkey-ios` module.
 - **Privy wallet integration** — Register a `PrivyProvider` with an authenticated `Privy` singleton (auth + embedded-wallet provisioning handled outside Rain by the Privy iOS SDK); custody routes through Privy's EIP-1193 embedded wallet.
 - **Pluggable providers** — Bring your own `WalletProvider` behind a `ProviderDescriptor` and register it; resolve providers by id or by `Capability`.
 - **Wallet-agnostic utilities** — EIP-712 message + withdraw calldata building are available straight off `RainSdk` with no provider resolved — use them with your own wallet or backend.
@@ -146,30 +146,34 @@ let client = try await rain.provider(.portal)
 
 ### 2. Turnkey (full wallet flow)
 
-Turnkey authentication happens **outside** Rain — drive Turnkey's Swift SDK (auth proxy / passkeys /
-OAuth / OTP), then hand the authenticated `TurnkeyContext` to Rain:
-
-- Proxy middleware: `https://docs.turnkey.com/sdks/swift/proxy-middleware`
-- Passkeys: `https://docs.turnkey.com/sdks/swift/register-passkey`
+**Managed mode (recommended)** — the SDK owns authentication (email OTP via Turnkey's auth
+proxy) and provisions EVM + Solana wallets on first login:
 
 ```swift
 import RainTurnkey   // re-exports RainCore
-import TurnkeySwift
+
+let provider = TurnkeyProvider(
+    TurnkeyConfig(organizationId: "<org-id>", authProxyConfigId: "<auth-proxy-config-id>")
+)
+
+await provider.awaitSessionRestore()
+if !provider.hasActiveSession() {
+    try await provider.sendLoginCode(email: "user@example.com")
+    try await provider.confirmLoginCode(code) // signup-or-login
+}
 
 let rain = try RainSdk.builder()
     .rpcEndpoints([43114: "https://avalanche-c-chain-rpc.publicnode.com"])
-    .register(
-        TurnkeyProvider(
-            TurnkeyConfig(
-                turnkey: turnkeyContext,
-                walletAddress: nil // omit to use the first Ethereum account from the context
-            )
-        )
-    )
+    .register(provider)
     .build()
 
 let client = try await rain.provider(.turnkey)
 ```
+
+**Bring-your-own** — drive Turnkey's Swift SDK yourself (auth proxy / passkeys / OAuth / OTP),
+then hand the authenticated `TurnkeyContext` to Rain via
+`TurnkeyConfig(turnkey: turnkeyContext, walletAddress: nil)` and register the same way. See
+[rain-turnkey-ios/README.md](rain-turnkey-ios/README.md) for both modes in full.
 
 ### 3. Bring your own provider, or resolve by capability
 
