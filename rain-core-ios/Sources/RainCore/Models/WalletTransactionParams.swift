@@ -1,7 +1,7 @@
 import Foundation
 
 /// Provider-agnostic transaction parameters for sending a transaction.
-/// Used by `RainWalletProvider`; adapters convert to/from provider-specific types (e.g. Portal's `ETHTransactionParam`).
+/// Used by `WalletProvider`; adapters convert to/from provider-specific types (e.g. Portal's `ETHTransactionParam`).
 public struct WalletTransactionParams: Sendable {
   public let from: String
   public let to: String

@@ -8,9 +8,9 @@ import Foundation
 /// A provider descriptor:
 /// - `id` / `capabilities` are cheap and available before any wallet is materialized, so the
 ///   registry can resolve by id or by capability without constructing the provider.
-/// - `create(context:)` lazily builds the vendor-backed `RainWalletProvider`, receiving the
+/// - `create(context:)` lazily builds the vendor-backed `WalletProvider`, receiving the
 ///   shared vendor-free `ProviderContext`. It may probe the wallet and throw if unavailable.
-public protocol RainProvider: Sendable {
+public protocol ProviderDescriptor: Sendable {
   /// Stable identifier used to resolve this provider from the registry.
   var id: ProviderId { get }
 
@@ -19,9 +19,9 @@ public protocol RainProvider: Sendable {
 
   /// Lazily materializes the vendor-backed wallet provider. Called once per resolution and
   /// cached by `RainSdk`. Receives the shared, vendor-free infrastructure context.
-  func create(context: ProviderContext) async throws -> any RainWalletProvider
+  func create(context: ProviderContext) async throws -> any WalletProvider
 }
 
-public extension RainProvider {
+public extension ProviderDescriptor {
   var capabilities: Set<Capability> { [] }
 }

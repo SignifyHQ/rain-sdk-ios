@@ -1,8 +1,9 @@
 import Foundation
 
 /// Abstraction for a wallet/signer used for address, balance, transfers, and signing.
-/// Implementations: Portal (via `PortalWalletProviderAdapter`), Web3Auth, or other providers.
-public protocol RainWalletProvider: Sendable {
+/// The port of the ports-and-adapters design: `TurnkeyWalletProviderAdapter`,
+/// `PortalWalletProviderAdapter`, Privy's adapter, or a host's own implementation.
+public protocol WalletProvider: Sendable {
   /// Returns the wallet address for the given chain.
   func address(
   ) async throws -> String
@@ -52,7 +53,7 @@ public protocol RainWalletProvider: Sendable {
   ) async throws -> [RainTransaction]
 }
 
-public extension RainWalletProvider {
+public extension WalletProvider {
   /// EVM-only providers inherit the single-address behaviour.
   func getAddress(chainId: Int) async throws -> String {
     try await address()

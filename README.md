@@ -15,7 +15,7 @@ your dependency graph. Each adapter re-exports `RainCore`, so one import per pro
 
 | Module        | Contains                                                                 |
 |---------------|--------------------------------------------------------------------------|
-| `RainCore`    | The `RainWalletProvider` port, capability model, provider registry (`RainSdk`), and all Rain domain logic. No wallet vendor SDKs. |
+| `RainCore`    | The `WalletProvider` port, capability model, provider registry (`RainSdk`), and all Rain domain logic. No wallet vendor SDKs. |
 | `RainTurnkey` | The Turnkey adapter (`TurnkeyProvider`); depends on `RainCore` + Turnkey's Swift SDK. |
 | `RainPortal`  | The Portal MPC adapter (`PortalProvider`); depends on `RainCore` + `PortalSwift`. |
 | `RainPrivy`   | The Privy embedded-key adapter (`PrivyProvider`); depends on `RainCore` + the Privy iOS SDK (`Privy`). Custody (sign/send) routes through Privy's EIP-1193 embedded wallet; balance/fee reads use Rain's configured RPC. |
@@ -27,7 +27,7 @@ The 1.x `RainSDK` umbrella module has been removed — link the provider product
 - **Portal wallet integration** — Register a `PortalProvider` with a Portal session token; resolve a `RainClient` and use the connected MPC wallet for signing and sending transactions. See [rain-portal-ios/README.md](rain-portal-ios/README.md#session-expiry-and-retry) for session refresh and retry behavior.
 - **Turnkey wallet integration** — Register a `TurnkeyProvider` with an authenticated `TurnkeyContext` (passkeys / auth proxy / OAuth / OTP handled outside Rain by the Turnkey Swift SDK). Ships in its own `rain-turnkey-ios` module.
 - **Privy wallet integration** — Register a `PrivyProvider` with an authenticated `Privy` singleton (auth + embedded-wallet provisioning handled outside Rain by the Privy iOS SDK); custody routes through Privy's EIP-1193 embedded wallet.
-- **Pluggable providers** — Bring your own `RainWalletProvider` behind a `RainProvider` descriptor and register it; resolve providers by id or by `Capability`.
+- **Pluggable providers** — Bring your own `WalletProvider` behind a `ProviderDescriptor` and register it; resolve providers by id or by `Capability`.
 - **Wallet-agnostic utilities** — EIP-712 message + withdraw calldata building are available straight off `RainSdk` with no provider resolved — use them with your own wallet or backend.
 - **EIP-712 message building** — Build typed data for admin signature required by the collateral contract.
 - **Withdrawal transaction building** — Build ABI-encoded withdraw calldata for submission.
@@ -72,7 +72,7 @@ unselected provider's vendor SDK is never linked into your app:
 | `rain-turnkey-ios` | Turnkey wallets | `import RainTurnkey` |
 | `rain-portal-ios` | Portal MPC wallets | `import RainPortal` |
 | `rain-privy-ios` | Privy embedded wallets | `import RainPrivy` |
-| `rain-core-ios` | Transaction building with your own wallet, or a custom `RainWalletProvider` | `import RainCore` |
+| `rain-core-ios` | Transaction building with your own wallet, or a custom `WalletProvider` | `import RainCore` |
 
 `RainCore` comes transitively with every adapter — you never list it twice — and each adapter
 re-exports it, so the adapter import alone surfaces the full SDK (`RainSdk`, `RainClient`, models,
@@ -174,7 +174,7 @@ let client = try await rain.provider(.turnkey)
 ### 3. Bring your own provider, or resolve by capability
 
 The registry is designed for the multi-provider case; a single-provider app is just the trivial
-`N = 1` instance of it. Register your own `RainWalletProvider` behind a `RainProvider` descriptor,
+`N = 1` instance of it. Register your own `WalletProvider` behind a `ProviderDescriptor`,
 then resolve by id or by capability:
 
 ```swift

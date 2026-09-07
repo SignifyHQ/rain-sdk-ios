@@ -7,9 +7,9 @@ import Web3Core
 /// ``RainSdk`` when a provider is resolved; not created directly by hosts.
 ///
 /// Holds the shared vendor-free services (transaction builder, token store) plus the one
-/// `RainWalletProvider` this client speaks to. All wallet operations delegate to that provider.
+/// `WalletProvider` this client speaks to. All wallet operations delegate to that provider.
 final class RainSdkManager: RainClient, @unchecked Sendable {
-  let walletProvider: any RainWalletProvider
+  let walletProvider: any WalletProvider
   private let networkConfigs: [NetworkConfig]
   let transactionBuilderService: TransactionBuilderProtocol
   let tokenStore: TokenMetadataStore
@@ -41,7 +41,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
   let approvalConfirmationInterval: Duration
 
   init(
-    walletProvider: any RainWalletProvider,
+    walletProvider: any WalletProvider,
     networkConfigs: [NetworkConfig],
     transactionBuilder: TransactionBuilderProtocol,
     tokenStore: TokenMetadataStore,

@@ -44,7 +44,7 @@ enum TestFixtures {
 //
 // The monolith's `RainSDKManager()` + `initialize*`/`setWalletProvider` lifecycle is gone. A
 // `RainSdkManager` (the concrete `RainClient`) is now always constructed already bound to a
-// resolved `RainWalletProvider`. `portalManager` wires the `PortalWalletProviderAdapter` directly,
+// resolved `WalletProvider`. `portalManager` wires the `PortalWalletProviderAdapter` directly,
 // the same seam `PortalProvider.create(context:)` uses.
 
 enum TestManagers {

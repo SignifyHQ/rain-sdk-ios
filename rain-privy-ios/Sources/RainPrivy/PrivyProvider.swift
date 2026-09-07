@@ -38,7 +38,7 @@ public struct PrivyConfig: Sendable {
   }
 }
 
-/// Privy adapter — the registrable ``RainProvider`` for Privy's embedded-key signer.
+/// Privy adapter — the registrable ``ProviderDescriptor`` for Privy's embedded-key signer.
 ///
 /// Custody (signing, broadcasting) routes through Privy's EIP-1193 embedded-wallet provider;
 /// balance / fee reads use Rain's configured RPC via ``PrivyRpcClient``.
@@ -60,7 +60,7 @@ public struct PrivyConfig: Sendable {
 ///     .build()
 /// let client = try await rain.provider(.privy)
 /// ```
-public struct PrivyProvider: RainProvider {
+public struct PrivyProvider: ProviderDescriptor {
   private let config: PrivyConfig
   private let coordinator: PrivySessionCoordinator
 
@@ -110,7 +110,7 @@ public struct PrivyProvider: RainProvider {
     coordinator.stopMonitoring()
   }
 
-  public func create(context: ProviderContext) async throws -> any RainWalletProvider {
+  public func create(context: ProviderContext) async throws -> any WalletProvider {
     // Always watch: beyond the optional host hook, the watcher drives cached-account eviction
     // on session death so a re-login can never sign with the previous user's accounts.
     coordinator.startMonitoring()
