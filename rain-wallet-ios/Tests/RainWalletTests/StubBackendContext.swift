@@ -1,0 +1,54 @@
+import Combine
+import Foundation
+import TurnkeySwift
+@testable import RainTurnkey
+
+/// Minimal inert `TurnkeyContextProtocol` so RainWallet tests can construct providers without
+/// touching the vendor singleton (which traps unconfigured in a test host). Test targets cannot
+/// import each other, so this is deliberately not RainTurnkeyTests' richer `MockTurnkey`.
+final class StubBackendContext: TurnkeyContextProtocol, @unchecked Sendable {
+  var wallets: [Wallet] = []
+  var turnkeyClient: (any TurnkeyClientProtocol)?
+  var session: Session?
+  var authState: AuthState = .unAuthenticated
+
+  var authStatePublisher: AnyPublisher<AuthState, Never> {
+    Just(authState).eraseToAnyPublisher()
+  }
+
+  var sessionPublisher: AnyPublisher<Session?, Never> {
+    Just(session).eraseToAnyPublisher()
+  }
+
+  func refreshWallets() async throws {}
+  func refreshTurnkeySession(expirationSeconds: String?) async throws {}
+
+  func signRawPayload(
+    signWith: String,
+    payload: String,
+    encoding: PayloadEncoding,
+    hashFunction: HashFunction
+  ) async throws -> SignRawPayloadResult {
+    throw RainSDKError.walletUnavailable
+  }
+
+  func sendOtp(contact: String, otpType: OtpType) async throws -> OtpChallenge {
+    OtpChallenge(otpId: "otp-id", encryptionTargetBundle: "bundle")
+  }
+
+  func completeOtp(
+    otpId: String,
+    otpCode: String,
+    otpEncryptionTargetBundle: String,
+    contact: String,
+    otpType: OtpType
+  ) async throws {}
+
+  func clearStoredSession() {}
+
+  func createTurnkeyWallet(
+    walletName: String,
+    accounts: [WalletAccountParams],
+    mnemonicLength: Int
+  ) async throws {}
+}

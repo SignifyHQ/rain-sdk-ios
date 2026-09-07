@@ -3,7 +3,7 @@ import Security
 
 /// Keychain copy of the last working credentials, read once at launch to resume the session.
 enum SessionStore {
-  enum Provider: String { case portal, turnkey, privy }
+  enum Provider: String { case portal, turnkey, privy, rainWallet }
 
   private static let service = Bundle.main.bundleIdentifier ?? "com.rain.sdk"
   private static let allKeys = [
@@ -31,6 +31,11 @@ enum SessionStore {
     get { read("privyAppClientId") ?? "" } set { write("privyAppClientId", newValue) }
   }
   static var privyEmail: String { get { read("privyEmail") ?? "" } set { write("privyEmail", newValue) } }
+  static var rainWalletOrgId: String { get { read("rainWalletOrgId") ?? "" } set { write("rainWalletOrgId", newValue) } }
+  static var rainWalletAuthConfigId: String {
+    get { read("rainWalletAuthConfigId") ?? "" } set { write("rainWalletAuthConfigId", newValue) }
+  }
+  static var rainWalletEmail: String { get { read("rainWalletEmail") ?? "" } set { write("rainWalletEmail", newValue) } }
 
   static func clear() {
     allKeys.forEach { write($0, nil) }

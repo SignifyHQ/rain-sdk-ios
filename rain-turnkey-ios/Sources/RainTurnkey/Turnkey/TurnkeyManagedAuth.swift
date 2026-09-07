@@ -39,6 +39,12 @@ internal enum TurnkeyManagedConfigurator {
     )
   }
 
+  /// Test seam: how a managed provider obtains the process-wide context. The vendor's `.shared`
+  /// traps when unconfigured, so tests replace this rather than ever touching the real singleton.
+  nonisolated(unsafe) internal static var sharedContext: @Sendable () -> TurnkeyContextProtocol = {
+    TurnkeyContext.shared
+  }
+
   /// Configures the Turnkey singleton once per process. Returns the error to surface on every
   /// subsequent call when the ids differ from the ones the process was configured with.
   internal static func configure(organizationId: String, authProxyConfigId: String) -> RainSDKError? {

@@ -462,6 +462,14 @@ public final class RainSdk: @unchecked Sendable {
         )
       }
       try validateAuthPullConfig()
+      // The Rain wallet and the Turnkey provider share one process-wide backend context, so an
+      // app can use one or the other — never both at once.
+      if descriptors[.rain] != nil, descriptors[.turnkey] != nil {
+        throw RainSDKError.invalidConfig(
+          details: "The Rain wallet provider and the Turnkey provider cannot both be registered; "
+            + "they share one process-wide wallet backend"
+        )
+      }
       return RainSdk(
         networkConfigs: networkConfigs,
         descriptors: descriptors,

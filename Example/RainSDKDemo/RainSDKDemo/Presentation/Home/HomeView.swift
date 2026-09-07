@@ -24,6 +24,7 @@ struct HomeView: View {
           case .portal: portalSection
           case .turnkey: turnkeySection
           case .privy: privySection
+          case .rainWallet: rainWalletSection
           }
 
           // Stays visible when the session is dead so the hidden feature grid is explained.
@@ -143,6 +144,60 @@ struct HomeView: View {
           isLoading: viewModel.isLoading
         ) {
           await viewModel.initializeRainWithTurnkey()
+        }
+      }
+    }
+  }
+
+  // MARK: - Rain Wallet
+
+  private var rainWalletSection: some View {
+    card("Rain Wallet Configuration (Email Login Code)") {
+      labeledField(
+        title: "Organization ID",
+        placeholder: "rain-issued organization id",
+        text: $viewModel.rainWalletOrgId
+      )
+      .disabled(viewModel.rainWalletOtpSent)
+
+      labeledField(
+        title: "Auth Config ID",
+        placeholder: "rain-issued auth config id",
+        text: $viewModel.rainWalletAuthConfigId
+      )
+      .disabled(viewModel.rainWalletOtpSent)
+
+      labeledField(title: "Email", placeholder: "you@example.com", text: $viewModel.rainWalletEmail)
+        .disabled(viewModel.rainWalletOtpSent)
+
+      actionButton(
+        title: viewModel.rainWalletOtpSent ? "Code sent" : "Init Rain Wallet & Send Code",
+        enabled: viewModel.canSendRainWalletOtp,
+        isLoading: viewModel.isLoading
+      ) {
+        await viewModel.sendRainWalletOtp()
+      }
+
+      if viewModel.rainWalletOtpSent {
+        labeledField(title: "Login Code", placeholder: "123456", text: $viewModel.rainWalletOtpCode)
+          .disabled(viewModel.rainWalletSessionActive)
+
+        actionButton(
+          title: viewModel.rainWalletSessionActive ? "✅ Session active" : "Verify & Log In",
+          enabled: viewModel.canVerifyRainWalletOtp,
+          isLoading: viewModel.isLoading
+        ) {
+          await viewModel.verifyRainWalletOtp()
+        }
+      }
+
+      if viewModel.rainWalletSessionActive {
+        actionButton(
+          title: viewModel.isInitialized ? "✅ Rain Initialized" : "Initialize Rain w/ Rain Wallet",
+          enabled: !viewModel.isLoading && !viewModel.isInitialized,
+          isLoading: viewModel.isLoading
+        ) {
+          await viewModel.initializeRainWithRainWallet()
         }
       }
     }

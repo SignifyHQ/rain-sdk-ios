@@ -2,7 +2,7 @@
 
 ## Git
 - Never commit or push changes unless explicitly asked.
-- Commit messages: single line only, no body.
+- Commit messages: single line only, no body. No conventional-commit prefixes (no `feat:`/`fix(scope):`). Always start with a capital letter.
 
 ## Build & test
 - Test command: `xcodebuild -scheme RainSDK-Package -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test` (always use the iPhone 17 Pro simulator).
@@ -19,9 +19,16 @@ import per provider suffices. The 1.x `RainSDK` umbrella module has been REMOVED
   (JSON-RPC + Multicall3), Solana stack (sentinel ids 900/901/902), token store, Rain issuing API
   (CST sessions, collateral contracts, admin signatures), Auth Pull (ERC-20 allowance surface),
   error model. No wallet vendor SDKs.
-- `RainTurnkey` (`rain-turnkey-ios`) — Turnkey BYO adapter (multi-chain EVM+Solana; `.multiChain`,
-  `.biometricGate`). `RainPortal` (`rain-portal-ios`) — Portal MPC, EVM-only.
-  `RainPrivy` (`rain-privy-ios`) — Privy embedded wallet (EIP-1193 custody, reads via Rain RPC).
+- `RainTurnkey` (`rain-turnkey-ios`) — Turnkey adapter, BYO + managed modes (multi-chain
+  EVM+Solana; `.multiChain`, `.biometricGate`). `RainPortal` (`rain-portal-ios`) — Portal MPC,
+  EVM-only. `RainPrivy` (`rain-privy-ios`) — Privy embedded wallet (EIP-1193 custody, reads via
+  Rain RPC). `RainWallet` (`rain-wallet-ios`) — Rain-branded provider: a wallet-neutral renaming
+  layer over managed RainTurnkey (descriptor struct `RainProvider`, id `.rain`, host-supplied
+  `RainWalletConfig(organizationId:authConfigId:)`); `internal import RainTurnkey` so no vendor
+  type can leak into its public surface (compiler-enforced), @_exported RainCore only; mutually
+  exclusive with `.turnkey` (guard in `RainSdk.build()`). Test seams for managed providers:
+  `TurnkeyManagedConfigurator.configureImpl` + `.sharedContext` (the vendor singleton traps
+  unconfigured in test hosts).
 - Adapters follow one shape: descriptor + config, wallet adapter over the vendor SDK, session
   coordinator/policy (`onSessionExpired`), error mapping registered via
   `RainSDKError.registerErrorMapper` from the provider's init. Portal/Privy: auth happens OUTSIDE
@@ -58,7 +65,7 @@ Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and Rai
   (initOtp → verifyOtp + completeOtp, login-or-signup), `logout()`, `authState` publisher mapped to
   a Rain-owned enum. Auth calls in BYO mode throw invalidConfig. TurnkeyContextProtocol + MockTurnkey
   grow the auth seams. Demo app's TurnkeyAuthSample dissolves into this feature.
-- PR B2, `rain-wallet-ios` / `RainWallet`: pure renaming layer over managed RainTurnkey — NO
+- PR B2 (DONE 2026-09-07), `rain-wallet-ios` / `RainWallet`: pure renaming layer over managed RainTurnkey — NO
   embedded ids; `RainWalletConfig(organizationId:authConfigId:)` is host-supplied (Rain issues the
   values to partners). Descriptor struct `RainProvider`, id `ProviderId.rain`, neutral session
   surface (`RainWalletSessionState`, publisher, refreshSession). RainWallet @_exported imports

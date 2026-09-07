@@ -11,6 +11,7 @@
 		1940E11B2F37B1A4003B6731 /* rain-portal-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6721 /* rain-portal-ios */; };
 		1940E11B2F37B1A4003B6732 /* rain-privy-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6722 /* rain-privy-ios */; };
 		1940E11B2F37B1A4003B6733 /* rain-turnkey-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6723 /* rain-turnkey-ios */; };
+		1940E11B2F37B1A4003B6734 /* rain-wallet-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6724 /* rain-wallet-ios */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +48,7 @@
 				1940E11B2F37B1A4003B6731 /* rain-portal-ios in Frameworks */,
 				1940E11B2F37B1A4003B6732 /* rain-privy-ios in Frameworks */,
 				1940E11B2F37B1A4003B6733 /* rain-turnkey-ios in Frameworks */,
+				1940E11B2F37B1A4003B6734 /* rain-wallet-ios in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -407,6 +409,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1940E1192F37B1A4003B6740 /* XCLocalSwiftPackageReference "../.." */;
 			productName = "rain-turnkey-ios";
+		};
+		1940E11A2F37B1A4003B6724 /* rain-wallet-ios */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1940E1192F37B1A4003B6740 /* XCLocalSwiftPackageReference "../.." */;
+			productName = "rain-wallet-ios";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -18,6 +18,7 @@ your dependency graph. Each adapter re-exports `RainCore`, so one import per pro
 | `RainCore`    | The `WalletProvider` port, capability model, provider registry (`RainSdk`), and all Rain domain logic. No wallet vendor SDKs. |
 | `RainTurnkey` | The Turnkey adapter (`TurnkeyProvider`); depends on `RainCore` + Turnkey's Swift SDK. |
 | `RainPortal`  | The Portal MPC adapter (`PortalProvider`); depends on `RainCore` + `PortalSwift`. |
+| `RainWallet`  | The Rain-branded wallet (`RainProvider`); Rain issues the org + auth config ids, and the SDK owns authentication (email login codes), wallet provisioning, and sessions. |
 | `RainPrivy`   | The Privy embedded-key adapter (`PrivyProvider`); depends on `RainCore` + the Privy iOS SDK (`Privy`). Custody (sign/send) routes through Privy's EIP-1193 embedded wallet; balance/fee reads use Rain's configured RPC. |
 
 The 1.x `RainSDK` umbrella module has been removed — link the provider product you use.
@@ -26,6 +27,7 @@ The 1.x `RainSDK` umbrella module has been removed — link the provider product
 
 - **Portal wallet integration** — Register a `PortalProvider` with a Portal session token; resolve a `RainClient` and use the connected MPC wallet for signing and sending transactions. See [rain-portal-ios/README.md](rain-portal-ios/README.md#session-expiry-and-retry) for session refresh and retry behavior.
 - **Turnkey wallet integration** — Managed mode: configure with your Turnkey org id + auth-proxy config id and the SDK runs email-OTP auth itself (`sendLoginCode` / `confirmLoginCode`), provisioning EVM + Solana wallets on first login. Or bring your own authenticated `TurnkeyContext`. Ships in its own `rain-turnkey-ios` module.
+- **Rain wallet** — Register a `RainProvider` with your Rain-issued organization id + auth config id; the SDK runs email login-code auth (`sendLoginCode` / `confirmLoginCode`), provisions EVM + Solana wallets on first login, and manages the session. See [rain-wallet-ios/README.md](rain-wallet-ios/README.md).
 - **Privy wallet integration** — Register a `PrivyProvider` with an authenticated `Privy` singleton (auth + embedded-wallet provisioning handled outside Rain by the Privy iOS SDK); custody routes through Privy's EIP-1193 embedded wallet.
 - **Pluggable providers** — Bring your own `WalletProvider` behind a `ProviderDescriptor` and register it; resolve providers by id or by `Capability`.
 - **Wallet-agnostic utilities** — EIP-712 message + withdraw calldata building are available straight off `RainSdk` with no provider resolved — use them with your own wallet or backend.
@@ -69,6 +71,7 @@ unselected provider's vendor SDK is never linked into your app:
 
 | Product | Link it for | Import |
 |---|---|---|
+| `rain-wallet-ios` | The Rain wallet | `import RainWallet` |
 | `rain-turnkey-ios` | Turnkey wallets | `import RainTurnkey` |
 | `rain-portal-ios` | Portal MPC wallets | `import RainPortal` |
 | `rain-privy-ios` | Privy embedded wallets | `import RainPrivy` |
@@ -79,8 +82,10 @@ re-exports it, so the adapter import alone surfaces the full SDK (`RainSdk`, `Ra
 errors).
 
 ```swift
+// Rain wallet app.
+.product(name: "rain-wallet-ios", package: "rain-sdk-ios")
 // Turnkey-only app.
-.product(name: "rain-turnkey-ios", package: "rain-sdk-ios")
+// .product(name: "rain-turnkey-ios", package: "rain-sdk-ios")
 // Portal-only app.
 // .product(name: "rain-portal-ios", package: "rain-sdk-ios")
 // Privy-only app.
