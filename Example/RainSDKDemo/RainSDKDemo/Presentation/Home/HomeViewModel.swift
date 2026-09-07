@@ -4,10 +4,10 @@ import RainCore
 
 /// Wallet provider the demo initializes with.
 enum WalletMode: String, CaseIterable, Identifiable {
-  case portal = "Portal MPC"
-  case turnkey = "Turnkey"
-  case privy = "Privy"
   case rainWallet = "Rain Wallet"
+  case turnkey = "Turnkey"
+  case portal = "Portal MPC"
+  case privy = "Privy"
 
   var id: String { rawValue }
 }
@@ -17,7 +17,7 @@ enum WalletMode: String, CaseIterable, Identifiable {
 final class HomeViewModel: ObservableObject {
   private let session: RainSDKService
 
-  @Published var mode: WalletMode = .turnkey
+  @Published var mode: WalletMode = .rainWallet
 
   // Rain API credentials — independent of the wallet provider.
   @Published var rainApiKey = "" { didSet { pushRainApiCredentials() } }
@@ -62,7 +62,7 @@ final class HomeViewModel: ObservableObject {
 
   init() {
     self.session = .shared
-    mode = SessionStore.provider.map(WalletMode.init) ?? .turnkey
+    mode = SessionStore.provider.map(WalletMode.init) ?? .rainWallet
     seedFields()
     // didSet does not fire inside init, so push explicitly.
     pushRainApiCredentials()

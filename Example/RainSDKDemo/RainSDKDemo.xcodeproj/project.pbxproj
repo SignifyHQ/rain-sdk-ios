@@ -12,6 +12,7 @@
 		1940E11B2F37B1A4003B6732 /* rain-privy-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6722 /* rain-privy-ios */; };
 		1940E11B2F37B1A4003B6733 /* rain-turnkey-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6723 /* rain-turnkey-ios */; };
 		1940E11B2F37B1A4003B6734 /* rain-wallet-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6724 /* rain-wallet-ios */; };
+		1940E11B2F37B1A4003B6735 /* PhosphorSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6725 /* PhosphorSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 				1940E11B2F37B1A4003B6732 /* rain-privy-ios in Frameworks */,
 				1940E11B2F37B1A4003B6733 /* rain-turnkey-ios in Frameworks */,
 				1940E11B2F37B1A4003B6734 /* rain-wallet-ios in Frameworks */,
+				1940E11B2F37B1A4003B6735 /* PhosphorSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +127,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				1940E1192F37B1A4003B6740 /* XCLocalSwiftPackageReference "../.." */,
+				1940E1192F37B1A4003B6750 /* XCRemoteSwiftPackageReference "swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 191A07FF2F1A1EF90026656C /* Products */;
@@ -286,15 +289,13 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RainSDKDemo/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Rain SDK Sample";
+				INFOPLIST_KEY_CFBundleDisplayName = "Rain SDK";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -329,15 +330,13 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RainSDKDemo/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Rain SDK Sample";
+				INFOPLIST_KEY_CFBundleDisplayName = "Rain SDK";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -389,6 +388,17 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		1940E1192F37B1A4003B6750 /* XCRemoteSwiftPackageReference "swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/phosphor-icons/swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		1940E11A2F37B1A4003B6720 /* rain-core-ios */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -414,6 +424,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1940E1192F37B1A4003B6740 /* XCLocalSwiftPackageReference "../.." */;
 			productName = "rain-wallet-ios";
+		};
+		1940E11A2F37B1A4003B6725 /* PhosphorSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1940E1192F37B1A4003B6750 /* XCRemoteSwiftPackageReference "swift" */;
+			productName = PhosphorSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
