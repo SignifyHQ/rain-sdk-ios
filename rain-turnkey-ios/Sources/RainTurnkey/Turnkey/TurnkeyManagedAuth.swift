@@ -80,6 +80,22 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
   /// Minimum remaining lifetime (seconds) for a restored session to count as active.
   private static let sessionMinRemainingSeconds: TimeInterval = 30
 
+  /// The account set every Rain user gets, derived from ONE wallet seed (standard first-index
+  /// derivation paths). A single seed per user is a cross-platform contract with the Android SDK:
+  /// one phrase to back up and export, regardless of chain family.
+  internal static let ethereumAccount = WalletAccountParams(
+    addressFormat: .address_format_ethereum,
+    curve: .curve_secp256k1,
+    path: "m/44'/60'/0'/0/0",
+    pathFormat: .path_format_bip32
+  )
+  internal static let solanaAccount = WalletAccountParams(
+    addressFormat: .address_format_solana,
+    curve: .curve_ed25519,
+    path: "m/44'/501'/0'/0'",
+    pathFormat: .path_format_bip32
+  )
+
   internal init(context: TurnkeyContextProtocol, configurationError: RainSDKError?) {
     self.context = context
     self.configurationError = configurationError
@@ -127,24 +143,52 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
   }
 
   /// Confirms the code from `sendLoginCode`. Handles first-time signup and returning login
-  /// transparently, then ensures the account has both an Ethereum and a Solana wallet, so a
-  /// freshly signed-up user is immediately usable on every chain family Rain serves.
+  /// transparently, then ensures the account has Ethereum and Solana accounts on a single
+  /// wallet seed, so the user is immediately usable on every chain family Rain serves with one
+  /// phrase to back up.
   internal func confirmLoginCode(_ code: String) async throws {
     try throwIfMisconfigured()
     guard let pending = pendingOtpLock.withLock({ pendingOtp }) else {
       throw RainSDKError.invalidConfig(details: "No login code was requested; call sendLoginCode first")
     }
+    // Log in under a fresh per-attempt session key: the vendor throws keyAlreadyExists only for
+    // a same-key collision, so an already-active session survives a mistyped code (verifyOtp
+    // consumes the code, so a premature logout could not be undone by retrying). Mirrors the
+    // Android SDK's behaviour.
+    let attemptKey = "rain-turnkey-\(UUID().uuidString)"
+    let previousKey = context.selectedStoredSessionKey
     do {
-      // A previous login can leave a stored session; the vendor throws keyAlreadyExists rather
-      // than overwriting it.
-      context.clearStoredSession()
       try await context.completeOtp(
         otpId: pending.otpId,
         otpCode: code,
         otpEncryptionTargetBundle: pending.encryptionTargetBundle,
         contact: pending.email,
-        otpType: .email
+        otpType: .email,
+        sessionKey: attemptKey,
+        // Signup creates ONE wallet with both accounts atomically; ignored on login.
+        signupWalletAccounts: [Self.ethereumAccount, Self.solanaAccount]
       )
+    } catch {
+      // Nothing was stored or cleared — a live session stays live and the user can request a
+      // new code.
+      throw RainSDKError.from(underlying: error)
+    }
+    do {
+      // The vendor auto-selects the new session only when none was selected; over a live
+      // session the attempt key must be activated explicitly.
+      if context.selectedStoredSessionKey != attemptKey {
+        try await context.selectStoredSession(sessionKey: attemptKey)
+      }
+    } catch {
+      // Don't leave the never-selected attempt session orphaned in the keychain.
+      context.clearStoredSession(sessionKey: attemptKey)
+      throw RainSDKError.from(underlying: error)
+    }
+    // The previous session is superseded; drop it so per-attempt keys don't accumulate.
+    if let previousKey, previousKey != attemptKey {
+      context.clearStoredSession(sessionKey: previousKey)
+    }
+    do {
       try await ensureWallets()
       pendingOtpLock.withLock { pendingOtp = nil }
     } catch {
@@ -153,42 +197,34 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
   }
 
   internal func logout() {
-    context.clearStoredSession()
+    context.clearStoredSession(sessionKey: nil) // nil = the currently selected session
     pendingOtpLock.withLock { pendingOtp = nil }
   }
 
   // MARK: Wallet provisioning
 
   /// Ensures the authenticated account has an Ethereum (secp256k1) and a Solana (ed25519)
-  /// wallet account. Idempotent: existing accounts are kept.
+  /// account, on ONE wallet seed. Fresh signups already get both atomically (see
+  /// `signupWalletAccounts` on `completeOtp`); this backfills accounts that predate that, by
+  /// deriving the missing account(s) from the existing wallet's seed — never by creating a
+  /// second wallet. Idempotent: existing accounts are kept.
   private func ensureWallets() async throws {
     try await context.refreshWallets()
-    let formats = Set(context.wallets.flatMap(\.accounts).map(\.addressFormat))
-    if !formats.contains(.address_format_ethereum) {
+    guard let wallet = context.wallets.first else {
+      // No wallet at all (an account created outside this flow): one wallet, both accounts.
       try await context.createTurnkeyWallet(
         walletName: "Wallet",
-        accounts: [WalletAccountParams(
-          addressFormat: .address_format_ethereum,
-          curve: .curve_secp256k1,
-          path: "m/44'/60'/0'/0/0",
-          pathFormat: .path_format_bip32
-        )],
+        accounts: [Self.ethereumAccount, Self.solanaAccount],
         mnemonicLength: 12
       )
+      return
     }
-    if !formats.contains(.address_format_solana) {
-      try await context.createTurnkeyWallet(
-        walletName: "Solana Wallet",
-        accounts: [WalletAccountParams(
-          addressFormat: .address_format_solana,
-          curve: .curve_ed25519,
-          path: "m/44'/501'/0'/0'",
-          pathFormat: .path_format_bip32
-        )],
-        mnemonicLength: 12
-      )
-    }
-    try await context.refreshWallets()
+    let formats = Set(context.wallets.flatMap(\.accounts).map(\.addressFormat))
+    var missing: [WalletAccountParams] = []
+    if !formats.contains(.address_format_ethereum) { missing.append(Self.ethereumAccount) }
+    if !formats.contains(.address_format_solana) { missing.append(Self.solanaAccount) }
+    guard !missing.isEmpty else { return }
+    try await context.addAccountsToTurnkeyWallet(walletId: wallet.walletId, accounts: missing)
   }
 
   private func throwIfMisconfigured() throws {
