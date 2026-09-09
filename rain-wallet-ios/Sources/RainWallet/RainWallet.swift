@@ -25,7 +25,9 @@
 import Combine
 import Foundation
 @_exported import RainCore
-internal import RainTurnkey
+// SPI: Turnkey's managed-auth surface is @_spi(RainWallet) — this module is its only consumer.
+// `internal` keeps the compiler-enforced guarantee that no Turnkey type leaks into our public API.
+@_spi(RainWallet) internal import RainTurnkey
 
 // MARK: - Auth state
 

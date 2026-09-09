@@ -3,14 +3,15 @@ import Foundation
 import TurnkeySwift
 @_spi(RainAdapter) import RainCore
 
-/// Configuration for the Turnkey provider. Two modes:
+/// Configuration for the Turnkey provider.
 ///
-/// - **Managed** (`init(organizationId:authProxyConfigId:...)`): the SDK owns Turnkey
-///   authentication — it configures the Turnkey singleton and `TurnkeyProvider` exposes the
-///   email-OTP flow (`sendLoginCode` / `confirmLoginCode` / `logout`) plus `authState`.
-/// - **Bring-your-own** (`init(turnkey:...)`): the host drives Turnkey's Swift SDK (passkeys /
-///   auth proxy / OAuth / OTP) and hands the authenticated `TurnkeyContext` to Rain; the SDK
-///   never touches authentication.
+/// Public mode is **bring-your-own** (`init(turnkey:...)`): the host drives Turnkey's Swift SDK
+/// (passkeys / auth proxy / OAuth / OTP) and hands the authenticated `TurnkeyContext` to Rain;
+/// the SDK never touches authentication.
+///
+/// A second, **managed** mode (`init(organizationId:authProxyConfigId:...)`, where the SDK owns
+/// the email-OTP flow) exists behind `@_spi(RainWallet)` and ships to hosts only through the
+/// `RainWallet` module.
 ///
 /// `@unchecked Sendable`: `TurnkeyContext` is a reference type with mutable published state that
 /// Rain reads from arbitrary executors. BYO host contract: finish authentication before handing
@@ -53,9 +54,14 @@ public struct TurnkeyConfig: @unchecked Sendable {
   /// Managed mode: the SDK configures Turnkey against this organization + auth-proxy
   /// configuration and owns the email-OTP authentication flow.
   ///
+  /// Not public API. `@_spi(RainWallet)`: managed auth ships exclusively through the
+  /// `RainWallet` module's `RainProvider` — the public Turnkey provider is bring-your-own,
+  /// where the host owns authentication.
+  ///
   /// The underlying Turnkey configuration is one-shot per app launch — constructing a second
   /// managed provider with *different* ids leaves the first configuration in place and makes
   /// every auth call on the new provider throw `invalidConfig`.
+  @_spi(RainWallet)
   public init(
     organizationId: String,
     authProxyConfigId: String,
@@ -193,20 +199,26 @@ public struct TurnkeyProvider: ProviderDescriptor, @unchecked Sendable {
 
 // MARK: - Managed authentication (email OTP)
 
+// Not public API. `@_spi(RainWallet)`: this entire surface exists for the `RainWallet` module,
+// which wraps a managed provider under wallet-neutral names. The public Turnkey provider is
+// bring-your-own — the host authenticates with Turnkey's SDK itself and hands in the context.
 extension TurnkeyProvider {
   /// Where managed authentication stands. `.unauthenticated` in a fresh install;
   /// `.authenticated` once a session is live (restored, or established via the OTP flow).
   /// Always `.unauthenticated`-shaped in BYO mode — the host owns auth there.
+  @_spi(RainWallet)
   public var authState: TurnkeyAuthState {
     managedAuth?.authState ?? .unauthenticated
   }
 
   /// `authState` over time. Emits on every auth change; finishes never.
+  @_spi(RainWallet)
   public var authStates: AnyPublisher<TurnkeyAuthState, Never> {
     managedAuth?.authStates ?? Just(.unauthenticated).eraseToAnyPublisher()
   }
 
   /// Sends a one-time login code to `email`. Managed mode only.
+  @_spi(RainWallet)
   public func sendLoginCode(email: String) async throws {
     try await requireManagedAuth().sendLoginCode(email: email)
   }
@@ -215,23 +227,27 @@ extension TurnkeyProvider {
   /// ensures the account has Ethereum and Solana accounts on one wallet seed. Managed mode only.
   /// Throws `RainSDKError.invalidLoginCode` when the code is rejected (wrong, expired, or already
   /// used) — re-prompt the user rather than restarting the flow.
+  @_spi(RainWallet)
   public func confirmLoginCode(_ code: String) async throws {
     try await requireManagedAuth().confirmLoginCode(code)
   }
 
   /// Clears the stored session (full logout). Safe no-op when none exists. Managed mode only —
   /// throws `invalidConfig` in BYO mode, where the host owns the session.
+  @_spi(RainWallet)
   public func logout() throws {
     try requireManagedAuth().logout()
   }
 
   /// Waits for the asynchronous session restore that follows configuration, so a returning
   /// user's session can be reused without re-running the OTP flow. No-op in BYO mode.
+  @_spi(RainWallet)
   public func awaitSessionRestore(timeout: TimeInterval = 5) async {
     await managedAuth?.awaitSessionRestore(timeout: timeout)
   }
 
   /// True when an unexpired session is already loaded and the OTP flow can be skipped.
+  @_spi(RainWallet)
   public func hasActiveSession() -> Bool {
     managedAuth?.hasActiveSession() ?? false
   }

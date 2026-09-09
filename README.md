@@ -26,8 +26,8 @@ The 1.x `RainSDK` umbrella module has been removed — link the provider product
 ## Features
 
 - **Portal wallet integration** — Register a `PortalProvider` with a Portal session token; resolve a `RainClient` and use the connected MPC wallet for signing and sending transactions. See [rain-portal-ios/README.md](rain-portal-ios/README.md#session-expiry-and-retry) for session refresh and retry behavior.
-- **Turnkey wallet integration** — Managed mode: configure with your Turnkey org id + auth-proxy config id and the SDK runs email-OTP auth itself (`sendLoginCode` / `confirmLoginCode`), provisioning EVM + Solana wallets on first login. Or bring your own authenticated `TurnkeyContext`. Ships in its own `rain-turnkey-ios` module.
-- **Rain wallet** — Register a `RainProvider` with your Rain-issued organization id + auth config id; the SDK runs email login-code auth (`sendLoginCode` / `confirmLoginCode`), provisions EVM + Solana wallets on first login, and manages the session. See [rain-wallet-ios/README.md](rain-wallet-ios/README.md).
+- **Turnkey wallet integration** — bring your own authenticated `TurnkeyContext` (auth proxy / passkeys / OAuth / OTP driven by the host); Rain handles sessions, signing, and multi-chain resolution. Ships in its own `rain-turnkey-ios` module. SDK-owned email-OTP auth is available through the Rain-branded `RainWallet` provider.
+- **Rain wallet** — Register a `RainProvider` with your Rain-issued organization id + auth config id; the SDK runs email login-code auth (`sendLoginCode` / `confirmLoginCode`), provisions one wallet with EVM + Solana accounts on first login, and manages the session. See [rain-wallet-ios/README.md](rain-wallet-ios/README.md).
 - **Privy wallet integration** — Register a `PrivyProvider` with an authenticated `Privy` singleton (auth + embedded-wallet provisioning handled outside Rain by the Privy iOS SDK); custody routes through Privy's EIP-1193 embedded wallet.
 - **Pluggable providers** — Bring your own `WalletProvider` behind a `ProviderDescriptor` and register it; resolve providers by id or by `Capability`.
 - **Wallet-agnostic utilities** — EIP-712 message + withdraw calldata building are available straight off `RainSdk` with no provider resolved — use them with your own wallet or backend.
@@ -149,36 +149,31 @@ let rain = try RainSdk.builder()
 let client = try await rain.provider(.portal)
 ```
 
-### 2. Turnkey (full wallet flow)
+### 2. Turnkey (bring your own auth)
 
-**Managed mode (recommended)** — the SDK owns authentication (email OTP via Turnkey's auth
-proxy) and provisions EVM + Solana wallets on first login:
+Like Portal and Privy, authentication lives outside the SDK: drive Turnkey's Swift SDK yourself
+(auth proxy / passkeys / OAuth / OTP), then hand the authenticated `TurnkeyContext` to Rain:
 
 ```swift
 import RainTurnkey   // re-exports RainCore
 
-let provider = TurnkeyProvider(
-    TurnkeyConfig(organizationId: "<org-id>", authProxyConfigId: "<auth-proxy-config-id>")
-)
-
-await provider.awaitSessionRestore()
-if !provider.hasActiveSession() {
-    try await provider.sendLoginCode(email: "user@example.com")
-    try await provider.confirmLoginCode(code) // signup-or-login
-}
-
 let rain = try RainSdk.builder()
     .rpcEndpoints([43114: "https://avalanche-c-chain-rpc.publicnode.com"])
-    .register(provider)
+    .register(
+        TurnkeyProvider(
+            TurnkeyConfig(
+                turnkey: turnkeyContext,   // your authenticated context
+                walletAddress: nil         // omit to use the first Ethereum account
+            )
+        )
+    )
     .build()
 
 let client = try await rain.provider(.turnkey)
 ```
 
-**Bring-your-own** — drive Turnkey's Swift SDK yourself (auth proxy / passkeys / OAuth / OTP),
-then hand the authenticated `TurnkeyContext` to Rain via
-`TurnkeyConfig(turnkey: turnkeyContext, walletAddress: nil)` and register the same way. See
-[rain-turnkey-ios/README.md](rain-turnkey-ios/README.md) for both modes in full.
+See [rain-turnkey-ios/README.md](rain-turnkey-ios/README.md) for details. SDK-owned email-OTP
+authentication is available through the Rain-branded `RainWallet` provider instead.
 
 ### 3. Bring your own provider, or resolve by capability
 

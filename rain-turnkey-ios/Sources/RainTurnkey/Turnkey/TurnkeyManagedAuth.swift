@@ -6,6 +6,8 @@ import RainCore
 // MARK: - Auth state
 
 /// Where managed Turnkey authentication stands, at the Rain boundary.
+/// Not public API — `@_spi(RainWallet)`, surfaced to hosts only through `RainWalletAuthState`.
+@_spi(RainWallet)
 public enum TurnkeyAuthState: Sendable, Equatable {
   /// The SDK is still restoring a possible previous session from secure storage.
   case loading

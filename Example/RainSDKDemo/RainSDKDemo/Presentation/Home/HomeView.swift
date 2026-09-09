@@ -107,27 +107,27 @@ struct HomeView: View {
         placeholder: "your-turnkey-parent-org-id",
         text: $viewModel.turnkeyOrgId
       )
-      .disabled(viewModel.turnkeyOtpSent)
+      .disabled(viewModel.turnkeyOtpId != nil)
 
       RainLabeledField(
         title: "Auth proxy config ID",
         placeholder: "auth proxy config id",
         text: $viewModel.turnkeyAuthProxyConfigId
       )
-      .disabled(viewModel.turnkeyOtpSent)
+      .disabled(viewModel.turnkeyOtpId != nil)
 
       RainLabeledField(title: "Email", placeholder: "you@example.com", text: $viewModel.turnkeyEmail)
-        .disabled(viewModel.turnkeyOtpSent)
+        .disabled(viewModel.turnkeyOtpId != nil)
 
       RainAsyncButton(
-        title: viewModel.turnkeyOtpSent ? "OTP sent" : "Init Turnkey & send OTP",
+        title: viewModel.turnkeyOtpId != nil ? "OTP sent" : "Init Turnkey & send OTP",
         enabled: viewModel.canSendTurnkeyOtp,
         isLoading: viewModel.isLoading
       ) {
         await viewModel.sendTurnkeyOtp()
       }
 
-      if viewModel.turnkeyOtpSent {
+      if viewModel.turnkeyOtpId != nil {
         RainLabeledField(title: "OTP code", placeholder: "123456", text: $viewModel.turnkeyOtpCode)
           .disabled(viewModel.turnkeySessionActive)
 
