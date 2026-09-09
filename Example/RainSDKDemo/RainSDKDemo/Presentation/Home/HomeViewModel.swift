@@ -1,6 +1,8 @@
 import Combine
 import Foundation
 import RainCore
+import UIKit
+import UniformTypeIdentifiers
 
 /// Wallet provider the demo initializes with.
 enum WalletMode: String, CaseIterable, Identifiable {
@@ -458,6 +460,7 @@ final class HomeViewModel: ObservableObject {
         rainWalletSessionActive = false
         rainWalletOtpSent = false
         rainWalletOtpCode = ""
+        revealedSecret = nil
         statusText = "Rain Wallet session expired — log in again"
       }
     }
@@ -526,7 +529,11 @@ final class HomeViewModel: ObservableObject {
     do {
       try await provider.confirmLoginCode(rainWalletOtpCode.trimmed)
       rainWalletSessionActive = true
-      statusText = "Session active — initialize Rain to continue"
+      isLoading = false
+      // No manual init step: go straight into Rain. On failure the status explains and the
+      // "Initialize Rain with Rain Wallet" button stays as the retry.
+      await initializeRainWithRainWallet()
+      return
     } catch {
       SampleLog.e("RainWallet.otpVerify", "failed: \(error.localizedDescription)")
       statusText = "Login code verification failed: \(error.localizedDescription)"
@@ -555,6 +562,64 @@ final class HomeViewModel: ObservableObject {
       statusText = "Rain Wallet init failed: \(error.localizedDescription)"
     }
     isLoading = false
+  }
+
+  // MARK: - Rain Wallet key export
+
+  enum RainWalletExportKind: String {
+    case recoveryPhrase = "Recovery phrase"
+    case ethereumKey = "Ethereum private key"
+    case solanaKey = "Solana private key"
+  }
+
+  struct RevealedSecret: Equatable {
+    let title: String
+    let value: String
+  }
+
+  /// The one currently revealed secret (tap-to-reveal, hidden again on demand or logout).
+  /// The value is displayed only — never logged, persisted, or put on the pasteboard.
+  @Published private(set) var revealedSecret: RevealedSecret?
+
+  func exportRainWalletSecret(_ kind: RainWalletExportKind) async {
+    guard rainWalletSessionActive, let provider = session.rainWalletProvider else {
+      statusText = "Log in with Rain Wallet first"
+      return
+    }
+    SampleLog.i("RainWallet.export", "exporting \(kind.rawValue)") // the kind only, never the value
+    isLoading = true
+    do {
+      let value: String
+      switch kind {
+      case .recoveryPhrase: value = try await provider.exportRecoveryPhrase()
+      case .ethereumKey: value = try await provider.exportPrivateKey(.ethereum)
+      case .solanaKey: value = try await provider.exportPrivateKey(.solana)
+      }
+      revealedSecret = RevealedSecret(title: kind.rawValue, value: value)
+      statusText = "\(kind.rawValue) revealed — hide it when you're done"
+    } catch {
+      SampleLog.e("RainWallet.export", "failed: \(error.localizedDescription)")
+      statusText = "Export failed: \(error.localizedDescription)"
+    }
+    isLoading = false
+  }
+
+  func hideRevealedSecret() {
+    revealedSecret = nil
+  }
+
+  /// Puts the revealed secret on the pasteboard, local-only (no Handoff/universal clipboard)
+  /// and self-expiring after 60 seconds.
+  func copyRevealedSecret() {
+    guard let secret = revealedSecret else { return }
+    UIPasteboard.general.setItems(
+      [[UTType.utf8PlainText.identifier: secret.value]],
+      options: [
+        .localOnly: true,
+        .expirationDate: Date().addingTimeInterval(60),
+      ]
+    )
+    statusText = "\(secret.title) copied — the clipboard clears itself in 60 seconds"
   }
 
   // MARK: - Privy
@@ -716,6 +781,7 @@ final class HomeViewModel: ObservableObject {
     rainWalletOtpSent = false
     rainWalletOtpCode = ""
     rainWalletSessionActive = false
+    revealedSecret = nil
     privyOtpSent = false
     privyOtpCode = ""
     privySessionActive = false

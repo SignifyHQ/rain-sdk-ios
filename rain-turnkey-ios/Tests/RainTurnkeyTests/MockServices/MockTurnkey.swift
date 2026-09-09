@@ -1,6 +1,6 @@
 import Combine
 import Foundation
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 @testable import RainTurnkey
 import TurnkeySwift
 import TurnkeyTypes
@@ -355,6 +355,33 @@ final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
     if let addAccountsError { throw addAccountsError }
   }
 
+  // MARK: Key export seams
+
+  struct ExportAccountKeyCall: Equatable { let address: String; let encoding: ExportedKeyEncoding }
+
+  var exportMnemonicCalls: [String] = []
+  var exportMnemonicError: Error?
+  var stubbedMnemonic = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
+
+  var exportAccountKeyCalls: [ExportAccountKeyCall] = []
+  var exportAccountKeyError: Error?
+  var stubbedExportedKey = "exported-private-key"
+
+  func exportWalletMnemonic(walletId: String) async throws -> String {
+    exportMnemonicCalls.append(walletId)
+    if let exportMnemonicError { throw exportMnemonicError }
+    return stubbedMnemonic
+  }
+
+  func exportAccountPrivateKey(
+    address: String,
+    encoding: ExportedKeyEncoding
+  ) async throws -> String {
+    exportAccountKeyCalls.append(ExportAccountKeyCall(address: address, encoding: encoding))
+    if let exportAccountKeyError { throw exportAccountKeyError }
+    return stubbedExportedKey
+  }
+
   func signRawPayload(
     signWith: String,
     payload: String,
@@ -526,6 +553,38 @@ extension MockTurnkey {
             walletAccountId: "wallet-account-id-sol",
             walletDetails: nil,
             walletId: "wallet-id"
+          )
+        ]
+      ),
+      as: Wallet.self
+    )
+  }
+
+  /// A wallet holding only a Solana account, under its own wallet id — the second seed of a
+  /// legacy (pre one-seed provisioning) account.
+  static func solanaOnlyWallet(solanaAddress: String = defaultSolanaAddress) -> Wallet {
+    decode(
+      WalletFixture(
+        walletId: "wallet-id-sol",
+        walletName: "wallet-sol",
+        createdAt: "0",
+        updatedAt: "0",
+        exported: false,
+        imported: false,
+        accounts: [
+          WalletAccount(
+            address: solanaAddress,
+            addressFormat: .address_format_solana,
+            createdAt: externaldatav1Timestamp(nanos: "0", seconds: "0"),
+            curve: .curve_ed25519,
+            organizationId: "org-id",
+            path: "m/44'/501'/0'/0'",
+            pathFormat: .path_format_bip32,
+            publicKey: nil,
+            updatedAt: externaldatav1Timestamp(nanos: "0", seconds: "0"),
+            walletAccountId: "wallet-account-id-sol-only",
+            walletDetails: nil,
+            walletId: "wallet-id-sol"
           )
         ]
       ),

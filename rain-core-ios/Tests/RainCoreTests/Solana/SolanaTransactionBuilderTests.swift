@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 
 /// Pins the exact byte layout of the unsigned legacy transfer transaction handed to Turnkey,
 /// matching `@solana/web3.js` `Transaction.serialize({ requireAllSignatures: false })`.

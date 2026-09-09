@@ -36,6 +36,11 @@ struct RainWalletNeutralityTests {
     let _: AnyPublisher<RainWalletSessionState, Never> = provider.sessionState
     let _: RainWalletSessionState = provider.currentSessionState()
     try await provider.refreshSession()
+
+    // Key export, fully typed with module-owned names.
+    let _: String = try await provider.exportRecoveryPhrase()
+    let _: String = try await provider.exportPrivateKey(.ethereum)
+    let _: String = try await provider.exportPrivateKey(RainWalletKeyAccount.solana)
     try provider.logout()
     provider.close()
 

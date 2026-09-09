@@ -10,7 +10,7 @@ import Foundation
 /// Leading zero bytes map to leading `"1"` characters (and back), matching the reference
 /// implementations. Uses the canonical byte-array base-conversion algorithm so it needs no
 /// big-integer type.
-internal enum Base58 {
+@_spi(RainAdapter) public enum Base58 {
   private static let alphabet = Array("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")
 
   /// Reverse lookup: Base58 character -> value. Built once from `alphabet`.
@@ -21,7 +21,7 @@ internal enum Base58 {
   }()
 
   /// Encodes raw bytes to a Base58 string.
-  static func encode(_ input: [UInt8]) -> String {
+  public static func encode(_ input: [UInt8]) -> String {
     if input.isEmpty { return "" }
 
     // Count leading zero bytes — each maps to a leading "1".

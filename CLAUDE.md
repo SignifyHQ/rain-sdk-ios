@@ -41,7 +41,7 @@ import per provider suffices. The 1.x `RainSDK` umbrella module has been REMOVED
 - SPI convention: adapter modules reach core internals via `@_spi(RainAdapter) import RainCore`
   (`ChainReader`/`MinedReceipt`, `ProviderContext.evmChainReader`, `RainSolanaSupport` seams,
   `SolanaRpcClient`, `SolanaTransferComposer`, `JsonRpcClient`, `SolanaTransactionDecoder`,
-  `SolanaConverter`, `TokenMetadataStore.init`, `String.strippingHexPrefix`,
+  `SolanaConverter`, `TokenMetadataStore.init`, `String.strippingHexPrefix`, `Base58`,
   `RainChain.solanaNativeCurrency`). Not API for host apps. Note: public types don't get Sendable
   inference — declare it when widening. Tests touching SPI symbols need
   `@_spi(RainAdapter) @testable import RainCore`.
@@ -84,3 +84,20 @@ Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and Rai
   per process). Vendor concealment is naming-level only (no embedded config anymore). Demo app
   gains a RainWallet provider option (4th tab/flow: org id + auth config id entry, email OTP via
   the RainWallet methods, then the standard wallet screens), linking rain-wallet-ios.
+- PR C (in progress 2026-09-09), key export — RainWallet-only, same SPI shape as managed auth.
+  Public surface: `RainProvider.exportRecoveryPhrase()` (12-word BIP-39 phrase of the account's
+  single seed) and `exportPrivateKey(_: RainWalletKeyAccount)` (`.ethereum` = 0x-prefixed 32-byte
+  hex; `.solana` = plain Base58 of priv‖pub, no checksum — NOT the vendor's Base58Check, which
+  Phantom rejects; built via CryptoKit ed25519 pubkey derivation + core's SPI Base58) — formats
+  are a cross-platform contract with Android.
+  Machinery: `TurnkeyContextProtocol.exportWalletMnemonic(walletId:)` (vendor `exportWallet`) and
+  `exportAccountPrivateKey(address:encoding:)` (composed: generateP256KeyPair →
+  client.exportWalletAccount → TurnkeyCrypto.decryptExportBundle, all on-device; no high-level
+  per-account export at swift-sdk 4.0.0). Provider surface `exportMnemonic()` /
+  `exportPrivateKey(family:)` is `@_spi(RainWallet)`; BYO mode throws invalidConfig. Legacy
+  accounts (pre one-seed) can hold several wallets/seeds: the mnemonic export anchors on the
+  wallet carrying the Ethereum account so phrase and exported ETH key always agree. The SDK
+  never logs/persists exported values; gating (biometrics) and safe display are the host's job.
+  RainTurnkey now also depends on the TurnkeyCrypto product. Demo: "Export keys" card on the
+  Rain Wallet tab (tap-to-reveal, `.privacySensitive()`, value never logged; Copy uses a
+  local-only pasteboard entry that self-expires after 60 s).

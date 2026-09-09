@@ -62,4 +62,24 @@ final class StubBackendContext: TurnkeyContextProtocol, @unchecked Sendable {
     walletId: String,
     accounts: [WalletAccountParams]
   ) async throws {}
+
+  var exportMnemonicCalls: [String] = []
+  var stubbedMnemonic = "stub mnemonic"
+
+  struct ExportKeyCall: Equatable { let address: String; let encoding: ExportedKeyEncoding }
+  var exportKeyCalls: [ExportKeyCall] = []
+  var stubbedExportedKey = "stub-key"
+
+  func exportWalletMnemonic(walletId: String) async throws -> String {
+    exportMnemonicCalls.append(walletId)
+    return stubbedMnemonic
+  }
+
+  func exportAccountPrivateKey(
+    address: String,
+    encoding: ExportedKeyEncoding
+  ) async throws -> String {
+    exportKeyCalls.append(ExportKeyCall(address: address, encoding: encoding))
+    return stubbedExportedKey
+  }
 }

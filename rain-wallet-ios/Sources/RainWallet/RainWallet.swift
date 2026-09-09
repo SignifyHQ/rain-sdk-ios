@@ -49,6 +49,17 @@ public enum RainWalletAuthState: Sendable, Equatable {
   }
 }
 
+// MARK: - Key export
+
+/// Which of the account's keys to export. Every Rain wallet account has exactly one key per
+/// chain family, both derived from the single wallet seed.
+public enum RainWalletKeyAccount: Sendable, Equatable, CaseIterable {
+  /// The EVM account (secp256k1); exports as a 0x-prefixed 32-byte hex string.
+  case ethereum
+  /// The Solana account (ed25519); exports as the standard Base58 string Solana wallets import.
+  case solana
+}
+
 // MARK: - Session state
 
 /// The wallet session as seen at the SDK boundary. Observable via ``RainProvider/sessionState``
@@ -187,6 +198,12 @@ public struct RainProvider: ProviderDescriptor {
     )
   }
 
+  /// Test seam: wraps an existing backing provider, bypassing the one-shot process-wide
+  /// backend configuration that the public init runs.
+  internal init(backing: TurnkeyProvider) {
+    self.backing = backing
+  }
+
   public var id: ProviderId { .rain }
 
   public var capabilities: Set<Capability> { [.multiChain, .biometricGate] }
@@ -233,6 +250,31 @@ public struct RainProvider: ProviderDescriptor {
   /// True when an unexpired session is already loaded and the login-code flow can be skipped.
   public func hasActiveSession() -> Bool {
     backing.hasActiveSession()
+  }
+
+  // MARK: Key export
+
+  /// Exports the wallet's 12-word recovery phrase, decrypted on-device. The account has ONE
+  /// wallet seed covering every chain family, so this single phrase restores both the EVM and
+  /// Solana accounts in any BIP-39 wallet.
+  ///
+  /// The SDK never logs or persists the returned value. Everything after the return is the
+  /// host's responsibility: gate the call (e.g. behind biometrics), show the phrase without
+  /// screenshots/screen recording where possible, and don't place it on the pasteboard.
+  /// Requires an active session — throws `RainSDKError.tokenExpired` otherwise.
+  public func exportRecoveryPhrase() async throws -> String {
+    try await backing.exportMnemonic()
+  }
+
+  /// Exports one account's private key, decrypted on-device: `.ethereum` as a 0x-prefixed
+  /// 32-byte hex string (the form Ethereum wallets import), `.solana` as the standard Base58
+  /// string Solana wallets import. The same formats are returned by the Android SDK.
+  ///
+  /// The SDK never logs or persists the returned value; gating and safe display are the host's
+  /// responsibility (see ``exportRecoveryPhrase()``). Requires an active session — throws
+  /// `RainSDKError.tokenExpired` otherwise.
+  public func exportPrivateKey(_ account: RainWalletKeyAccount) async throws -> String {
+    try await backing.exportPrivateKey(family: account == .ethereum ? .ethereum : .solana)
   }
 
   // MARK: Session

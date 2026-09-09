@@ -81,6 +81,7 @@ let package = Package(
         .product(name: "TurnkeySwift", package: "swift-sdk"),
         .product(name: "TurnkeyHttp", package: "swift-sdk"),
         .product(name: "TurnkeyTypes", package: "swift-sdk"),
+        .product(name: "TurnkeyCrypto", package: "swift-sdk"),
       ],
       path: "rain-turnkey-ios/Sources/RainTurnkey"
     ),

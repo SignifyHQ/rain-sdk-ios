@@ -252,6 +252,23 @@ extension TurnkeyProvider {
     managedAuth?.hasActiveSession() ?? false
   }
 
+  /// Exports the wallet's 12-word mnemonic phrase, decrypted on-device — one seed per account,
+  /// so a single phrase restores every chain family. Managed mode only. The SDK never logs or
+  /// persists the value; gating (e.g. biometrics) and safe display are the host's responsibility.
+  @_spi(RainWallet)
+  public func exportMnemonic() async throws -> String {
+    try await requireManagedAuth().exportMnemonic()
+  }
+
+  /// Exports one account's private key, decrypted on-device: `.ethereum` as a 0x-prefixed
+  /// 32-byte hex string, `.solana` as plain Base58 of privkey‖pubkey — the formats the Android SDK
+  /// also returns. Managed mode only. The SDK never logs or persists the value; gating and safe
+  /// display are the host's responsibility.
+  @_spi(RainWallet)
+  public func exportPrivateKey(family: TurnkeyKeyFamily) async throws -> String {
+    try await requireManagedAuth().exportPrivateKey(family: family)
+  }
+
   private func requireManagedAuth() throws -> TurnkeyManagedAuthController {
     guard let managedAuth else {
       throw RainSDKError.invalidConfig(details:
