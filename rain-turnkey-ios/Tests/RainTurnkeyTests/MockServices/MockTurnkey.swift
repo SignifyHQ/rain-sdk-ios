@@ -276,9 +276,16 @@ final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
   var stubbedOtpChallenge = OtpChallenge(otpId: "otp-id", encryptionTargetBundle: "bundle")
 
   var completeOtpCalls: [CompleteOtpCall] = []
+  /// The signup wallet accounts passed to each `completeOtp` call (parallel to
+  /// `completeOtpCalls`; `WalletAccountParams` is not Equatable so it can't live in the struct).
+  var completeOtpSignupAccounts: [[WalletAccountParams]] = []
   var completeOtpError: Error?
   /// Runs after a successful `completeOtp` — install the new session / authState here.
   var onCompleteOtp: (() -> Void)?
+
+  struct AddAccountsCall { let walletId: String; let accounts: [WalletAccountParams] }
+  var addAccountsCalls: [AddAccountsCall] = []
+  var addAccountsError: Error?
 
   var clearStoredSessionCallCount = 0
   /// The keys passed to `clearStoredSession` (`nil` = "the selected session").
@@ -302,12 +309,14 @@ final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
     otpEncryptionTargetBundle: String,
     contact: String,
     otpType: OtpType,
-    sessionKey: String
+    sessionKey: String,
+    signupWalletAccounts: [WalletAccountParams]
   ) async throws {
     completeOtpCalls.append(CompleteOtpCall(
       otpId: otpId, otpCode: otpCode, otpEncryptionTargetBundle: otpEncryptionTargetBundle,
       contact: contact, otpType: otpType, sessionKey: sessionKey
     ))
+    completeOtpSignupAccounts.append(signupWalletAccounts)
     if let completeOtpError { throw completeOtpError }
     // Vendor behaviour: the new session is auto-selected only when none was selected.
     if selectedStoredSessionKey == nil {
@@ -339,6 +348,11 @@ final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
       walletName: walletName, accounts: accounts, mnemonicLength: mnemonicLength
     ))
     if let createWalletError { throw createWalletError }
+  }
+
+  func addAccountsToTurnkeyWallet(walletId: String, accounts: [WalletAccountParams]) async throws {
+    addAccountsCalls.append(AddAccountsCall(walletId: walletId, accounts: accounts))
+    if let addAccountsError { throw addAccountsError }
   }
 
   func signRawPayload(

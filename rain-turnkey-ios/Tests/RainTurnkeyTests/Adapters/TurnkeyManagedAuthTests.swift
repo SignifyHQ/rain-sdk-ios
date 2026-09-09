@@ -63,11 +63,15 @@ struct TurnkeyManagedAuthTests {
     #expect(call.contact == "user@example.com")
     #expect(call.otpType == .email)
     #expect(call.sessionKey.hasPrefix("rain-turnkey-"))
+    // A signup creates ONE wallet carrying both chain families atomically (one seed).
+    let signupAccounts = try #require(turnkey.completeOtpSignupAccounts.first)
+    #expect(signupAccounts.map(\.addressFormat) == [.address_format_ethereum, .address_format_solana])
     // With nothing previously selected, the vendor auto-selects — no explicit activation.
     #expect(turnkey.selectStoredSessionCalls.isEmpty)
     #expect(turnkey.selectedStoredSessionKey == call.sessionKey)
-    // Both chain families already provisioned — nothing to create.
+    // Both chain families already provisioned — nothing to create or derive.
     #expect(turnkey.createWalletCalls.isEmpty)
+    #expect(turnkey.addAccountsCalls.isEmpty)
     #expect(controller.authState == .authenticated)
   }
 
@@ -113,7 +117,7 @@ struct TurnkeyManagedAuthTests {
     #expect(controller.hasActiveSession())
   }
 
-  @Test("confirmLoginCode provisions the missing Solana wallet for an EVM-only account")
+  @Test("confirmLoginCode derives the missing Solana account from the existing wallet's seed")
   func testConfirmProvisionsMissingWallets() async throws {
     let turnkey = MockTurnkey(
       wallets: [MockTurnkey.defaultWallet()], // Ethereum account only
@@ -125,10 +129,31 @@ struct TurnkeyManagedAuthTests {
     try await controller.sendLoginCode(email: "user@example.com")
     try await controller.confirmLoginCode("123456")
 
-    #expect(turnkey.createWalletCalls.count == 1)
-    let call = try #require(turnkey.createWalletCalls.first)
+    // Never a second wallet (a second seed to back up) — the account is derived on the
+    // existing wallet.
+    #expect(turnkey.createWalletCalls.isEmpty)
+    #expect(turnkey.addAccountsCalls.count == 1)
+    let call = try #require(turnkey.addAccountsCalls.first)
+    #expect(call.walletId == "wallet-id")
+    #expect(call.accounts.count == 1)
     #expect(call.accounts.first?.addressFormat == .address_format_solana)
     #expect(call.accounts.first?.curve == .curve_ed25519)
+  }
+
+  @Test("confirmLoginCode with no wallet at all creates one wallet with both accounts")
+  func testConfirmCreatesSingleDualAccountWallet() async throws {
+    // An account created outside the signup flow (or predating atomic provisioning).
+    let turnkey = MockTurnkey(wallets: [], session: nil)
+    turnkey.onCompleteOtp = { turnkey.session = MockTurnkey.defaultSession() }
+    let controller = makeController(turnkey: turnkey)
+
+    try await controller.sendLoginCode(email: "user@example.com")
+    try await controller.confirmLoginCode("123456")
+
+    #expect(turnkey.createWalletCalls.count == 1)
+    let call = try #require(turnkey.createWalletCalls.first)
+    #expect(call.accounts.map(\.addressFormat) == [.address_format_ethereum, .address_format_solana])
+    #expect(turnkey.addAccountsCalls.isEmpty)
   }
 
   @Test("a vendor auth error surfaces as a mapped RainSDKError, never raw")
