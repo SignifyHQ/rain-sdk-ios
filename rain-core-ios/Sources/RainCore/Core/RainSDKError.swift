@@ -28,6 +28,11 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// RAIN_202: Invalid Rain API Key or insufficient permissions for the requested operation
   case unauthorized
 
+  /// RAIN_203: The one-time login code was rejected (wrong, expired, or already used) — ask the
+  /// user to retype it or request a new one. Distinct from `tokenExpired`, which means an
+  /// established session died.
+  case invalidLoginCode
+
   // MARK: - 3xx: Network Errors
 
   /// RAIN_301: Connectivity issues preventing communication with APIs or Blockchain nodes
@@ -114,6 +119,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "RAIN_201"
     case .unauthorized:
       return "RAIN_202"
+    case .invalidLoginCode:
+      return "RAIN_203"
     case .networkError:
       return "RAIN_301"
     case .apiError:
@@ -161,6 +168,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "[\(errorCode)] The wallet provider session token has expired or is no longer valid."
     case .unauthorized:
       return "[\(errorCode)] Invalid Rain API Key or insufficient permissions for the requested operation."
+    case .invalidLoginCode:
+      return "[\(errorCode)] The one-time login code was rejected — wrong, expired, or already used. Retype it or request a new one."
     case .networkError(let underlying):
       return "[\(errorCode)] Connectivity issues preventing communication with APIs or Blockchain nodes. \(underlying.localizedDescription)"
     case .apiError(let statusCode, let message):
@@ -212,6 +221,7 @@ extension RainSDKError {
     case .rainApiNotConfigured: return "rainApiNotConfigured"
     case .tokenExpired: return "tokenExpired"
     case .unauthorized: return "unauthorized"
+    case .invalidLoginCode: return "invalidLoginCode"
     case .networkError: return "networkError"
     case .apiError: return "apiError"
     case .signatureNotReady: return "signatureNotReady"

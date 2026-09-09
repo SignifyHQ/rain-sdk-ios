@@ -37,6 +37,18 @@ enum TurnkeyErrorMapping {
     case .invalidSession:
       return .tokenExpired
 
+    case .failedToVerifyOtp(let underlying):
+      // A rejected code (wrong, expired, already used) comes back from the auth proxy as a 4xx.
+      // Without this, the 401 branch below would turn a mistyped code into .tokenExpired and the
+      // host could not tell "retype the code" from "the session died". 400/401/403 only: 429 and
+      // other statuses stay transient/provider errors.
+      if let requestError = underlying as? TurnkeyRequestError,
+         case .apiError(let statusCode, _) = requestError,
+         [400, 401, 403].contains(statusCode) {
+        return .invalidLoginCode
+      }
+      return RainSDKError.from(underlying: underlying)
+
     case .failedToRetrieveOAuthCredential(_, let underlying):
       // May wrap ASAuthorizationError.canceled; recurse so user cancellation surfaces as .userRejected.
       return RainSDKError.from(underlying: underlying)
@@ -51,7 +63,6 @@ enum TurnkeyErrorMapping {
          .failedToLoginWithPasskey(let underlying),
          .failedToSignUpWithPasskey(let underlying),
          .failedToInitOtp(let underlying),
-         .failedToVerifyOtp(let underlying),
          .failedToLoginWithOtp(let underlying),
          .failedToSignUpWithOtp(let underlying),
          .failedToCompleteOtp(let underlying),
