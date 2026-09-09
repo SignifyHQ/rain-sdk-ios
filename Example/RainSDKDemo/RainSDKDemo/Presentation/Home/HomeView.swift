@@ -39,7 +39,7 @@ struct HomeView: View {
             featureGrid
           }
           if viewModel.isRecovered {
-            RainAsyncButton(title: "Clear session", kind: .destructive) {
+            RainAsyncButton(title: "Clear session", kind: .destructive, enabled: !viewModel.isLoading) {
               await viewModel.clearSession()
             }
           }
@@ -90,8 +90,7 @@ struct HomeView: View {
 
       RainAsyncButton(
         title: viewModel.isInitialized ? "SDK initialized" : "Initialize SDK",
-        enabled: viewModel.canInitializePortal,
-        isLoading: viewModel.isLoading
+        enabled: viewModel.canInitializePortal
       ) {
         await viewModel.initializeSdk()
       }
@@ -121,8 +120,7 @@ struct HomeView: View {
 
       RainAsyncButton(
         title: viewModel.turnkeyOtpId != nil ? "OTP sent" : "Init Turnkey & send OTP",
-        enabled: viewModel.canSendTurnkeyOtp,
-        isLoading: viewModel.isLoading
+        enabled: viewModel.canSendTurnkeyOtp
       ) {
         await viewModel.sendTurnkeyOtp()
       }
@@ -133,8 +131,7 @@ struct HomeView: View {
 
         RainAsyncButton(
           title: viewModel.turnkeySessionActive ? "Session active" : "Verify & log in",
-          enabled: viewModel.canVerifyTurnkeyOtp,
-          isLoading: viewModel.isLoading
+          enabled: viewModel.canVerifyTurnkeyOtp
         ) {
           await viewModel.verifyTurnkeyOtp()
         }
@@ -143,8 +140,7 @@ struct HomeView: View {
       if viewModel.turnkeySessionActive {
         RainAsyncButton(
           title: viewModel.isInitialized ? "Rain initialized" : "Initialize Rain with Turnkey",
-          enabled: !viewModel.isLoading && !viewModel.isInitialized,
-          isLoading: viewModel.isLoading
+          enabled: !viewModel.isLoading && !viewModel.isInitialized
         ) {
           await viewModel.initializeRainWithTurnkey()
         }
@@ -173,12 +169,14 @@ struct HomeView: View {
       RainLabeledField(title: "Email", placeholder: "you@example.com", text: $viewModel.rainWalletEmail)
         .disabled(viewModel.rainWalletOtpSent)
 
-      RainAsyncButton(
-        title: viewModel.rainWalletOtpSent ? "Code sent" : "Init Rain Wallet & send code",
-        enabled: viewModel.canSendRainWalletOtp,
-        isLoading: viewModel.isLoading
-      ) {
-        await viewModel.sendRainWalletOtp()
+      // Gone once the session is active — there is nothing left to initiate.
+      if !viewModel.rainWalletSessionActive {
+        RainAsyncButton(
+          title: viewModel.rainWalletOtpSent ? "Code sent" : "Init Rain Wallet & send code",
+          enabled: viewModel.canSendRainWalletOtp
+        ) {
+          await viewModel.sendRainWalletOtp()
+        }
       }
 
       if viewModel.rainWalletOtpSent {
@@ -187,20 +185,73 @@ struct HomeView: View {
 
         RainAsyncButton(
           title: viewModel.rainWalletSessionActive ? "Session active" : "Verify & log in",
-          enabled: viewModel.canVerifyRainWalletOtp,
-          isLoading: viewModel.isLoading
+          enabled: viewModel.canVerifyRainWalletOtp
         ) {
           await viewModel.verifyRainWalletOtp()
         }
       }
 
       if viewModel.rainWalletSessionActive {
-        RainAsyncButton(
-          title: viewModel.isInitialized ? "Rain initialized" : "Initialize Rain with Rain Wallet",
-          enabled: !viewModel.isLoading && !viewModel.isInitialized,
-          isLoading: viewModel.isLoading
-        ) {
-          await viewModel.initializeRainWithRainWallet()
+        // Rain initializes automatically after the code verifies; this is only the retry for
+        // when that init failed (e.g. missing Rain API credentials).
+        if !viewModel.isInitialized {
+          RainAsyncButton(
+            title: "Initialize Rain with Rain Wallet",
+            enabled: !viewModel.isLoading
+          ) {
+            await viewModel.initializeRainWithRainWallet()
+          }
+        }
+
+        exportSection
+      }
+    }
+  }
+
+  // MARK: - Rain Wallet key export
+
+  /// Tap-to-reveal export of the recovery phrase and per-chain private keys. The revealed value
+  /// is only ever rendered here — never logged, persisted, or placed on the pasteboard.
+  private var exportSection: some View {
+    RainSectionCard(title: "Export keys") {
+      RainAsyncButton(
+        title: "Reveal recovery phrase",
+        enabled: !viewModel.isLoading
+      ) {
+        await viewModel.exportRainWalletSecret(.recoveryPhrase)
+      }
+      RainAsyncButton(
+        title: "Reveal Ethereum private key",
+        enabled: !viewModel.isLoading
+      ) {
+        await viewModel.exportRainWalletSecret(.ethereumKey)
+      }
+      RainAsyncButton(
+        title: "Reveal Solana private key",
+        enabled: !viewModel.isLoading
+      ) {
+        await viewModel.exportRainWalletSecret(.solanaKey)
+      }
+
+      if let secret = viewModel.revealedSecret {
+        VStack(alignment: .leading, spacing: RainMetrics.s1) {
+          Text(secret.title)
+            .font(.caption)
+            .foregroundColor(.secondary)
+          Text(secret.value)
+            .font(.system(.footnote, design: .monospaced))
+            .textSelection(.enabled)
+            .privacySensitive()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+
+        HStack(spacing: RainMetrics.s1) {
+          RainAsyncButton(title: "Copy", kind: .secondary) {
+            viewModel.copyRevealedSecret()
+          }
+          RainAsyncButton(title: "Hide", kind: .destructive) {
+            viewModel.hideRevealedSecret()
+          }
         }
       }
     }
@@ -225,8 +276,7 @@ struct HomeView: View {
 
       RainAsyncButton(
         title: viewModel.privyOtpSent ? "OTP sent" : "Init Privy & send OTP",
-        enabled: viewModel.canSendPrivyOtp,
-        isLoading: viewModel.isLoading
+        enabled: viewModel.canSendPrivyOtp
       ) {
         await viewModel.sendPrivyOtp()
       }
@@ -236,8 +286,7 @@ struct HomeView: View {
 
         RainAsyncButton(
           title: "Verify & log in",
-          enabled: viewModel.canVerifyPrivyOtp,
-          isLoading: viewModel.isLoading
+          enabled: viewModel.canVerifyPrivyOtp
         ) {
           await viewModel.verifyPrivyOtp()
         }
@@ -246,8 +295,7 @@ struct HomeView: View {
       if viewModel.privySessionActive {
         RainAsyncButton(
           title: viewModel.isInitialized ? "Rain initialized" : "Initialize Rain with Privy",
-          enabled: !viewModel.isLoading && !viewModel.isInitialized,
-          isLoading: viewModel.isLoading
+          enabled: !viewModel.isLoading && !viewModel.isInitialized
         ) {
           await viewModel.initializeRainWithPrivy()
         }
