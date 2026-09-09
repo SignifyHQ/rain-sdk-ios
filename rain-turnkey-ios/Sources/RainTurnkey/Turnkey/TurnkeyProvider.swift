@@ -212,7 +212,9 @@ extension TurnkeyProvider {
   }
 
   /// Confirms the code from ``sendLoginCode(email:)``, signing the user up on first login, and
-  /// provisions the account's Ethereum and Solana wallets. Managed mode only.
+  /// ensures the account has Ethereum and Solana accounts on one wallet seed. Managed mode only.
+  /// Throws `RainSDKError.invalidLoginCode` when the code is rejected (wrong, expired, or already
+  /// used) — re-prompt the user rather than restarting the flow.
   public func confirmLoginCode(_ code: String) async throws {
     try await requireManagedAuth().confirmLoginCode(code)
   }
