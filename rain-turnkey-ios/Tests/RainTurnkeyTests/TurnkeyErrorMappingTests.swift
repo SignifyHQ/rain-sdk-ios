@@ -53,6 +53,26 @@ struct TurnkeyErrorMappingTests {
     #expect(mapped == RainSDKError.invalidLoginCode)
   }
 
+  @Test("from(_:) maps failedToVerifyOtp over a proxy 500 embedding status=400 to invalidLoginCode")
+  func testFailedToVerifyOtpProxy500WithEmbedded400MapsToInvalidLoginCode() {
+    // The auth proxy wraps the upstream rejection in a 500 whose body leaks the real status.
+    let payload = Data(#"{"code":2,"message":"turnkey: Invalid OTP code (status=400)"}"#.utf8)
+    let mapped = RainSDKError.from(underlying: TurnkeySwiftError.failedToVerifyOtp(
+      underlying: TurnkeyRequestError.apiError(statusCode: 500, payload: payload)
+    ))
+    #expect(mapped == RainSDKError.invalidLoginCode)
+  }
+
+  @Test("from(_:) keeps failedToVerifyOtp over a plain 500 out of invalidLoginCode")
+  func testFailedToVerifyOtpPlain500StaysProviderError() {
+    // A 500 without an embedded rejected status (or with a non-rejection one) stays a provider error.
+    let payload = Data(#"{"code":13,"message":"turnkey: upstream unavailable (status=503)"}"#.utf8)
+    let mapped = RainSDKError.from(underlying: TurnkeySwiftError.failedToVerifyOtp(
+      underlying: TurnkeyRequestError.apiError(statusCode: 500, payload: payload)
+    ))
+    #expect(mapped != RainSDKError.invalidLoginCode)
+  }
+
   @Test("from(_:) keeps failedToVerifyOtp over 429 out of invalidLoginCode")
   func testFailedToVerifyOtp429StaysTransient() {
     // Rate limiting is not a wrong code; it falls through to the generic status mapping.

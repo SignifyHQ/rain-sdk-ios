@@ -43,9 +43,17 @@ enum TurnkeyErrorMapping {
       // host could not tell "retype the code" from "the session died". 400/401/403 only: 429 and
       // other statuses stay transient/provider errors.
       if let requestError = underlying as? TurnkeyRequestError,
-         case .apiError(let statusCode, _) = requestError,
-         [400, 401, 403].contains(statusCode) {
-        return .invalidLoginCode
+         case .apiError(let statusCode, let payload) = requestError {
+        if let statusCode, rejectedCodeStatuses.contains(statusCode) {
+          return .invalidLoginCode
+        }
+        // The auth proxy sometimes wraps the upstream rejection in an HTTP 500 whose body embeds
+        // the real status, e.g. {"code":2,"message":"turnkey: Invalid OTP code (status=400)"}.
+        // Recover the embedded status and apply the same rule.
+        if let embedded = embeddedUpstreamStatus(in: payload),
+           rejectedCodeStatuses.contains(embedded) {
+          return .invalidLoginCode
+        }
       }
       return RainSDKError.from(underlying: underlying)
 
@@ -93,6 +101,21 @@ enum TurnkeyErrorMapping {
          .oauthMissingIDToken:
       return .internalLogicError(details: "Turnkey: \(error.localizedDescription)")
     }
+  }
+
+  /// Statuses meaning "the code itself was rejected" (wrong, expired, already used).
+  private static let rejectedCodeStatuses: Set<Int> = [400, 401, 403]
+
+  /// Extracts an upstream HTTP status the auth proxy embedded in its error body's message,
+  /// e.g. `"turnkey: Invalid OTP code (status=400)"` -> 400. Returns `nil` when the payload
+  /// isn't that JSON shape or carries no `status=NNN` marker.
+  private static func embeddedUpstreamStatus(in payload: Data?) -> Int? {
+    struct ProxyErrorBody: Decodable { let message: String }
+    guard let payload,
+          let body = try? JSONDecoder().decode(ProxyErrorBody.self, from: payload),
+          let range = body.message.range(of: #"status=\d{3}"#, options: .regularExpression)
+    else { return nil }
+    return Int(body.message[range].dropFirst("status=".count))
   }
 
   private static func mapTurnkeyRequestError(_ error: TurnkeyRequestError) -> RainSDKError {
