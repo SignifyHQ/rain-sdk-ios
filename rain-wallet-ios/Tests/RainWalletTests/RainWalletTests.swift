@@ -1,7 +1,7 @@
 import Testing
 import Foundation
 @testable import RainCore
-@testable import RainTurnkey
+@_spi(RainWallet) @testable import RainTurnkey
 @testable import RainWallet
 
 @Suite("RainWallet")

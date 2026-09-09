@@ -3,7 +3,7 @@ import Foundation
 import TurnkeyHttp
 import TurnkeySwift
 @_spi(RainAdapter) @testable import RainCore
-@testable import RainTurnkey
+@_spi(RainWallet) @testable import RainTurnkey
 
 @Suite("Turnkey Managed Auth")
 struct TurnkeyManagedAuthTests {

@@ -33,8 +33,9 @@ final class HomeViewModel: ObservableObject {
   @Published var turnkeyAuthProxyConfigId = ""
   @Published var turnkeyEmail = ""
   @Published var turnkeyOtpCode = ""
-  @Published private(set) var turnkeyOtpSent = false
+  @Published private(set) var turnkeyOtpId: String?
   @Published private(set) var turnkeySessionActive = false
+  private var turnkeyOtpEncryptionBundle: String?
 
   // Rain Wallet
   @Published var rainWalletOrgId = ""
@@ -106,17 +107,12 @@ final class HomeViewModel: ObservableObject {
       isLoading = false
       if sessionToken.trimmed.isEmpty { statusText = "Ready" } else { await initializeSdk() }
     case .turnkey:
-      guard !turnkeyOrgId.trimmed.isEmpty, !turnkeyAuthProxyConfigId.trimmed.isEmpty else {
-        return resumeFallback("Saved Turnkey ids missing — log in again")
-      }
-      let turnkeyProvider = session.prepareTurnkey(
-        organizationId: turnkeyOrgId.trimmed,
-        authProxyConfigId: turnkeyAuthProxyConfigId.trimmed,
-        onSessionExpired: turnkeyExpiryHandler
-      )
-      await turnkeyProvider.awaitSessionRestore()
-      guard turnkeyProvider.hasActiveSession() else {
+      await TurnkeyAuthSample.awaitSessionRestore()
+      guard TurnkeyAuthSample.hasActiveSession() else {
         return resumeFallback("Saved Turnkey session expired — log in again")
+      }
+      guard await TurnkeyAuthSample.activeSessionEmail().matches(turnkeyEmail) else {
+        return resumeFallback("Saved Turnkey session belongs to another email — log in again")
       }
       turnkeySessionActive = true
       isLoading = false
@@ -305,26 +301,11 @@ final class HomeViewModel: ObservableObject {
       && !turnkeyAuthProxyConfigId.trimmed.isEmpty
       && !turnkeyEmail.trimmed.isEmpty
       && !isLoading
-      && !turnkeyOtpSent
+      && turnkeyOtpId == nil
   }
 
   var canVerifyTurnkeyOtp: Bool {
     !turnkeyOtpCode.trimmed.isEmpty && !isLoading && !turnkeySessionActive
-  }
-
-  /// Expiry hook shared by the send and resume paths: restart the OTP flow. A fresh login
-  /// revives the provider (it watches the process-wide session), so Rain is not re-initialized.
-  private var turnkeyExpiryHandler: @Sendable () -> Void {
-    { [weak self] in
-      SampleLog.w("Turnkey.session", "Turnkey session expired, re-auth required")
-      Task { @MainActor [weak self] in
-        guard let self else { return }
-        turnkeySessionActive = false
-        turnkeyOtpSent = false
-        turnkeyOtpCode = ""
-        statusText = "Turnkey session expired — log in again"
-      }
-    }
   }
 
   func sendTurnkeyOtp() async {
@@ -333,7 +314,6 @@ final class HomeViewModel: ObservableObject {
       return
     }
     let email = turnkeyEmail.trimmed
-    let previousEmail = SessionStore.turnkeyEmail
     SampleLog.i("Turnkey.otpInit", "starting email-OTP flow email=\(SampleLog.maskEmail(email))")
     // Saved before configure so a relaunch (the only way to change ids) picks up the new values.
     SessionStore.provider = .turnkey
@@ -341,35 +321,38 @@ final class HomeViewModel: ObservableObject {
     SessionStore.turnkeyAuthProxyConfigId = turnkeyAuthProxyConfigId.trimmed
     SessionStore.turnkeyEmail = email
     isLoading = true
-    statusText = "Initializing wallet backend..."
+    statusText = "Initializing Turnkey..."
 
     do {
-      let provider = session.prepareTurnkey(
+      try TurnkeyAuthSample.configure(
         organizationId: turnkeyOrgId.trimmed,
-        authProxyConfigId: turnkeyAuthProxyConfigId.trimmed,
-        onSessionExpired: turnkeyExpiryHandler
+        authProxyConfigId: turnkeyAuthProxyConfigId.trimmed
       )
-      await provider.awaitSessionRestore()
 
-      // The SDK restores a valid session from secure storage. Only reuse it when it belongs to
-      // the email being logged in (tracked locally, since the last login on this device wrote
-      // it) — otherwise entering a different email would silently continue as the previous
-      // user. On mismatch, log out and run the full OTP flow.
-      if provider.hasActiveSession() {
-        if previousEmail.caseInsensitiveCompare(email) == .orderedSame {
+      // Turnkey restores a valid session from the Keychain. Only reuse it when it provably
+      // belongs to the email being logged in — otherwise entering a different email would
+      // silently continue as the previous user. On mismatch, log out and run the full OTP flow.
+      if TurnkeyAuthSample.hasActiveSession() {
+        let sessionEmail = await TurnkeyAuthSample.activeSessionEmail()
+        if let sessionEmail, sessionEmail.caseInsensitiveCompare(email) == .orderedSame {
           SampleLog.i("Turnkey.otpInit", "existing session restored for this email — skipping OTP")
           turnkeySessionActive = true
-          statusText = "Existing session restored — initialize Rain to continue"
+          statusText = "Existing Turnkey session restored — initialize Rain to continue"
           isLoading = false
           return
         }
-        SampleLog.w("Turnkey.otpInit", "restored session belongs to a different email — logging out")
-        try provider.logout()
+        SampleLog.w(
+          "Turnkey.otpInit",
+          "restored session belongs to \(SampleLog.maskEmail(sessionEmail)), "
+          + "not \(SampleLog.maskEmail(email)) — logging out"
+        )
+        TurnkeyAuthSample.logout()
       }
 
       statusText = "Sending OTP to \(email)..."
-      try await provider.sendLoginCode(email: email)
-      turnkeyOtpSent = true
+      let result = try await TurnkeyAuthSample.sendEmailOtp(email: email)
+      turnkeyOtpId = result.otpId
+      turnkeyOtpEncryptionBundle = result.otpEncryptionTargetBundle
       statusText = "OTP sent — check your email"
       SampleLog.i("Turnkey.otpInit", "OTP sent")
     } catch {
@@ -380,7 +363,7 @@ final class HomeViewModel: ObservableObject {
   }
 
   func verifyTurnkeyOtp() async {
-    guard turnkeyOtpSent, let provider = session.turnkeyProvider else {
+    guard let otpId = turnkeyOtpId, let bundle = turnkeyOtpEncryptionBundle else {
       statusText = "Send OTP first"
       return
     }
@@ -394,10 +377,14 @@ final class HomeViewModel: ObservableObject {
     statusText = "Verifying OTP..."
 
     do {
-      // Signup-or-login, plus EVM + Solana wallet provisioning — all inside the SDK now.
-      try await provider.confirmLoginCode(turnkeyOtpCode.trimmed)
+      try await TurnkeyAuthSample.verifyEmailOtp(
+        otpId: otpId,
+        otpCode: turnkeyOtpCode.trimmed,
+        otpEncryptionTargetBundle: bundle,
+        email: turnkeyEmail.trimmed
+      )
       turnkeySessionActive = true
-      statusText = "Session active — initialize Rain to continue"
+      statusText = "Turnkey session active — initialize Rain to continue"
     } catch {
       SampleLog.e("Turnkey.otpVerify", "failed: \(error.localizedDescription)")
       statusText = "OTP verification failed: \(error.localizedDescription)"
@@ -415,9 +402,27 @@ final class HomeViewModel: ObservableObject {
     statusText = "Initializing Rain with Turnkey..."
 
     do {
-      // Wallet provisioning already happened inside confirmLoginCode; the expiry handler was
-      // installed when the provider was prepared.
-      try await session.initializeTurnkey()
+      // One wallet carrying both the Ethereum and Solana accounts (a single seed to back up).
+      if try await TurnkeyAuthSample.ensureWallets() {
+        statusText = "Provisioned Turnkey wallet, initializing Rain..."
+      }
+
+      try await session.initializeTurnkey(
+        turnkey: TurnkeyAuthSample.context,
+        // Restart the OTP flow; a fresh login revives the provider (it watches the process-wide
+        // Turnkey singleton), so Rain is not re-initialized.
+        onSessionExpired: { [weak self] in
+          SampleLog.w("Turnkey.session", "Turnkey session expired, re-auth required")
+          Task { @MainActor [weak self] in
+            guard let self else { return }
+            turnkeySessionActive = false
+            turnkeyOtpId = nil
+            turnkeyOtpEncryptionBundle = nil
+            turnkeyOtpCode = ""
+            statusText = "Turnkey session expired — log in again"
+          }
+        }
+      )
       await logResolvedAddresses(area: "Turnkey.rainInit")
       persistRainCredentials(.turnkey)
       isInitialized = session.isInitialized
@@ -697,15 +702,16 @@ final class HomeViewModel: ObservableObject {
     session.reset()
     SessionStore.clear()
     // Real logout so the next run requires fresh auth (and resume detects no session).
-    try? session.turnkeyProvider?.logout()
+    TurnkeyAuthSample.logout()
     try? session.rainWalletProvider?.logout()
     await PrivyAuthSample.shared.logout()
 
     // Inputs reset (the provider choice is kept).
     seedFields()
     replacementPortalToken = ""
-    turnkeyOtpSent = false
+    turnkeyOtpId = nil
     turnkeyOtpCode = ""
+    turnkeyOtpEncryptionBundle = nil
     turnkeySessionActive = false
     rainWalletOtpSent = false
     rainWalletOtpCode = ""

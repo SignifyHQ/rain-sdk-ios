@@ -36,19 +36,30 @@ final class StubBackendContext: TurnkeyContextProtocol, @unchecked Sendable {
     OtpChallenge(otpId: "otp-id", encryptionTargetBundle: "bundle")
   }
 
+  var selectedStoredSessionKey: String?
+
   func completeOtp(
     otpId: String,
     otpCode: String,
     otpEncryptionTargetBundle: String,
     contact: String,
-    otpType: OtpType
+    otpType: OtpType,
+    sessionKey: String,
+    signupWalletAccounts: [WalletAccountParams]
   ) async throws {}
 
-  func clearStoredSession() {}
+  func selectStoredSession(sessionKey: String) async throws {}
+
+  func clearStoredSession(sessionKey: String?) {}
 
   func createTurnkeyWallet(
     walletName: String,
     accounts: [WalletAccountParams],
     mnemonicLength: Int
+  ) async throws {}
+
+  func addAccountsToTurnkeyWallet(
+    walletId: String,
+    accounts: [WalletAccountParams]
   ) async throws {}
 }
