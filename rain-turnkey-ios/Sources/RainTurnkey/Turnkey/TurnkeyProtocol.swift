@@ -62,18 +62,27 @@ internal protocol TurnkeyContextProtocol: AnyObject {
   /// returns a module-owned value so mocks need not construct the vendor's result type.
   func sendOtp(contact: String, otpType: OtpType) async throws -> OtpChallenge
 
-  /// Completes the OTP flow (signup-or-login). Distinctly named and fixed-arity so it cannot
-  /// collide with the vendor's defaulted `completeOtp(...)`.
+  /// The key the currently selected stored session lives under, if any.
+  var selectedStoredSessionKey: String? { get }
+
+  /// Completes the OTP flow (signup-or-login), storing the resulting session under `sessionKey`.
+  /// Distinctly named and fixed-arity so it cannot collide with the vendor's defaulted
+  /// `completeOtp(...)`.
   func completeOtp(
     otpId: String,
     otpCode: String,
     otpEncryptionTargetBundle: String,
     contact: String,
-    otpType: OtpType
+    otpType: OtpType,
+    sessionKey: String
   ) async throws
 
-  /// Clears the stored default session (logout / pre-login cleanup). Safe no-op when none exists.
-  func clearStoredSession()
+  /// Activates the session stored under `sessionKey` (client, published session, auth state).
+  func selectStoredSession(sessionKey: String) async throws
+
+  /// Clears the session stored under `sessionKey`; `nil` clears the currently selected one
+  /// (logout). Safe no-op when none exists.
+  func clearStoredSession(sessionKey: String?)
 
   /// Creates a wallet with the given accounts on the authenticated account. Distinctly named so
   /// it cannot collide with the vendor's defaulted `createWallet(...)`.
@@ -110,12 +119,17 @@ extension TurnkeyContext: TurnkeyContextProtocol {
     return OtpChallenge(otpId: result.otpId, encryptionTargetBundle: result.otpEncryptionTargetBundle)
   }
 
+  internal var selectedStoredSessionKey: String? {
+    selectedSessionKey
+  }
+
   internal func completeOtp(
     otpId: String,
     otpCode: String,
     otpEncryptionTargetBundle: String,
     contact: String,
-    otpType: OtpType
+    otpType: OtpType,
+    sessionKey: String
   ) async throws {
     _ = try await completeOtp(
       otpId: otpId,
@@ -123,12 +137,18 @@ extension TurnkeyContext: TurnkeyContextProtocol {
       otpEncryptionTargetBundle: otpEncryptionTargetBundle,
       contact: contact,
       otpType: otpType,
-      invalidateExisting: true
+      invalidateExisting: true,
+      sessionKey: sessionKey
     )
   }
 
-  internal func clearStoredSession() {
-    clearSession(for: TurnkeySwift.Constants.Session.defaultSessionKey)
+  internal func selectStoredSession(sessionKey: String) async throws {
+    _ = try await setActiveSession(sessionKey: sessionKey)
+  }
+
+  internal func clearStoredSession(sessionKey: String?) {
+    // The vendor resolves `nil` to the currently selected session.
+    clearSession(for: sessionKey)
   }
 
   internal func createTurnkeyWallet(

@@ -128,17 +128,42 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
     guard let pending = pendingOtpLock.withLock({ pendingOtp }) else {
       throw RainSDKError.invalidConfig(details: "No login code was requested; call sendLoginCode first")
     }
+    // Log in under a fresh per-attempt session key: the vendor throws keyAlreadyExists only for
+    // a same-key collision, so an already-active session survives a mistyped code (verifyOtp
+    // consumes the code, so a premature logout could not be undone by retrying). Mirrors the
+    // Android SDK's behaviour.
+    let attemptKey = "rain-turnkey-\(UUID().uuidString)"
+    let previousKey = context.selectedStoredSessionKey
     do {
-      // A previous login can leave a stored session; the vendor throws keyAlreadyExists rather
-      // than overwriting it.
-      context.clearStoredSession()
       try await context.completeOtp(
         otpId: pending.otpId,
         otpCode: code,
         otpEncryptionTargetBundle: pending.encryptionTargetBundle,
         contact: pending.email,
-        otpType: .email
+        otpType: .email,
+        sessionKey: attemptKey
       )
+    } catch {
+      // Nothing was stored or cleared — a live session stays live and the user can request a
+      // new code.
+      throw RainSDKError.from(underlying: error)
+    }
+    do {
+      // The vendor auto-selects the new session only when none was selected; over a live
+      // session the attempt key must be activated explicitly.
+      if context.selectedStoredSessionKey != attemptKey {
+        try await context.selectStoredSession(sessionKey: attemptKey)
+      }
+    } catch {
+      // Don't leave the never-selected attempt session orphaned in the keychain.
+      context.clearStoredSession(sessionKey: attemptKey)
+      throw RainSDKError.from(underlying: error)
+    }
+    // The previous session is superseded; drop it so per-attempt keys don't accumulate.
+    if let previousKey, previousKey != attemptKey {
+      context.clearStoredSession(sessionKey: previousKey)
+    }
+    do {
       try await ensureWallets()
       pendingOtpLock.withLock { pendingOtp = nil }
     } catch {
@@ -147,7 +172,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
   }
 
   internal func logout() {
-    context.clearStoredSession()
+    context.clearStoredSession(sessionKey: nil) // nil = the currently selected session
     pendingOtpLock.withLock { pendingOtp = nil }
   }
 
