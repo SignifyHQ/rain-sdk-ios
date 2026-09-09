@@ -3,6 +3,7 @@ import RainCore
 import RainPortal
 import RainPrivy
 import RainTurnkey
+import RainWallet
 
 /// Coarse health of the wallet session, for colouring the home screen's session card.
 enum SessionHealth {
@@ -89,5 +90,34 @@ extension PortalSessionState {
         detail: "Portal rejected the session token; provide a new one"
       )
     }
+  }
+}
+
+extension RainWalletSessionState {
+  /// Rain wallet: session-backed, so `.active` carries an expiry.
+  var status: WalletSessionStatus {
+    switch self {
+    case .loading:
+      return WalletSessionStatus("Restoring session", .transitional)
+    case .active(let expiresAt):
+      return WalletSessionStatus(
+        "Active", .healthy,
+        detail: "Session expires at \(Self.clock(expiresAt)) (auto-refreshed by the SDK)"
+      )
+    case .expired:
+      return WalletSessionStatus("Expired", .dead, detail: "Log in again")
+    case .unauthenticated:
+      return WalletSessionStatus("Unauthenticated", .dead, detail: "Log in again")
+    }
+  }
+
+  private static let clockFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "HH:mm:ss"
+    return formatter
+  }()
+
+  private static func clock(_ epochSeconds: TimeInterval) -> String {
+    clockFormatter.string(from: Date(timeIntervalSince1970: epochSeconds))
   }
 }

@@ -7,6 +7,7 @@ enum WalletMode: String, CaseIterable, Identifiable {
   case portal = "Portal MPC"
   case turnkey = "Turnkey"
   case privy = "Privy"
+  case rainWallet = "Rain Wallet"
 
   var id: String { rawValue }
 }
@@ -35,6 +36,14 @@ final class HomeViewModel: ObservableObject {
   @Published private(set) var turnkeyOtpId: String?
   @Published private(set) var turnkeySessionActive = false
   private var turnkeyOtpEncryptionBundle: String?
+
+  // Rain Wallet
+  @Published var rainWalletOrgId = ""
+  @Published var rainWalletAuthConfigId = ""
+  @Published var rainWalletEmail = ""
+  @Published var rainWalletOtpCode = ""
+  @Published private(set) var rainWalletOtpSent = false
+  @Published private(set) var rainWalletSessionActive = false
 
   // Privy
   @Published var privyAppId = ""
@@ -84,6 +93,7 @@ final class HomeViewModel: ObservableObject {
     isRecovered = true
     turnkeySessionActive = mode == .turnkey
     privySessionActive = mode == .privy
+    rainWalletSessionActive = mode == .rainWallet
     statusText = "Session resumed"
   }
 
@@ -107,6 +117,22 @@ final class HomeViewModel: ObservableObject {
       turnkeySessionActive = true
       isLoading = false
       await initializeRainWithTurnkey()
+    case .rainWallet:
+      guard !rainWalletOrgId.trimmed.isEmpty, !rainWalletAuthConfigId.trimmed.isEmpty else {
+        return resumeFallback("Saved Rain Wallet ids missing — log in again")
+      }
+      let rainWalletProvider = session.prepareRainWallet(
+        organizationId: rainWalletOrgId.trimmed,
+        authConfigId: rainWalletAuthConfigId.trimmed,
+        onSessionExpired: rainWalletExpiryHandler
+      )
+      await rainWalletProvider.awaitSessionRestore()
+      guard rainWalletProvider.hasActiveSession() else {
+        return resumeFallback("Saved Rain Wallet session expired — log in again")
+      }
+      rainWalletSessionActive = true
+      isLoading = false
+      await initializeRainWithRainWallet()
     case .privy:
       guard await PrivyAuthSample.shared.hasActiveSession() else {
         return resumeFallback("Saved Privy session expired — log in again")
@@ -128,6 +154,9 @@ final class HomeViewModel: ObservableObject {
     turnkeyOrgId = SessionStore.turnkeyOrgId
     turnkeyAuthProxyConfigId = SessionStore.turnkeyAuthProxyConfigId
     turnkeyEmail = SessionStore.turnkeyEmail
+    rainWalletOrgId = SessionStore.rainWalletOrgId
+    rainWalletAuthConfigId = SessionStore.rainWalletAuthConfigId
+    rainWalletEmail = SessionStore.rainWalletEmail
     privyAppId = SessionStore.privyAppId
     privyAppClientId = SessionStore.privyAppClientId
     privyEmail = SessionStore.privyEmail
@@ -406,6 +435,128 @@ final class HomeViewModel: ObservableObject {
     isLoading = false
   }
 
+  // MARK: - Rain Wallet
+
+  var canSendRainWalletOtp: Bool {
+    !rainWalletOrgId.trimmed.isEmpty
+      && !rainWalletAuthConfigId.trimmed.isEmpty
+      && !rainWalletEmail.trimmed.isEmpty
+      && !isLoading
+      && !rainWalletOtpSent
+  }
+
+  var canVerifyRainWalletOtp: Bool {
+    !rainWalletOtpCode.trimmed.isEmpty && !isLoading && !rainWalletSessionActive
+  }
+
+  /// Expiry hook shared by the send and resume paths: restart the login-code flow.
+  private var rainWalletExpiryHandler: @Sendable () -> Void {
+    { [weak self] in
+      SampleLog.w("RainWallet.session", "Rain Wallet session expired, re-auth required")
+      Task { @MainActor [weak self] in
+        guard let self else { return }
+        rainWalletSessionActive = false
+        rainWalletOtpSent = false
+        rainWalletOtpCode = ""
+        statusText = "Rain Wallet session expired — log in again"
+      }
+    }
+  }
+
+  func sendRainWalletOtp() async {
+    guard canSendRainWalletOtp else {
+      statusText = "Organization ID, Auth Config ID, and Email are required"
+      return
+    }
+    let email = rainWalletEmail.trimmed
+    let previousEmail = SessionStore.rainWalletEmail
+    SampleLog.i("RainWallet.otpInit", "starting login-code flow email=\(SampleLog.maskEmail(email))")
+    SessionStore.provider = .rainWallet
+    SessionStore.rainWalletOrgId = rainWalletOrgId.trimmed
+    SessionStore.rainWalletAuthConfigId = rainWalletAuthConfigId.trimmed
+    SessionStore.rainWalletEmail = email
+    isLoading = true
+    statusText = "Initializing Rain Wallet..."
+
+    do {
+      let provider = session.prepareRainWallet(
+        organizationId: rainWalletOrgId.trimmed,
+        authConfigId: rainWalletAuthConfigId.trimmed,
+        onSessionExpired: rainWalletExpiryHandler
+      )
+      await provider.awaitSessionRestore()
+
+      if provider.hasActiveSession() {
+        if previousEmail.caseInsensitiveCompare(email) == .orderedSame {
+          SampleLog.i("RainWallet.otpInit", "existing session restored for this email — skipping OTP")
+          rainWalletSessionActive = true
+          statusText = "Existing session restored — initialize Rain to continue"
+          isLoading = false
+          return
+        }
+        SampleLog.w("RainWallet.otpInit", "restored session belongs to a different email — logging out")
+        try provider.logout()
+      }
+
+      statusText = "Sending login code to \(email)..."
+      try await provider.sendLoginCode(email: email)
+      rainWalletOtpSent = true
+      statusText = "Login code sent — check your email"
+    } catch {
+      SampleLog.e("RainWallet.otpInit", "failed: \(error.localizedDescription)")
+      statusText = "Rain Wallet login init failed: \(error.localizedDescription)"
+    }
+    isLoading = false
+  }
+
+  func verifyRainWalletOtp() async {
+    guard rainWalletOtpSent, let provider = session.rainWalletProvider else {
+      statusText = "Send the login code first"
+      return
+    }
+    guard canVerifyRainWalletOtp else {
+      statusText = "Login code required"
+      return
+    }
+
+    SampleLog.i("RainWallet.otpVerify", "verifying login code")
+    isLoading = true
+    statusText = "Verifying login code..."
+
+    do {
+      try await provider.confirmLoginCode(rainWalletOtpCode.trimmed)
+      rainWalletSessionActive = true
+      statusText = "Session active — initialize Rain to continue"
+    } catch {
+      SampleLog.e("RainWallet.otpVerify", "failed: \(error.localizedDescription)")
+      statusText = "Login code verification failed: \(error.localizedDescription)"
+    }
+    isLoading = false
+  }
+
+  func initializeRainWithRainWallet() async {
+    guard rainWalletSessionActive else {
+      statusText = "Verify the login code first"
+      return
+    }
+    SampleLog.i("RainWallet.rainInit", "initializing Rain w/ Rain Wallet (EVM + Solana)")
+    isLoading = true
+    statusText = "Initializing Rain with Rain Wallet..."
+
+    do {
+      try await session.initializeRainWallet()
+      await logResolvedAddresses(area: "RainWallet.rainInit")
+      persistRainCredentials(.rainWallet)
+      isInitialized = session.isInitialized
+      isRecovered = true
+      statusText = "Rain initialized with Rain Wallet — wallet ready"
+    } catch {
+      SampleLog.e("RainWallet.rainInit", "failed: \(error.localizedDescription)")
+      statusText = "Rain Wallet init failed: \(error.localizedDescription)"
+    }
+    isLoading = false
+  }
+
   // MARK: - Privy
 
   var canSendPrivyOtp: Bool {
@@ -552,6 +703,7 @@ final class HomeViewModel: ObservableObject {
     SessionStore.clear()
     // Real logout so the next run requires fresh auth (and resume detects no session).
     TurnkeyAuthSample.logout()
+    try? session.rainWalletProvider?.logout()
     await PrivyAuthSample.shared.logout()
 
     // Inputs reset (the provider choice is kept).
@@ -561,6 +713,9 @@ final class HomeViewModel: ObservableObject {
     turnkeyOtpCode = ""
     turnkeyOtpEncryptionBundle = nil
     turnkeySessionActive = false
+    rainWalletOtpSent = false
+    rainWalletOtpCode = ""
+    rainWalletSessionActive = false
     privyOtpSent = false
     privyOtpCode = ""
     privySessionActive = false
@@ -593,6 +748,7 @@ private extension WalletMode {
     case .portal: self = .portal
     case .turnkey: self = .turnkey
     case .privy: self = .privy
+    case .rainWallet: self = .rainWallet
     }
   }
 }

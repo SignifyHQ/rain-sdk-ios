@@ -4,6 +4,7 @@ import RainCore
 import RainTurnkey
 import RainPortal
 import RainPrivy
+import RainWallet
 import PortalSwift
 import PrivySDK
 import TurnkeySwift
@@ -35,6 +36,7 @@ final class RainSDKService: ObservableObject {
     case portal
     case turnkey
     case privy
+    case rainWallet
   }
 
   /// The built SDK registry (Rain API + wallet-agnostic building). Nil before initialization.
@@ -64,12 +66,14 @@ final class RainSDKService: ObservableObject {
     case portal(RainPortal.PortalProvider)
     case turnkey(TurnkeyProvider)
     case privy(PrivyProvider)
+    case rainWallet(RainWallet.RainProvider)
 
     func close() {
       switch self {
       case .portal(let provider): provider.close()
       case .turnkey(let provider): provider.close()
       case .privy(let provider): provider.close()
+      case .rainWallet(let provider): provider.close()
       }
     }
   }
@@ -173,6 +177,43 @@ final class RainSDKService: ObservableObject {
     bind(.turnkey(provider), states: provider.sessionState.map(\.status))
   }
 
+  /// The Rain wallet provider, created by ``prepareRainWallet(organizationId:authConfigId:onSessionExpired:)``.
+  /// Authentication (`sendLoginCode` / `confirmLoginCode`) runs on it before Rain is initialized.
+  private(set) var rainWalletProvider: RainWallet.RainProvider?
+
+  /// Creates the Rain wallet provider. The SDK owns configuration and the email-OTP flow.
+  @discardableResult
+  func prepareRainWallet(
+    organizationId: String,
+    authConfigId: String,
+    onSessionExpired: (@Sendable () -> Void)? = nil
+  ) -> RainWallet.RainProvider {
+    RainLogger.isEnabled = true
+    let provider = RainWallet.RainProvider(
+      RainWalletConfig(
+        organizationId: organizationId,
+        authConfigId: authConfigId,
+        onSessionExpired: onSessionExpired
+      )
+    )
+    rainWalletProvider = provider
+    return provider
+  }
+
+  /// Builds the SDK with the prepared (and authenticated) Rain wallet provider and resolves the
+  /// Rain-backed client.
+  func initializeRainWallet() async throws {
+    guard let provider = rainWalletProvider else {
+      throw RainSDKError.invalidConfig(details: "Call prepareRainWallet before initializeRainWallet")
+    }
+    closeActiveProvider()
+    let sdk = try builder(networkConfigs: WalletChain.networkConfigs)
+      .register(provider)
+      .build()
+    try await resolve(sdk: sdk, providerId: .rain, provider: .rainWallet)
+    bind(.rainWallet(provider), states: provider.sessionState.map(\.status))
+  }
+
   /// Builds the SDK with the Privy provider and resolves the Privy-backed client.
   func initializePrivy(
     privy: any Privy,
@@ -207,6 +248,8 @@ final class RainSDKService: ObservableObject {
     case .privy(let provider):
       try await provider.refreshSession()
     case .portal(let provider):
+      try await provider.refreshSession()
+    case .rainWallet(let provider):
       try await provider.refreshSession()
     }
   }

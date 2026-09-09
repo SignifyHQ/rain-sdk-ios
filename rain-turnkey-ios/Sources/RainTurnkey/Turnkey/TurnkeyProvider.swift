@@ -119,7 +119,7 @@ public struct TurnkeyProvider: ProviderDescriptor, @unchecked Sendable {
         organizationId: organizationId,
         authProxyConfigId: authProxyConfigId
       )
-      let shared = TurnkeyContext.shared
+      let shared = TurnkeyManagedConfigurator.sharedContext()
       context = shared
       managedAuth = TurnkeyManagedAuthController(context: shared, configurationError: configurationError)
     }
