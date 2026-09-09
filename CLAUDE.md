@@ -51,13 +51,21 @@ descriptor struct). No typealiases at all: both renames are clean breaks in the 
 
 Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and RainWallet:
 
-- PR B1 (DONE 2026-09-07), RainTurnkey managed auth: `TurnkeyConfig` gains a managed init (`organizationId` +
-  `authProxyConfigId`) alongside the existing BYO authenticated-context init (kept, non-breaking).
-  Managed mode: the SDK calls `TurnkeyContext.configure` itself (singleton, process-guarded) and
-  `TurnkeyProvider` exposes auth — email OTP only: `sendLoginCode(email:)` / `confirmLoginCode(_:)`
-  (initOtp → verifyOtp + completeOtp, login-or-signup), `logout()`, `authState` publisher mapped to
-  a Rain-owned enum. Auth calls in BYO mode throw invalidConfig. TurnkeyContextProtocol + MockTurnkey
-  grow the auth seams. Demo app's TurnkeyAuthSample dissolves into this feature.
+- PR B1 (DONE 2026-09-07; reworked 2026-09-09), RainTurnkey managed auth — SPI-only: `TurnkeyConfig`
+  gains a managed init (`organizationId` + `authProxyConfigId`) alongside the existing BYO
+  authenticated-context init (kept, non-breaking). Managed mode: the SDK calls
+  `TurnkeyContext.configure` itself (singleton, process-guarded) and `TurnkeyProvider` exposes
+  auth — email OTP only: `sendLoginCode(email:)` / `confirmLoginCode(_:)` (initOtp → verifyOtp +
+  completeOtp under a per-attempt session key, login-or-signup; wrong code = `invalidLoginCode`
+  RAIN_203, never a logout), `logout()`, `authState` publisher mapped to a Rain-owned enum.
+  Provisioning: ONE wallet with both the Ethereum and Solana accounts (single seed; atomic at
+  signup via `createSubOrgParams.customWallet`, backfilled onto the existing seed via
+  `create_wallet_accounts` otherwise) — a cross-platform contract with Android. Auth calls in
+  BYO mode throw invalidConfig. DECISION 2026-09-09: the managed surface (managed init, auth
+  extension, `TurnkeyAuthState`) is `@_spi(RainWallet)` — publicly Turnkey is BYO-only like
+  Portal/Privy; managed auth ships to hosts exclusively through RainWallet, whose module uses
+  `@_spi(RainWallet) internal import RainTurnkey`. Demo Turnkey tab stays full BYO
+  (TurnkeyAuthSample drives the vendor SDK); managed email-OTP is demoed on the Rain Wallet tab.
 - PR B2, `rain-wallet-ios` / `RainWallet`: pure renaming layer over managed RainTurnkey — NO
   embedded ids; `RainWalletConfig(organizationId:authConfigId:)` is host-supplied (Rain issues the
   values to partners). Descriptor struct `RainProvider`, id `ProviderId.rain`, neutral session
