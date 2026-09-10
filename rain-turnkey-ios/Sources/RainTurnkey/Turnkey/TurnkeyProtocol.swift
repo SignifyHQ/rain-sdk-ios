@@ -159,6 +159,9 @@ extension TurnkeyContext: TurnkeyContextProtocol {
       contact: contact,
       otpType: otpType,
       createSubOrgParams: subOrgParams,
+      // Server-side: kills every other login session the user has, on every device — a second
+      // phone logging in logs the first out (documented on the managed TurnkeyConfig init;
+      // Android passes the same value).
       invalidateExisting: true,
       sessionKey: sessionKey
     )

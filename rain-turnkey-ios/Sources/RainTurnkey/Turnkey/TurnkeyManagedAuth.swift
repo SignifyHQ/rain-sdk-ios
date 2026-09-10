@@ -121,12 +121,22 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
   }
 
   /// The session restore after configuration is asynchronous; waits until it settles (a session
-  /// appears or the state resolves to unauthenticated) or `timeout` elapses.
+  /// appears or the state resolves to unauthenticated) or `timeout` elapses. A restored session
+  /// also gets wallet provisioning re-checked (see below).
   internal func awaitSessionRestore(timeout: TimeInterval) async {
     let deadline = Date().addingTimeInterval(timeout)
     while Date() < deadline {
-      if context.session != nil || context.authState == .unAuthenticated { return }
+      if context.session != nil || context.authState == .unAuthenticated { break }
       try? await Task.sleep(nanoseconds: 100_000_000)
+    }
+    // A previous login can have died between session storage and wallet provisioning (e.g. a
+    // network blip in ensureWallets after completeOtp succeeded): the session is live, the host
+    // skips the OTP flow, and confirmLoginCode — the only other place provisioning runs — never
+    // executes again, stranding the account without one of its chain families. Re-check here,
+    // best-effort: a failure simply retries on the next restore, and the check is a no-op when
+    // both accounts exist.
+    if hasActiveSession() {
+      try? await ensureWallets()
     }
   }
 
@@ -198,9 +208,17 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
     }
   }
 
-  internal func logout() {
+  internal func logout() async {
     context.clearStoredSession(sessionKey: nil) // nil = the currently selected session
     pendingOtpLock.withLock { pendingOtp = nil }
+    // The vendor wipes storage synchronously but flips `session` / `authState` from a main-actor
+    // Task slightly later. Wait (bounded) for the live state to settle so callers can read
+    // `authState` / `hasActiveSession()` immediately after logout returns.
+    let deadline = Date().addingTimeInterval(2)
+    while Date() < deadline {
+      if context.session == nil && context.authState == .unAuthenticated { return }
+      try? await Task.sleep(nanoseconds: 20_000_000)
+    }
   }
 
   // MARK: Wallet provisioning

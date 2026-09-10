@@ -335,11 +335,14 @@ final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
     clearStoredSessionCallCount += 1
     clearStoredSessionCalls.append(sessionKey)
     // Vendor behaviour: only clearing the selected session (or `nil`) tears down live state;
-    // purging another key touches storage only.
+    // purging another key touches storage only. Like the vendor, the live state flips from a
+    // main-actor Task — i.e. NOT synchronously — so logout's wait-for-settle is exercised.
     if sessionKey == nil || sessionKey == selectedStoredSessionKey {
       selectedStoredSessionKey = nil
-      session = nil
-      authState = .unAuthenticated
+      Task { @MainActor in
+        self.session = nil
+        self.authState = .unAuthenticated
+      }
     }
   }
 
