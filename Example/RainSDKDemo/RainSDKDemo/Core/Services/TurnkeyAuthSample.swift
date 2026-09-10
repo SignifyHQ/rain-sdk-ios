@@ -119,57 +119,50 @@ enum TurnkeyAuthSample {
     SampleLog.d("TurnkeyAuth", "session active subOrgId=\(SampleLog.maskToken(subOrganizationId))")
   }
 
-  /// Ensures the authenticated sub-org has an Ethereum-format account (secp256k1). Returns true
-  /// when a new wallet was created.
-  static func ensureEthereumWallet() async throws -> Bool {
-    try await ensureWallet(
-      addressFormat: .address_format_ethereum,
-      curve: .curve_secp256k1,
-      path: "m/44'/60'/0'/0/0",
-      walletName: "Rain SDK Sample Wallet"
-    )
-  }
-
-  /// Ensures the authenticated sub-org has a Solana-format account (ed25519), so the demo can
-  /// hand Rain both an EVM and a Solana account. Returns true when a new wallet was created.
-  static func ensureSolanaWallet() async throws -> Bool {
-    try await ensureWallet(
-      addressFormat: .address_format_solana,
-      curve: .curve_ed25519,
-      path: "m/44'/501'/0'/0'",
-      walletName: "Rain SDK Sample Solana Wallet"
-    )
-  }
-
-  private static func ensureWallet(
-    addressFormat: AddressFormat,
-    curve: Curve,
-    path: String,
-    walletName: String
-  ) async throws -> Bool {
+  /// Ensures the authenticated sub-org has Ethereum (secp256k1) and Solana (ed25519) accounts.
+  /// A fresh account gets ONE wallet carrying both — a single seed to back up, matching what the
+  /// SDK's managed mode provisions. Returns true when a wallet was created.
+  ///
+  /// An existing wallet missing a family is only warned about: deriving extra accounts onto an
+  /// existing seed needs the raw `create_wallet_accounts` API, which this sample keeps out of
+  /// scope.
+  static func ensureWallets() async throws -> Bool {
     try await TurnkeyContext.shared.refreshWallets()
-    let hasAccount = TurnkeyContext.shared.wallets
-      .flatMap(\.accounts)
-      .contains { $0.addressFormat == addressFormat }
+    let formats = Set(TurnkeyContext.shared.wallets.flatMap(\.accounts).map(\.addressFormat))
     SampleLog.d(
       "TurnkeyAuth",
-      "ensureWallet \(addressFormat.rawValue) wallets=\(TurnkeyContext.shared.wallets.count) has=\(hasAccount)"
+      "ensureWallets wallets=\(TurnkeyContext.shared.wallets.count) formats=\(formats.map(\.rawValue))"
     )
-    if hasAccount { return false }
+    if formats.contains(.address_format_ethereum), formats.contains(.address_format_solana) {
+      return false
+    }
+    guard TurnkeyContext.shared.wallets.isEmpty else {
+      SampleLog.w(
+        "TurnkeyAuth",
+        "existing wallet lacks an Ethereum or Solana account — add it via Turnkey (create_wallet_accounts)"
+      )
+      return false
+    }
 
     try await TurnkeyContext.shared.createWallet(
-      walletName: walletName,
+      walletName: "Rain SDK Sample Wallet",
       accounts: [
         WalletAccountParams(
-          addressFormat: addressFormat,
-          curve: curve,
-          path: path,
+          addressFormat: .address_format_ethereum,
+          curve: .curve_secp256k1,
+          path: "m/44'/60'/0'/0/0",
           pathFormat: .path_format_bip32
-        )
+        ),
+        WalletAccountParams(
+          addressFormat: .address_format_solana,
+          curve: .curve_ed25519,
+          path: "m/44'/501'/0'/0'",
+          pathFormat: .path_format_bip32
+        ),
       ],
       mnemonicLength: 12
     )
-    SampleLog.i("TurnkeyAuth", "created wallet \(walletName)")
+    SampleLog.i("TurnkeyAuth", "created wallet with Ethereum + Solana accounts")
     return true
   }
 }

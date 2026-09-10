@@ -7,8 +7,10 @@ Linking `rain-turnkey-ios` is all a Turnkey app needs — `RainCore` comes trans
 re-exported, so `import RainTurnkey` surfaces the full SDK), and Portal's / Privy's vendor SDKs
 never enter the dependency graph.
 
-Turnkey authentication happens **outside** Rain: the host app drives Turnkey's Swift SDK
-(auth proxy / passkeys / OAuth / OTP), then hands the authenticated `TurnkeyContext` to Rain:
+Like Portal and Privy, this is a **bring-your-own** adapter: the host drives Turnkey's Swift SDK
+itself (auth proxy / passkeys / OAuth / OTP) and hands the authenticated `TurnkeyContext` to
+Rain — authentication lives outside the SDK. (SDK-owned email-OTP authentication exists, but it
+ships exclusively through the Rain-branded `RainWallet` module.)
 
 ```swift
 import RainTurnkey   // re-exports RainCore

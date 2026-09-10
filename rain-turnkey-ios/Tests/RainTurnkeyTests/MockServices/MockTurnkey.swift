@@ -240,6 +240,8 @@ final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
       session != nil ? .authenticated : .unAuthenticated
     )
     self.turnkeyClient = client
+    // A live session is always selected under some key (the vendor restores it that way).
+    self.selectedStoredSessionKey = session != nil ? "previous-session-key" : nil
   }
 
   func refreshWallets() async throws {
@@ -254,6 +256,106 @@ final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
       throw refreshSessionError
     }
     onRefreshSession?()
+  }
+
+  // MARK: Managed auth seams
+
+  struct SendOtpCall: Equatable { let contact: String; let otpType: OtpType }
+  struct CompleteOtpCall: Equatable {
+    let otpId: String
+    let otpCode: String
+    let otpEncryptionTargetBundle: String
+    let contact: String
+    let otpType: OtpType
+    let sessionKey: String
+  }
+  struct CreateWalletCall { let walletName: String; let accounts: [WalletAccountParams]; let mnemonicLength: Int }
+
+  var sendOtpCalls: [SendOtpCall] = []
+  var sendOtpError: Error?
+  var stubbedOtpChallenge = OtpChallenge(otpId: "otp-id", encryptionTargetBundle: "bundle")
+
+  var completeOtpCalls: [CompleteOtpCall] = []
+  /// The signup wallet accounts passed to each `completeOtp` call (parallel to
+  /// `completeOtpCalls`; `WalletAccountParams` is not Equatable so it can't live in the struct).
+  var completeOtpSignupAccounts: [[WalletAccountParams]] = []
+  var completeOtpError: Error?
+  /// Runs after a successful `completeOtp` — install the new session / authState here.
+  var onCompleteOtp: (() -> Void)?
+
+  struct AddAccountsCall { let walletId: String; let accounts: [WalletAccountParams] }
+  var addAccountsCalls: [AddAccountsCall] = []
+  var addAccountsError: Error?
+
+  var clearStoredSessionCallCount = 0
+  /// The keys passed to `clearStoredSession` (`nil` = "the selected session").
+  var clearStoredSessionCalls: [String?] = []
+  var createWalletCalls: [CreateWalletCall] = []
+  var createWalletError: Error?
+
+  var selectedStoredSessionKey: String?
+  var selectStoredSessionCalls: [String] = []
+  var selectStoredSessionError: Error?
+
+  func sendOtp(contact: String, otpType: OtpType) async throws -> OtpChallenge {
+    sendOtpCalls.append(SendOtpCall(contact: contact, otpType: otpType))
+    if let sendOtpError { throw sendOtpError }
+    return stubbedOtpChallenge
+  }
+
+  func completeOtp(
+    otpId: String,
+    otpCode: String,
+    otpEncryptionTargetBundle: String,
+    contact: String,
+    otpType: OtpType,
+    sessionKey: String,
+    signupWalletAccounts: [WalletAccountParams]
+  ) async throws {
+    completeOtpCalls.append(CompleteOtpCall(
+      otpId: otpId, otpCode: otpCode, otpEncryptionTargetBundle: otpEncryptionTargetBundle,
+      contact: contact, otpType: otpType, sessionKey: sessionKey
+    ))
+    completeOtpSignupAccounts.append(signupWalletAccounts)
+    if let completeOtpError { throw completeOtpError }
+    // Vendor behaviour: the new session is auto-selected only when none was selected.
+    if selectedStoredSessionKey == nil {
+      selectedStoredSessionKey = sessionKey
+    }
+    onCompleteOtp?()
+  }
+
+  func selectStoredSession(sessionKey: String) async throws {
+    selectStoredSessionCalls.append(sessionKey)
+    if let selectStoredSessionError { throw selectStoredSessionError }
+    selectedStoredSessionKey = sessionKey
+  }
+
+  func clearStoredSession(sessionKey: String?) {
+    clearStoredSessionCallCount += 1
+    clearStoredSessionCalls.append(sessionKey)
+    // Vendor behaviour: only clearing the selected session (or `nil`) tears down live state;
+    // purging another key touches storage only. Like the vendor, the live state flips from a
+    // main-actor Task — i.e. NOT synchronously — so logout's wait-for-settle is exercised.
+    if sessionKey == nil || sessionKey == selectedStoredSessionKey {
+      selectedStoredSessionKey = nil
+      Task { @MainActor in
+        self.session = nil
+        self.authState = .unAuthenticated
+      }
+    }
+  }
+
+  func createTurnkeyWallet(walletName: String, accounts: [WalletAccountParams], mnemonicLength: Int) async throws {
+    createWalletCalls.append(CreateWalletCall(
+      walletName: walletName, accounts: accounts, mnemonicLength: mnemonicLength
+    ))
+    if let createWalletError { throw createWalletError }
+  }
+
+  func addAccountsToTurnkeyWallet(walletId: String, accounts: [WalletAccountParams]) async throws {
+    addAccountsCalls.append(AddAccountsCall(walletId: walletId, accounts: accounts))
+    if let addAccountsError { throw addAccountsError }
   }
 
   func signRawPayload(

@@ -39,6 +39,10 @@ let package = Package(
       name: "rain-privy-ios",
       targets: ["RainPrivy"]
     ),
+    .library(
+      name: "rain-wallet-ios",
+      targets: ["RainWallet"]
+    ),
   ],
   dependencies: [
     .package(url: "https://github.com/tkhq/swift-sdk.git", exact: "4.0.0"),
@@ -84,6 +88,19 @@ let package = Package(
       name: "RainTurnkeyTests",
       dependencies: ["RainTurnkey"],
       path: "rain-turnkey-ios/Tests/RainTurnkeyTests"
+    ),
+
+    // The Rain-branded wallet: a wallet-neutral surface over the managed wallet backend.
+    // Depends on RainTurnkey internally but never re-exports it.
+    .target(
+      name: "RainWallet",
+      dependencies: ["RainTurnkey"],
+      path: "rain-wallet-ios/Sources/RainWallet"
+    ),
+    .testTarget(
+      name: "RainWalletTests",
+      dependencies: ["RainWallet"],
+      path: "rain-wallet-ios/Tests/RainWalletTests"
     ),
 
     .target(

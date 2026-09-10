@@ -843,6 +843,7 @@ programmatic handling.
 | `RAIN_104` | `rainApiNotConfigured` | A Rain API method was called before an Api-Key and userId were supplied. |
 | `RAIN_201` | `tokenExpired` | Provider session token expired or invalid. |
 | `RAIN_202` | `unauthorized` | Invalid or missing token / permissions. |
+| `RAIN_203` | `invalidLoginCode` | The one-time login code was rejected (wrong, expired, or already used) — ask the user to retype it or request a new one. Distinct from `RAIN_201`, which means an established session died. |
 | `RAIN_301` | `networkError(underlying:)` | Network/connectivity failure. |
 | `RAIN_302` | `apiError(statusCode:message:)` | The Rain API returned a non-success HTTP status (other than 401/403 → `unauthorized`). |
 | `RAIN_303` | `signatureNotReady(status:retryAfter:)` / `transactionPending(statusId:)` | The withdrawal admin signature is not ready yet, retry after `retryAfter` seconds; or a submitted transaction's hash was not yet visible when status polling stopped. `transactionPending` is not a failure: the transaction may still confirm, so resume polling with `statusId` instead of resending. |

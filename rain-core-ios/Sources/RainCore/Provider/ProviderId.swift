@@ -22,4 +22,6 @@ public struct ProviderId: Hashable, Sendable, RawRepresentable, CustomStringConv
   public static let turnkey = ProviderId("turnkey")
   /// Privy embedded-key adapter (shipped in the `RainPrivy` module).
   public static let privy = ProviderId("privy")
+  /// Rain-branded wallet (shipped in the `RainWallet` module).
+  public static let rain = ProviderId("rain")
 }

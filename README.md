@@ -18,6 +18,7 @@ your dependency graph. Each adapter re-exports `RainCore`, so one import per pro
 | `RainCore`    | The `WalletProvider` port, capability model, provider registry (`RainSdk`), and all Rain domain logic. No wallet vendor SDKs. |
 | `RainTurnkey` | The Turnkey adapter (`TurnkeyProvider`); depends on `RainCore` + Turnkey's Swift SDK. |
 | `RainPortal`  | The Portal MPC adapter (`PortalProvider`); depends on `RainCore` + `PortalSwift`. |
+| `RainWallet`  | The Rain-branded wallet (`RainProvider`); Rain issues the org + auth config ids, and the SDK owns authentication (email login codes), wallet provisioning, and sessions. |
 | `RainPrivy`   | The Privy embedded-key adapter (`PrivyProvider`); depends on `RainCore` + the Privy iOS SDK (`Privy`). Custody (sign/send) routes through Privy's EIP-1193 embedded wallet; balance/fee reads use Rain's configured RPC. |
 
 The 1.x `RainSDK` umbrella module has been removed — link the provider product you use.
@@ -25,7 +26,8 @@ The 1.x `RainSDK` umbrella module has been removed — link the provider product
 ## Features
 
 - **Portal wallet integration** — Register a `PortalProvider` with a Portal session token; resolve a `RainClient` and use the connected MPC wallet for signing and sending transactions. See [rain-portal-ios/README.md](rain-portal-ios/README.md#session-expiry-and-retry) for session refresh and retry behavior.
-- **Turnkey wallet integration** — Register a `TurnkeyProvider` with an authenticated `TurnkeyContext` (passkeys / auth proxy / OAuth / OTP handled outside Rain by the Turnkey Swift SDK). Ships in its own `rain-turnkey-ios` module.
+- **Turnkey wallet integration** — bring your own authenticated `TurnkeyContext` (auth proxy / passkeys / OAuth / OTP driven by the host); Rain handles sessions, signing, and multi-chain resolution. Ships in its own `rain-turnkey-ios` module. SDK-owned email-OTP auth is available through the Rain-branded `RainWallet` provider.
+- **Rain wallet** — Register a `RainProvider` with your Rain-issued organization id + auth config id; the SDK runs email login-code auth (`sendLoginCode` / `confirmLoginCode`), provisions one wallet with EVM + Solana accounts on first login, and manages the session. See [rain-wallet-ios/README.md](rain-wallet-ios/README.md).
 - **Privy wallet integration** — Register a `PrivyProvider` with an authenticated `Privy` singleton (auth + embedded-wallet provisioning handled outside Rain by the Privy iOS SDK); custody routes through Privy's EIP-1193 embedded wallet.
 - **Pluggable providers** — Bring your own `WalletProvider` behind a `ProviderDescriptor` and register it; resolve providers by id or by `Capability`.
 - **Wallet-agnostic utilities** — EIP-712 message + withdraw calldata building are available straight off `RainSdk` with no provider resolved — use them with your own wallet or backend.
@@ -69,6 +71,7 @@ unselected provider's vendor SDK is never linked into your app:
 
 | Product | Link it for | Import |
 |---|---|---|
+| `rain-wallet-ios` | The Rain wallet | `import RainWallet` |
 | `rain-turnkey-ios` | Turnkey wallets | `import RainTurnkey` |
 | `rain-portal-ios` | Portal MPC wallets | `import RainPortal` |
 | `rain-privy-ios` | Privy embedded wallets | `import RainPrivy` |
@@ -79,8 +82,10 @@ re-exports it, so the adapter import alone surfaces the full SDK (`RainSdk`, `Ra
 errors).
 
 ```swift
+// Rain wallet app.
+.product(name: "rain-wallet-ios", package: "rain-sdk-ios")
 // Turnkey-only app.
-.product(name: "rain-turnkey-ios", package: "rain-sdk-ios")
+// .product(name: "rain-turnkey-ios", package: "rain-sdk-ios")
 // Portal-only app.
 // .product(name: "rain-portal-ios", package: "rain-sdk-ios")
 // Privy-only app.
@@ -144,25 +149,21 @@ let rain = try RainSdk.builder()
 let client = try await rain.provider(.portal)
 ```
 
-### 2. Turnkey (full wallet flow)
+### 2. Turnkey (bring your own auth)
 
-Turnkey authentication happens **outside** Rain — drive Turnkey's Swift SDK (auth proxy / passkeys /
-OAuth / OTP), then hand the authenticated `TurnkeyContext` to Rain:
-
-- Proxy middleware: `https://docs.turnkey.com/sdks/swift/proxy-middleware`
-- Passkeys: `https://docs.turnkey.com/sdks/swift/register-passkey`
+Like Portal and Privy, authentication lives outside the SDK: drive Turnkey's Swift SDK yourself
+(auth proxy / passkeys / OAuth / OTP), then hand the authenticated `TurnkeyContext` to Rain:
 
 ```swift
 import RainTurnkey   // re-exports RainCore
-import TurnkeySwift
 
 let rain = try RainSdk.builder()
     .rpcEndpoints([43114: "https://avalanche-c-chain-rpc.publicnode.com"])
     .register(
         TurnkeyProvider(
             TurnkeyConfig(
-                turnkey: turnkeyContext,
-                walletAddress: nil // omit to use the first Ethereum account from the context
+                turnkey: turnkeyContext,   // your authenticated context
+                walletAddress: nil         // omit to use the first Ethereum account
             )
         )
     )
@@ -170,6 +171,9 @@ let rain = try RainSdk.builder()
 
 let client = try await rain.provider(.turnkey)
 ```
+
+See [rain-turnkey-ios/README.md](rain-turnkey-ios/README.md) for details. SDK-owned email-OTP
+authentication is available through the Rain-branded `RainWallet` provider instead.
 
 ### 3. Bring your own provider, or resolve by capability
 
