@@ -41,7 +41,7 @@ struct RainWalletNeutralityTests {
     let _: String = try await provider.exportRecoveryPhrase()
     let _: String = try await provider.exportPrivateKey(.ethereum)
     let _: String = try await provider.exportPrivateKey(RainWalletKeyAccount.solana)
-    try provider.logout()
+    try await provider.logout()
     provider.close()
 
     // The re-exported core surface resolves through this one import.
