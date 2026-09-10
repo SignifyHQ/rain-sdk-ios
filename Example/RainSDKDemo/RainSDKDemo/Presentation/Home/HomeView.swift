@@ -8,10 +8,11 @@ struct HomeView: View {
   var body: some View {
     NavigationStack {
       ScrollView {
-        VStack(spacing: 16) {
-          Text("Rain SDK Showcase")
-            .font(.title)
-            .fontWeight(.bold)
+        VStack(alignment: .leading, spacing: RainMetrics.s3) {
+          Text("Rain SDK showcase")
+            .font(RainFont.title)
+            .tracking(-0.72)
+            .foregroundStyle(Color.rainTextPrimary)
 
           modeSelector
 
@@ -38,55 +39,57 @@ struct HomeView: View {
             featureGrid
           }
           if viewModel.isRecovered {
-            clearSessionButton
+            RainAsyncButton(title: "Clear session", kind: .destructive) {
+              await viewModel.clearSession()
+            }
           }
 
-          statusSection
+          RainStatusLog(text: viewModel.statusText)
         }
-        .padding()
+        .padding(RainMetrics.s2)
       }
-      .navigationTitle("Rain SDK Demo")
-      .navigationBarTitleDisplayMode(.inline)
+      .rainScreen()
+      .toolbarBackground(Color.rainInk, for: .navigationBar)
+      .toolbarColorScheme(.dark, for: .navigationBar)
     }
   }
 
   // MARK: - Mode selector
 
   private var modeSelector: some View {
-    Picker("Wallet provider", selection: Binding(
-      get: { viewModel.mode },
-      set: { viewModel.onModeChanged($0) }
-    )) {
-      ForEach(WalletMode.allCases) { mode in
-        Text(mode.rawValue).tag(mode)
-      }
-    }
-    .pickerStyle(.segmented)
-    // Locked while a provider is resolved so the session card always describes `mode`.
-    .disabled(viewModel.isInitialized || sdkService.sessionStatus != nil)
+    RainSegmentedTabs(
+      items: WalletMode.allCases,
+      selection: Binding(
+        get: { viewModel.mode },
+        set: { viewModel.onModeChanged($0) }
+      ),
+      title: { $0.rawValue },
+      // Locked while a provider is resolved so the session card always describes `mode`.
+      isDisabled: viewModel.isInitialized || sdkService.sessionStatus != nil
+    )
   }
 
   // MARK: - Rain API
 
   private var rainApiSection: some View {
-    card("Rain API Credentials") {
-      labeledField(title: "Rain Api-Key", placeholder: "Enter Rain Api-Key", text: $viewModel.rainApiKey)
-      labeledField(title: "Rain User ID", placeholder: "Enter Rain User ID", text: $viewModel.userId)
+    RainSectionCard(title: "Rain API credentials") {
+      RainLabeledField(title: "Rain API key", placeholder: "Enter Rain API key", text: $viewModel.rainApiKey)
+      RainLabeledField(title: "Rain user ID", placeholder: "Enter Rain user ID", text: $viewModel.userId)
     }
   }
 
   // MARK: - Portal
 
   private var portalSection: some View {
-    card("Portal Configuration") {
-      labeledField(
-        title: "Portal Session Token",
+    RainSectionCard(title: "Portal MPC configuration") {
+      RainLabeledField(
+        title: "Portal session token",
         placeholder: "Enter session token",
         text: $viewModel.sessionToken
       )
 
-      actionButton(
-        title: viewModel.isInitialized ? "✅ SDK Initialized" : "Initialize SDK",
+      RainAsyncButton(
+        title: viewModel.isInitialized ? "SDK initialized" : "Initialize SDK",
         enabled: viewModel.canInitializePortal,
         isLoading: viewModel.isLoading
       ) {
@@ -98,26 +101,26 @@ struct HomeView: View {
   // MARK: - Turnkey
 
   private var turnkeySection: some View {
-    card("Turnkey Configuration (Email OTP)") {
-      labeledField(
-        title: "Parent Organization ID",
+    RainSectionCard(title: "Turnkey configuration, email OTP") {
+      RainLabeledField(
+        title: "Parent organization ID",
         placeholder: "your-turnkey-parent-org-id",
         text: $viewModel.turnkeyOrgId
       )
       .disabled(viewModel.turnkeyOtpId != nil)
 
-      labeledField(
-        title: "Auth Proxy Config ID",
+      RainLabeledField(
+        title: "Auth proxy config ID",
         placeholder: "auth proxy config id",
         text: $viewModel.turnkeyAuthProxyConfigId
       )
       .disabled(viewModel.turnkeyOtpId != nil)
 
-      labeledField(title: "Email", placeholder: "you@example.com", text: $viewModel.turnkeyEmail)
+      RainLabeledField(title: "Email", placeholder: "you@example.com", text: $viewModel.turnkeyEmail)
         .disabled(viewModel.turnkeyOtpId != nil)
 
-      actionButton(
-        title: viewModel.turnkeyOtpId != nil ? "OTP sent" : "Init Turnkey & Send OTP",
+      RainAsyncButton(
+        title: viewModel.turnkeyOtpId != nil ? "OTP sent" : "Init Turnkey & send OTP",
         enabled: viewModel.canSendTurnkeyOtp,
         isLoading: viewModel.isLoading
       ) {
@@ -125,11 +128,11 @@ struct HomeView: View {
       }
 
       if viewModel.turnkeyOtpId != nil {
-        labeledField(title: "OTP Code", placeholder: "123456", text: $viewModel.turnkeyOtpCode)
+        RainLabeledField(title: "OTP code", placeholder: "123456", text: $viewModel.turnkeyOtpCode)
           .disabled(viewModel.turnkeySessionActive)
 
-        actionButton(
-          title: viewModel.turnkeySessionActive ? "✅ Session active" : "Verify & Log In",
+        RainAsyncButton(
+          title: viewModel.turnkeySessionActive ? "Session active" : "Verify & log in",
           enabled: viewModel.canVerifyTurnkeyOtp,
           isLoading: viewModel.isLoading
         ) {
@@ -138,8 +141,8 @@ struct HomeView: View {
       }
 
       if viewModel.turnkeySessionActive {
-        actionButton(
-          title: viewModel.isInitialized ? "✅ Rain Initialized" : "Initialize Rain w/ Turnkey",
+        RainAsyncButton(
+          title: viewModel.isInitialized ? "Rain initialized" : "Initialize Rain with Turnkey",
           enabled: !viewModel.isLoading && !viewModel.isInitialized,
           isLoading: viewModel.isLoading
         ) {
@@ -152,26 +155,26 @@ struct HomeView: View {
   // MARK: - Rain Wallet
 
   private var rainWalletSection: some View {
-    card("Rain Wallet Configuration (Email Login Code)") {
-      labeledField(
+    RainSectionCard(title: "Rain Wallet configuration, email login code") {
+      RainLabeledField(
         title: "Organization ID",
         placeholder: "rain-issued organization id",
         text: $viewModel.rainWalletOrgId
       )
       .disabled(viewModel.rainWalletOtpSent)
 
-      labeledField(
-        title: "Auth Config ID",
+      RainLabeledField(
+        title: "Auth config ID",
         placeholder: "rain-issued auth config id",
         text: $viewModel.rainWalletAuthConfigId
       )
       .disabled(viewModel.rainWalletOtpSent)
 
-      labeledField(title: "Email", placeholder: "you@example.com", text: $viewModel.rainWalletEmail)
+      RainLabeledField(title: "Email", placeholder: "you@example.com", text: $viewModel.rainWalletEmail)
         .disabled(viewModel.rainWalletOtpSent)
 
-      actionButton(
-        title: viewModel.rainWalletOtpSent ? "Code sent" : "Init Rain Wallet & Send Code",
+      RainAsyncButton(
+        title: viewModel.rainWalletOtpSent ? "Code sent" : "Init Rain Wallet & send code",
         enabled: viewModel.canSendRainWalletOtp,
         isLoading: viewModel.isLoading
       ) {
@@ -179,11 +182,11 @@ struct HomeView: View {
       }
 
       if viewModel.rainWalletOtpSent {
-        labeledField(title: "Login Code", placeholder: "123456", text: $viewModel.rainWalletOtpCode)
+        RainLabeledField(title: "Login code", placeholder: "123456", text: $viewModel.rainWalletOtpCode)
           .disabled(viewModel.rainWalletSessionActive)
 
-        actionButton(
-          title: viewModel.rainWalletSessionActive ? "✅ Session active" : "Verify & Log In",
+        RainAsyncButton(
+          title: viewModel.rainWalletSessionActive ? "Session active" : "Verify & log in",
           enabled: viewModel.canVerifyRainWalletOtp,
           isLoading: viewModel.isLoading
         ) {
@@ -192,8 +195,8 @@ struct HomeView: View {
       }
 
       if viewModel.rainWalletSessionActive {
-        actionButton(
-          title: viewModel.isInitialized ? "✅ Rain Initialized" : "Initialize Rain w/ Rain Wallet",
+        RainAsyncButton(
+          title: viewModel.isInitialized ? "Rain initialized" : "Initialize Rain with Rain Wallet",
           enabled: !viewModel.isLoading && !viewModel.isInitialized,
           isLoading: viewModel.isLoading
         ) {
@@ -206,22 +209,22 @@ struct HomeView: View {
   // MARK: - Privy
 
   private var privySection: some View {
-    card("Privy Configuration (Email OTP)") {
-      labeledField(title: "Privy App ID", placeholder: "your-privy-app-id", text: $viewModel.privyAppId)
+    RainSectionCard(title: "Privy configuration, email OTP") {
+      RainLabeledField(title: "Privy app ID", placeholder: "your-privy-app-id", text: $viewModel.privyAppId)
         .disabled(viewModel.privyOtpSent || viewModel.privySessionActive)
 
-      labeledField(
-        title: "Privy App Client ID",
+      RainLabeledField(
+        title: "Privy app client ID",
         placeholder: "your-privy-app-client-id",
         text: $viewModel.privyAppClientId
       )
       .disabled(viewModel.privyOtpSent || viewModel.privySessionActive)
 
-      labeledField(title: "Email", placeholder: "you@example.com", text: $viewModel.privyEmail)
+      RainLabeledField(title: "Email", placeholder: "you@example.com", text: $viewModel.privyEmail)
         .disabled(viewModel.privyOtpSent || viewModel.privySessionActive)
 
-      actionButton(
-        title: viewModel.privyOtpSent ? "OTP sent" : "Init Privy & Send OTP",
+      RainAsyncButton(
+        title: viewModel.privyOtpSent ? "OTP sent" : "Init Privy & send OTP",
         enabled: viewModel.canSendPrivyOtp,
         isLoading: viewModel.isLoading
       ) {
@@ -229,10 +232,10 @@ struct HomeView: View {
       }
 
       if viewModel.privyOtpSent && !viewModel.privySessionActive {
-        labeledField(title: "OTP Code", placeholder: "123456", text: $viewModel.privyOtpCode)
+        RainLabeledField(title: "OTP code", placeholder: "123456", text: $viewModel.privyOtpCode)
 
-        actionButton(
-          title: "Verify & Log In",
+        RainAsyncButton(
+          title: "Verify & log in",
           enabled: viewModel.canVerifyPrivyOtp,
           isLoading: viewModel.isLoading
         ) {
@@ -241,8 +244,8 @@ struct HomeView: View {
       }
 
       if viewModel.privySessionActive {
-        actionButton(
-          title: viewModel.isInitialized ? "✅ Rain Initialized" : "Initialize Rain w/ Privy",
+        RainAsyncButton(
+          title: viewModel.isInitialized ? "Rain initialized" : "Initialize Rain with Privy",
           enabled: !viewModel.isLoading && !viewModel.isInitialized,
           isLoading: viewModel.isLoading
         ) {
@@ -256,77 +259,63 @@ struct HomeView: View {
 
   /// `sessionState`, `refreshSession()` and, for Portal, `updateSessionToken(_:)`.
   private func sessionSection(_ status: WalletSessionStatus) -> some View {
-    card("Wallet Session") {
-      HStack(spacing: 8) {
-        Circle()
-          .fill(indicatorColor(for: status.health))
-          .frame(width: 12, height: 12)
-        Text(status.label)
-          .font(.body)
-          .fontWeight(.semibold)
+    RainSectionCard(title: "Wallet session") {
+      HStack {
+        RainStatusPill(text: status.label, active: status.health == .healthy)
+        Spacer()
       }
       if let detail = status.detail {
         Text(detail)
-          .font(.caption)
-          .foregroundColor(.secondary)
+          .font(RainFont.meta)
+          .tracking(-0.12)
+          .foregroundStyle(Color.rainTextMuted)
       }
 
       // Portal's refresh goes through onSessionTokenNeeded, which needs a replacement token.
       let canRefresh = !viewModel.isLoading
         && (viewModel.mode != .portal || viewModel.canUpdatePortalToken)
-      secondaryButton(title: "Refresh session", enabled: canRefresh) {
+      RainAsyncButton(title: "Refresh session", kind: .secondary, enabled: canRefresh) {
         await viewModel.refreshSession()
       }
 
       if viewModel.mode == .portal {
         Text(
           "Replacement token: \"Update token\" installs it now (updateSessionToken); "
-            + "Refresh and any rejected call take it via onSessionTokenNeeded."
+            + "refresh and any rejected call take it via onSessionTokenNeeded."
         )
-        .font(.caption)
-        .foregroundColor(.secondary)
+        .font(RainFont.meta)
+        .tracking(-0.12)
+        .lineSpacing(4)
+        .foregroundStyle(Color.rainTextMuted)
 
-        labeledField(
+        RainLabeledField(
           title: "Replacement session token",
           placeholder: "Enter a freshly minted token",
           text: $viewModel.replacementPortalToken
         )
 
-        secondaryButton(title: "Update token", enabled: viewModel.canUpdatePortalToken) {
+        RainAsyncButton(title: "Update token", kind: .secondary, enabled: viewModel.canUpdatePortalToken) {
           await viewModel.updatePortalSessionToken()
         }
       }
     }
   }
 
-  private func indicatorColor(for health: SessionHealth) -> Color {
-    switch health {
-    case .healthy: return .green
-    case .transitional: return .yellow
-    case .dead: return .red
-    case .unknown: return .gray
-    }
-  }
-
   // MARK: - Chain selector
 
   private var chainSelector: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text("Active wallet")
-        .font(.headline)
-        .frame(maxWidth: .infinity, alignment: .leading)
+    VStack(alignment: .leading, spacing: RainMetrics.s1) {
+      RainSectionLabel(text: "Active wallet")
 
-      Picker("Active wallet", selection: $sdkService.selectedChain) {
+      Menu {
         ForEach(viewModel.availableChains) { chain in
-          Text(chain.displayName).tag(chain)
+          Button(chain.displayName) { sdkService.selectedChain = chain }
+        }
+      } label: {
+        RainSelectorRow {
+          Text(sdkService.selectedChain.displayName)
         }
       }
-      .pickerStyle(.menu)
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(12)
-      .background(Color(.systemBackground))
-      .cornerRadius(8)
-      .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.secondary.opacity(0.4)))
     }
     // Turnkey and Privy hold a Solana account; Portal is EVM-only.
     .onAppear { viewModel.normalizeSelectedChain() }
@@ -336,147 +325,21 @@ struct HomeView: View {
   // MARK: - Feature grid
 
   private var featureGrid: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      Text("SDK Features")
-        .font(.headline)
-        .frame(maxWidth: .infinity, alignment: .leading)
+    VStack(alignment: .leading, spacing: RainMetrics.s1) {
+      RainSectionLabel(text: "SDK features")
 
-      LazyVGrid(columns: [GridItem(spacing: 12), GridItem(spacing: 12)], spacing: 12) {
-        featureCard(emoji: "💳", label: "Wallet & QR") { WalletInfoView() }
-        featureCard(emoji: "💰", label: "Balances") { BalancesView() }
-        featureCard(emoji: "📤", label: "Send Tokens") { SendTokensView() }
-        featureCard(emoji: "🏦", label: "Withdraw") { CollateralWithdrawView() }
-        featureCard(emoji: "🔐", label: "Auth Pull") { AuthPullView() }
-        featureCard(emoji: "📜", label: "History") { TransactionHistoryView() }
+      LazyVGrid(
+        columns: [GridItem(spacing: RainMetrics.s1), GridItem(spacing: RainMetrics.s1)],
+        spacing: RainMetrics.s1
+      ) {
+        RainFeatureTile(icon: .walletQR, title: "Wallet & QR") { WalletInfoView() }
+        RainFeatureTile(icon: .balances, title: "Balances") { BalancesView() }
+        RainFeatureTile(icon: .sendTokens, title: "Send tokens") { SendTokensView() }
+        RainFeatureTile(icon: .withdraw, title: "Withdraw") { CollateralWithdrawView() }
+        RainFeatureTile(icon: .authPull, title: "Auth pull") { AuthPullView() }
+        RainFeatureTile(icon: .history, title: "History") { TransactionHistoryView() }
       }
     }
-  }
-
-  private func featureCard<Destination: View>(
-    emoji: String,
-    label: String,
-    @ViewBuilder destination: () -> Destination
-  ) -> some View {
-    NavigationLink(destination: destination()) {
-      VStack(spacing: 8) {
-        Text(emoji)
-          .font(.system(size: 32))
-        Text(label)
-          .font(.subheadline)
-          .fontWeight(.medium)
-          .multilineTextAlignment(.center)
-      }
-      .frame(maxWidth: .infinity)
-      .padding(20)
-      .background(Color.accentColor.opacity(0.12))
-      .foregroundColor(.primary)
-      .cornerRadius(12)
-    }
-    .buttonStyle(.plain)
-  }
-
-  // MARK: - Session
-
-  private var clearSessionButton: some View {
-    Button {
-      hideKeyboard()
-      Task { await viewModel.clearSession() }
-    } label: {
-      Text("Clear Session")
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(Color.red)
-        .foregroundColor(.white)
-        .cornerRadius(12)
-    }
-  }
-
-  private var statusSection: some View {
-    Text("Status: \(viewModel.statusText)")
-      .font(.subheadline)
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .padding()
-      .background(Color(.systemGray6))
-      .cornerRadius(12)
-  }
-
-  // MARK: - Building blocks
-
-  private func card<Content: View>(
-    _ title: String,
-    @ViewBuilder content: () -> Content
-  ) -> some View {
-    VStack(alignment: .leading, spacing: 12) {
-      Text(title)
-        .font(.headline)
-      content()
-    }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding()
-    .background(Color(.systemGray6))
-    .cornerRadius(12)
-  }
-
-  private func labeledField(
-    title: String,
-    placeholder: String,
-    text: Binding<String>
-  ) -> some View {
-    VStack(alignment: .leading, spacing: 6) {
-      Text(title)
-        .font(.subheadline)
-        .foregroundColor(.secondary)
-      TextField(placeholder, text: text)
-        .textFieldStyle(.roundedBorder)
-        .textInputAutocapitalization(.never)
-        .disableAutocorrection(true)
-    }
-  }
-
-  /// Outlined variant of `actionButton`.
-  private func secondaryButton(
-    title: String,
-    enabled: Bool,
-    action: @escaping () async -> Void
-  ) -> some View {
-    Button {
-      hideKeyboard()
-      Task { await action() }
-    } label: {
-      Text(title)
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 10)
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.accentColor))
-    }
-    .disabled(!enabled)
-    .opacity(enabled ? 1 : 0.6)
-  }
-
-  private func actionButton(
-    title: String,
-    enabled: Bool,
-    isLoading: Bool,
-    action: @escaping () async -> Void
-  ) -> some View {
-    Button {
-      hideKeyboard()
-      Task { await action() }
-    } label: {
-      HStack {
-        if isLoading {
-          ProgressView()
-            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-        }
-        Text(title)
-      }
-      .frame(maxWidth: .infinity)
-      .padding(.vertical, 12)
-      .background(enabled ? Color.accentColor : Color.gray)
-      .foregroundColor(.white)
-      .cornerRadius(10)
-    }
-    .disabled(!enabled)
-    .opacity(enabled ? 1 : 0.6)
   }
 }
 
