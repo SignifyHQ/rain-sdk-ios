@@ -210,15 +210,43 @@ struct TurnkeyManagedAuthTests {
     #expect(!controller.hasActiveSession())
   }
 
+  @Test("awaitSessionRestore backfills a missing account family on a restored session")
+  func testRestoreBackfillsMissingAccounts() async throws {
+    // A login that died between session storage and provisioning leaves a live session with an
+    // EVM-only wallet; the restore path must repair it, since the OTP flow will be skipped.
+    let turnkey = MockTurnkey(wallets: [MockTurnkey.defaultWallet()])
+    let controller = makeController(turnkey: turnkey)
+
+    await controller.awaitSessionRestore(timeout: 1)
+
+    #expect(turnkey.addAccountsCalls.count == 1)
+    #expect(turnkey.addAccountsCalls.first?.walletId == "wallet-id")
+    #expect(turnkey.createWalletCalls.isEmpty)
+  }
+
+  @Test("awaitSessionRestore provisions nothing without a session or when accounts are complete")
+  func testRestoreProvisionsOnlyWhenNeeded() async {
+    let noSession = MockTurnkey(session: nil)
+    await makeController(turnkey: noSession).awaitSessionRestore(timeout: 0.2)
+    #expect(noSession.addAccountsCalls.isEmpty && noSession.createWalletCalls.isEmpty)
+
+    let complete = MockTurnkey(wallets: [MockTurnkey.dualCurveWallet()])
+    await makeController(turnkey: complete).awaitSessionRestore(timeout: 1)
+    #expect(complete.addAccountsCalls.isEmpty && complete.createWalletCalls.isEmpty)
+  }
+
   @Test("logout clears the stored session and the pending OTP")
   func testLogout() async throws {
     let turnkey = MockTurnkey(session: MockTurnkey.defaultSession())
     let controller = makeController(turnkey: turnkey)
     try await controller.sendLoginCode(email: "user@example.com")
 
-    controller.logout()
+    await controller.logout()
 
     #expect(turnkey.clearStoredSessionCallCount == 1)
+    // The mock flips live state from a main-actor Task like the vendor; logout must have waited.
+    #expect(!controller.hasActiveSession())
+    #expect(controller.authState == .unauthenticated)
     await #expect(throws: RainSDKError.self) {
       try await controller.confirmLoginCode("123456") // pending OTP was dropped
     }

@@ -495,7 +495,7 @@ final class HomeViewModel: ObservableObject {
           return
         }
         SampleLog.w("RainWallet.otpInit", "restored session belongs to a different email — logging out")
-        try provider.logout()
+        try await provider.logout()
       }
 
       statusText = "Sending login code to \(email)..."
@@ -703,7 +703,9 @@ final class HomeViewModel: ObservableObject {
     SessionStore.clear()
     // Real logout so the next run requires fresh auth (and resume detects no session).
     TurnkeyAuthSample.logout()
-    try? session.rainWalletProvider?.logout()
+    if let rainWalletProvider = session.rainWalletProvider {
+      try? await rainWalletProvider.logout()
+    }
     await PrivyAuthSample.shared.logout()
 
     // Inputs reset (the provider choice is kept).

@@ -36,7 +36,7 @@ struct RainWalletNeutralityTests {
     let _: AnyPublisher<RainWalletSessionState, Never> = provider.sessionState
     let _: RainWalletSessionState = provider.currentSessionState()
     try await provider.refreshSession()
-    try provider.logout()
+    try await provider.logout()
     provider.close()
 
     // The re-exported core surface resolves through this one import.

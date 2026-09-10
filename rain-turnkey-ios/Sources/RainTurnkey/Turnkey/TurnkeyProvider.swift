@@ -61,6 +61,12 @@ public struct TurnkeyConfig: @unchecked Sendable {
   /// The underlying Turnkey configuration is one-shot per app launch — constructing a second
   /// managed provider with *different* ids leaves the first configuration in place and makes
   /// every auth call on the new provider throw `invalidConfig`.
+  ///
+  /// Single active login per user: `confirmLoginCode` completes the OTP with Turnkey's
+  /// `invalidateExisting: true`, which server-side kills every other login session the user has —
+  /// including on other devices. Logging in on a second phone therefore logs the first one out
+  /// (its next call fails, firing `onSessionExpired` there). A cross-platform contract with the
+  /// Android SDK, which passes the same value.
   @_spi(RainWallet)
   public init(
     organizationId: String,
@@ -234,9 +240,12 @@ extension TurnkeyProvider {
 
   /// Clears the stored session (full logout). Safe no-op when none exists. Managed mode only —
   /// throws `invalidConfig` in BYO mode, where the host owns the session.
+  ///
+  /// Async because the vendor flips the live auth state from a main-actor Task after wiping
+  /// storage: the call returns only once `authState` / `hasActiveSession()` reflect the logout.
   @_spi(RainWallet)
-  public func logout() throws {
-    try requireManagedAuth().logout()
+  public func logout() async throws {
+    try await requireManagedAuth().logout()
   }
 
   /// Waits for the asynchronous session restore that follows configuration, so a returning

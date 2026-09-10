@@ -215,13 +215,19 @@ public struct RainProvider: ProviderDescriptor {
 
   /// Confirms the code from ``sendLoginCode(email:)``, signing the user up on first login, and
   /// provisions the account's EVM and Solana wallets.
+  ///
+  /// One active login per user: a successful login invalidates the user's sessions everywhere
+  /// else, so logging in on a second device logs the first one out (where `onSessionExpired`
+  /// fires on its next use). Same behavior on the Android SDK.
   public func confirmLoginCode(_ code: String) async throws {
     try await backing.confirmLoginCode(code)
   }
 
-  /// Clears the stored session (full logout). Safe no-op when none exists.
-  public func logout() throws {
-    try backing.logout()
+  /// Clears the stored session (full logout). Safe no-op when none exists. Returns only once
+  /// `authState` / `hasActiveSession()` reflect the logout, so it is safe to read them right
+  /// after.
+  public func logout() async throws {
+    try await backing.logout()
   }
 
   /// Waits for the asynchronous session restore that follows configuration, so a returning
