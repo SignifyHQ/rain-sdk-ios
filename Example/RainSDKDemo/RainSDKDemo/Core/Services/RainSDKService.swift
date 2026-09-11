@@ -177,24 +177,19 @@ final class RainSDKService: ObservableObject {
     bind(.turnkey(provider), states: provider.sessionState.map(\.status))
   }
 
-  /// The Rain wallet provider, created by ``prepareRainWallet(organizationId:authConfigId:onSessionExpired:)``.
+  /// The Rain wallet provider, created by ``prepareRainWallet(onSessionExpired:)``.
   /// Authentication (`sendLoginCode` / `confirmLoginCode`) runs on it before Rain is initialized.
   private(set) var rainWalletProvider: RainWallet.RainProvider?
 
-  /// Creates the Rain wallet provider. The SDK owns configuration and the email-OTP flow.
+  /// Creates the Rain wallet provider. The SDK embeds the backend identity and owns the
+  /// email-OTP flow — nothing to configure beyond the hooks.
   @discardableResult
   func prepareRainWallet(
-    organizationId: String,
-    authConfigId: String,
     onSessionExpired: (@Sendable () -> Void)? = nil
   ) -> RainWallet.RainProvider {
     RainLogger.isEnabled = true
     let provider = RainWallet.RainProvider(
-      RainWalletConfig(
-        organizationId: organizationId,
-        authConfigId: authConfigId,
-        onSessionExpired: onSessionExpired
-      )
+      RainWalletConfig(onSessionExpired: onSessionExpired)
     )
     rainWalletProvider = provider
     return provider

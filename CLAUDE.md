@@ -24,8 +24,8 @@ import per provider suffices. The 1.x `RainSDK` umbrella module has been REMOVED
   EVM+Solana; `.multiChain`, `.biometricGate`). `RainPortal` (`rain-portal-ios`) — Portal MPC,
   EVM-only. `RainPrivy` (`rain-privy-ios`) — Privy embedded wallet (EIP-1193 custody, reads via
   Rain RPC). `RainWallet` (`rain-wallet-ios`) — Rain-branded provider: a wallet-neutral renaming
-  layer over managed RainTurnkey (descriptor struct `RainProvider`, id `.rain`, host-supplied
-  `RainWalletConfig(organizationId:authConfigId:)`); `@_spi(RainWallet) internal import RainTurnkey`
+  layer over managed RainTurnkey (descriptor struct `RainProvider`, id `.rain`, embedded backend
+  identity — `RainWalletConfig` carries behavior only, `RainProvider()` is zero-config); `@_spi(RainWallet) internal import RainTurnkey`
   so no vendor type can leak into its public surface (compiler-enforced), @_exported RainCore
   only; mutually
   exclusive with `.turnkey` (guard in `RainSdk.build()`). Test seams for managed providers:
@@ -75,15 +75,18 @@ Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and Rai
   Portal/Privy; managed auth ships to hosts exclusively through RainWallet, whose module uses
   `@_spi(RainWallet) internal import RainTurnkey`. Demo Turnkey tab stays full BYO
   (TurnkeyAuthSample drives the vendor SDK); managed email-OTP is demoed on the Rain Wallet tab.
-- PR B2 (DONE 2026-09-07), `rain-wallet-ios` / `RainWallet`: pure renaming layer over managed RainTurnkey — NO
-  embedded ids; `RainWalletConfig(organizationId:authConfigId:)` is host-supplied (Rain issues the
-  values to partners). Descriptor struct `RainProvider`, id `ProviderId.rain`, neutral session
-  surface (`RainWalletSessionState`, publisher, refreshSession). RainWallet @_exported imports
-  RainCore only — NEVER RainTurnkey (no Turnkey symbol on a bare `import RainWallet`). Mutual
-  exclusion guard in `RainSdk.build()` (.rain + .turnkey cannot both register — one TurnkeyContext
-  per process). Vendor concealment is naming-level only (no embedded config anymore). Demo app
-  gains a RainWallet provider option (4th tab/flow: org id + auth config id entry, email OTP via
-  the RainWallet methods, then the standard wallet screens), linking rain-wallet-ios.
+- PR B2 (DONE 2026-09-07; ids embedded 2026-09-11), `rain-wallet-ios` / `RainWallet`: renaming
+  layer over managed RainTurnkey. DECISION 2026-09-11 (reverses the earlier host-supplied
+  design): Rain's org id + auth config id are EMBEDDED in the module
+  (`RainWalletBackend.organizationId` / `.authConfigId` — public identifiers, not secrets;
+  abuse bounded by OTP rate limits). `RainWalletConfig(walletAddress:sessionPolicy:onSessionExpired:)`
+  carries behavior only, and `RainProvider()` is zero-config (defaulted init). Descriptor struct
+  `RainProvider`, id `ProviderId.rain`, neutral session surface (`RainWalletSessionState`,
+  publisher, refreshSession). RainWallet @_exported imports RainCore only — NEVER RainTurnkey
+  (no Turnkey symbol on a bare `import RainWallet`). Mutual exclusion guard in `RainSdk.build()`
+  (.rain + .turnkey cannot both register — one TurnkeyContext per process). Demo app has a
+  RainWallet provider option (email-only entry — no id fields; email OTP via the RainWallet
+  methods, then the standard wallet screens), linking rain-wallet-ios.
 - PR C (in progress 2026-09-09), key export — RainWallet-only, same SPI shape as managed auth.
   Public surface: `RainProvider.exportRecoveryPhrase()` (12-word BIP-39 phrase of the account's
   single seed) and `exportPrivateKey(_: RainWalletKeyAccount)` (`.ethereum` = 0x-prefixed 32-byte

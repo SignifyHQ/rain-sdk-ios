@@ -1,14 +1,12 @@
 // RainWallet — the Rain-branded wallet provider.
 //
-// Rain issues each partner an organization id and an auth configuration id; authentication
+// The wallet backend identity is embedded in the SDK — hosts configure nothing. Authentication
 // (email one-time codes) runs inside the SDK, and the resolved `RainClient` exposes the same
 // wallet surface as every other provider.
 //
 //     import RainWallet   // surfaces RainCore too
 //
-//     let provider = RainProvider(
-//         RainWalletConfig(organizationId: "<org-id>", authConfigId: "<auth-config-id>")
-//     )
+//     let provider = RainProvider()
 //
 //     await provider.awaitSessionRestore()
 //     if !provider.hasActiveSession() {
@@ -139,13 +137,9 @@ public struct RainWalletSessionPolicy: Sendable {
 
 // MARK: - Configuration
 
-/// Configuration for the Rain wallet provider. Rain issues the `organizationId` and
-/// `authConfigId` to each partner.
+/// Configuration for the Rain wallet provider. The wallet backend identity (Rain's organization
+/// and authentication configuration) is embedded in the SDK — hosts configure only behavior.
 public struct RainWalletConfig: Sendable {
-  /// The wallet organization id issued by Rain.
-  public let organizationId: String
-  /// The authentication configuration id issued by Rain.
-  public let authConfigId: String
   /// Optional explicit EVM wallet address. When `nil`, the first Ethereum account is used.
   public let walletAddress: String?
   /// Expiry/refresh/retry behavior for the session guarding every wallet call.
@@ -157,18 +151,22 @@ public struct RainWalletConfig: Sendable {
   public let onSessionExpired: (@Sendable () -> Void)?
 
   public init(
-    organizationId: String,
-    authConfigId: String,
     walletAddress: String? = nil,
     sessionPolicy: RainWalletSessionPolicy = RainWalletSessionPolicy(),
     onSessionExpired: (@Sendable () -> Void)? = nil
   ) {
-    self.organizationId = organizationId
-    self.authConfigId = authConfigId
     self.walletAddress = walletAddress
     self.sessionPolicy = sessionPolicy
     self.onSessionExpired = onSessionExpired
   }
+}
+
+/// Rain's wallet backend identity. Public identifiers, not secrets: possession grants nothing —
+/// authentication still runs the email one-time-code flow, and abuse is bounded by the backend's
+/// OTP rate limits. Embedded so hosts need zero configuration to use the Rain wallet.
+internal enum RainWalletBackend {
+  static let organizationId = "63495e45-8e64-42b5-b602-c68f019ca806"
+  static let authConfigId = "1d8aac5e-f236-4800-bab7-98a9e27b4b2a"
 }
 
 // MARK: - Provider
@@ -186,11 +184,11 @@ public struct RainWalletConfig: Sendable {
 public struct RainProvider: ProviderDescriptor {
   private let backing: TurnkeyProvider
 
-  public init(_ config: RainWalletConfig) {
+  public init(_ config: RainWalletConfig = RainWalletConfig()) {
     self.backing = TurnkeyProvider(
       TurnkeyConfig(
-        organizationId: config.organizationId,
-        authProxyConfigId: config.authConfigId,
+        organizationId: RainWalletBackend.organizationId,
+        authProxyConfigId: RainWalletBackend.authConfigId,
         walletAddress: config.walletAddress,
         sessionPolicy: config.sessionPolicy.backingPolicy,
         onSessionExpired: config.onSessionExpired

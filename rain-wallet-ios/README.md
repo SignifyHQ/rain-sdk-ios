@@ -2,18 +2,16 @@
 
 The Rain-branded wallet provider for the modular Rain iOS SDK.
 
-Rain issues each partner an **organization id** and an **auth configuration id**; with those, the
-SDK owns the whole wallet lifecycle — authentication (email one-time codes), wallet provisioning
-(EVM + Solana on first login), session management, and the full `RainClient` surface. Linking
+The wallet backend identity is embedded in the SDK — hosts configure nothing. The SDK owns the
+whole wallet lifecycle: authentication (email one-time codes), wallet provisioning (EVM + Solana
+on first login), session management, and the full `RainClient` surface. Linking
 `rain-wallet-ios` is all an app needs: `RainCore` comes transitively (and is re-exported, so
 `import RainWallet` surfaces the full SDK).
 
 ```swift
 import RainWallet   // re-exports RainCore
 
-let provider = RainProvider(
-    RainWalletConfig(organizationId: "<org-id>", authConfigId: "<auth-config-id>")
-)
+let provider = RainProvider()   // optionally RainProvider(RainWalletConfig(onSessionExpired:...))
 
 // Reuse a restored session, or run the login-code flow:
 await provider.awaitSessionRestore()
@@ -54,8 +52,7 @@ SDK returns the same formats.
 
 Notes:
 
-- The wallet-backend configuration is one-shot per app launch — changing the ids requires a
-  relaunch.
+- The wallet-backend configuration is one-shot per app launch.
 - The Rain wallet provider cannot be registered alongside the Turnkey provider in one app
   (`RainSdk.build()` rejects the combination); they share one process-wide wallet backend.
 - Multi-chain: the same provider serves EVM chains and Solana clusters

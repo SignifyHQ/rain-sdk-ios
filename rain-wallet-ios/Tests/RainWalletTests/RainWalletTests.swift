@@ -57,7 +57,7 @@ struct RainWalletTests {
   @Test("the descriptor advertises the .rain id and the backing capabilities")
   func testDescriptorIdentity() {
     let provider = RainProvider(
-      RainWalletConfig(organizationId: "org-\(UUID().uuidString)", authConfigId: "auth")
+      RainWalletConfig()
     )
     #expect(provider.id == .rain)
     #expect(provider.capabilities == [.multiChain, .biometricGate])

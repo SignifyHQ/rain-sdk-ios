@@ -39,9 +39,7 @@ final class HomeViewModel: ObservableObject {
   @Published private(set) var turnkeySessionActive = false
   private var turnkeyOtpEncryptionBundle: String?
 
-  // Rain Wallet
-  @Published var rainWalletOrgId = ""
-  @Published var rainWalletAuthConfigId = ""
+  // Rain Wallet — backend identity is embedded in the SDK; only the email is needed.
   @Published var rainWalletEmail = ""
   @Published var rainWalletOtpCode = ""
   @Published private(set) var rainWalletOtpSent = false
@@ -120,14 +118,7 @@ final class HomeViewModel: ObservableObject {
       isLoading = false
       await initializeRainWithTurnkey()
     case .rainWallet:
-      guard !rainWalletOrgId.trimmed.isEmpty, !rainWalletAuthConfigId.trimmed.isEmpty else {
-        return resumeFallback("Saved Rain Wallet ids missing — log in again")
-      }
-      let rainWalletProvider = session.prepareRainWallet(
-        organizationId: rainWalletOrgId.trimmed,
-        authConfigId: rainWalletAuthConfigId.trimmed,
-        onSessionExpired: rainWalletExpiryHandler
-      )
+      let rainWalletProvider = session.prepareRainWallet(onSessionExpired: rainWalletExpiryHandler)
       await rainWalletProvider.awaitSessionRestore()
       guard rainWalletProvider.hasActiveSession() else {
         return resumeFallback("Saved Rain Wallet session expired — log in again")
@@ -156,8 +147,6 @@ final class HomeViewModel: ObservableObject {
     turnkeyOrgId = SessionStore.turnkeyOrgId
     turnkeyAuthProxyConfigId = SessionStore.turnkeyAuthProxyConfigId
     turnkeyEmail = SessionStore.turnkeyEmail
-    rainWalletOrgId = SessionStore.rainWalletOrgId
-    rainWalletAuthConfigId = SessionStore.rainWalletAuthConfigId
     rainWalletEmail = SessionStore.rainWalletEmail
     privyAppId = SessionStore.privyAppId
     privyAppClientId = SessionStore.privyAppClientId
@@ -440,11 +429,7 @@ final class HomeViewModel: ObservableObject {
   // MARK: - Rain Wallet
 
   var canSendRainWalletOtp: Bool {
-    !rainWalletOrgId.trimmed.isEmpty
-      && !rainWalletAuthConfigId.trimmed.isEmpty
-      && !rainWalletEmail.trimmed.isEmpty
-      && !isLoading
-      && !rainWalletOtpSent
+    !rainWalletEmail.trimmed.isEmpty && !isLoading && !rainWalletOtpSent
   }
 
   var canVerifyRainWalletOtp: Bool {
@@ -468,25 +453,19 @@ final class HomeViewModel: ObservableObject {
 
   func sendRainWalletOtp() async {
     guard canSendRainWalletOtp else {
-      statusText = "Organization ID, Auth Config ID, and Email are required"
+      statusText = "Email is required"
       return
     }
     let email = rainWalletEmail.trimmed
     let previousEmail = SessionStore.rainWalletEmail
     SampleLog.i("RainWallet.otpInit", "starting login-code flow email=\(SampleLog.maskEmail(email))")
     SessionStore.provider = .rainWallet
-    SessionStore.rainWalletOrgId = rainWalletOrgId.trimmed
-    SessionStore.rainWalletAuthConfigId = rainWalletAuthConfigId.trimmed
     SessionStore.rainWalletEmail = email
     isLoading = true
     statusText = "Initializing Rain Wallet..."
 
     do {
-      let provider = session.prepareRainWallet(
-        organizationId: rainWalletOrgId.trimmed,
-        authConfigId: rainWalletAuthConfigId.trimmed,
-        onSessionExpired: rainWalletExpiryHandler
-      )
+      let provider = session.prepareRainWallet(onSessionExpired: rainWalletExpiryHandler)
       await provider.awaitSessionRestore()
 
       if provider.hasActiveSession() {

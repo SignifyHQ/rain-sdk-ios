@@ -31,10 +31,6 @@ enum SessionStore {
     get { read("privyAppClientId") ?? "" } set { write("privyAppClientId", newValue) }
   }
   static var privyEmail: String { get { read("privyEmail") ?? "" } set { write("privyEmail", newValue) } }
-  static var rainWalletOrgId: String { get { read("rainWalletOrgId") ?? "" } set { write("rainWalletOrgId", newValue) } }
-  static var rainWalletAuthConfigId: String {
-    get { read("rainWalletAuthConfigId") ?? "" } set { write("rainWalletAuthConfigId", newValue) }
-  }
   static var rainWalletEmail: String { get { read("rainWalletEmail") ?? "" } set { write("rainWalletEmail", newValue) } }
 
   static func clear() {

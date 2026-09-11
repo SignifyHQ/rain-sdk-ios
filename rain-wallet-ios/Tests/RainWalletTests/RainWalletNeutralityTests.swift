@@ -17,13 +17,12 @@ struct RainWalletNeutralityTests {
   private static func integrationSurface() async throws {
     let provider = RainProvider(
       RainWalletConfig(
-        organizationId: "org",
-        authConfigId: "auth",
         walletAddress: nil,
         sessionPolicy: RainWalletSessionPolicy(autoRefresh: true),
         onSessionExpired: {}
       )
     )
+    let _: RainProvider = RainProvider() // zero-config: the backend identity is embedded
 
     // Auth + session surface, fully typed with module-owned names.
     let _: RainWalletAuthState = provider.authState

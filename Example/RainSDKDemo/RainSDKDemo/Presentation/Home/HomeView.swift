@@ -152,20 +152,7 @@ struct HomeView: View {
 
   private var rainWalletSection: some View {
     RainSectionCard(title: "Rain Wallet configuration, email login code") {
-      RainLabeledField(
-        title: "Organization ID",
-        placeholder: "rain-issued organization id",
-        text: $viewModel.rainWalletOrgId
-      )
-      .disabled(viewModel.rainWalletOtpSent)
-
-      RainLabeledField(
-        title: "Auth config ID",
-        placeholder: "rain-issued auth config id",
-        text: $viewModel.rainWalletAuthConfigId
-      )
-      .disabled(viewModel.rainWalletOtpSent)
-
+      // Backend identity is embedded in the SDK — only the email is needed.
       RainLabeledField(title: "Email", placeholder: "you@example.com", text: $viewModel.rainWalletEmail)
         .disabled(viewModel.rainWalletOtpSent)
 
