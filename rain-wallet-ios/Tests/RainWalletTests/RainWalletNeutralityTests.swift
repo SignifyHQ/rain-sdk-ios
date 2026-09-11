@@ -17,13 +17,12 @@ struct RainWalletNeutralityTests {
   private static func integrationSurface() async throws {
     let provider = RainProvider(
       RainWalletConfig(
-        organizationId: "org",
-        authConfigId: "auth",
         walletAddress: nil,
         sessionPolicy: RainWalletSessionPolicy(autoRefresh: true),
         onSessionExpired: {}
       )
     )
+    let _: RainProvider = RainProvider() // zero-config: the backend identity is embedded
 
     // Auth + session surface, fully typed with module-owned names.
     let _: RainWalletAuthState = provider.authState
@@ -36,6 +35,11 @@ struct RainWalletNeutralityTests {
     let _: AnyPublisher<RainWalletSessionState, Never> = provider.sessionState
     let _: RainWalletSessionState = provider.currentSessionState()
     try await provider.refreshSession()
+
+    // Key export, fully typed with module-owned names.
+    let _: String = try await provider.exportRecoveryPhrase()
+    let _: String = try await provider.exportPrivateKey(.ethereum)
+    let _: String = try await provider.exportPrivateKey(RainWalletKeyAccount.solana)
     try await provider.logout()
     provider.close()
 

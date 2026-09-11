@@ -342,16 +342,25 @@ struct RainAsyncButton: View {
   let title: String
   var kind: Kind = .primary
   var enabled: Bool = true
+  /// External loading override — normally omitted: the button tracks its own in-flight action,
+  /// so only the tapped button spins while the others are merely disabled (via `enabled`).
   var isLoading: Bool = false
   let action: () async -> Void
+
+  /// True while this button's own action is in flight; drives the spinner.
+  @State private var isRunning = false
 
   var body: some View {
     Button {
       hideKeyboard()
-      Task { await action() }
+      Task {
+        isRunning = true
+        await action()
+        isRunning = false
+      }
     } label: {
       HStack(spacing: RainMetrics.s1) {
-        if isLoading {
+        if isLoading || isRunning {
           ProgressView()
             .progressViewStyle(CircularProgressViewStyle(tint: spinnerTint))
         }
@@ -359,7 +368,7 @@ struct RainAsyncButton: View {
       }
     }
     .modifier(RainButtonKindModifier(kind: kind))
-    .disabled(!enabled)
+    .disabled(!enabled || isRunning)
   }
 
   private var spinnerTint: Color {

@@ -1,5 +1,7 @@
 import Testing
 import Foundation
+import TurnkeySwift
+import TurnkeyTypes
 @testable import RainCore
 @_spi(RainWallet) @testable import RainTurnkey
 @testable import RainWallet
@@ -55,10 +57,84 @@ struct RainWalletTests {
   @Test("the descriptor advertises the .rain id and the backing capabilities")
   func testDescriptorIdentity() {
     let provider = RainProvider(
-      RainWalletConfig(organizationId: "org-\(UUID().uuidString)", authConfigId: "auth")
+      RainWalletConfig()
     )
     #expect(provider.id == .rain)
     #expect(provider.capabilities == [.multiChain, .biometricGate])
+  }
+
+  // MARK: - Key export
+
+  @Test("export methods delegate to the backend with the right account and encoding")
+  func testExportDelegation() async throws {
+    // Built around the public init: the process-wide configurator is one-shot, so a second
+    // provider with fresh ids would carry a configurationError and fail every call. The internal
+    // seams inject the stub directly instead.
+    let stub = StubBackendContext()
+    stub.wallets = [Self.dualAccountWallet()]
+    let provider = RainProvider(backing: TurnkeyProvider(
+      config: TurnkeyConfig(organizationId: "org", authProxyConfigId: "auth"),
+      context: stub,
+      managedAuth: TurnkeyManagedAuthController(context: stub, configurationError: nil)
+    ))
+
+    let phrase = try await provider.exportRecoveryPhrase()
+    let ethKey = try await provider.exportPrivateKey(.ethereum)
+    let solKey = try await provider.exportPrivateKey(.solana)
+
+    #expect(phrase == stub.stubbedMnemonic)
+    #expect(ethKey == "0x" + stub.stubbedExportedKey) // Ethereum keys are 0x-prefixed
+    #expect(solKey == stub.stubbedExportedKey)
+    #expect(stub.exportMnemonicCalls == ["wallet-id"])
+    #expect(stub.exportKeyCalls == [
+      .init(address: "0xeth-address", encoding: .hexSecp256k1),
+      .init(address: "sol-address", encoding: .solanaBase58),
+    ])
+  }
+
+  /// `Wallet` has no public memberwise init — round-trip through its Codable conformance.
+  private static func dualAccountWallet() -> Wallet {
+    struct WalletFixture: Encodable {
+      let walletId: String
+      let walletName: String
+      let createdAt: String
+      let updatedAt: String
+      let exported: Bool
+      let imported: Bool
+      let accounts: [WalletAccount]
+    }
+    func account(address: String, format: v1AddressFormat, curve: v1Curve, path: String) -> WalletAccount {
+      WalletAccount(
+        address: address,
+        addressFormat: format,
+        createdAt: externaldatav1Timestamp(nanos: "0", seconds: "0"),
+        curve: curve,
+        organizationId: "org-id",
+        path: path,
+        pathFormat: .path_format_bip32,
+        publicKey: nil,
+        updatedAt: externaldatav1Timestamp(nanos: "0", seconds: "0"),
+        walletAccountId: "wallet-account-id-\(address)",
+        walletDetails: nil,
+        walletId: "wallet-id"
+      )
+    }
+    let fixture = WalletFixture(
+      walletId: "wallet-id", walletName: "wallet", createdAt: "0", updatedAt: "0",
+      exported: false, imported: false,
+      accounts: [
+        account(
+          address: "0xeth-address", format: .address_format_ethereum,
+          curve: .curve_secp256k1, path: "m/44'/60'/0'/0/0"
+        ),
+        account(
+          address: "sol-address", format: .address_format_solana,
+          curve: .curve_ed25519, path: "m/44'/501'/0'/0'"
+        ),
+      ]
+    )
+    let data = try! JSONEncoder().encode(fixture)
+    return try! JSONDecoder().decode(Wallet.self, from: data)
   }
 
   // MARK: - Registry exclusion

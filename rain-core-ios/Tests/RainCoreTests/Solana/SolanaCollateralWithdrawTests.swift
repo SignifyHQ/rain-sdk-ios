@@ -1,7 +1,7 @@
 import Testing
 import Foundation
 import Web3
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 
 /// The message-encoding golden test uses values captured from a LIVE Rain dev-API withdrawal
 /// signature (2026-07-24, devnet collateral `2h5mCX…`): the expected message is the exact

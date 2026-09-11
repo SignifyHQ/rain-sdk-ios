@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import RainCore
+@_spi(RainAdapter) @testable import RainCore
 
 /// Pins the PDA / associated-token-account derivation against vectors produced by the canonical
 /// Rust implementation (`solders`, which wraps `solana-program`'s `Pubkey::find_program_address`

@@ -1,14 +1,12 @@
 // RainWallet — the Rain-branded wallet provider.
 //
-// Rain issues each partner an organization id and an auth configuration id; authentication
+// The wallet backend identity is embedded in the SDK — hosts configure nothing. Authentication
 // (email one-time codes) runs inside the SDK, and the resolved `RainClient` exposes the same
 // wallet surface as every other provider.
 //
 //     import RainWallet   // surfaces RainCore too
 //
-//     let provider = RainProvider(
-//         RainWalletConfig(organizationId: "<org-id>", authConfigId: "<auth-config-id>")
-//     )
+//     let provider = RainProvider()
 //
 //     await provider.awaitSessionRestore()
 //     if !provider.hasActiveSession() {
@@ -47,6 +45,17 @@ public enum RainWalletAuthState: Sendable, Equatable {
     case .unauthenticated: self = .unauthenticated
     }
   }
+}
+
+// MARK: - Key export
+
+/// Which of the account's keys to export. Every Rain wallet account has exactly one key per
+/// chain family, both derived from the single wallet seed.
+public enum RainWalletKeyAccount: Sendable, Equatable, CaseIterable {
+  /// The EVM account (secp256k1); exports as a 0x-prefixed 32-byte hex string.
+  case ethereum
+  /// The Solana account (ed25519); exports as the standard Base58 string Solana wallets import.
+  case solana
 }
 
 // MARK: - Session state
@@ -128,13 +137,9 @@ public struct RainWalletSessionPolicy: Sendable {
 
 // MARK: - Configuration
 
-/// Configuration for the Rain wallet provider. Rain issues the `organizationId` and
-/// `authConfigId` to each partner.
+/// Configuration for the Rain wallet provider. The wallet backend identity (Rain's organization
+/// and authentication configuration) is embedded in the SDK — hosts configure only behavior.
 public struct RainWalletConfig: Sendable {
-  /// The wallet organization id issued by Rain.
-  public let organizationId: String
-  /// The authentication configuration id issued by Rain.
-  public let authConfigId: String
   /// Optional explicit EVM wallet address. When `nil`, the first Ethereum account is used.
   public let walletAddress: String?
   /// Expiry/refresh/retry behavior for the session guarding every wallet call.
@@ -146,18 +151,22 @@ public struct RainWalletConfig: Sendable {
   public let onSessionExpired: (@Sendable () -> Void)?
 
   public init(
-    organizationId: String,
-    authConfigId: String,
     walletAddress: String? = nil,
     sessionPolicy: RainWalletSessionPolicy = RainWalletSessionPolicy(),
     onSessionExpired: (@Sendable () -> Void)? = nil
   ) {
-    self.organizationId = organizationId
-    self.authConfigId = authConfigId
     self.walletAddress = walletAddress
     self.sessionPolicy = sessionPolicy
     self.onSessionExpired = onSessionExpired
   }
+}
+
+/// Rain's wallet backend identity. Public identifiers, not secrets: possession grants nothing —
+/// authentication still runs the email one-time-code flow, and abuse is bounded by the backend's
+/// OTP rate limits. Embedded so hosts need zero configuration to use the Rain wallet.
+internal enum RainWalletBackend {
+  static let organizationId = "63495e45-8e64-42b5-b602-c68f019ca806"
+  static let authConfigId = "1d8aac5e-f236-4800-bab7-98a9e27b4b2a"
 }
 
 // MARK: - Provider
@@ -175,16 +184,22 @@ public struct RainWalletConfig: Sendable {
 public struct RainProvider: ProviderDescriptor {
   private let backing: TurnkeyProvider
 
-  public init(_ config: RainWalletConfig) {
+  public init(_ config: RainWalletConfig = RainWalletConfig()) {
     self.backing = TurnkeyProvider(
       TurnkeyConfig(
-        organizationId: config.organizationId,
-        authProxyConfigId: config.authConfigId,
+        organizationId: RainWalletBackend.organizationId,
+        authProxyConfigId: RainWalletBackend.authConfigId,
         walletAddress: config.walletAddress,
         sessionPolicy: config.sessionPolicy.backingPolicy,
         onSessionExpired: config.onSessionExpired
       )
     )
+  }
+
+  /// Test seam: wraps an existing backing provider, bypassing the one-shot process-wide
+  /// backend configuration that the public init runs.
+  internal init(backing: TurnkeyProvider) {
+    self.backing = backing
   }
 
   public var id: ProviderId { .rain }
@@ -239,6 +254,31 @@ public struct RainProvider: ProviderDescriptor {
   /// True when an unexpired session is already loaded and the login-code flow can be skipped.
   public func hasActiveSession() -> Bool {
     backing.hasActiveSession()
+  }
+
+  // MARK: Key export
+
+  /// Exports the wallet's 12-word recovery phrase, decrypted on-device. The account has ONE
+  /// wallet seed covering every chain family, so this single phrase restores both the EVM and
+  /// Solana accounts in any BIP-39 wallet.
+  ///
+  /// The SDK never logs or persists the returned value. Everything after the return is the
+  /// host's responsibility: gate the call (e.g. behind biometrics), show the phrase without
+  /// screenshots/screen recording where possible, and don't place it on the pasteboard.
+  /// Requires an active session — throws `RainSDKError.tokenExpired` otherwise.
+  public func exportRecoveryPhrase() async throws -> String {
+    try await backing.exportMnemonic()
+  }
+
+  /// Exports one account's private key, decrypted on-device: `.ethereum` as a 0x-prefixed
+  /// 32-byte hex string (the form Ethereum wallets import), `.solana` as the standard Base58
+  /// string Solana wallets import. The same formats are returned by the Android SDK.
+  ///
+  /// The SDK never logs or persists the returned value; gating and safe display are the host's
+  /// responsibility (see ``exportRecoveryPhrase()``). Requires an active session — throws
+  /// `RainSDKError.tokenExpired` otherwise.
+  public func exportPrivateKey(_ account: RainWalletKeyAccount) async throws -> String {
+    try await backing.exportPrivateKey(family: account == .ethereum ? .ethereum : .solana)
   }
 
   // MARK: Session

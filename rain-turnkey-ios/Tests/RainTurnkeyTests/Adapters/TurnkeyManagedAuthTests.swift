@@ -252,6 +252,123 @@ struct TurnkeyManagedAuthTests {
     }
   }
 
+  // MARK: - Key export
+
+  @Test("exportMnemonic exports the account's single wallet seed")
+  func testExportMnemonic() async throws {
+    let turnkey = MockTurnkey(wallets: [MockTurnkey.dualCurveWallet()])
+    let controller = makeController(turnkey: turnkey)
+
+    let phrase = try await controller.exportMnemonic()
+
+    #expect(phrase == turnkey.stubbedMnemonic)
+    #expect(turnkey.exportMnemonicCalls == ["wallet-id"])
+    // Wallets were already loaded; no extra refresh round-trip.
+    #expect(turnkey.refreshWalletsCallCount == 0)
+  }
+
+  @Test("exportMnemonic refreshes an empty wallet cache before resolving the wallet")
+  func testExportMnemonicRefreshesWhenEmpty() async throws {
+    let turnkey = MockTurnkey(wallets: [])
+    turnkey.onRefreshWallets = { turnkey.wallets = [MockTurnkey.dualCurveWallet()] }
+    let controller = makeController(turnkey: turnkey)
+
+    _ = try await controller.exportMnemonic()
+
+    #expect(turnkey.refreshWalletsCallCount == 1)
+    #expect(turnkey.exportMnemonicCalls == ["wallet-id"])
+  }
+
+  @Test("exportMnemonic anchors on the wallet holding the Ethereum account (legacy two-seed accounts)")
+  func testExportMnemonicLegacyTwoWallets() async throws {
+    // Pre one-seed accounts hold two wallets/seeds. The phrase must come from the wallet whose
+    // Ethereum key is in use, or it derives a different address than the exported private key.
+    let turnkey = MockTurnkey(wallets: [MockTurnkey.solanaOnlyWallet(), MockTurnkey.defaultWallet()])
+    let controller = makeController(turnkey: turnkey)
+
+    _ = try await controller.exportMnemonic()
+
+    #expect(turnkey.exportMnemonicCalls == ["wallet-id"]) // the Ethereum wallet, not "wallet-id-sol"
+  }
+
+  @Test("exportPrivateKey resolves the right account and encoding per family")
+  func testExportPrivateKeyPerFamily() async throws {
+    let turnkey = MockTurnkey(wallets: [MockTurnkey.dualCurveWallet()])
+    let controller = makeController(turnkey: turnkey)
+
+    let ethKey = try await controller.exportPrivateKey(family: .ethereum)
+    let solKey = try await controller.exportPrivateKey(family: .solana)
+
+    #expect(turnkey.exportAccountKeyCalls == [
+      .init(address: MockTurnkey.defaultWalletAddress, encoding: .hexSecp256k1),
+      .init(address: MockTurnkey.defaultSolanaAddress, encoding: .solanaBase58),
+    ])
+    // Ethereum keys carry the 0x prefix at the Rain boundary; Solana Base58 passes through.
+    #expect(ethKey == "0x" + turnkey.stubbedExportedKey)
+    #expect(solKey == turnkey.stubbedExportedKey)
+  }
+
+  @Test("exportPrivateKey for a family with no account throws a mapped error")
+  func testExportPrivateKeyMissingFamily() async {
+    // EVM-only wallet (predates dual-account provisioning): no Solana account to export.
+    let turnkey = MockTurnkey(wallets: [MockTurnkey.defaultWallet()])
+    let controller = makeController(turnkey: turnkey)
+
+    await #expect(throws: RainSDKError.self) {
+      _ = try await controller.exportPrivateKey(family: .solana)
+    }
+    #expect(turnkey.exportAccountKeyCalls.isEmpty)
+  }
+
+  @Test("SolanaKeyEncoder emits the plain-Base58 keypair Solana wallets import")
+  func testSolanaKeyEncoderVector() throws {
+    // Known vector (PyNaCl/libsodium): priv = 0x01…20, plain Base58 of priv‖pub, NO checksum —
+    // the vendor's Base58Check output is rejected by Phantom, hence this encoder.
+    let encoded = try SolanaKeyEncoder.keypairBase58(
+      privateKeyHex: "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
+    )
+    #expect(encoded == "2Ana1pUpv2ZbMVkwF5FXapYeBEjdxDatLn7nvJkhgTSdZd8hbDHTd21as7EAsg7ypityqfsw2pMQKJcVDVcAEsd")
+  }
+
+  @Test("SolanaKeyEncoder rejects malformed key material")
+  func testSolanaKeyEncoderRejectsBadInput() {
+    #expect(throws: (any Error).self) {
+      _ = try SolanaKeyEncoder.keypairBase58(privateKeyHex: "abcd") // not 32 bytes
+    }
+    #expect(throws: (any Error).self) {
+      _ = try SolanaKeyEncoder.keypairBase58(privateKeyHex: "zz") // not hex
+    }
+  }
+
+  @Test("export with no session surfaces a mapped RainSDKError, never raw")
+  func testExportWithoutSessionMapsError() async {
+    let turnkey = MockTurnkey(wallets: [], session: nil)
+    let controller = makeController(turnkey: turnkey)
+
+    do {
+      _ = try await controller.exportMnemonic()
+      Issue.record("Expected exportMnemonic to throw")
+    } catch {
+      #expect(error is RainSDKError)
+    }
+  }
+
+  @Test("a vendor export failure surfaces as a mapped RainSDKError, never raw")
+  func testExportVendorErrorMapsError() async {
+    let turnkey = MockTurnkey(wallets: [MockTurnkey.dualCurveWallet()])
+    turnkey.exportMnemonicError = TurnkeySwiftError.failedToExportWallet(
+      underlying: TurnkeyRequestError.apiError(statusCode: 500, payload: nil)
+    )
+    let controller = makeController(turnkey: turnkey)
+
+    do {
+      _ = try await controller.exportMnemonic()
+      Issue.record("Expected exportMnemonic to throw")
+    } catch {
+      #expect(error is RainSDKError)
+    }
+  }
+
   // MARK: - Provider surface
 
   @Test("auth methods on a BYO-mode provider throw invalidConfig")
@@ -266,6 +383,12 @@ struct TurnkeyManagedAuthTests {
     #expect(!provider.hasActiveSession())
     await #expect(throws: RainSDKError.self) {
       try await provider.sendLoginCode(email: "user@example.com")
+    }
+    await #expect(throws: RainSDKError.self) {
+      _ = try await provider.exportMnemonic()
+    }
+    await #expect(throws: RainSDKError.self) {
+      _ = try await provider.exportPrivateKey(family: .ethereum)
     }
   }
 

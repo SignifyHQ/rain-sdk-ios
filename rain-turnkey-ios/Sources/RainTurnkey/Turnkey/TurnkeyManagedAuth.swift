@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import TurnkeySwift
+import TurnkeyTypes
 import RainCore
 
 // MARK: - Auth state
@@ -23,6 +24,18 @@ public enum TurnkeyAuthState: Sendable, Equatable {
     default: self = .loading
     }
   }
+}
+
+// MARK: - Key export
+
+/// Chain-family selector for a single-key export.
+/// Not public API — `@_spi(RainWallet)`, surfaced to hosts through RainWallet's neutral enum.
+@_spi(RainWallet)
+public enum TurnkeyKeyFamily: Sendable, Equatable {
+  /// secp256k1; exports as a 0x-prefixed 32-byte hex string.
+  case ethereum
+  /// ed25519; exports as plain Base58 of privkey‖pubkey (no checksum), the format Solana wallets import.
+  case solana
 }
 
 // MARK: - Process-wide configuration
@@ -245,6 +258,67 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
     if !formats.contains(.address_format_solana) { missing.append(Self.solanaAccount) }
     guard !missing.isEmpty else { return }
     try await context.addAccountsToTurnkeyWallet(walletId: wallet.walletId, accounts: missing)
+  }
+
+  // MARK: Key export
+
+  /// Exports the wallet's 12-word mnemonic phrase, decrypted on-device. One wallet seed per
+  /// account (see `ensureWallets`), so a single phrase restores every chain family.
+  /// The SDK never logs or persists the value; display and gating are the host's responsibility.
+  internal func exportMnemonic() async throws -> String {
+    try throwIfMisconfigured()
+    do {
+      let wallet = try await requireWallet()
+      return try await context.exportWalletMnemonic(walletId: wallet.walletId)
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  /// Exports one account's private key, decrypted on-device: Ethereum as a 0x-prefixed 32-byte
+  /// hex string (the form Ethereum wallets import), Solana as plain Base58 of privkey‖pubkey —
+  /// formats shared with the Android SDK.
+  /// The SDK never logs or persists the value; display and gating are the host's responsibility.
+  internal func exportPrivateKey(family: TurnkeyKeyFamily) async throws -> String {
+    try throwIfMisconfigured()
+    do {
+      _ = try await requireWallet()
+      let format: v1AddressFormat =
+        family == .ethereum ? .address_format_ethereum : .address_format_solana
+      guard let account = context.wallets.flatMap(\.accounts).first(where: { $0.addressFormat == format })
+      else {
+        // Login provisions both families (ensureWallets); reaching this means provisioning was
+        // interrupted — a re-login repairs it.
+        throw RainSDKError.internalLogicError(
+          details: "No \(family) account exists to export; log in again to provision it")
+      }
+      let value = try await context.exportAccountPrivateKey(
+        address: account.address,
+        encoding: family == .ethereum ? .hexSecp256k1 : .solanaBase58
+      )
+      // The decrypted secp256k1 key is bare hex; the 0x prefix is the Rain-boundary format.
+      return family == .ethereum ? "0x" + value : value
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  /// The account's wallet, refreshing the cached list once if it is empty. Post one-seed
+  /// provisioning there is exactly one; legacy accounts can still hold several wallets (several
+  /// seeds), so anchor on the wallet carrying the Ethereum account in use — the exported phrase
+  /// must derive the same address as the exported Ethereum key.
+  private func requireWallet() async throws -> Wallet {
+    if context.wallets.isEmpty {
+      try await context.refreshWallets()
+    }
+    let wallets = context.wallets
+    let ethereumWallet = wallets.first { wallet in
+      wallet.accounts.contains { $0.addressFormat == .address_format_ethereum }
+    }
+    guard let wallet = ethereumWallet ?? wallets.first else {
+      throw TurnkeySwiftError.invalidSession
+    }
+    return wallet
   }
 
   private func throwIfMisconfigured() throws {
