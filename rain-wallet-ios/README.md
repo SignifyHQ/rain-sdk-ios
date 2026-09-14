@@ -13,11 +13,12 @@ import RainWallet   // re-exports RainCore
 
 let provider = RainProvider()   // optionally RainProvider(RainWalletConfig(onSessionExpired:...))
 
-// Reuse a restored session, or run the login-code flow:
+// Reuse a restored session, or run the login-code flow (email or SMS):
 await provider.awaitSessionRestore()
 if !provider.hasActiveSession() {
-    try await provider.sendLoginCode(email: "user@example.com")
+    try await provider.sendLoginCode(to: .email("user@example.com"))  // or .phone("+1555...")
     try await provider.confirmLoginCode(code) // signup-or-login + EVM/Solana wallet provisioning
+    // ...or passkeys: loginWithPasskey(anchor:) / signUpWithPasskey(anchor:)
 }
 
 let rain = try RainSdk.builder()
@@ -33,6 +34,18 @@ let client = try await rain.provider(.rain)
 session, and `close()` stops the passive session watcher when discarding a provider.
 Configure expiry/refresh/retry behavior via `RainWalletConfig.sessionPolicy`
 (`RainWalletSessionPolicy`) and react to unrecoverable expiry via `onSessionExpired`.
+
+## Passkeys and login contacts
+
+`signUpWithPasskey(anchor:)` creates a NEW account (fresh wallet — returning users must use
+`loginWithPasskey(anchor:)` or a login code, or they end up with a second, empty account);
+`addPasskey(anchor:)` registers a passkey on the current account so the next login can skip the
+code. Passkeys require Rain's relying-party domain to be live (association files + the app's
+Associated Domains entitlement `webcredentials:<domain>`); until then these methods throw
+`invalidConfig`. A passkey-created account can attach a verified email or phone with
+`sendContactVerificationCode(to:)` + `confirmContactVerification(_:)`, after which that contact
+is a login method too. SMS login requires SMS auth enabled on the wallet backend. Accounts are
+never merged: attaching a contact adds a login method to THIS account; it never moves wallets.
 
 ## Key export
 

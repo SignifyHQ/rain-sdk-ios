@@ -1,4 +1,5 @@
 import Testing
+import AuthenticationServices
 import Foundation
 import TurnkeySwift
 import TurnkeyTypes
@@ -12,7 +13,7 @@ struct RainWalletTests {
   /// vendor singleton (which traps when unconfigured in a test host) — stub both seams so unit
   /// tests never touch real keychain/session machinery.
   init() {
-    TurnkeyManagedConfigurator.configureImpl = { _, _ in }
+    TurnkeyManagedConfigurator.configureImpl = { _, _, _ in }
     TurnkeyManagedConfigurator.sharedContext = { StubBackendContext() }
   }
 
@@ -135,6 +136,60 @@ struct RainWalletTests {
     )
     let data = try! JSONEncoder().encode(fixture)
     return try! JSONDecoder().decode(Wallet.self, from: data)
+  }
+
+  // MARK: - Passkeys + login contacts
+
+  @MainActor
+  @Test("login-contact, passkey and contact-attach methods delegate to the backend")
+  func testAuthDelegation() async throws {
+    let stub = StubBackendContext()
+    stub.session = Self.stubSession()
+    stub.authState = .authenticated
+    let provider = RainProvider(backing: TurnkeyProvider(
+      config: TurnkeyConfig(organizationId: "org", authProxyConfigId: "auth", rpId: "passkeys.rain.xyz"),
+      context: stub,
+      managedAuth: TurnkeyManagedAuthController(
+        context: stub, configurationError: nil, rpId: "passkeys.rain.xyz"
+      )
+    ))
+    let anchor = ASPresentationAnchor()
+
+    try await provider.loginWithPasskey(anchor: anchor)
+    try await provider.addPasskey(anchor: anchor)
+    try await provider.sendContactVerificationCode(to: .phone("+15551234567"))
+    try await provider.confirmContactVerification("123456")
+
+    #expect(stub.loginWithPasskeyCallCount == 1)
+    #expect(stub.addPasskeyCalls == ["passkeys.rain.xyz"])
+    #expect(stub.setUserPhoneNumberCalls.map(\.0) == ["+15551234567"])
+    #expect(stub.setUserPhoneNumberCalls.first?.1 == stub.stubbedVerificationToken)
+  }
+
+  /// `Session` has no public memberwise init — round-trip through its Codable conformance.
+  private static func stubSession() -> Session {
+    struct SessionFixture: Encodable {
+      let exp: TimeInterval
+      let publicKey: String
+      let sessionType: String
+      let userId: String
+      let organizationId: String
+      enum CodingKeys: String, CodingKey {
+        case exp
+        case publicKey = "public_key"
+        case sessionType = "session_type"
+        case userId = "user_id"
+        case organizationId = "organization_id"
+      }
+    }
+    let data = try! JSONEncoder().encode(SessionFixture(
+      exp: Date().addingTimeInterval(3600).timeIntervalSince1970,
+      publicKey: "pubkey",
+      sessionType: "SESSION_TYPE_READ_WRITE",
+      userId: "user-id",
+      organizationId: "org-id"
+    ))
+    return try! JSONDecoder().decode(Session.self, from: data)
   }
 
   // MARK: - Registry exclusion

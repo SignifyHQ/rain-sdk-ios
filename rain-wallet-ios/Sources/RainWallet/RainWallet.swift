@@ -10,8 +10,8 @@
 //
 //     await provider.awaitSessionRestore()
 //     if !provider.hasActiveSession() {
-//         try await provider.sendLoginCode(email: "user@example.com")
-//         try await provider.confirmLoginCode(code)
+//         try await provider.sendLoginCode(to: .email("user@example.com"))
+//         try await provider.confirmLoginCode(code)   // or loginWithPasskey(anchor:)
 //     }
 //
 //     let rain = try RainSdk.builder()
@@ -20,6 +20,7 @@
 //         .build()
 //     let client = try await rain.provider(.rain)
 
+import AuthenticationServices
 import Combine
 import Foundation
 @_exported import RainCore
@@ -43,6 +44,28 @@ public enum RainWalletAuthState: Sendable, Equatable {
     case .loading: self = .loading
     case .authenticated: self = .authenticated
     case .unauthenticated: self = .unauthenticated
+    }
+  }
+}
+
+// MARK: - Login contact
+
+/// Where a one-time login (or contact-verification) code is delivered.
+///
+/// Inputs are normalized before use: emails are trimmed, and phone numbers have user-visible
+/// formatting (spaces, dashes, dots, parentheses) stripped down to E.164. What remains must be a
+/// plausible contact — `+` and 6–15 digits for a phone — or the call throws
+/// `RainSDKError.invalidConfig` locally instead of a wrapped backend rejection.
+public enum RainWalletContact: Sendable, Equatable {
+  /// An email address.
+  case email(String)
+  /// A phone number in international format (e.g. "+1 555 123 4567") — the code arrives by SMS.
+  case phone(String)
+
+  internal var backing: TurnkeyLoginContact {
+    switch self {
+    case .email(let value): .email(value)
+    case .phone(let value): .phone(value)
     }
   }
 }
@@ -167,6 +190,11 @@ public struct RainWalletConfig: Sendable {
 internal enum RainWalletBackend {
   static let organizationId = "63495e45-8e64-42b5-b602-c68f019ca806"
   static let authConfigId = "1d8aac5e-f236-4800-bab7-98a9e27b4b2a"
+  /// The passkey relying-party domain. `nil` until Rain infra serves the association files for
+  /// it (apple-app-site-association / assetlinks.json) — passkey methods throw `invalidConfig`
+  /// until then. Host apps additionally need the Associated Domains entitlement
+  /// (`webcredentials:<domain>`). Cross-platform: Android embeds the identical domain.
+  static let passkeyDomain: String? = nil
 }
 
 // MARK: - Provider
@@ -189,6 +217,7 @@ public struct RainProvider: ProviderDescriptor {
       TurnkeyConfig(
         organizationId: RainWalletBackend.organizationId,
         authProxyConfigId: RainWalletBackend.authConfigId,
+        rpId: RainWalletBackend.passkeyDomain,
         walletAddress: config.walletAddress,
         sessionPolicy: config.sessionPolicy.backingPolicy,
         onSessionExpired: config.onSessionExpired
@@ -223,12 +252,12 @@ public struct RainProvider: ProviderDescriptor {
     backing.authStates.map(RainWalletAuthState.init).removeDuplicates().eraseToAnyPublisher()
   }
 
-  /// Sends a one-time login code to `email`.
-  public func sendLoginCode(email: String) async throws {
-    try await backing.sendLoginCode(email: email)
+  /// Sends a one-time login code to an email address or phone number (SMS).
+  public func sendLoginCode(to contact: RainWalletContact) async throws {
+    try await backing.sendLoginCode(to: contact.backing)
   }
 
-  /// Confirms the code from ``sendLoginCode(email:)``, signing the user up on first login, and
+  /// Confirms the code from ``sendLoginCode(to:)``, signing the user up on first login, and
   /// provisions the account's EVM and Solana wallets.
   ///
   /// One active login per user: a successful login invalidates the user's sessions everywhere
@@ -236,6 +265,43 @@ public struct RainProvider: ProviderDescriptor {
   /// fires on its next use). Same behavior on the Android SDK.
   public func confirmLoginCode(_ code: String) async throws {
     try await backing.confirmLoginCode(code)
+  }
+
+  // MARK: Passkeys
+
+  /// Signs an existing user in with a passkey. `anchor` is the window/scene the system passkey
+  /// sheet presents from.
+  public func loginWithPasskey(anchor: ASPresentationAnchor) async throws {
+    try await backing.loginWithPasskey(anchor: anchor)
+  }
+
+  /// Creates a NEW account with a passkey; one wallet with EVM + Solana accounts is provisioned
+  /// atomically. Every call mints a fresh account — returning users must use
+  /// ``loginWithPasskey(anchor:)`` (or a login code), or they end up with a second, empty wallet.
+  public func signUpWithPasskey(anchor: ASPresentationAnchor) async throws {
+    try await backing.signUpWithPasskey(anchor: anchor)
+  }
+
+  /// Registers a passkey on the current account (active session required) so the user can sign
+  /// in with it next time.
+  public func addPasskey(anchor: ASPresentationAnchor) async throws {
+    try await backing.addPasskey(anchor: anchor)
+  }
+
+  // MARK: Attach a login contact
+
+  /// Sends a verification code to a contact the user wants to ATTACH to the current account
+  /// (active session required) — e.g. adding an email to a passkey-created account. Once
+  /// confirmed, the contact is a login method for this account. Accounts are never merged: if
+  /// the contact already belongs to another account, attaching it here does not move wallets.
+  public func sendContactVerificationCode(to contact: RainWalletContact) async throws {
+    try await backing.sendContactVerificationCode(to: contact.backing)
+  }
+
+  /// Confirms the code from ``sendContactVerificationCode(to:)`` and attaches the contact,
+  /// verified. A wrong code throws `RainSDKError.invalidLoginCode` — re-prompt and retry.
+  public func confirmContactVerification(_ code: String) async throws {
+    try await backing.confirmContactVerification(code)
   }
 
   /// Clears the stored session (full logout). Safe no-op when none exists. Returns only once

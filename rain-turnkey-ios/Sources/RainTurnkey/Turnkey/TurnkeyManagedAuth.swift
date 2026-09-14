@@ -1,3 +1,4 @@
+import AuthenticationServices
 import Combine
 import Foundation
 import TurnkeySwift
@@ -26,6 +27,63 @@ public enum TurnkeyAuthState: Sendable, Equatable {
   }
 }
 
+// MARK: - Login contact
+
+/// Where a one-time login code is delivered.
+/// Not public API — `@_spi(RainWallet)`, surfaced to hosts through RainWallet's neutral enum.
+@_spi(RainWallet)
+public enum TurnkeyLoginContact: Sendable, Equatable {
+  /// Email OTP.
+  case email(String)
+  /// SMS OTP. Requires SMS auth to be enabled on the wallet backend (Turnkey Enterprise
+  /// feature + auth-proxy configuration).
+  case phone(String)
+
+  internal var contact: String {
+    switch self {
+    case .email(let value), .phone(let value): value
+    }
+  }
+
+  internal var otpType: OtpType {
+    switch self {
+    case .email: .email
+    case .phone: .sms
+    }
+  }
+
+  /// The contact normalized for the wallet backend: emails are trimmed; phone numbers have
+  /// user-visible formatting (spaces, dashes, dots, parentheses) stripped down to E.164.
+  /// Throws `invalidConfig` when what remains cannot be a valid contact — a clear local error
+  /// beats a wrapped backend rejection. Identical rules on the Android SDK: the normalized
+  /// string is the account identity, so both platforms must produce the same one.
+  internal func normalized() throws -> TurnkeyLoginContact {
+    switch self {
+    case .email(let raw):
+      let email = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+      guard email.contains("@"), email.count >= 3 else {
+        throw RainSDKError.invalidConfig(details: "Not a valid email address")
+      }
+      return .email(email)
+    case .phone(let raw):
+      let formatting = CharacterSet(charactersIn: "-.()").union(.whitespacesAndNewlines)
+      let phone = String(String.UnicodeScalarView(
+        raw.unicodeScalars.filter { !formatting.contains($0) }
+      ))
+      // E.164: a leading "+" and 6–15 digits, nothing else.
+      let digits = phone.dropFirst()
+      guard phone.hasPrefix("+"),
+            (6...15).contains(digits.count),
+            digits.allSatisfy({ $0.isASCII && $0.isNumber })
+      else {
+        throw RainSDKError.invalidConfig(details:
+          "Not a valid phone number — use the international format, like +15551234567")
+      }
+      return .phone(phone)
+    }
+  }
+}
+
 // MARK: - Key export
 
 /// Chain-family selector for a single-key export.
@@ -44,13 +102,18 @@ public enum TurnkeyKeyFamily: Sendable, Equatable {
 /// Configuring again with the same values is a no-op; with different values it is an error the
 /// caller must surface (the app has to relaunch to change them).
 internal enum TurnkeyManagedConfigurator {
-  nonisolated(unsafe) private static var configuredWith: (organizationId: String, authProxyConfigId: String)?
+  nonisolated(unsafe) private static var configuredWith:
+    (organizationId: String, authProxyConfigId: String, rpId: String?)?
   private static let lock = NSLock()
 
   /// Test seam: replaces the actual vendor configure call.
-  nonisolated(unsafe) internal static var configureImpl: @Sendable (String, String) -> Void = { organizationId, authProxyConfigId in
+  nonisolated(unsafe) internal static var configureImpl: @Sendable (String, String, String?) -> Void = { organizationId, authProxyConfigId, rpId in
     TurnkeyContext.configure(
-      TurnkeySwift.TurnkeyConfig(organizationId: organizationId, authProxyConfigId: authProxyConfigId)
+      TurnkeySwift.TurnkeyConfig(
+        organizationId: organizationId,
+        authProxyConfigId: authProxyConfigId,
+        rpId: rpId
+      )
     )
   }
 
@@ -62,18 +125,23 @@ internal enum TurnkeyManagedConfigurator {
 
   /// Configures the Turnkey singleton once per process. Returns the error to surface on every
   /// subsequent call when the ids differ from the ones the process was configured with.
-  internal static func configure(organizationId: String, authProxyConfigId: String) -> RainSDKError? {
+  /// `rpId` is the passkey relying-party domain; `nil` disables passkey flows.
+  internal static func configure(
+    organizationId: String,
+    authProxyConfigId: String,
+    rpId: String?
+  ) -> RainSDKError? {
     lock.lock(); defer { lock.unlock() }
     if let configuredWith {
-      guard configuredWith == (organizationId, authProxyConfigId) else {
+      guard configuredWith == (organizationId, authProxyConfigId, rpId) else {
         return .invalidConfig(details:
           "The wallet backend is already configured with different ids for this app launch; "
           + "relaunch the app to change them")
       }
       return nil
     }
-    configureImpl(organizationId, authProxyConfigId)
-    configuredWith = (organizationId, authProxyConfigId)
+    configureImpl(organizationId, authProxyConfigId, rpId)
+    configuredWith = (organizationId, authProxyConfigId, rpId)
     return nil
   }
 }
@@ -89,8 +157,20 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
   private let configurationError: RainSDKError?
 
   /// In-flight OTP handed back by `sendLoginCode`, consumed by `confirmLoginCode`.
-  private var pendingOtp: (otpId: String, encryptionTargetBundle: String, email: String)?
+  private var pendingOtp: (challenge: OtpChallenge, contact: TurnkeyLoginContact)?
+  /// In-flight OTP for contact verification (attach a login contact to the current account) —
+  /// deliberately separate from `pendingOtp` so a login flow can't consume a verification code.
+  private var pendingContactVerification: (challenge: OtpChallenge, contact: TurnkeyLoginContact)?
   private let pendingOtpLock = NSLock()
+
+  /// The passkey relying-party domain from the managed configuration; `nil` means passkeys are
+  /// not configured and every passkey call throws `invalidConfig`.
+  private let rpId: String?
+
+  /// At swift-sdk 4.0.0 the vendor pins every passkey session to this key — the `sessionKey`
+  /// parameters on its passkey flows are accepted but ignored — and refuses to overwrite an
+  /// occupied key. See the passkey methods for the resulting session handling.
+  internal static let passkeyDefaultSessionKey = "com.turnkey.sdk.session"
 
   /// Minimum remaining lifetime (seconds) for a restored session to count as active.
   private static let sessionMinRemainingSeconds: TimeInterval = 30
@@ -111,9 +191,14 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
     pathFormat: .path_format_bip32
   )
 
-  internal init(context: TurnkeyContextProtocol, configurationError: RainSDKError?) {
+  internal init(
+    context: TurnkeyContextProtocol,
+    configurationError: RainSDKError?,
+    rpId: String? = nil
+  ) {
     self.context = context
     self.configurationError = configurationError
+    self.rpId = rpId
   }
 
   // MARK: State
@@ -153,14 +238,19 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
     }
   }
 
-  // MARK: Email OTP
+  // MARK: One-time-code login (email or SMS)
 
-  internal func sendLoginCode(email: String) async throws {
+  internal func sendLoginCode(to contact: TurnkeyLoginContact) async throws {
     try throwIfMisconfigured()
+    // The normalized string is the account identity — it is what gets sent, confirmed, and stored.
+    let contact = try contact.normalized()
     do {
-      let challenge = try await context.sendOtp(contact: email, otpType: .email)
+      let challenge = try await context.sendOtp(
+        contact: contact.contact,
+        otpType: contact.otpType
+      )
       pendingOtpLock.withLock {
-        pendingOtp = (challenge.otpId, challenge.encryptionTargetBundle, email)
+        pendingOtp = (challenge, contact)
       }
     } catch {
       throw RainSDKError.from(underlying: error)
@@ -184,11 +274,11 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
     let previousKey = context.selectedStoredSessionKey
     do {
       try await context.completeOtp(
-        otpId: pending.otpId,
+        otpId: pending.challenge.otpId,
         otpCode: code,
-        otpEncryptionTargetBundle: pending.encryptionTargetBundle,
-        contact: pending.email,
-        otpType: .email,
+        otpEncryptionTargetBundle: pending.challenge.encryptionTargetBundle,
+        contact: pending.contact.contact,
+        otpType: pending.contact.otpType,
         sessionKey: attemptKey,
         // Signup creates ONE wallet with both accounts atomically; ignored on login.
         signupWalletAccounts: [Self.ethereumAccount, Self.solanaAccount]
@@ -221,9 +311,159 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
     }
   }
 
+  // MARK: Passkeys
+
+  /// Signs an existing user in with a passkey. Provisioning is re-checked afterwards (backfill
+  /// for accounts predating one-seed provisioning).
+  internal func loginWithPasskey(anchor: ASPresentationAnchor) async throws {
+    try throwIfMisconfigured()
+    try requirePasskeysConfigured()
+    let previousKey = context.selectedStoredSessionKey
+    preparePasskeyDefaultKey()
+    do {
+      try await context.loginWithTurnkeyPasskey(anchor: anchor)
+    } catch {
+      // Nothing was stored or cleared beyond a stale unselected key — a live session stays live.
+      throw RainSDKError.from(underlying: error)
+    }
+    try await activatePasskeySession(previousKey: previousKey)
+    do {
+      try await ensureWallets()
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  /// Creates a NEW account with a passkey — one wallet with both chain-family accounts is
+  /// provisioned atomically inside the signup. Returning users must use `loginWithPasskey`
+  /// (or a login code): every call here mints a fresh account with an empty wallet.
+  internal func signUpWithPasskey(anchor: ASPresentationAnchor) async throws {
+    try throwIfMisconfigured()
+    try requirePasskeysConfigured()
+    let previousKey = context.selectedStoredSessionKey
+    preparePasskeyDefaultKey()
+    do {
+      try await context.signUpWithTurnkeyPasskey(
+        anchor: anchor,
+        signupWalletAccounts: [Self.ethereumAccount, Self.solanaAccount]
+      )
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+    try await activatePasskeySession(previousKey: previousKey)
+    do {
+      try await ensureWallets()
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  /// Registers a passkey on the CURRENT account (active session required), so the user can sign
+  /// in with it later. No new account, no session change.
+  internal func addPasskey(anchor: ASPresentationAnchor) async throws {
+    try throwIfMisconfigured()
+    try requirePasskeysConfigured()
+    do {
+      try await context.addPasskeyAuthenticator(anchor: anchor, rpId: rpId ?? "")
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  @discardableResult
+  private func requirePasskeysConfigured() throws -> String {
+    guard let rpId, !rpId.isEmpty else {
+      throw RainSDKError.invalidConfig(details:
+        "Passkeys are not configured for this app: the relying-party domain is missing. "
+        + "The app also needs the Associated Domains entitlement for that domain.")
+    }
+    return rpId
+  }
+
+  /// The vendor refuses to store a passkey session over an occupied default key. Purge a stale
+  /// stored session under it — but NEVER the live selection, so a cancelled or failed ceremony
+  /// cannot log anyone out. Consequence: a passkey login over a live passkey session fails with
+  /// a mapped error; hosts should gate on `hasActiveSession()` first.
+  private func preparePasskeyDefaultKey() {
+    if context.selectedStoredSessionKey != Self.passkeyDefaultSessionKey {
+      context.clearStoredSession(sessionKey: Self.passkeyDefaultSessionKey)
+    }
+  }
+
+  /// Mirrors the OTP flow's activation: the vendor auto-selects only when nothing was selected,
+  /// so over a live session the fresh passkey session (always under the default key) is
+  /// activated explicitly, then the superseded key is purged.
+  private func activatePasskeySession(previousKey: String?) async throws {
+    do {
+      if context.selectedStoredSessionKey != Self.passkeyDefaultSessionKey {
+        try await context.selectStoredSession(sessionKey: Self.passkeyDefaultSessionKey)
+      }
+    } catch {
+      // Don't leave the never-selected passkey session orphaned in the keychain.
+      context.clearStoredSession(sessionKey: Self.passkeyDefaultSessionKey)
+      throw RainSDKError.from(underlying: error)
+    }
+    if let previousKey, previousKey != Self.passkeyDefaultSessionKey {
+      context.clearStoredSession(sessionKey: previousKey)
+    }
+  }
+
+  // MARK: Contact verification (attach a login contact to the current account)
+
+  /// Sends a verification code to a contact the user wants to ATTACH to the current account
+  /// (active session required). Distinct from `sendLoginCode`, which starts a login.
+  internal func sendContactVerificationCode(to contact: TurnkeyLoginContact) async throws {
+    try throwIfMisconfigured()
+    guard hasActiveSession() else { throw RainSDKError.tokenExpired }
+    // Normalized before it is verified and attached — the stored contact must be the exact
+    // string a later login normalizes to.
+    let contact = try contact.normalized()
+    do {
+      let challenge = try await context.sendOtp(
+        contact: contact.contact,
+        otpType: contact.otpType
+      )
+      pendingOtpLock.withLock {
+        pendingContactVerification = (challenge, contact)
+      }
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  /// Confirms the code from `sendContactVerificationCode` and attaches the contact — VERIFIED,
+  /// so it becomes a login method for this account. A wrong code throws `invalidLoginCode` and
+  /// keeps the challenge, so the user can retype it.
+  internal func confirmContactVerification(_ code: String) async throws {
+    try throwIfMisconfigured()
+    guard let pending = pendingOtpLock.withLock({ pendingContactVerification }) else {
+      throw RainSDKError.invalidConfig(details:
+        "No verification code was requested; call sendContactVerificationCode first")
+    }
+    do {
+      let token = try await context.verifyOtpToken(
+        otpId: pending.challenge.otpId,
+        otpCode: code,
+        otpEncryptionTargetBundle: pending.challenge.encryptionTargetBundle
+      )
+      switch pending.contact {
+      case .email(let email):
+        try await context.setUserEmail(email, verificationToken: token)
+      case .phone(let phone):
+        try await context.setUserPhoneNumber(phone, verificationToken: token)
+      }
+      pendingOtpLock.withLock { pendingContactVerification = nil }
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
   internal func logout() async {
     context.clearStoredSession(sessionKey: nil) // nil = the currently selected session
-    pendingOtpLock.withLock { pendingOtp = nil }
+    pendingOtpLock.withLock {
+      pendingOtp = nil
+      pendingContactVerification = nil
+    }
     // The vendor wipes storage synchronously but flips `session` / `authState` from a main-actor
     // Task slightly later. Wait (bounded) for the live state to settle so callers can read
     // `authState` / `hasActiveSession()` immediately after logout returns.

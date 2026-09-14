@@ -1,4 +1,5 @@
 import Testing
+import AuthenticationServices
 import Foundation
 import Combine
 import RainWallet // deliberately the ONLY SDK import — see below
@@ -14,7 +15,9 @@ import RainWallet // deliberately the ONLY SDK import — see below
 @Suite("RainWallet Neutrality")
 struct RainWalletNeutralityTests {
   /// Never called. Type-checks the complete integration surface with module-owned names only.
+  @MainActor
   private static func integrationSurface() async throws {
+    let anchor = ASPresentationAnchor()
     let provider = RainProvider(
       RainWalletConfig(
         walletAddress: nil,
@@ -29,9 +32,15 @@ struct RainWalletNeutralityTests {
     let _: AnyPublisher<RainWalletAuthState, Never> = provider.authStates
     await provider.awaitSessionRestore(timeout: 1)
     if !provider.hasActiveSession() {
-      try await provider.sendLoginCode(email: "user@example.com")
+      try await provider.sendLoginCode(to: .email("user@example.com"))
+      try await provider.sendLoginCode(to: RainWalletContact.phone("+15551234567"))
       try await provider.confirmLoginCode("123456")
+      try await provider.loginWithPasskey(anchor: anchor)
+      try await provider.signUpWithPasskey(anchor: anchor)
     }
+    try await provider.addPasskey(anchor: anchor)
+    try await provider.sendContactVerificationCode(to: .phone("+15551234567"))
+    try await provider.confirmContactVerification("123456")
     let _: AnyPublisher<RainWalletSessionState, Never> = provider.sessionState
     let _: RainWalletSessionState = provider.currentSessionState()
     try await provider.refreshSession()

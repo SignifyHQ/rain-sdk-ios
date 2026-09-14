@@ -1,3 +1,4 @@
+import AuthenticationServices
 import Combine
 import Foundation
 @_spi(RainAdapter) @testable import RainCore
@@ -242,6 +243,7 @@ final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
     self.turnkeyClient = client
     // A live session is always selected under some key (the vendor restores it that way).
     self.selectedStoredSessionKey = session != nil ? "previous-session-key" : nil
+    if session != nil { self.storedSessionKeys = ["previous-session-key"] }
   }
 
   func refreshWallets() async throws {
@@ -303,6 +305,10 @@ final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
     return stubbedOtpChallenge
   }
 
+  /// Keys with a stored session, mirroring the vendor's keychain registry. `completeOtp` and the
+  /// passkey flows insert; `clearStoredSession` removes.
+  var storedSessionKeys: Set<String> = []
+
   func completeOtp(
     otpId: String,
     otpCode: String,
@@ -318,7 +324,10 @@ final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
     ))
     completeOtpSignupAccounts.append(signupWalletAccounts)
     if let completeOtpError { throw completeOtpError }
-    // Vendor behaviour: the new session is auto-selected only when none was selected.
+    // Vendor behaviour: an occupied key refuses the store; the new session is auto-selected
+    // only when none was selected.
+    guard !storedSessionKeys.contains(sessionKey) else { throw TurnkeySwiftError.keyAlreadyExists }
+    storedSessionKeys.insert(sessionKey)
     if selectedStoredSessionKey == nil {
       selectedStoredSessionKey = sessionKey
     }
@@ -334,6 +343,7 @@ final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
   func clearStoredSession(sessionKey: String?) {
     clearStoredSessionCallCount += 1
     clearStoredSessionCalls.append(sessionKey)
+    storedSessionKeys.remove(sessionKey ?? selectedStoredSessionKey ?? "")
     // Vendor behaviour: only clearing the selected session (or `nil`) tears down live state;
     // purging another key touches storage only. Like the vendor, the live state flips from a
     // main-actor Task — i.e. NOT synchronously — so logout's wait-for-settle is exercised.
@@ -344,6 +354,95 @@ final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
         self.authState = .unAuthenticated
       }
     }
+  }
+
+  // MARK: Passkey seams
+
+  static let passkeyDefaultSessionKey = "com.turnkey.sdk.session"
+
+  var loginWithPasskeyCallCount = 0
+  var loginWithPasskeyError: Error?
+  var signUpWithPasskeyCallCount = 0
+  var signUpWithPasskeyError: Error?
+  /// Signup wallet accounts passed to each `signUpWithTurnkeyPasskey` call.
+  var signUpPasskeyAccounts: [[WalletAccountParams]] = []
+  /// Runs after a successful passkey login/signup — install the new session / authState here.
+  var onPasskeyAuth: (() -> Void)?
+
+  var addPasskeyCalls: [String] = [] // rpIds
+  var addPasskeyError: Error?
+
+  func loginWithTurnkeyPasskey(anchor: ASPresentationAnchor) async throws {
+    loginWithPasskeyCallCount += 1
+    if let loginWithPasskeyError { throw loginWithPasskeyError }
+    try storePasskeySession()
+  }
+
+  func signUpWithTurnkeyPasskey(
+    anchor: ASPresentationAnchor,
+    signupWalletAccounts: [WalletAccountParams]
+  ) async throws {
+    signUpWithPasskeyCallCount += 1
+    signUpPasskeyAccounts.append(signupWalletAccounts)
+    if let signUpWithPasskeyError { throw signUpWithPasskeyError }
+    try storePasskeySession()
+  }
+
+  /// Vendor behaviour at 4.0.0: passkey sessions always store under the DEFAULT key (the
+  /// flows' `sessionKey` parameters are ignored), an occupied key refuses the store, and the
+  /// session is auto-selected only when none was selected.
+  private func storePasskeySession() throws {
+    guard !storedSessionKeys.contains(Self.passkeyDefaultSessionKey) else {
+      throw TurnkeySwiftError.failedToLoginWithPasskey(underlying: TurnkeySwiftError.keyAlreadyExists)
+    }
+    storedSessionKeys.insert(Self.passkeyDefaultSessionKey)
+    if selectedStoredSessionKey == nil {
+      selectedStoredSessionKey = Self.passkeyDefaultSessionKey
+    }
+    onPasskeyAuth?()
+  }
+
+  func addPasskeyAuthenticator(anchor: ASPresentationAnchor, rpId: String) async throws {
+    addPasskeyCalls.append(rpId)
+    if let addPasskeyError { throw addPasskeyError }
+  }
+
+  // MARK: Contact verification seams
+
+  struct VerifyOtpTokenCall: Equatable {
+    let otpId: String
+    let otpCode: String
+    let otpEncryptionTargetBundle: String
+  }
+  var verifyOtpTokenCalls: [VerifyOtpTokenCall] = []
+  var verifyOtpTokenError: Error?
+  var stubbedVerificationToken = "verification-token"
+
+  struct SetContactCall: Equatable { let contact: String; let verificationToken: String? }
+  var setUserEmailCalls: [SetContactCall] = []
+  var setUserPhoneNumberCalls: [SetContactCall] = []
+  var setUserContactError: Error?
+
+  func verifyOtpToken(
+    otpId: String,
+    otpCode: String,
+    otpEncryptionTargetBundle: String
+  ) async throws -> String {
+    verifyOtpTokenCalls.append(VerifyOtpTokenCall(
+      otpId: otpId, otpCode: otpCode, otpEncryptionTargetBundle: otpEncryptionTargetBundle
+    ))
+    if let verifyOtpTokenError { throw verifyOtpTokenError }
+    return stubbedVerificationToken
+  }
+
+  func setUserEmail(_ email: String, verificationToken: String?) async throws {
+    setUserEmailCalls.append(SetContactCall(contact: email, verificationToken: verificationToken))
+    if let setUserContactError { throw setUserContactError }
+  }
+
+  func setUserPhoneNumber(_ phone: String, verificationToken: String?) async throws {
+    setUserPhoneNumberCalls.append(SetContactCall(contact: phone, verificationToken: verificationToken))
+    if let setUserContactError { throw setUserContactError }
   }
 
   func createTurnkeyWallet(walletName: String, accounts: [WalletAccountParams], mnemonicLength: Int) async throws {

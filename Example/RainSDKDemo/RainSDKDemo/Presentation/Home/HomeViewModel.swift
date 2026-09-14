@@ -1,6 +1,8 @@
+import AuthenticationServices
 import Combine
 import Foundation
 import RainCore
+import RainWallet
 import UIKit
 import UniformTypeIdentifiers
 
@@ -39,8 +41,17 @@ final class HomeViewModel: ObservableObject {
   @Published private(set) var turnkeySessionActive = false
   private var turnkeyOtpEncryptionBundle: String?
 
-  // Rain Wallet — backend identity is embedded in the SDK; only the email is needed.
+  /// Delivery channel for the Rain wallet login code.
+  enum RainWalletContactKind: String, CaseIterable, Identifiable {
+    case email = "Email"
+    case phone = "Phone (SMS)"
+    var id: String { rawValue }
+  }
+
+  // Rain Wallet — backend identity is embedded in the SDK; only the contact is needed.
+  @Published var rainWalletContactKind: RainWalletContactKind = .email
   @Published var rainWalletEmail = ""
+  @Published var rainWalletPhone = ""
   @Published var rainWalletOtpCode = ""
   @Published private(set) var rainWalletOtpSent = false
   @Published private(set) var rainWalletSessionActive = false
@@ -147,7 +158,13 @@ final class HomeViewModel: ObservableObject {
     turnkeyOrgId = SessionStore.turnkeyOrgId
     turnkeyAuthProxyConfigId = SessionStore.turnkeyAuthProxyConfigId
     turnkeyEmail = SessionStore.turnkeyEmail
-    rainWalletEmail = SessionStore.rainWalletEmail
+    let rainWalletContact = SessionStore.rainWalletContact
+    if rainWalletContact.contains("@") || rainWalletContact.isEmpty {
+      rainWalletEmail = rainWalletContact
+    } else {
+      rainWalletPhone = rainWalletContact
+      rainWalletContactKind = .phone
+    }
     privyAppId = SessionStore.privyAppId
     privyAppClientId = SessionStore.privyAppClientId
     privyEmail = SessionStore.privyEmail
@@ -428,8 +445,20 @@ final class HomeViewModel: ObservableObject {
 
   // MARK: - Rain Wallet
 
+  var rainWalletUsePhone: Bool { rainWalletContactKind == .phone }
+
+  /// The login contact from the current inputs, or nil while it is empty.
+  var rainWalletContact: RainWalletContact? {
+    if rainWalletUsePhone {
+      let phone = rainWalletPhone.trimmed
+      return phone.isEmpty ? nil : .phone(phone)
+    }
+    let email = rainWalletEmail.trimmed
+    return email.isEmpty ? nil : .email(email)
+  }
+
   var canSendRainWalletOtp: Bool {
-    !rainWalletEmail.trimmed.isEmpty && !isLoading && !rainWalletOtpSent
+    rainWalletContact != nil && !isLoading && !rainWalletOtpSent
   }
 
   var canVerifyRainWalletOtp: Bool {
@@ -452,15 +481,19 @@ final class HomeViewModel: ObservableObject {
   }
 
   func sendRainWalletOtp() async {
-    guard canSendRainWalletOtp else {
-      statusText = "Email is required"
+    guard canSendRainWalletOtp, let contact = rainWalletContact else {
+      statusText = rainWalletUsePhone ? "Phone number is required" : "Email is required"
       return
     }
-    let email = rainWalletEmail.trimmed
-    let previousEmail = SessionStore.rainWalletEmail
-    SampleLog.i("RainWallet.otpInit", "starting login-code flow email=\(SampleLog.maskEmail(email))")
+    let contactValue: String
+    switch contact {
+    case .email(let email): contactValue = email
+    case .phone(let phone): contactValue = phone
+    }
+    let previousContact = SessionStore.rainWalletContact
+    SampleLog.i("RainWallet.otpInit", "starting login-code flow (\(rainWalletUsePhone ? "sms" : "email"))")
     SessionStore.provider = .rainWallet
-    SessionStore.rainWalletEmail = email
+    SessionStore.rainWalletContact = contactValue
     isLoading = true
     statusText = "Initializing Rain Wallet..."
 
@@ -469,26 +502,97 @@ final class HomeViewModel: ObservableObject {
       await provider.awaitSessionRestore()
 
       if provider.hasActiveSession() {
-        if previousEmail.caseInsensitiveCompare(email) == .orderedSame {
-          SampleLog.i("RainWallet.otpInit", "existing session restored for this email — skipping OTP")
+        if previousContact.caseInsensitiveCompare(contactValue) == .orderedSame {
+          SampleLog.i("RainWallet.otpInit", "existing session restored for this contact — skipping OTP")
           rainWalletSessionActive = true
           statusText = "Existing session restored — initialize Rain to continue"
           isLoading = false
           return
         }
-        SampleLog.w("RainWallet.otpInit", "restored session belongs to a different email — logging out")
+        SampleLog.w("RainWallet.otpInit", "restored session belongs to a different contact — logging out")
         try await provider.logout()
       }
 
-      statusText = "Sending login code to \(email)..."
-      try await provider.sendLoginCode(email: email)
+      statusText = "Sending login code..."
+      try await provider.sendLoginCode(to: contact)
       rainWalletOtpSent = true
-      statusText = "Login code sent — check your email"
+      statusText = rainWalletUsePhone
+        ? "Login code sent — check your messages" : "Login code sent — check your email"
     } catch {
       SampleLog.e("RainWallet.otpInit", "failed: \(error.localizedDescription)")
       statusText = "Rain Wallet login init failed: \(error.localizedDescription)"
     }
     isLoading = false
+  }
+
+  // MARK: - Rain Wallet passkeys
+
+  /// Signs in with an existing passkey, then initializes Rain — the passkey twin of the
+  /// verify-code path.
+  func signInWithRainWalletPasskey() async {
+    await runRainWalletPasskey(area: "RainWallet.passkeyLogin", label: "Signing in with passkey") { provider, anchor in
+      try await provider.loginWithPasskey(anchor: anchor)
+    }
+  }
+
+  /// Creates a brand-new account with a passkey. Every call mints a fresh account — returning
+  /// users must use sign-in.
+  func signUpWithRainWalletPasskey() async {
+    await runRainWalletPasskey(area: "RainWallet.passkeySignup", label: "Creating wallet with passkey") { provider, anchor in
+      try await provider.signUpWithPasskey(anchor: anchor)
+    }
+  }
+
+  /// Adds a passkey to the current account so the next login can skip the code.
+  func addRainWalletPasskey() async {
+    guard rainWalletSessionActive, let provider = session.rainWalletProvider else {
+      statusText = "Log in with Rain Wallet first"
+      return
+    }
+    SampleLog.i("RainWallet.passkeyAdd", "registering a passkey on the current account")
+    isLoading = true
+    do {
+      try await provider.addPasskey(anchor: presentationAnchor())
+      statusText = "Passkey added — next login can use it"
+    } catch {
+      SampleLog.e("RainWallet.passkeyAdd", "failed: \(error.localizedDescription)")
+      statusText = "Adding the passkey failed: \(error.localizedDescription)"
+    }
+    isLoading = false
+  }
+
+  /// Shared shell of the two passkey auth entry points: prepare the provider, run the ceremony,
+  /// then flow into the standard Rain initialization.
+  private func runRainWalletPasskey(
+    area: String,
+    label: String,
+    _ ceremony: (RainWallet.RainProvider, ASPresentationAnchor) async throws -> Void
+  ) async {
+    SampleLog.i(area, "starting passkey ceremony")
+    SessionStore.provider = .rainWallet
+    isLoading = true
+    statusText = "\(label)..."
+    do {
+      let provider = session.prepareRainWallet(onSessionExpired: rainWalletExpiryHandler)
+      await provider.awaitSessionRestore()
+      try await ceremony(provider, presentationAnchor())
+      rainWalletSessionActive = true
+      isLoading = false
+      await initializeRainWithRainWallet()
+      return
+    } catch {
+      SampleLog.e(area, "failed: \(error.localizedDescription)")
+      statusText = "\(label) failed: \(error.localizedDescription)"
+    }
+    isLoading = false
+  }
+
+  /// The key window, for the system passkey sheet.
+  private func presentationAnchor() -> ASPresentationAnchor {
+    UIApplication.shared.connectedScenes
+      .compactMap { $0 as? UIWindowScene }
+      .flatMap(\.windows)
+      .first { $0.isKeyWindow } ?? ASPresentationAnchor()
   }
 
   func verifyRainWalletOtp() async {
@@ -763,6 +867,8 @@ final class HomeViewModel: ObservableObject {
     rainWalletOtpCode = ""
     rainWalletSessionActive = false
     revealedSecret = nil
+    rainWalletPhone = ""
+
     privyOtpSent = false
     privyOtpCode = ""
     privySessionActive = false

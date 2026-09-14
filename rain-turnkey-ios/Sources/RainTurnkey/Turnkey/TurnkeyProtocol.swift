@@ -1,8 +1,10 @@
+import AuthenticationServices
 import Combine
 import CryptoKit
 import Foundation
 import TurnkeyCrypto
 import TurnkeyHttp
+import TurnkeyPasskeys
 import TurnkeySwift
 import TurnkeyTypes
 @_spi(RainAdapter) import RainCore
@@ -105,6 +107,42 @@ internal protocol TurnkeyContextProtocol: AnyObject {
     accounts: [WalletAccountParams],
     mnemonicLength: Int
   ) async throws
+
+  // MARK: Passkeys (RainWallet)
+
+  /// Signs an existing user in with a passkey assertion. At swift-sdk 4.0.0 the vendor stores
+  /// the resulting session under ITS DEFAULT key — `sessionKey` arguments are accepted but
+  /// ignored — see `TurnkeyManagedAuthController`'s passkey session handling.
+  func loginWithTurnkeyPasskey(anchor: ASPresentationAnchor) async throws
+
+  /// Signs a NEW user up with a passkey, creating the sub-organization and — atomically — one
+  /// custom wallet carrying `signupWalletAccounts` (one seed for every chain family). Stores
+  /// the session under the vendor's default key (see `loginWithTurnkeyPasskey`).
+  func signUpWithTurnkeyPasskey(
+    anchor: ASPresentationAnchor,
+    signupWalletAccounts: [WalletAccountParams]
+  ) async throws
+
+  /// Registers an additional passkey authenticator on the authenticated user. No new account,
+  /// no session change — afterwards the passkey signs into THIS account.
+  func addPasskeyAuthenticator(anchor: ASPresentationAnchor, rpId: String) async throws
+
+  // MARK: Contact verification (RainWallet)
+
+  /// Verifies an OTP code WITHOUT logging in and returns the verification token proving the
+  /// contact. Distinctly named so it cannot collide with the vendor's defaulted `verifyOtp(...)`.
+  func verifyOtpToken(
+    otpId: String,
+    otpCode: String,
+    otpEncryptionTargetBundle: String
+  ) async throws -> String
+
+  /// Sets the authenticated user's email; the verification token marks it VERIFIED, which is
+  /// what lets the contact become a login method.
+  func setUserEmail(_ email: String, verificationToken: String?) async throws
+
+  /// Sets the authenticated user's phone number; the verification token marks it VERIFIED.
+  func setUserPhoneNumber(_ phone: String, verificationToken: String?) async throws
 
   // MARK: Key export (RainWallet)
 
@@ -229,6 +267,71 @@ extension TurnkeyContext: TurnkeyContextProtocol {
       accounts: accounts,
       mnemonicLength: Int32(mnemonicLength)
     )
+  }
+
+  internal func loginWithTurnkeyPasskey(anchor: ASPresentationAnchor) async throws {
+    _ = try await loginWithPasskey(anchor: anchor)
+  }
+
+  internal func signUpWithTurnkeyPasskey(
+    anchor: ASPresentationAnchor,
+    signupWalletAccounts: [WalletAccountParams]
+  ) async throws {
+    // Same atomic provisioning as the OTP signup path: the custom wallet is created inside the
+    // signup request. CreateSubOrgParams has no public initializer at swift-sdk 4.0.0 — its
+    // Decodable witness is the only way to construct one from outside the vendor module.
+    var subOrgParams = try JSONDecoder().decode(CreateSubOrgParams.self, from: Data("{}".utf8))
+    subOrgParams.customWallet = v1WalletParams(
+      accounts: signupWalletAccounts,
+      mnemonicLength: 12,
+      walletName: "Wallet"
+    )
+    _ = try await signUpWithPasskey(anchor: anchor, createSubOrgParams: subOrgParams)
+  }
+
+  internal func addPasskeyAuthenticator(anchor: ASPresentationAnchor, rpId: String) async throws {
+    // The vendor has no high-level "add a passkey to the current account" at 4.0.0; composed
+    // from its public pieces: the platform ceremony, then create_authenticators on the raw
+    // client (see addAccountsToTurnkeyWallet for the same cast).
+    guard let client = turnkeyClient as? TurnkeyClient, let session, authState == .authenticated
+    else {
+      throw TurnkeySwiftError.invalidSession
+    }
+    let passkeyName = "passkey-\(Int(Date().timeIntervalSince1970))"
+    let passkey = try await createPasskey(
+      user: PasskeyUser(id: UUID().uuidString, name: passkeyName, displayName: passkeyName),
+      rp: RelyingParty(id: rpId, name: ""),
+      presentationAnchor: anchor
+    )
+    _ = try await client.createAuthenticators(TCreateAuthenticatorsBody(
+      organizationId: session.organizationId,
+      authenticators: [v1AuthenticatorParamsV2(
+        attestation: passkey.attestation,
+        authenticatorName: passkeyName,
+        challenge: passkey.challenge
+      )],
+      userId: session.userId
+    ))
+  }
+
+  internal func verifyOtpToken(
+    otpId: String,
+    otpCode: String,
+    otpEncryptionTargetBundle: String
+  ) async throws -> String {
+    try await verifyOtp(
+      otpId: otpId,
+      otpCode: otpCode,
+      otpEncryptionTargetBundle: otpEncryptionTargetBundle
+    ).verificationToken
+  }
+
+  internal func setUserEmail(_ email: String, verificationToken: String?) async throws {
+    try await updateUserEmail(email: email, verificationToken: verificationToken)
+  }
+
+  internal func setUserPhoneNumber(_ phone: String, verificationToken: String?) async throws {
+    try await updateUserPhoneNumber(phone: phone, verificationToken: verificationToken)
   }
 
   internal func exportWalletMnemonic(walletId: String) async throws -> String {

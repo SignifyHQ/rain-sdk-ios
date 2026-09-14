@@ -31,7 +31,8 @@ enum SessionStore {
     get { read("privyAppClientId") ?? "" } set { write("privyAppClientId", newValue) }
   }
   static var privyEmail: String { get { read("privyEmail") ?? "" } set { write("privyEmail", newValue) } }
-  static var rainWalletEmail: String { get { read("rainWalletEmail") ?? "" } set { write("rainWalletEmail", newValue) } }
+  /// The last login contact used with the Rain wallet — an email address or a phone number.
+  static var rainWalletContact: String { get { read("rainWalletContact") ?? "" } set { write("rainWalletContact", newValue) } }
 
   static func clear() {
     allKeys.forEach { write($0, nil) }
