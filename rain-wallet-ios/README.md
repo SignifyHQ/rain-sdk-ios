@@ -40,9 +40,12 @@ Configure expiry/refresh/retry behavior via `RainWalletConfig.sessionPolicy`
 `signUpWithPasskey(anchor:)` creates a NEW account (fresh wallet — returning users must use
 `loginWithPasskey(anchor:)` or a login code, or they end up with a second, empty account);
 `addPasskey(anchor:)` registers a passkey on the current account so the next login can skip the
-code. Passkeys require Rain's relying-party domain to be live (association files + the app's
-Associated Domains entitlement `webcredentials:<domain>`); until then these methods throw
-`invalidConfig`. A passkey-created account can attach a verified email or phone with
+code. Passkeys use YOUR domain: set `RainWalletConfig(passkeyDomain:)` to a web domain you
+control, serve `/.well-known/apple-app-site-association` on it listing your app under
+`webcredentials`, and add the `webcredentials:<domain>` Associated Domains entitlement. Without
+a configured domain the passkey methods throw `invalidConfig`. The domain is permanent — your
+users' passkeys are bound to it — and passkeys from one domain don't work in apps on another.
+A passkey-created account can attach a verified email or phone with
 `sendContactVerificationCode(to:)` + `confirmContactVerification(_:)`, after which that contact
 is a login method too. SMS login requires SMS auth enabled on the wallet backend. Accounts are
 never merged: attaching a contact adds a login method to THIS account; it never moves wallets.

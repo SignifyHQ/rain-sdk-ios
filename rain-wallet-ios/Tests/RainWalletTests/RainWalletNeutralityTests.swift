@@ -20,6 +20,7 @@ struct RainWalletNeutralityTests {
     let anchor = ASPresentationAnchor()
     let provider = RainProvider(
       RainWalletConfig(
+        passkeyDomain: "passkeys.example.com",
         walletAddress: nil,
         sessionPolicy: RainWalletSessionPolicy(autoRefresh: true),
         onSessionExpired: {}

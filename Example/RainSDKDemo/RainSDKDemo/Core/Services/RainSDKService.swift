@@ -185,11 +185,12 @@ final class RainSDKService: ObservableObject {
   /// email-OTP flow — nothing to configure beyond the hooks.
   @discardableResult
   func prepareRainWallet(
+    passkeyDomain: String? = nil,
     onSessionExpired: (@Sendable () -> Void)? = nil
   ) -> RainWallet.RainProvider {
     RainLogger.isEnabled = true
     let provider = RainWallet.RainProvider(
-      RainWalletConfig(onSessionExpired: onSessionExpired)
+      RainWalletConfig(passkeyDomain: passkeyDomain, onSessionExpired: onSessionExpired)
     )
     rainWalletProvider = provider
     return provider

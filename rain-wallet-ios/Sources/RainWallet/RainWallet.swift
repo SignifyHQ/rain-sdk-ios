@@ -1,8 +1,8 @@
 // RainWallet — the Rain-branded wallet provider.
 //
-// The wallet backend identity is embedded in the SDK — hosts configure nothing. Authentication
-// (email one-time codes) runs inside the SDK, and the resolved `RainClient` exposes the same
-// wallet surface as every other provider.
+// The wallet backend identity is embedded in the SDK — hosts configure nothing beyond optional
+// behavior (and their own passkey domain, if they use passkeys). Authentication runs inside the
+// SDK, and the resolved `RainClient` exposes the same wallet surface as every other provider.
 //
 //     import RainWallet   // surfaces RainCore too
 //
@@ -163,6 +163,14 @@ public struct RainWalletSessionPolicy: Sendable {
 /// Configuration for the Rain wallet provider. The wallet backend identity (Rain's organization
 /// and authentication configuration) is embedded in the SDK — hosts configure only behavior.
 public struct RainWalletConfig: Sendable {
+  /// The passkey relying-party domain — a web domain YOUR app controls (e.g. "example.com").
+  /// `nil` disables the passkey methods (they throw `RainSDKError.invalidConfig`).
+  ///
+  /// Requirements: the domain serves `/.well-known/apple-app-site-association` listing your
+  /// app under `webcredentials`, and the app carries the Associated Domains entitlement
+  /// `webcredentials:<domain>`. Passkeys are bound to this domain forever — changing it strands
+  /// every passkey your users created — and the value is one-shot per app launch.
+  public let passkeyDomain: String?
   /// Optional explicit EVM wallet address. When `nil`, the first Ethereum account is used.
   public let walletAddress: String?
   /// Expiry/refresh/retry behavior for the session guarding every wallet call.
@@ -174,10 +182,12 @@ public struct RainWalletConfig: Sendable {
   public let onSessionExpired: (@Sendable () -> Void)?
 
   public init(
+    passkeyDomain: String? = nil,
     walletAddress: String? = nil,
     sessionPolicy: RainWalletSessionPolicy = RainWalletSessionPolicy(),
     onSessionExpired: (@Sendable () -> Void)? = nil
   ) {
+    self.passkeyDomain = passkeyDomain
     self.walletAddress = walletAddress
     self.sessionPolicy = sessionPolicy
     self.onSessionExpired = onSessionExpired
@@ -190,11 +200,6 @@ public struct RainWalletConfig: Sendable {
 internal enum RainWalletBackend {
   static let organizationId = "63495e45-8e64-42b5-b602-c68f019ca806"
   static let authConfigId = "1d8aac5e-f236-4800-bab7-98a9e27b4b2a"
-  /// The passkey relying-party domain. `nil` until Rain infra serves the association files for
-  /// it (apple-app-site-association / assetlinks.json) — passkey methods throw `invalidConfig`
-  /// until then. Host apps additionally need the Associated Domains entitlement
-  /// (`webcredentials:<domain>`). Cross-platform: Android embeds the identical domain.
-  static let passkeyDomain: String? = nil
 }
 
 // MARK: - Provider
@@ -217,7 +222,7 @@ public struct RainProvider: ProviderDescriptor {
       TurnkeyConfig(
         organizationId: RainWalletBackend.organizationId,
         authProxyConfigId: RainWalletBackend.authConfigId,
-        rpId: RainWalletBackend.passkeyDomain,
+        rpId: config.passkeyDomain,
         walletAddress: config.walletAddress,
         sessionPolicy: config.sessionPolicy.backingPolicy,
         onSessionExpired: config.onSessionExpired

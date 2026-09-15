@@ -121,9 +121,12 @@ Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and Rai
   purge the superseded per-attempt key); passkey signup merges our one-seed `customWallet`
   into CreateSubOrgParams (atomic provisioning holds); signup's stampLogin passes
   invalidateExisting: true but LOGIN's does not (single-active-session gap — flag upstream +
-  Android). Prereqs: `rpId` must join the one-shot vendor configure (placeholder constant in
-  RainWalletBackend until Rain infra provides the domain + AASA file + app Associated Domains
-  entitlement — passkey calls throw invalidConfig until then); SMS is Turnkey-Enterprise
+  Android). DECISION 2026-09-15 (reverses 2026-09-14's shared-Rain-domain plan): the passkey
+  relying-party domain is PARTNER-SUPPLIED — `RainWalletConfig(passkeyDomain:)`, nil = passkeys
+  off (invalidConfig). Each partner hosts their own AASA/assetlinks files and entitlement; Rain
+  runs no shared passkey domain, and passkeys are per-partner (not portable across partner apps;
+  the same account can hold passkeys from several domains). rpId still joins the one-shot vendor
+  configure and is one-shot per launch. SMS is Turnkey-Enterprise
   (FEATURE_NAME_SMS_AUTH on Rain's org + allowed on the auth-proxy config; sandbox:
   +1 999-999-9999 / 000000 with alphanumeric=false, otpLength=6). Accounts NEVER merge
   (sub-org = account boundary): docs steer returning users to login/add-passkey, not signup;
