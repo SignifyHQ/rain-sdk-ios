@@ -47,7 +47,6 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/tkhq/swift-sdk.git", exact: "4.0.0"),
     .package(url: "https://github.com/Boilertalk/Web3.swift.git", exact: "0.8.8"),
-    .package(url: "https://github.com/web3swift-team/web3swift.git", from: "3.3.2"),
     .package(url: "https://github.com/dagronf/QRCode", exact: "28.0.2"),
     .package(url: "https://github.com/portal-hq/PortalSwift.git", exact: "7.3.0"),
     .package(url: "https://github.com/privy-io/privy-ios", from: "2.14.0"),
@@ -61,7 +60,6 @@ let package = Package(
         .product(name: "Web3", package: "Web3.swift"),
         .product(name: "Web3PromiseKit", package: "Web3.swift"),
         .product(name: "Web3ContractABI", package: "Web3.swift"),
-        .product(name: "web3swift", package: "web3swift"),
       ],
       path: "rain-core-ios/Sources/RainCore",
       resources: [

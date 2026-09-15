@@ -1,7 +1,6 @@
 import Foundation
 import CoreGraphics
 import Web3
-import Web3Core
 
 /// Concrete ``RainClient`` bound to a single resolved wallet provider. Constructed by
 /// ``RainSdk`` when a provider is resolved; not created directly by hosts.
