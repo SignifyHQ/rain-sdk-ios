@@ -18,8 +18,11 @@ import per provider suffices. The 1.x `RainSDK` umbrella module has been REMOVED
   descriptors, `Capability` model, `RainSdk` builder/registry (caches in-flight resolution Tasks),
   `RainClient` (impl `RainSdkManager`), transaction building, EIP-712, EVM chain reader
   (JSON-RPC + Multicall3), Solana stack (sentinel ids 900/901/902), token store, Rain issuing API
-  (CST sessions, collateral contracts, admin signatures), Auth Pull (ERC-20 allowance surface),
-  error model. No wallet vendor SDKs.
+  (direct Api-Key auth — CST minting REMOVED 2026-09-15, not enabled for Rain tenants; collateral contracts, admin signatures), Auth Pull (ERC-20 allowance surface),
+  error model. No wallet vendor SDKs. EVM ABI encoding + collateral contract reads go through
+  Boilertalk Web3.swift ONLY — web3swift was REMOVED 2026-09-15 (abandoned upstream since 2025;
+  its URLSession overload trick stopped compiling on new Xcode). Contract call outputs from
+  Boilertalk decode under the ABI output NAME as key ("" for unnamed outputs, not "0").
 - `RainTurnkey` (`rain-turnkey-ios`) — Turnkey adapter, BYO + managed modes (multi-chain
   EVM+Solana; `.multiChain`, `.biometricGate`). `RainPortal` (`rain-portal-ios`) — Portal MPC,
   EVM-only. `RainPrivy` (`rain-privy-ios`) — Privy embedded wallet (EIP-1193 custody, reads via

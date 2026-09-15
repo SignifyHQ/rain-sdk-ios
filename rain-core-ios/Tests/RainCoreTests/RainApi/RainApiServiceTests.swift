@@ -4,9 +4,6 @@ import Foundation
 
 @Suite("RainApiService Tests", .serialized)
 struct RainApiServiceTests {
-  private static let sessionJson =
-    #"{"token":"cst_abc","expiresAt":"2030-01-01T00:00:00Z","userId":"user"}"#
-
   /// One contract on an unknown chain (999888) with one unknown token, so the token store
   /// always enriches through the chain reader rather than the built-in registry.
   private static let contractsJson = #"""
@@ -48,58 +45,37 @@ struct RainApiServiceTests {
     }
   }
 
-  @Test("401 on a data call re-mints the session and retries once")
-  func retryOnceOn401() async throws {
+  @Test("data calls authenticate with the Api-Key header directly — no session is minted")
+  func directApiKeyAuth() async throws {
     try await MockRainApiURLProtocol.withStubs {
-      MockRainApiURLProtocol.stub("/sessions", .init(json: Self.sessionJson))
-      MockRainApiURLProtocol.stub(
-        "/contracts",
-        .init(statusCode: 401, json: "expired"),
-        .init(json: Self.contractsJson)
-      )
+      MockRainApiURLProtocol.stub("/contracts", .init(json: Self.contractsJson))
 
       let contracts = try await makeService().fetchCollateralContracts()
 
       #expect(contracts.count == 1)
-      #expect(MockRainApiURLProtocol.recordedRequests(pathSuffix: "/sessions").count == 2)
+      // No CST layer: nothing ever calls /sessions.
+      #expect(MockRainApiURLProtocol.recordedRequests(pathSuffix: "/sessions").isEmpty)
+      let request = try #require(MockRainApiURLProtocol.recordedRequests(pathSuffix: "/contracts").first)
+      #expect(request.value(forHTTPHeaderField: "Api-Key") == "key")
+      #expect(request.value(forHTTPHeaderField: "Authorization") == nil)
     }
   }
 
-  @Test("persistent 401 surfaces unauthorized after one retry")
-  func persistent401() async throws {
+  @Test("401 surfaces unauthorized immediately — retrying the same key cannot succeed")
+  func unauthorized401IsTerminal() async throws {
     await MockRainApiURLProtocol.withStubs {
-      MockRainApiURLProtocol.stub("/sessions", .init(json: Self.sessionJson))
       MockRainApiURLProtocol.stub("/contracts", .init(statusCode: 401, json: "nope"))
 
       await #expect(throws: RainSDKError.unauthorized) {
         _ = try await makeService().fetchCollateralContracts()
       }
-      #expect(MockRainApiURLProtocol.recordedRequests(pathSuffix: "/contracts").count == 2)
-    }
-  }
-
-  @Test("invalidateSession drops the cached CST so the next call re-mints")
-  func invalidateSessionRemints() async throws {
-    // Regression: RainSdk.reset() invalidates the session — reset + reconfigure with the same
-    // credentials must not reuse the pre-reset token.
-    try await MockRainApiURLProtocol.withStubs {
-      MockRainApiURLProtocol.stub("/sessions", .init(json: Self.sessionJson))
-      MockRainApiURLProtocol.stub("/contracts", .init(json: Self.contractsJson))
-
-      let service = makeService()
-      _ = try await service.fetchCollateralContracts()
-      #expect(MockRainApiURLProtocol.recordedRequests(pathSuffix: "/sessions").count == 1)
-
-      await service.invalidateSession()
-      _ = try await service.fetchCollateralContracts()
-      #expect(MockRainApiURLProtocol.recordedRequests(pathSuffix: "/sessions").count == 2)
+      #expect(MockRainApiURLProtocol.recordedRequests(pathSuffix: "/contracts").count == 1)
     }
   }
 
   @Test("enriches token metadata through the token store")
   func enrichesTokens() async throws {
     try await MockRainApiURLProtocol.withStubs {
-      MockRainApiURLProtocol.stub("/sessions", .init(json: Self.sessionJson))
       MockRainApiURLProtocol.stub("/contracts", .init(json: Self.contractsJson))
 
       let chainReader = MockChainReader()
@@ -122,7 +98,6 @@ struct RainApiServiceTests {
     // A fabricated decimals default (e.g. 18) would corrupt the caller's base-unit math,
     // so a failed read must surface as nil — the fetch itself still succeeds.
     try await MockRainApiURLProtocol.withStubs {
-      MockRainApiURLProtocol.stub("/sessions", .init(json: Self.sessionJson))
       MockRainApiURLProtocol.stub("/contracts", .init(json: Self.contractsJson))
 
       let chainReader = MockChainReader()
@@ -141,7 +116,6 @@ struct RainApiServiceTests {
   @Test("registered token resolves without any on-chain read")
   func registeredTokenSkipsChainReads() async throws {
     try await MockRainApiURLProtocol.withStubs {
-      MockRainApiURLProtocol.stub("/sessions", .init(json: Self.sessionJson))
       MockRainApiURLProtocol.stub("/contracts", .init(json: Self.contractsJson))
 
       let chainReader = MockChainReader()
@@ -186,7 +160,6 @@ struct RainApiServiceTests {
     ]
     """#
     try await MockRainApiURLProtocol.withStubs {
-      MockRainApiURLProtocol.stub("/sessions", .init(json: Self.sessionJson))
       MockRainApiURLProtocol.stub("/contracts", .init(json: solanaContractsJson))
 
       let chainReader = MockChainReader()
@@ -224,7 +197,6 @@ struct RainApiServiceTests {
   @Test("fetchAdminSignature returns the mapped signature")
   func adminSignaturePassthrough() async throws {
     try await MockRainApiURLProtocol.withStubs {
-      MockRainApiURLProtocol.stub("/sessions", .init(json: Self.sessionJson))
       MockRainApiURLProtocol.stub(
         "/signatures/withdrawals",
         .init(json: #"{"status":"ready","signature":{"data":"0xsig","salt":"0xsalt"},"expiresAt":"2030-01-01T00:00:00Z"}"#)
