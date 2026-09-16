@@ -1,17 +1,16 @@
 import Foundation
 
-/// Orchestrates the Rain issuing API: composes credentials (`RainApiConfigStore`), the CST
-/// cache (`RainSessionManager`) and the HTTP client (`RainApiClient`), and enriches contract
-/// tokens through the SDK token store.
+/// Orchestrates the Rain issuing API: composes credentials (`RainApiConfigStore`) with the HTTP
+/// client (`RainApiClient`) and enriches contract tokens through the SDK token store.
 ///
-/// A Bearer call rejected as `.unauthorized` invalidates the cached CST and retries exactly
-/// once with a freshly minted token before rethrowing.
+/// Every call authenticates directly with the program key (`Api-Key` header) — the CST session
+/// layer was removed 2026-09-15 (client session tokens are not enabled for Rain's tenants), so
+/// an `.unauthorized` is terminal: retrying with the same key cannot succeed.
 internal final class RainApiService: Sendable {
   private let configStore: RainApiConfigStore
   private let tokenStore: TokenMetadataStore
   private let chainReader: ChainReader
   private let client: RainApiClient
-  private let sessionManager: RainSessionManager
 
   init(
     configStore: RainApiConfigStore,
@@ -23,20 +22,13 @@ internal final class RainApiService: Sendable {
     self.tokenStore = tokenStore
     self.chainReader = chainReader
     self.client = client
-    let baseURL = configStore.baseURL
-    self.sessionManager = RainSessionManager { credentials in
-      try await client.createSession(baseURL: baseURL, credentials: credentials)
-    }
   }
 
   func fetchCollateralContracts() async throws -> [RainCollateralContract] {
-    let contracts = try await withCst { cst, credentials in
-      try await self.client.getContracts(
-        baseURL: self.configStore.baseURL,
-        cst: cst,
-        userId: credentials.userId
-      )
-    }
+    let contracts = try await client.getContracts(
+      baseURL: configStore.baseURL,
+      credentials: try configStore.credentials()
+    )
     var enriched: [RainCollateralContract] = []
     enriched.reserveCapacity(contracts.count)
     for contract in contracts {
@@ -53,42 +45,19 @@ internal final class RainApiService: Sendable {
     recipientAddress: String,
     isAmountNative: Bool
   ) async throws -> RainAdminSignature {
-    try await withCst { cst, credentials in
-      try await self.client.getWithdrawalSignature(
-        baseURL: self.configStore.baseURL,
-        cst: cst,
-        userId: credentials.userId,
-        chainId: chainId,
-        tokenAddress: tokenAddress,
-        amountBaseUnits: amountBaseUnits,
-        adminAddress: adminAddress,
-        recipientAddress: recipientAddress,
-        isAmountNative: isAmountNative
-      )
-    }
-  }
-
-  /// Drops the cached CST so the next call re-mints. Awaitable so callers can order against it.
-  func invalidateSession() async {
-    await sessionManager.invalidate()
+    try await client.getWithdrawalSignature(
+      baseURL: configStore.baseURL,
+      credentials: try configStore.credentials(),
+      chainId: chainId,
+      tokenAddress: tokenAddress,
+      amountBaseUnits: amountBaseUnits,
+      adminAddress: adminAddress,
+      recipientAddress: recipientAddress,
+      isAmountNative: isAmountNative
+    )
   }
 
   // MARK: - Internals
-
-  private func withCst<T>(
-    _ block: (_ cst: String, _ credentials: RainApiCredentials) async throws -> T
-  ) async throws -> T {
-    let credentials = try configStore.credentials()
-    let cst = try await sessionManager.validToken(for: credentials)
-    do {
-      return try await block(cst, credentials)
-    } catch RainSDKError.unauthorized {
-      // The CST may have been revoked before its expiry — re-mint once and retry.
-      await sessionManager.invalidate()
-      let fresh = try configStore.credentials()
-      return try await block(try await sessionManager.validToken(for: fresh), fresh)
-    }
-  }
 
   /// Fills token `name`/`symbol`/`decimals`: known tokens (registry + host-registered) first,
   /// else direct on-chain reads. Best-effort and concurrent per token: a failed read leaves

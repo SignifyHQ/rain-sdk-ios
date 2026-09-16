@@ -1,5 +1,5 @@
 import Foundation
-import Web3Core
+import Web3
 
 /// The four addresses a collateral withdrawal needs. Field names follow
 /// ``RainCollateralContract``, which is where a host gets them.
@@ -40,9 +40,9 @@ public struct RainWithdrawAddresses: Sendable, Hashable {
 
   /// Checksums one address, throwing `invalidConfig` when it is not a valid EVM address.
   internal static func checksummed(_ address: String, label: String) throws -> String {
-    guard let parsed = Web3Core.EthereumAddress(address) else {
+    guard let parsed = EthereumAddress.parse(address) else {
       throw RainSDKError.invalidConfig(details: "Invalid \(label) format: \(address)")
     }
-    return parsed.address
+    return parsed.hex(eip55: true)
   }
 }

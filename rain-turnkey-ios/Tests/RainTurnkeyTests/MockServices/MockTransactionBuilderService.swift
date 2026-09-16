@@ -1,6 +1,6 @@
 import Foundation
 import Web3
-import Web3Core
+import Web3
 @testable import RainCore
 @testable import RainTurnkey
 
@@ -106,7 +106,7 @@ final class MockTransactionBuilderService: TransactionBuilderProtocol {
   }
   
   func buildErc20TransactionForWithdrawAsset(
-    ethereumContractAddress: Web3Core.EthereumAddress,
+    ethereumContractAddress: EthereumAddress,
     withdrawAssetParameter: WithdrawAssetParameter
   ) throws -> String {
     // Mock implementation - return dummy transaction data

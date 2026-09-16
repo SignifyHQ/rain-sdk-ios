@@ -1,6 +1,5 @@
 import Foundation
 import Web3
-import Web3Core
 
 /// Composes the withdrawal transaction for Rain's Solana collateral program (single-signer
 /// accounts, program v2.02).

@@ -1,6 +1,6 @@
 import Foundation
 import Web3
-import Web3Core
+import Web3ContractABI
 
 /// The wallet-agnostic withdrawal-building steps, in one place.
 ///
@@ -62,10 +62,10 @@ enum WithdrawalBuilder {
   ) throws -> String {
     let validated = try addresses.validated()
 
-    guard let controllerAddress = Web3Core.EthereumAddress(validated.controllerAddress),
-          let proxyAddress = Web3Core.EthereumAddress(validated.proxyAddress),
-          let tokenAddress = Web3Core.EthereumAddress(validated.tokenAddress),
-          let recipientAddress = Web3Core.EthereumAddress(validated.recipientAddress)
+    guard let controllerAddress = EthereumAddress.parse(validated.controllerAddress),
+          let proxyAddress = EthereumAddress.parse(validated.proxyAddress),
+          let tokenAddress = EthereumAddress.parse(validated.tokenAddress),
+          let recipientAddress = EthereumAddress.parse(validated.recipientAddress)
     else {
       throw RainSDKError.internalLogicError(
         details: "Error building transaction parameters for withdrawal. One of the addresses could not be built"

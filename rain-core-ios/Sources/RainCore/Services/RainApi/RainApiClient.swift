@@ -2,15 +2,13 @@ import Foundation
 
 /// HTTP client for the Rain issuing REST API.
 ///
-/// Auth model:
-///  1. `POST /v1/issuing/users/{userId}/sessions` with an `Api-Key` header exchanges the
-///     program key for a short-lived client session token (CST).
-///  2. Data endpoints (contracts, withdrawal signatures) are called with
-///     `Authorization: Bearer cst_…`.
+/// Auth model: every endpoint authenticates directly with the program key in the `Api-Key`
+/// header. (The earlier CST exchange — minting a short-lived session token first — was removed
+/// 2026-09-15: client session tokens are not enabled for Rain's tenants.)
 ///
-/// Stateless: base URL and auth material are passed per call; caching lives in
-/// `RainSessionManager` and orchestration in `RainApiService`. Follows the `JsonRpcClient`
-/// conventions — plain `URLSession` async/await, typed `RainSDKError`s.
+/// Stateless: base URL and auth material are passed per call; orchestration lives in
+/// `RainApiService`. Follows the `JsonRpcClient` conventions — plain `URLSession` async/await,
+/// typed `RainSDKError`s.
 internal final class RainApiClient: Sendable {
   private let session: URLSession
   private let decoder = JSONDecoder()
@@ -29,11 +27,6 @@ internal final class RainApiClient: Sendable {
   }
 
   // MARK: - Wire DTOs
-
-  private struct SessionResponse: Decodable {
-    let token: String
-    let expiresAt: String?
-  }
 
   private struct ContractDto: Decodable {
     let id: String?
@@ -67,47 +60,13 @@ internal final class RainApiClient: Sendable {
 
   // MARK: - Endpoints
 
-  /// Mints a client session token.
-  ///
-  /// The request body must be empty AND carry no `Content-Type` header — Rain rejects an
-  /// empty body that declares a content type with a 400 ("Body cannot be empty when
-  /// content-type is set …").
-  func createSession(baseURL: URL, credentials: RainApiCredentials) async throws -> RainSession {
+  /// `GET /v1/issuing/users/{userId}/contracts` (Api-Key auth). Tokens are not yet enriched.
+  func getContracts(baseURL: URL, credentials: RainApiCredentials) async throws -> [RainCollateralContract] {
     var request = URLRequest(
-      url: url(baseURL, path: "v1/issuing/users/\(credentials.userId)/sessions", queryItems: nil)
-    )
-    request.httpMethod = "POST"
-    request.setValue(credentials.apiKey, forHTTPHeaderField: "Api-Key")
-    request.setValue("application/json", forHTTPHeaderField: "Accept")
-
-    let data = try await executeChecked(request, operation: "create session")
-    let response: SessionResponse
-    do {
-      response = try decoder.decode(SessionResponse.self, from: data)
-    } catch {
-      throw RainSDKError.networkError(underlying: error)
-    }
-    guard !response.token.isEmpty else {
-      throw RainSDKError.networkError(
-        underlying: NSError(
-          domain: "rain.api", code: -1,
-          userInfo: [NSLocalizedDescriptionKey: "Create session returned no token"]
-        )
-      )
-    }
-    return RainSession(
-      token: response.token,
-      expiresAt: response.expiresAt.flatMap(RainSdk.parseISO8601)
-    )
-  }
-
-  /// `GET /v1/issuing/users/{userId}/contracts` (CST auth). Tokens are not yet enriched.
-  func getContracts(baseURL: URL, cst: String, userId: String) async throws -> [RainCollateralContract] {
-    var request = URLRequest(
-      url: url(baseURL, path: "v1/issuing/users/\(userId)/contracts", queryItems: nil)
+      url: url(baseURL, path: "v1/issuing/users/\(credentials.userId)/contracts", queryItems: nil)
     )
     request.httpMethod = "GET"
-    request.setValue("Bearer \(cst)", forHTTPHeaderField: "Authorization")
+    request.setValue(credentials.apiKey, forHTTPHeaderField: "Api-Key")
     request.setValue("application/json", forHTTPHeaderField: "Accept")
 
     let data = try await executeChecked(request, operation: "fetch contracts")
@@ -138,14 +97,13 @@ internal final class RainApiClient: Sendable {
     }
   }
 
-  /// `GET /v1/issuing/users/{userId}/signatures/withdrawals` (CST auth).
+  /// `GET /v1/issuing/users/{userId}/signatures/withdrawals` (Api-Key auth).
   ///
   /// - Parameter amountBaseUnits: Withdrawal amount in the token's base units (decimal string).
   /// - Throws: `RainSDKError.signatureNotReady` when `status != "ready"` or the signature is missing.
   func getWithdrawalSignature(
     baseURL: URL,
-    cst: String,
-    userId: String,
+    credentials: RainApiCredentials,
     chainId: Int,
     tokenAddress: String,
     amountBaseUnits: String,
@@ -162,10 +120,10 @@ internal final class RainApiClient: Sendable {
       URLQueryItem(name: "isAmountNative", value: isAmountNative ? "true" : "false"),
     ]
     var request = URLRequest(
-      url: url(baseURL, path: "v1/issuing/users/\(userId)/signatures/withdrawals", queryItems: queryItems)
+      url: url(baseURL, path: "v1/issuing/users/\(credentials.userId)/signatures/withdrawals", queryItems: queryItems)
     )
     request.httpMethod = "GET"
-    request.setValue("Bearer \(cst)", forHTTPHeaderField: "Authorization")
+    request.setValue(credentials.apiKey, forHTTPHeaderField: "Api-Key")
     request.setValue("application/json", forHTTPHeaderField: "Accept")
 
     let data = try await executeChecked(request, operation: "fetch withdrawal signature")
