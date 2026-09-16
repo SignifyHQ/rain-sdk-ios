@@ -263,7 +263,7 @@ let erc20 = try await client.sendToken(
 ### 8. Rain API: collateral contracts & admin signature
 
 The SDK talks to the Rain issuing API directly — supply your program **Api-Key** and Rain
-**userId** and it handles session (CST) minting, caching, and refresh internally. Credentials
+**userId**; every request authenticates directly with the Api-Key header. Credentials
 are never persisted by the SDK. In production, prefer minting server-to-server and keeping the
 Api-Key off the device.
 

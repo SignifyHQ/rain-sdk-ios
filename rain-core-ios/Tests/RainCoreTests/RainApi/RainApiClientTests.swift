@@ -11,57 +11,9 @@ struct RainApiClientTests {
     RainApiClient(session: MockRainApiURLProtocol.makeSession())
   }
 
-  // MARK: - Session
-
-  @Test("createSession parses token and expiry")
-  func sessionParses() async throws {
-    try await MockRainApiURLProtocol.withStubs {
-      MockRainApiURLProtocol.stub(
-        "/sessions",
-        .init(json: #"{"token":"cst_abc","expiresAt":"2030-01-01T00:00:00Z","userId":"user-abc"}"#)
-      )
-
-      let session = try await makeClient().createSession(baseURL: baseURL, credentials: credentials)
-
-      #expect(session.token == "cst_abc")
-      #expect(session.expiresAt == RainSdk.parseISO8601("2030-01-01T00:00:00Z"))
-    }
-  }
-
-  @Test("createSession sends Api-Key header with empty body and no Content-Type")
-  func sessionRequestShape() async throws {
-    try await MockRainApiURLProtocol.withStubs {
-      MockRainApiURLProtocol.stub(
-        "/sessions",
-        .init(json: #"{"token":"cst_abc","expiresAt":"2030-01-01T00:00:00Z"}"#)
-      )
-
-      _ = try await makeClient().createSession(baseURL: baseURL, credentials: credentials)
-
-      let request = try #require(MockRainApiURLProtocol.recorded.first)
-      #expect(request.httpMethod == "POST")
-      #expect(request.url?.path == "/v1/issuing/users/user-abc/sessions")
-      #expect(request.value(forHTTPHeaderField: "Api-Key") == "key-123")
-      #expect(request.httpBody == nil && request.httpBodyStream == nil)
-      // Rain 400s when an empty body declares a content type — must stay absent.
-      #expect(request.value(forHTTPHeaderField: "Content-Type") == nil)
-    }
-  }
-
-  @Test("createSession with unparseable expiry yields nil expiresAt")
-  func sessionUnparseableExpiry() async throws {
-    try await MockRainApiURLProtocol.withStubs {
-      MockRainApiURLProtocol.stub("/sessions", .init(json: #"{"token":"cst_abc","expiresAt":"not-a-date"}"#))
-
-      let session = try await makeClient().createSession(baseURL: baseURL, credentials: credentials)
-
-      #expect(session.expiresAt == nil)
-    }
-  }
-
   // MARK: - Contracts
 
-  @Test("getContracts parses full and minimal contracts and sends Bearer header")
+  @Test("getContracts parses full and minimal contracts and sends the Api-Key header")
   func contractsParse() async throws {
     try await MockRainApiURLProtocol.withStubs {
       MockRainApiURLProtocol.stub(
@@ -85,11 +37,12 @@ struct RainApiClientTests {
         """#)
       )
 
-      let contracts = try await makeClient().getContracts(baseURL: baseURL, cst: "cst_abc", userId: "user-abc")
+      let contracts = try await makeClient().getContracts(baseURL: baseURL, credentials: credentials)
 
       let request = try #require(MockRainApiURLProtocol.recorded.first)
       #expect(request.url?.path == "/v1/issuing/users/user-abc/contracts")
-      #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer cst_abc")
+      #expect(request.value(forHTTPHeaderField: "Api-Key") == "key-123")
+      #expect(request.value(forHTTPHeaderField: "Authorization") == nil)
 
       #expect(contracts.count == 2)
       let full = contracts[0]
@@ -211,7 +164,7 @@ struct RainApiClientTests {
       MockRainApiURLProtocol.stub("/contracts", .init(statusCode: statusCode, json: "denied"))
 
       await #expect(throws: RainSDKError.unauthorized) {
-        _ = try await makeClient().getContracts(baseURL: baseURL, cst: "cst_abc", userId: "user-abc")
+        _ = try await makeClient().getContracts(baseURL: baseURL, credentials: credentials)
       }
     }
   }
@@ -222,7 +175,7 @@ struct RainApiClientTests {
       MockRainApiURLProtocol.stub("/contracts", .init(statusCode: 500, json: "boom"))
 
       do {
-        _ = try await makeClient().getContracts(baseURL: baseURL, cst: "cst_abc", userId: "user-abc")
+        _ = try await makeClient().getContracts(baseURL: baseURL, credentials: credentials)
         Issue.record("expected apiError")
       } catch RainSDKError.apiError(let statusCode, let message) {
         #expect(statusCode == 500)
@@ -242,7 +195,7 @@ struct RainApiClientTests {
       )
 
       await #expect(throws: RainSDKError.networkError(underlying: URLError(.notConnectedToInternet))) {
-        _ = try await makeClient().getContracts(baseURL: baseURL, cst: "cst_abc", userId: "user-abc")
+        _ = try await makeClient().getContracts(baseURL: baseURL, credentials: credentials)
       }
     }
   }
@@ -253,7 +206,7 @@ struct RainApiClientTests {
       MockRainApiURLProtocol.stub("/contracts", .init(json: "<html>gateway error</html>"))
 
       do {
-        _ = try await makeClient().getContracts(baseURL: baseURL, cst: "cst_abc", userId: "user-abc")
+        _ = try await makeClient().getContracts(baseURL: baseURL, credentials: credentials)
         Issue.record("expected networkError")
       } catch RainSDKError.networkError {
         // expected
@@ -272,8 +225,7 @@ struct RainApiClientTests {
   private func fetchSignature() async throws -> RainAdminSignature {
     try await makeClient().getWithdrawalSignature(
       baseURL: baseURL,
-      cst: "cst_abc",
-      userId: "user-abc",
+      credentials: credentials,
       chainId: 43114,
       tokenAddress: "0xtoken",
       amountBaseUnits: "1500000",

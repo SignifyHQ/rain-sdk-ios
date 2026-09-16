@@ -1,6 +1,5 @@
 import Foundation
 import Web3
-import Web3Core
 
 /// Protocol for building transaction components
 /// Handles EIP-712 message generation, contract interactions, and ABI management
@@ -63,7 +62,7 @@ protocol TransactionBuilderProtocol {
   /// - Returns: Hex-encoded transaction calldata (prefixed with "0x")
   /// - Throws: RainSDKError if ABI encoding or validation fails
   func buildErc20TransactionForWithdrawAsset(
-    ethereumContractAddress: Web3Core.EthereumAddress,
+    ethereumContractAddress: EthereumAddress,
     withdrawAssetParameter: WithdrawAssetParameter
   ) throws -> String
 

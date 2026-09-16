@@ -1,7 +1,5 @@
 import Foundation
 import Web3
-import Web3Core
-import web3swift
 import Web3ContractABI
 
 /// Service for building transaction components
@@ -39,43 +37,64 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     chainId: Int
   ) async throws -> BigUInt {
     let rpcURL = try getRpcURL(chainId: chainId)
-    let collateralJsonABI = try getCollateralJsonABI()
-    
-    guard let url = URL(string: rpcURL),
-          let ethereumCollateralAddress = Web3Core.EthereumAddress(proxyAddress)
-    else {
+
+    guard let ethereumCollateralAddress = EthereumAddress.parse(proxyAddress) else {
       RainLogger.error("Rain SDK: Error getting contract's nonce. Could not build proxy address or RPC URL is missing")
       throw RainSDKError.internalLogicError(
         details: "Invalid proxy address or RPC URL for chain ID \(chainId)"
       )
     }
-    
+
     do {
-      let web3 = try await Web3.new(url)
-      let contract = web3.contract(
-        collateralJsonABI,
-        at: ethereumCollateralAddress,
-        abiVersion: 2
+      let web3 = Web3(rpcURL: rpcURL)
+      let contract = try web3.eth.Contract(
+        json: Data(Self.adminNonceABI.utf8),
+        abiKey: nil,
+        address: ethereumCollateralAddress
       )
-      
-      let response = try await contract?
-        .createReadOperation("adminNonce")?
-        .callContractMethod()
-      
-      guard let nonce = response?["0"] as? BigUInt
-      else {
-        RainLogger.error("Rain SDK: Error getting contract's nonce. Nonce is missing in the response")
-        throw RainSDKError.internalLogicError(
-          details: "Nonce not found in contract response for proxy address \(proxyAddress)"
-        )
+      guard let invocation = contract["adminNonce"]?() else {
+        throw RainSDKError.internalLogicError(details: "Collateral ABI is missing adminNonce")
       }
-      
+
+      let nonce: BigUInt = try await contractValue(invocation, method: "adminNonce")
       return nonce
     } catch let error as RainSDKError {
       throw error
     } catch {
       RainLogger.error("Rain SDK: Error calling contract for nonce - \(error.localizedDescription)")
       throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  /// Minimal single-function ABIs for the collateral reads. The full collateral ABI contains
+  /// `error` and `receive` entries the ABI decoder does not understand (it decodes the whole
+  /// file up front), so each read carries only the function it calls — the same approach the
+  /// withdrawAsset encoder takes.
+  private static let adminNonceABI = """
+    [{"inputs":[],"name":"adminNonce","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]
+    """
+  private static let isAdminABI = """
+    [{"inputs":[{"name":"_address","type":"address"}],"name":"isAdmin","outputs":[{"name":"","type":"bool"}],"stateMutability":"view","type":"function"}]
+    """
+
+  /// Bridges Boilertalk's callback-based contract read into async/await, decoding the single
+  /// return value inside the callback: the raw `[String: Any]` outputs are not Sendable, so only
+  /// the typed value crosses the concurrency boundary. Boilertalk keys outputs by the ABI output
+  /// NAME — the collateral ABI leaves them unnamed, hence the empty-string key.
+  private func contractValue<T: Sendable>(
+    _ invocation: SolidityInvocation,
+    method: String
+  ) async throws -> T {
+    try await withCheckedThrowingContinuation { continuation in
+      invocation.call { outputs, error in
+        if let value = (outputs?[""] ?? outputs?.values.first) as? T {
+          continuation.resume(returning: value)
+        } else {
+          continuation.resume(throwing: error ?? RainSDKError.internalLogicError(
+            details: "\(method) value not found in contract response"
+          ))
+        }
+      }
     }
   }
   
@@ -91,27 +110,27 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     chainId: Int
   ) async -> Bool? {
     guard let rpcURL = try? getRpcURL(chainId: chainId),
-          let collateralJsonABI = try? getCollateralJsonABI(),
-          let url = URL(string: rpcURL),
-          let ethereumCollateralAddress = Web3Core.EthereumAddress(proxyAddress),
-          let ethereumWalletAddress = Web3Core.EthereumAddress(walletAddress)
+          let ethereumCollateralAddress = EthereumAddress.parse(proxyAddress),
+          let ethereumWalletAddress = EthereumAddress.parse(walletAddress)
     else {
       return nil
     }
 
     do {
-      let web3 = try await Web3.new(url)
-      let contract = web3.contract(collateralJsonABI, at: ethereumCollateralAddress, abiVersion: 2)
+      let web3 = Web3(rpcURL: rpcURL)
+      let contract = try web3.eth.Contract(
+        json: Data(Self.isAdminABI.utf8),
+        abiKey: nil,
+        address: ethereumCollateralAddress
+      )
 
-      // A missing operation means the collateral exposes no `isAdmin` — unknown, not unauthorized.
-      guard let operation = contract?.createReadOperation(
-        "isAdmin",
-        parameters: [ethereumWalletAddress]
-      ) else {
+      // A missing invocation means the collateral exposes no `isAdmin` — unknown, not unauthorized.
+      guard let invocation = contract["isAdmin"]?(ethereumWalletAddress) else {
         return nil
       }
 
-      return try await operation.callContractMethod()["0"] as? Bool
+      let isAdmin: Bool = try await contractValue(invocation, method: "isAdmin")
+      return isAdmin
     } catch {
       RainLogger.error("Rain SDK: isAdmin preflight failed, skipping the check - \(error.localizedDescription)")
       return nil
@@ -196,12 +215,12 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
   ///
   /// Pure ABI encoding — no RPC, so it needs no chain id and cannot fail on the network. Encodes
   /// against a minimal single-function ABI (only `withdrawAsset`) rather than the full contract
-  /// ABI, since web3swift parses the whole ABI string up front.
+  /// ABI, so the parser touches nothing it does not need.
   func buildErc20TransactionForWithdrawAsset(
-    ethereumContractAddress: Web3Core.EthereumAddress,
+    ethereumContractAddress: EthereumAddress,
     withdrawAssetParameter: WithdrawAssetParameter
   ) throws -> String {
-    // bytes32 fields must be exactly 32 bytes or web3swift fails the encode (returns nil).
+    // bytes32 fields must be exactly 32 bytes or the ABI encoder fails the encode (returns nil).
     // Surface a precise error instead of the opaque "Could not encode" when they aren't.
     guard withdrawAssetParameter.executorSalt.count == 32,
           withdrawAssetParameter.walletSalt.count == 32 else {
@@ -211,104 +230,29 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
       )
     }
 
-    let contract = try EthereumContract(Self.withdrawAssetABI, at: ethereumContractAddress)
-
-    guard let encoded = contract.method(
-      "withdrawAsset",
-      parameters: [
-        withdrawAssetParameter.proxyAddress,
-        withdrawAssetParameter.tokenAddress,
-        withdrawAssetParameter.amount,
-        withdrawAssetParameter.recipientAddress,
-        withdrawAssetParameter.expiryAt,
-        withdrawAssetParameter.executorSalt,
-        withdrawAssetParameter.executorSignature,
-        [withdrawAssetParameter.walletSalt],
-        [withdrawAssetParameter.walletSignature],
-        true
-      ],
-      extraData: nil
-    ) else {
-      RainLogger.error("Rain SDK: Error building transaction for withdrawal. Could not encode withdrawAsset contract function")
-      throw RainSDKError.internalLogicError(
-        details: "Failed to encode withdrawAsset contract function"
-      )
-    }
-
-    return "0x" + encoded.toHexString()
+    return WithdrawAssetCalldata.encode(withdrawAssetParameter)
   }
 
-  /// Minimal ABI carrying only `withdrawAsset` — see `buildErc20TransactionForWithdrawAsset`.
-  private static let withdrawAssetABI = """
-    [
-      {
-        "inputs": [
-          {"internalType":"address","name":"_collateralProxy","type":"address"},
-          {"internalType":"address","name":"_asset","type":"address"},
-          {"internalType":"uint256","name":"_amountNative","type":"uint256"},
-          {"internalType":"address","name":"_recipient","type":"address"},
-          {"internalType":"uint256","name":"_expiresAt","type":"uint256"},
-          {"internalType":"bytes32","name":"_executorPublisherSalt","type":"bytes32"},
-          {"internalType":"bytes","name":"_executorPublisherSignature","type":"bytes"},
-          {"internalType":"bytes32[]","name":"_adminSalts","type":"bytes32[]"},
-          {"internalType":"bytes[]","name":"_adminSignatures","type":"bytes[]"},
-          {"internalType":"bool","name":"_directTransfer","type":"bool"}
-        ],
-        "name":"withdrawAsset",
-        "outputs":[],
-        "stateMutability":"nonpayable",
-        "type":"function"
-      }
-    ]
-    """
 
-  /// ABI-encodes a `balanceOf(address)` call using the RPC URL resolved from `chainId`.
+  /// ABI-encodes a `balanceOf(address)` call. `chainId` is still validated against the
+  /// configured networks so a misconfigured chain fails here, like before.
   func encodeBalanceOfCall(walletAddress: String, chainId: Int) async throws -> String {
     let rpcURL = try getRpcURL(chainId: chainId)
 
-    guard let url = URL(string: rpcURL),
-          Web3Core.EthereumAddress(walletAddress) != nil
-    else {
+    guard let address = EthereumAddress.parse(walletAddress) else {
       RainLogger.error("Rain SDK: encodeBalanceOfCall — invalid wallet address or RPC URL for chain \(chainId)")
       throw RainSDKError.internalLogicError(details: "Invalid wallet address or RPC URL for chain ID \(chainId)")
     }
 
-    do {
-      let web3 = try await Web3.new(url)
-      
-      guard let address = EthereumAddress(walletAddress) else {
-        throw RainSDKError.internalLogicError(details: "Could not build EthereumAddress from \(walletAddress)")
-      }
-      
-      guard let contract = web3.contract(
-        """
-        [
-          {
-            "constant":true,
-            "inputs":[{"name":"_owner","type":"address"}],
-            "name":"balanceOf",
-            "outputs":[{"name":"balance","type":"uint256"}],
-            "type":"function"
-          }
-        ]
-        """
-      ) else {
-        throw RainSDKError.internalLogicError(details: "Could not build balanceOf contract")
-      }
-      
-      guard let tx = contract.createReadOperation(
-        "balanceOf",
-        parameters: [address as AnyObject],
-        extraData: Data()
-      ) else {
-        throw RainSDKError.internalLogicError(details: "Could not encode balanceOf call")
-      }
-      
-      return "0x" + tx.transaction.data.toHexString()
-    } catch {
-      RainLogger.error("Rain SDK: encodeBalanceOfCall — ABI encoding failed: \(error)")
-      throw RainSDKError.from(underlying: error)
+    let web3 = Web3(rpcURL: rpcURL)
+    let contract = web3.eth.Contract(type: GenericERC20Contract.self, address: nil)
+
+    guard let encoded = contract.balanceOf(address: address).encodeABI() else {
+      RainLogger.error("Rain SDK: encodeBalanceOfCall — ABI encoding failed")
+      throw RainSDKError.internalLogicError(details: "Could not encode balanceOf call")
     }
+
+    return encoded.hex()
   }
 
   /// Builds ERC-20 transfer(to, amount) transaction data.
@@ -321,15 +265,15 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     amount: BigUInt
   ) async throws -> String {
     let rpcURL = try getRpcURL(chainId: chainId)
-    let ethereumFromAddress = EthereumAddress(hexString: walletAddress)
+    let ethereumFromAddress = EthereumAddress.parse(walletAddress)
     
     let web3 = Web3(rpcURL: rpcURL)
     let contract = web3.eth.Contract(
       type: GenericERC20Contract.self,
-      address: EthereumAddress(hexString: contractAddress)
+      address: EthereumAddress.parse(contractAddress)
     )
     
-    guard let ethereumToAddress = EthereumAddress(hexString: toAddress)
+    guard let ethereumToAddress = EthereumAddress.parse(toAddress)
     else {
       RainLogger.error("Rain SDK: Error building ERC-20 transfer parameters")
       throw RainSDKError.internalLogicError(details: "Failed to encode ERC-20")
@@ -382,15 +326,15 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
       )
     }
     let rpcURL = try getRpcURL(chainId: chainId)
-    let ethereumFromAddress = EthereumAddress(hexString: walletAddress)
+    let ethereumFromAddress = EthereumAddress.parse(walletAddress)
 
     let web3 = Web3(rpcURL: rpcURL)
     let contract = web3.eth.Contract(
       type: GenericERC20Contract.self,
-      address: EthereumAddress(hexString: contractAddress)
+      address: EthereumAddress.parse(contractAddress)
     )
 
-    guard let ethereumSpenderAddress = EthereumAddress(hexString: spender)
+    guard let ethereumSpenderAddress = EthereumAddress.parse(spender)
     else {
       RainLogger.error("Rain SDK: Error building ERC-20 approve parameters")
       throw RainSDKError.internalLogicError(details: "Failed to encode ERC-20 approve")
@@ -446,33 +390,4 @@ private extension TransactionBuilderService {
     return config.rpcUrl
   }
   
-  /// Get contract ABI JSON string
-  /// - Returns: Contract ABI JSON string
-  /// - Throws: RainSDKError if ABI file not found
-  func getContractJsonABI() throws -> String {
-    guard let contractABIJsonString = FileHelpers.readJSONFile(
-      forName: Constants.ContractABI.contractJsonABI,
-      type: String.self
-    ) else {
-      RainLogger.error("Rain SDK: Error getting contract ABI. ABI file not found: \(Constants.ContractABI.contractJsonABI).json")
-      throw RainSDKError.internalLogicError(details: "Contract ABI file not found.")
-    }
-    
-    return contractABIJsonString
-  }
-  
-  /// Get collateral contract ABI JSON string
-  /// - Returns: Collateral ABI JSON string
-  /// - Throws: RainSDKError if ABI file not found
-  func getCollateralJsonABI() throws -> String {
-    guard let collateralABIJsonString = FileHelpers.readJSONFile(
-      forName: Constants.ContractABI.collateralJsonABI,
-      type: String.self
-    ) else {
-      RainLogger.error("Rain SDK: Error getting collateral ABI. ABI file not found: \(Constants.ContractABI.collateralJsonABI).json")
-      throw RainSDKError.internalLogicError(details: "Collateral ABI file not found.")
-    }
-    
-    return collateralABIJsonString
-  }
 }

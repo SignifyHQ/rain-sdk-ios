@@ -1,5 +1,4 @@
 import Foundation
-import Web3Core
 import Web3
 
 /// Arguments for the collateral controller's `withdrawAsset` call.
@@ -11,16 +10,16 @@ import Web3
 /// collateral. Field names here follow the roles, not the API's wording.
 public struct WithdrawAssetParameter {
   /// Address of the collateral proxy contract
-  public let proxyAddress: Web3Core.EthereumAddress
+  public let proxyAddress: EthereumAddress
 
   /// Address of the ERC-20 token contract
-  public let tokenAddress: Web3Core.EthereumAddress
+  public let tokenAddress: EthereumAddress
 
   /// Withdrawal amount in base units (smallest denomination)
   public let amount: BigUInt
 
   /// Address of the recipient receiving the withdrawal
-  public let recipientAddress: Web3Core.EthereumAddress
+  public let recipientAddress: EthereumAddress
 
   /// Expiration timestamp (Unix timestamp)
   public let expiryAt: BigUInt
@@ -38,10 +37,10 @@ public struct WithdrawAssetParameter {
   public let walletSignature: Data
 
   public init(
-    proxyAddress: Web3Core.EthereumAddress,
-    tokenAddress: Web3Core.EthereumAddress,
+    proxyAddress: EthereumAddress,
+    tokenAddress: EthereumAddress,
     amount: BigUInt,
-    recipientAddress: Web3Core.EthereumAddress,
+    recipientAddress: EthereumAddress,
     expiryAt: BigUInt,
     executorSalt: Data,
     executorSignature: Data,

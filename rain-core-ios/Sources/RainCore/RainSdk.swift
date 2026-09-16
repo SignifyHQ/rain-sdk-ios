@@ -187,10 +187,7 @@ public final class RainSdk: @unchecked Sendable {
       }
     }
     rainApiConfig.clear()
-    // Fire-and-forget: credentials were cleared synchronously above, so calls racing this drop
-    // fail with rainApiNotConfigured until configureRainApi supplies a pair again.
-    Task { [rainApiService] in await rainApiService.invalidateSession() }
-    RainLogger.info("Rain SDK: Reset (resolved clients evicted; Rain API session and credentials cleared)")
+    RainLogger.info("Rain SDK: Reset (resolved clients evicted; Rain API credentials cleared)")
   }
 
   /// Resolves the first registered provider (in registration order) matching `predicate`, e.g.
