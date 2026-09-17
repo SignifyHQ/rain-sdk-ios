@@ -29,6 +29,11 @@ internal protocol TurnkeyClientProtocol {
   func getActivities(
     _ input: TGetActivitiesBody
   ) async throws -> TGetActivitiesResponse
+
+  /// Account and gas-station nonces; sponsored sends fetch the gas-station nonce through this.
+  func getNonces(
+    _ input: TGetNoncesBody
+  ) async throws -> TGetNoncesResponse
 }
 
 extension TurnkeyClient: TurnkeyClientProtocol {}

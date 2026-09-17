@@ -841,6 +841,7 @@ programmatic handling.
 | `RAIN_102` | `invalidConfig(details:)` / `providerNotRegistered(details:)` | Invalid configuration or parameter (bad RPC URL / chain ID, malformed address or expiry); no provider registered for the requested id; or no provider matched a capability. |
 | `RAIN_103` | `invalidRpcUrl(_:)` | RPC URL could not be parsed as a valid URL. |
 | `RAIN_104` | `rainApiNotConfigured` | A Rain API method was called before an Api-Key and userId were supplied. |
+| `RAIN_105` | `chainNotSupported(chainId:details:)` | The active wallet provider cannot broadcast on this chain, so a send (transfer, withdrawal, approval) was refused before any signing or network work. Reads — balances, history, fee estimates — are not gated. E.g. Turnkey's managed broadcast does not cover Avalanche. |
 | `RAIN_201` | `tokenExpired` | Provider session token expired or invalid. |
 | `RAIN_202` | `unauthorized` | Invalid or missing token / permissions. |
 | `RAIN_203` | `invalidLoginCode` | The one-time login code was rejected (wrong, expired, or already used) — ask the user to retype it or request a new one. Distinct from `RAIN_201`, which means an established session died. |

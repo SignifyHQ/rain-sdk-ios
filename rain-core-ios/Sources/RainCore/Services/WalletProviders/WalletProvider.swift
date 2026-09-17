@@ -12,6 +12,22 @@ public protocol WalletProvider: Sendable {
   /// address family (e.g. Turnkey resolving a Solana account for Solana chains) override it.
   func getAddress(chainId: Int) async throws -> String
 
+  /// Refuses a send on `chainId` before any work starts. Core calls this at the top of every
+  /// flow that signs and broadcasts (withdrawals, Auth Pull approvals), so a chain the provider
+  /// cannot broadcast on fails closed before the contract reads and the signing prompt rather
+  /// than after them. A provider that can broadcast on every configured chain keeps the no-op
+  /// default; an adapter whose vendor broadcasts on a fixed set consults its own chain registry.
+  ///
+  /// - Throws: `RainSDKError.chainNotSupported` when this provider cannot broadcast on `chainId`.
+  func requireSendSupport(chainId: Int) throws
+
+  /// True when this provider pays the network fee for sends on `chainId`, so core skips the
+  /// self-paid preflights that would charge the fee to the wallet (the Solana fee-lamport check
+  /// and dry run). Fee estimates are NOT affected: they still quote the on-chain cost, so a host
+  /// can show what sponsorship saves. The per-chain refinement of `Capability.gasSponsorship`:
+  /// a provider may sponsor only where it can broadcast. Defaults to false.
+  func sponsorsFees(chainId: Int) -> Bool
+
   /// Sends a transaction; returns the transaction hash.
   func sendTransaction(
     chainId: Int,
@@ -58,5 +74,11 @@ public extension WalletProvider {
   func getAddress(chainId: Int) async throws -> String {
     try await address()
   }
+
+  /// Every configured chain is sendable unless the provider says otherwise.
+  func requireSendSupport(chainId: Int) throws {}
+
+  /// The wallet pays its own fees unless the provider says otherwise.
+  func sponsorsFees(chainId: Int) -> Bool { false }
 }
 

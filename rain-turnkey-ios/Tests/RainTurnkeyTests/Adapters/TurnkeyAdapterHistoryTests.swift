@@ -17,6 +17,7 @@ struct TurnkeyAdapterHistoryTests {
     TurnkeyWalletProviderAdapter(
       turnkey: turnkey,
       networkConfigs: configs,
+      sponsorGas: false,
       chainReader: MockChainReader(),
       history: history
     )

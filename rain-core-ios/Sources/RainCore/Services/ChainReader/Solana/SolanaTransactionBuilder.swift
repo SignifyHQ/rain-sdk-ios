@@ -134,7 +134,8 @@ internal enum SolanaTransactionBuilder {
     amount: UInt64,
     decimals: UInt8,
     recentBlockhash: String,
-    createDestinationAccount: Bool
+    createDestinationAccount: Bool,
+    extraReadonlyKeys: [String] = []
   ) throws -> [UInt8] {
     var instructions: [Instruction] = []
 
@@ -171,7 +172,8 @@ internal enum SolanaTransactionBuilder {
     return try buildTransactionBytes(
       feePayer: owner,
       recentBlockhash: recentBlockhash,
-      instructions: instructions
+      instructions: instructions,
+      extraReadonlyKeys: extraReadonlyKeys
     )
   }
 
@@ -182,13 +184,23 @@ internal enum SolanaTransactionBuilder {
   ///
   /// Only the fee payer ever signs: a required signer besides it would yield a transaction the
   /// single wallet key can never complete, so that is rejected rather than silently emitted.
+  ///
+  /// `extraReadonlyKeys` are carried in the static key table even though no instruction
+  /// references them, placed after the programs as read-only non-signers. A legacy message may
+  /// list accounts its instructions never touch, and a fee-sponsored send can require the System
+  /// Program there. Keys already in the table are not repeated.
   static func buildTransactionBytes(
     feePayer: String,
     recentBlockhash: String,
-    instructions: [Instruction]
+    instructions: [Instruction],
+    extraReadonlyKeys: [String] = []
   ) throws -> [UInt8] {
     let blockhash = try decodeKey(recentBlockhash, label: "recentBlockhash")
-    let accounts = try mergedAccounts(feePayer: feePayer, instructions: instructions)
+    let accounts = try mergedAccounts(
+      feePayer: feePayer,
+      instructions: instructions,
+      extraReadonlyKeys: extraReadonlyKeys
+    )
     let extraSigners = accounts.filter(\.isSigner).count - 1
     guard extraSigners == 0 else {
       throw RainSDKError.invalidConfig(
@@ -222,7 +234,8 @@ internal enum SolanaTransactionBuilder {
   /// first-seen order, as web3.js does, so a given transfer always serializes to identical bytes.
   private static func mergedAccounts(
     feePayer: String,
-    instructions: [Instruction]
+    instructions: [Instruction],
+    extraReadonlyKeys: [String] = []
   ) throws -> [MergedAccount] {
     // Programs go last, first-seen, and are excluded from the merged table below.
     var programOrder: [String] = []
@@ -267,12 +280,26 @@ internal enum SolanaTransactionBuilder {
       MergedAccount(pubkey: key, bytes: programBytes[key]!, isSigner: false, isWritable: false)
     }
 
+    // Unreferenced keys the caller wants carried anyway, after the programs, once each.
+    var extras: [MergedAccount] = []
+    for key in extraReadonlyKeys
+    where key != feePayer && merged[key] == nil && !programKeys.contains(key)
+      && !extras.contains(where: { $0.pubkey == key }) {
+      extras.append(MergedAccount(
+        pubkey: key,
+        bytes: try decodeKey(key, label: "extra account"),
+        isSigner: false,
+        isWritable: false
+      ))
+    }
+
     return [payer]
       + rest.filter { $0.isSigner && $0.isWritable }
       + rest.filter { $0.isSigner && !$0.isWritable }
       + rest.filter { !$0.isSigner && $0.isWritable }
       + rest.filter { !$0.isSigner && !$0.isWritable }
       + programs
+      + extras
   }
 
   private static func serializeMessage(
