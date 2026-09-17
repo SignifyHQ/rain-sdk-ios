@@ -151,18 +151,47 @@ struct HomeView: View {
   // MARK: - Rain Wallet
 
   private var rainWalletSection: some View {
-    RainSectionCard(title: "Rain Wallet configuration, email login code") {
-      // Backend identity is embedded in the SDK — only the email is needed.
-      RainLabeledField(title: "Email", placeholder: "you@example.com", text: $viewModel.rainWalletEmail)
-        .disabled(viewModel.rainWalletOtpSent)
+    RainSectionCard(title: "Rain Wallet sign-in") {
+      // Backend identity is embedded in the SDK — only the login contact is needed.
+      if !viewModel.rainWalletSessionActive {
+        RainSegmentedTabs(
+          items: HomeViewModel.RainWalletContactKind.allCases,
+          selection: $viewModel.rainWalletContactKind,
+          title: { $0.rawValue },
+          isDisabled: viewModel.rainWalletOtpSent
+        )
+      }
+
+      if viewModel.rainWalletUsePhone {
+        RainLabeledField(title: "Phone", placeholder: "+1 555 123 4567", text: $viewModel.rainWalletPhone)
+          .disabled(viewModel.rainWalletOtpSent)
+      } else {
+        RainLabeledField(title: "Email", placeholder: "you@example.com", text: $viewModel.rainWalletEmail)
+          .disabled(viewModel.rainWalletOtpSent)
+      }
 
       // Gone once the session is active — there is nothing left to initiate.
       if !viewModel.rainWalletSessionActive {
         RainAsyncButton(
-          title: viewModel.rainWalletOtpSent ? "Code sent" : "Init Rain Wallet & send code",
+          title: viewModel.rainWalletOtpSent ? "Code sent" : "Send login code",
           enabled: viewModel.canSendRainWalletOtp
         ) {
           await viewModel.sendRainWalletOtp()
+        }
+
+        RainAsyncButton(
+          title: "Sign in with passkey",
+          kind: .secondary,
+          enabled: !viewModel.isLoading
+        ) {
+          await viewModel.signInWithRainWalletPasskey()
+        }
+        RainAsyncButton(
+          title: "Create wallet with passkey",
+          kind: .secondary,
+          enabled: !viewModel.isLoading
+        ) {
+          await viewModel.signUpWithRainWalletPasskey()
         }
       }
 
@@ -188,6 +217,14 @@ struct HomeView: View {
           ) {
             await viewModel.initializeRainWithRainWallet()
           }
+        }
+
+        RainAsyncButton(
+          title: "Add a passkey to this account",
+          kind: .secondary,
+          enabled: !viewModel.isLoading
+        ) {
+          await viewModel.addRainWalletPasskey()
         }
 
         exportSection

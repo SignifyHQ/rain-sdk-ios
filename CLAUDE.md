@@ -90,7 +90,8 @@ Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and Rai
   (.rain + .turnkey cannot both register — one TurnkeyContext per process). Demo app has a
   RainWallet provider option (email-only entry — no id fields; email OTP via the RainWallet
   methods, then the standard wallet screens), linking rain-wallet-ios.
-- PR C (in progress 2026-09-09), key export — RainWallet-only, same SPI shape as managed auth.
+- PR C (DONE 2026-09-11, merged as #36), key export — RainWallet-only, same SPI shape as
+  managed auth.
   Public surface: `RainProvider.exportRecoveryPhrase()` (12-word BIP-39 phrase of the account's
   single seed) and `exportPrivateKey(_: RainWalletKeyAccount)` (`.ethereum` = 0x-prefixed 32-byte
   hex; `.solana` = plain Base58 of priv‖pub, no checksum — NOT the vendor's Base58Check, which
@@ -107,3 +108,36 @@ Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and Rai
   RainTurnkey now also depends on the TurnkeyCrypto product. Demo: "Export keys" card on the
   Rain Wallet tab (tap-to-reveal, `.privacySensitive()`, value never logged; Copy uses a
   local-only pasteboard entry that self-expires after 60 s).
+- PR D (IN PROGRESS 2026-09-14, branch volo/feature/add-passkey-support), passkeys + SMS OTP for
+  RainWallet — same SPI shape as managed auth. Public surface: `RainWalletContact`
+  (.email/.phone) with `sendLoginCode(to:)` REPLACING `sendLoginCode(email:)` (clean break,
+  v5 stance; confirmLoginCode unchanged — SMS reuses the whole OTP pipeline, vendor `.sms`);
+  `signUpWithPasskey(anchor:)` / `loginWithPasskey(anchor:)` / `addPasskey(anchor:)` (add =
+  raw client.createAuthenticators + TurnkeyPasskeys createPasskey ceremony on the live session,
+  composed like export); contact-attach for passkey accounts:
+  `sendContactVerificationCode(to:)` + `confirmContactVerification(_:)` (vendor verifyOtp →
+  verificationToken → updateUserEmail/updateUserPhoneNumber so the contact lands VERIFIED and
+  becomes a login method). Vendor facts (verified at 4.0.0): passkey flows accept a `sessionKey`
+  param but IGNORE it — sessions always store under "com.turnkey.sdk.session" and storeSession
+  throws keyAlreadyExists on an occupied key, so the controller needs a passkey session dance
+  (pre-purge the default key only when it is NOT the live selection; explicit select after;
+  purge the superseded per-attempt key; and REFUSE login/signup up front over a LIVE passkey
+  session — the vendor stores the session LAST, so letting the ceremony run would mint an
+  orphan passkey + for signup an orphan account before failing on the occupied key; an EXPIRED
+  session under the selected default key is purged instead, waiting out the vendor's async
+  state flip, and the ceremony proceeds); passkey signup merges our one-seed `customWallet`
+  into CreateSubOrgParams (atomic provisioning holds); signup's stampLogin passes
+  invalidateExisting: true but LOGIN's does not (single-active-session gap — flag upstream +
+  Android). DECISION 2026-09-15 (reverses 2026-09-14's shared-Rain-domain plan): the passkey
+  relying-party domain is PARTNER-SUPPLIED — `RainWalletConfig(passkeyDomain:)`, nil = passkeys
+  off (invalidConfig). Each partner hosts their own AASA/assetlinks files and entitlement; Rain
+  runs no shared passkey domain, and passkeys are per-partner (not portable across partner apps;
+  the same account can hold passkeys from several domains). rpId still joins the one-shot vendor
+  configure and is one-shot per launch. SMS is Turnkey-Enterprise
+  (FEATURE_NAME_SMS_AUTH on Rain's org + allowed on the auth-proxy config; sandbox:
+  +1 999-999-9999 / 000000 with alphanumeric=false, otpLength=6). Accounts NEVER merge
+  (sub-org = account boundary): docs steer returning users to login/add-passkey, not signup;
+  OPEN QUESTION to test + confirm with Turnkey: attaching a contact already owned by another
+  sub-org (rejected, or ambiguous for contact-based login lookup?). Demo: email/phone toggle on
+  the code flow + three passkey buttons (sign in / create / add). Everything here is a
+  cross-platform contract with Android.

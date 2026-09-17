@@ -1,3 +1,4 @@
+import AuthenticationServices
 import Combine
 import Foundation
 import TurnkeySwift
@@ -22,7 +23,8 @@ public struct TurnkeyConfig: @unchecked Sendable {
     /// Host-authenticated context; the SDK exposes no auth surface.
     case byoContext(TurnkeyContext)
     /// SDK-managed auth against the Turnkey organization + auth-proxy configuration.
-    case managed(organizationId: String, authProxyConfigId: String)
+    /// `rpId` is the passkey relying-party domain; `nil` disables passkey flows.
+    case managed(organizationId: String, authProxyConfigId: String, rpId: String?)
   }
 
   internal let mode: Mode
@@ -71,11 +73,16 @@ public struct TurnkeyConfig: @unchecked Sendable {
   public init(
     organizationId: String,
     authProxyConfigId: String,
+    rpId: String? = nil,
     walletAddress: String? = nil,
     sessionPolicy: TurnkeySessionPolicy = TurnkeySessionPolicy(),
     onSessionExpired: (@Sendable () -> Void)? = nil
   ) {
-    self.mode = .managed(organizationId: organizationId, authProxyConfigId: authProxyConfigId)
+    self.mode = .managed(
+      organizationId: organizationId,
+      authProxyConfigId: authProxyConfigId,
+      rpId: rpId
+    )
     self.walletAddress = walletAddress
     self.sessionPolicy = sessionPolicy
     self.onSessionExpired = onSessionExpired
@@ -119,15 +126,20 @@ public struct TurnkeyProvider: ProviderDescriptor, @unchecked Sendable {
     case .byoContext(let turnkey):
       context = turnkey
       managedAuth = nil
-    case .managed(let organizationId, let authProxyConfigId):
+    case .managed(let organizationId, let authProxyConfigId, let rpId):
       // One-shot per process; a mismatch is remembered and thrown from every auth call.
       let configurationError = TurnkeyManagedConfigurator.configure(
         organizationId: organizationId,
-        authProxyConfigId: authProxyConfigId
+        authProxyConfigId: authProxyConfigId,
+        rpId: rpId
       )
       let shared = TurnkeyManagedConfigurator.sharedContext()
       context = shared
-      managedAuth = TurnkeyManagedAuthController(context: shared, configurationError: configurationError)
+      managedAuth = TurnkeyManagedAuthController(
+        context: shared,
+        configurationError: configurationError,
+        rpId: rpId
+      )
     }
 
     self.init(config: config, context: context, managedAuth: managedAuth)
@@ -223,19 +235,55 @@ extension TurnkeyProvider {
     managedAuth?.authStates ?? Just(.unauthenticated).eraseToAnyPublisher()
   }
 
-  /// Sends a one-time login code to `email`. Managed mode only.
+  /// Sends a one-time login code to an email address or (SMS) phone number. Managed mode only.
   @_spi(RainWallet)
-  public func sendLoginCode(email: String) async throws {
-    try await requireManagedAuth().sendLoginCode(email: email)
+  public func sendLoginCode(to contact: TurnkeyLoginContact) async throws {
+    try await requireManagedAuth().sendLoginCode(to: contact)
   }
 
-  /// Confirms the code from ``sendLoginCode(email:)``, signing the user up on first login, and
+  /// Confirms the code from ``sendLoginCode(to:)``, signing the user up on first login, and
   /// ensures the account has Ethereum and Solana accounts on one wallet seed. Managed mode only.
   /// Throws `RainSDKError.invalidLoginCode` when the code is rejected (wrong, expired, or already
   /// used) — re-prompt the user rather than restarting the flow.
   @_spi(RainWallet)
   public func confirmLoginCode(_ code: String) async throws {
     try await requireManagedAuth().confirmLoginCode(code)
+  }
+
+  /// Signs an existing user in with a passkey. Managed mode only; requires the relying-party
+  /// domain in the managed configuration.
+  @_spi(RainWallet)
+  public func loginWithPasskey(anchor: ASPresentationAnchor) async throws {
+    try await requireManagedAuth().loginWithPasskey(anchor: anchor)
+  }
+
+  /// Creates a NEW account with a passkey (one wallet, both chain families, atomically).
+  /// Returning users must use ``loginWithPasskey(anchor:)`` — every call here mints a fresh
+  /// account. Managed mode only.
+  @_spi(RainWallet)
+  public func signUpWithPasskey(anchor: ASPresentationAnchor) async throws {
+    try await requireManagedAuth().signUpWithPasskey(anchor: anchor)
+  }
+
+  /// Registers a passkey on the current account (active session required) so the user can sign
+  /// in with it later. Managed mode only.
+  @_spi(RainWallet)
+  public func addPasskey(anchor: ASPresentationAnchor) async throws {
+    try await requireManagedAuth().addPasskey(anchor: anchor)
+  }
+
+  /// Sends a verification code to a contact to ATTACH to the current account (active session
+  /// required). Managed mode only.
+  @_spi(RainWallet)
+  public func sendContactVerificationCode(to contact: TurnkeyLoginContact) async throws {
+    try await requireManagedAuth().sendContactVerificationCode(to: contact)
+  }
+
+  /// Confirms the code from ``sendContactVerificationCode(to:)`` and attaches the contact,
+  /// verified, as a login method for this account. Managed mode only.
+  @_spi(RainWallet)
+  public func confirmContactVerification(_ code: String) async throws {
+    try await requireManagedAuth().confirmContactVerification(code)
   }
 
   /// Clears the stored session (full logout). Safe no-op when none exists. Managed mode only —

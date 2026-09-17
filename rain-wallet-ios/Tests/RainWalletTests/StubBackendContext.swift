@@ -1,3 +1,4 @@
+import AuthenticationServices
 import Combine
 import Foundation
 import TurnkeySwift
@@ -62,6 +63,47 @@ final class StubBackendContext: TurnkeyContextProtocol, @unchecked Sendable {
     walletId: String,
     accounts: [WalletAccountParams]
   ) async throws {}
+
+  var loginWithPasskeyCallCount = 0
+  var signUpWithPasskeyCallCount = 0
+  var addPasskeyCalls: [String] = []
+
+  func loginWithTurnkeyPasskey(anchor: ASPresentationAnchor) async throws {
+    loginWithPasskeyCallCount += 1
+  }
+
+  func signUpWithTurnkeyPasskey(
+    anchor: ASPresentationAnchor,
+    signupWalletAccounts: [WalletAccountParams]
+  ) async throws {
+    signUpWithPasskeyCallCount += 1
+  }
+
+  func addPasskeyAuthenticator(anchor: ASPresentationAnchor, rpId: String) async throws {
+    addPasskeyCalls.append(rpId)
+  }
+
+  var verifyOtpTokenCalls: [String] = []
+  var stubbedVerificationToken = "stub-verification-token"
+  var setUserEmailCalls: [(String, String?)] = []
+  var setUserPhoneNumberCalls: [(String, String?)] = []
+
+  func verifyOtpToken(
+    otpId: String,
+    otpCode: String,
+    otpEncryptionTargetBundle: String
+  ) async throws -> String {
+    verifyOtpTokenCalls.append(otpCode)
+    return stubbedVerificationToken
+  }
+
+  func setUserEmail(_ email: String, verificationToken: String?) async throws {
+    setUserEmailCalls.append((email, verificationToken))
+  }
+
+  func setUserPhoneNumber(_ phone: String, verificationToken: String?) async throws {
+    setUserPhoneNumberCalls.append((phone, verificationToken))
+  }
 
   var exportMnemonicCalls: [String] = []
   var stubbedMnemonic = "stub mnemonic"

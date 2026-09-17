@@ -1,4 +1,5 @@
 import Testing
+import AuthenticationServices
 import Foundation
 import TurnkeyHttp
 import TurnkeySwift
@@ -11,9 +12,14 @@ struct TurnkeyManagedAuthTests {
 
   private func makeController(
     turnkey: MockTurnkey,
-    configurationError: RainSDKError? = nil
+    configurationError: RainSDKError? = nil,
+    rpId: String? = nil
   ) -> TurnkeyManagedAuthController {
-    TurnkeyManagedAuthController(context: turnkey, configurationError: configurationError)
+    TurnkeyManagedAuthController(
+      context: turnkey,
+      configurationError: configurationError,
+      rpId: rpId
+    )
   }
 
   // MARK: - OTP flow
@@ -23,7 +29,7 @@ struct TurnkeyManagedAuthTests {
     let turnkey = MockTurnkey(session: nil)
     let controller = makeController(turnkey: turnkey)
 
-    try await controller.sendLoginCode(email: "user@example.com")
+    try await controller.sendLoginCode(to: .email("user@example.com"))
 
     #expect(turnkey.sendOtpCalls == [.init(contact: "user@example.com", otpType: .email)])
   }
@@ -50,7 +56,7 @@ struct TurnkeyManagedAuthTests {
     }
     let controller = makeController(turnkey: turnkey)
 
-    try await controller.sendLoginCode(email: "user@example.com")
+    try await controller.sendLoginCode(to: .email("user@example.com"))
     try await controller.confirmLoginCode("123456")
 
     // No session to supersede — nothing is ever cleared.
@@ -84,7 +90,7 @@ struct TurnkeyManagedAuthTests {
       underlying: TurnkeyRequestError.apiError(statusCode: 401, payload: nil)
     )
     let controller = makeController(turnkey: turnkey)
-    try await controller.sendLoginCode(email: "user@example.com")
+    try await controller.sendLoginCode(to: .email("user@example.com"))
 
     await #expect(throws: RainSDKError.invalidLoginCode) {
       try await controller.confirmLoginCode("999999")
@@ -105,7 +111,7 @@ struct TurnkeyManagedAuthTests {
     let previousKey = try #require(turnkey.selectedStoredSessionKey)
     let controller = makeController(turnkey: turnkey)
 
-    try await controller.sendLoginCode(email: "other@example.com")
+    try await controller.sendLoginCode(to: .email("other@example.com"))
     try await controller.confirmLoginCode("123456")
 
     let attemptKey = try #require(turnkey.completeOtpCalls.first?.sessionKey)
@@ -126,7 +132,7 @@ struct TurnkeyManagedAuthTests {
     turnkey.onCompleteOtp = { turnkey.session = MockTurnkey.defaultSession() }
     let controller = makeController(turnkey: turnkey)
 
-    try await controller.sendLoginCode(email: "user@example.com")
+    try await controller.sendLoginCode(to: .email("user@example.com"))
     try await controller.confirmLoginCode("123456")
 
     // Never a second wallet (a second seed to back up) — the account is derived on the
@@ -147,7 +153,7 @@ struct TurnkeyManagedAuthTests {
     turnkey.onCompleteOtp = { turnkey.session = MockTurnkey.defaultSession() }
     let controller = makeController(turnkey: turnkey)
 
-    try await controller.sendLoginCode(email: "user@example.com")
+    try await controller.sendLoginCode(to: .email("user@example.com"))
     try await controller.confirmLoginCode("123456")
 
     #expect(turnkey.createWalletCalls.count == 1)
@@ -163,7 +169,7 @@ struct TurnkeyManagedAuthTests {
     let controller = makeController(turnkey: turnkey)
 
     do {
-      try await controller.sendLoginCode(email: "user@example.com")
+      try await controller.sendLoginCode(to: .email("user@example.com"))
       Issue.record("Expected an error")
     } catch let error as RainSDKError {
       #expect(error == .tokenExpired)
@@ -180,7 +186,7 @@ struct TurnkeyManagedAuthTests {
     )
 
     await #expect(throws: RainSDKError.invalidConfig(details: "mismatch")) {
-      try await controller.sendLoginCode(email: "user@example.com")
+      try await controller.sendLoginCode(to: .email("user@example.com"))
     }
   }
 
@@ -239,7 +245,7 @@ struct TurnkeyManagedAuthTests {
   func testLogout() async throws {
     let turnkey = MockTurnkey(session: MockTurnkey.defaultSession())
     let controller = makeController(turnkey: turnkey)
-    try await controller.sendLoginCode(email: "user@example.com")
+    try await controller.sendLoginCode(to: .email("user@example.com"))
 
     await controller.logout()
 
@@ -250,6 +256,307 @@ struct TurnkeyManagedAuthTests {
     await #expect(throws: RainSDKError.self) {
       try await controller.confirmLoginCode("123456") // pending OTP was dropped
     }
+  }
+
+  // MARK: - SMS OTP
+
+  @Test("sendLoginCode to a phone number starts an SMS OTP")
+  func testSendLoginCodeSms() async throws {
+    let turnkey = MockTurnkey(session: nil)
+    let controller = makeController(turnkey: turnkey)
+
+    try await controller.sendLoginCode(to: .phone("+15551234567"))
+
+    #expect(turnkey.sendOtpCalls == [.init(contact: "+15551234567", otpType: .sms)])
+  }
+
+  @Test("confirmLoginCode completes an SMS challenge with the SMS type")
+  func testConfirmSmsLoginCode() async throws {
+    let turnkey = MockTurnkey(wallets: [MockTurnkey.dualCurveWallet()], session: nil)
+    turnkey.onCompleteOtp = { turnkey.session = MockTurnkey.defaultSession() }
+    let controller = makeController(turnkey: turnkey)
+
+    try await controller.sendLoginCode(to: .phone("+15551234567"))
+    try await controller.confirmLoginCode("123456")
+
+    let call = try #require(turnkey.completeOtpCalls.first)
+    #expect(call.contact == "+15551234567")
+    #expect(call.otpType == .sms)
+  }
+
+  // MARK: - Contact normalization
+
+  @Test("sendLoginCode normalizes phone formatting down to E.164 before anything is sent")
+  func testPhoneNormalization() async throws {
+    let turnkey = MockTurnkey(session: nil)
+    let controller = makeController(turnkey: turnkey)
+
+    try await controller.sendLoginCode(to: .phone(" +1 (555) 123-45.67 "))
+
+    // The normalized string is the account identity — identical rule on Android.
+    #expect(turnkey.sendOtpCalls == [.init(contact: "+15551234567", otpType: .sms)])
+  }
+
+  @Test("confirmLoginCode completes with the normalized contact, not the raw input")
+  func testConfirmUsesNormalizedContact() async throws {
+    let turnkey = MockTurnkey(wallets: [MockTurnkey.dualCurveWallet()], session: nil)
+    turnkey.onCompleteOtp = { turnkey.session = MockTurnkey.defaultSession() }
+    let controller = makeController(turnkey: turnkey)
+
+    try await controller.sendLoginCode(to: .phone("+1 555 123 4567"))
+    try await controller.confirmLoginCode("123456")
+
+    #expect(turnkey.completeOtpCalls.first?.contact == "+15551234567")
+  }
+
+  @Test("an email is trimmed before it is sent")
+  func testEmailTrimmed() async throws {
+    let turnkey = MockTurnkey(session: nil)
+    let controller = makeController(turnkey: turnkey)
+
+    try await controller.sendLoginCode(to: .email("  user@example.com\n"))
+
+    #expect(turnkey.sendOtpCalls == [.init(contact: "user@example.com", otpType: .email)])
+  }
+
+  @Test(
+    "an invalid contact throws invalidConfig locally, before anything is sent",
+    arguments: [
+      TurnkeyLoginContact.phone("5551234567"),      // no leading +: the country can't be guessed
+      TurnkeyLoginContact.phone("+1555"),           // too short
+      TurnkeyLoginContact.phone("+1555abc4567"),    // letters
+      TurnkeyLoginContact.email("not-an-email"),    // no @
+    ]
+  )
+  func testInvalidContactFailsFast(contact: TurnkeyLoginContact) async {
+    let turnkey = MockTurnkey(session: nil)
+    let controller = makeController(turnkey: turnkey)
+
+    await #expect(throws: RainSDKError.self) {
+      try await controller.sendLoginCode(to: contact)
+    }
+    #expect(turnkey.sendOtpCalls.isEmpty)
+  }
+
+  @Test("contact verification attaches the normalized phone, not the raw input")
+  func testContactVerificationNormalizes() async throws {
+    let turnkey = MockTurnkey(session: MockTurnkey.defaultSession())
+    let controller = makeController(turnkey: turnkey)
+
+    try await controller.sendContactVerificationCode(to: .phone("+1 (555) 123-4567"))
+    try await controller.confirmContactVerification("123456")
+
+    #expect(turnkey.sendOtpCalls.first?.contact == "+15551234567")
+    #expect(turnkey.setUserPhoneNumberCalls.map(\.contact) == ["+15551234567"])
+  }
+
+  // MARK: - Passkeys
+
+  @MainActor
+  @Test("passkey login on a fresh install auto-selects the vendor's default-key session")
+  func testPasskeyLoginFreshInstall() async throws {
+    let turnkey = MockTurnkey(wallets: [MockTurnkey.dualCurveWallet()], session: nil)
+    turnkey.onPasskeyAuth = {
+      turnkey.session = MockTurnkey.defaultSession()
+      turnkey.authState = .authenticated
+    }
+    let controller = makeController(turnkey: turnkey, rpId: "passkeys.rain.xyz")
+
+    try await controller.loginWithPasskey(anchor: ASPresentationAnchor())
+
+    #expect(turnkey.loginWithPasskeyCallCount == 1)
+    // Nothing was selected, so the vendor auto-selected — no explicit activation.
+    #expect(turnkey.selectStoredSessionCalls.isEmpty)
+    #expect(turnkey.selectedStoredSessionKey == MockTurnkey.passkeyDefaultSessionKey)
+    // The stale-default-key pre-purge is storage-only and touched no live state.
+    #expect(turnkey.clearStoredSessionCalls == [MockTurnkey.passkeyDefaultSessionKey])
+    #expect(controller.hasActiveSession())
+  }
+
+  @MainActor
+  @Test("passkey login over a live OTP session activates the default key and drops the old one")
+  func testPasskeyLoginOverOtpSession() async throws {
+    let turnkey = MockTurnkey(
+      wallets: [MockTurnkey.dualCurveWallet()],
+      session: MockTurnkey.defaultSession() // selected under "previous-session-key"
+    )
+    let controller = makeController(turnkey: turnkey, rpId: "passkeys.rain.xyz")
+
+    try await controller.loginWithPasskey(anchor: ASPresentationAnchor())
+
+    // The vendor kept the old session selected, so the passkey session (always under the
+    // default key) is activated explicitly, then the superseded key is purged.
+    #expect(turnkey.selectStoredSessionCalls == [MockTurnkey.passkeyDefaultSessionKey])
+    #expect(turnkey.selectedStoredSessionKey == MockTurnkey.passkeyDefaultSessionKey)
+    #expect(turnkey.clearStoredSessionCalls == [
+      MockTurnkey.passkeyDefaultSessionKey, // storage-only pre-purge of the stale default key
+      "previous-session-key",               // the superseded session
+    ])
+  }
+
+  @MainActor
+  @Test("passkey login and signup over a live passkey session are refused before the ceremony",
+        arguments: [true, false])
+  func testPasskeyOverLivePasskeySessionRefusedUpFront(signup: Bool) async throws {
+    // The vendor stores the session LAST, so letting the ceremony run would mint a passkey (and
+    // for signup an account) only to fail on the occupied default key. Refuse before Face ID.
+    let turnkey = MockTurnkey(wallets: [MockTurnkey.dualCurveWallet()], session: MockTurnkey.defaultSession())
+    turnkey.selectedStoredSessionKey = MockTurnkey.passkeyDefaultSessionKey
+    turnkey.storedSessionKeys = [MockTurnkey.passkeyDefaultSessionKey]
+    let controller = makeController(turnkey: turnkey, rpId: "passkeys.rain.xyz")
+
+    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+      if signup {
+        try await controller.signUpWithPasskey(anchor: ASPresentationAnchor())
+      } else {
+        try await controller.loginWithPasskey(anchor: ASPresentationAnchor())
+      }
+    }
+
+    #expect(turnkey.loginWithPasskeyCallCount == 0)
+    #expect(turnkey.signUpWithPasskeyCallCount == 0)
+    #expect(turnkey.clearStoredSessionCalls.isEmpty)
+    #expect(turnkey.session != nil)
+    #expect(controller.hasActiveSession())
+  }
+
+  @MainActor
+  @Test("an expired session left under the selected default key is purged and passkey login proceeds")
+  func testPasskeyLoginOverExpiredPasskeySessionProceeds() async throws {
+    let turnkey = MockTurnkey(
+      wallets: [MockTurnkey.dualCurveWallet()], session: MockTurnkey.session(expiringIn: -60)
+    )
+    turnkey.selectedStoredSessionKey = MockTurnkey.passkeyDefaultSessionKey
+    turnkey.storedSessionKeys = [MockTurnkey.passkeyDefaultSessionKey]
+    turnkey.onPasskeyAuth = {
+      turnkey.session = MockTurnkey.defaultSession()
+      turnkey.authState = .authenticated
+    }
+    let controller = makeController(turnkey: turnkey, rpId: "passkeys.rain.xyz")
+
+    try await controller.loginWithPasskey(anchor: ASPresentationAnchor())
+
+    #expect(turnkey.loginWithPasskeyCallCount == 1)
+    #expect(turnkey.clearStoredSessionCalls.first == MockTurnkey.passkeyDefaultSessionKey)
+    #expect(controller.hasActiveSession())
+  }
+
+  @MainActor
+  @Test("passkey signup provisions one dual-account wallet atomically")
+  func testPasskeySignupProvisionsAtomically() async throws {
+    let turnkey = MockTurnkey(wallets: [MockTurnkey.dualCurveWallet()], session: nil)
+    turnkey.onPasskeyAuth = {
+      turnkey.session = MockTurnkey.defaultSession()
+      turnkey.authState = .authenticated
+    }
+    let controller = makeController(turnkey: turnkey, rpId: "passkeys.rain.xyz")
+
+    try await controller.signUpWithPasskey(anchor: ASPresentationAnchor())
+
+    #expect(turnkey.signUpWithPasskeyCallCount == 1)
+    let accounts = try #require(turnkey.signUpPasskeyAccounts.first)
+    #expect(accounts.map(\.addressFormat) == [.address_format_ethereum, .address_format_solana])
+    // Atomic provisioning at signup — nothing left for the backfill to do.
+    #expect(turnkey.createWalletCalls.isEmpty)
+    #expect(turnkey.addAccountsCalls.isEmpty)
+  }
+
+  @MainActor
+  @Test("passkey calls without a configured relying-party domain throw invalidConfig")
+  func testPasskeyWithoutRpIdThrowsInvalidConfig() async {
+    let turnkey = MockTurnkey(session: MockTurnkey.defaultSession())
+    let controller = makeController(turnkey: turnkey) // rpId: nil
+
+    let anchor = ASPresentationAnchor()
+    await #expect(throws: RainSDKError.self) {
+      try await controller.loginWithPasskey(anchor: anchor)
+    }
+    await #expect(throws: RainSDKError.self) {
+      try await controller.signUpWithPasskey(anchor: anchor)
+    }
+    await #expect(throws: RainSDKError.self) {
+      try await controller.addPasskey(anchor: anchor)
+    }
+    #expect(turnkey.loginWithPasskeyCallCount == 0)
+    #expect(turnkey.signUpWithPasskeyCallCount == 0)
+    #expect(turnkey.addPasskeyCalls.isEmpty)
+  }
+
+  @MainActor
+  @Test("addPasskey registers an authenticator against the configured domain")
+  func testAddPasskeyPassesRpId() async throws {
+    let turnkey = MockTurnkey(session: MockTurnkey.defaultSession())
+    let controller = makeController(turnkey: turnkey, rpId: "passkeys.rain.xyz")
+
+    try await controller.addPasskey(anchor: ASPresentationAnchor())
+
+    #expect(turnkey.addPasskeyCalls == ["passkeys.rain.xyz"])
+  }
+
+  // MARK: - Contact verification (attach a login contact)
+
+  @Test("sendContactVerificationCode requires an active session")
+  func testContactVerificationRequiresSession() async {
+    let controller = makeController(turnkey: MockTurnkey(session: nil))
+
+    await #expect(throws: RainSDKError.tokenExpired) {
+      try await controller.sendContactVerificationCode(to: .email("new@example.com"))
+    }
+  }
+
+  @Test("confirmContactVerification attaches a verified email to the current account")
+  func testAttachEmailContact() async throws {
+    let turnkey = MockTurnkey(session: MockTurnkey.defaultSession())
+    turnkey.stubbedOtpChallenge = OtpChallenge(otpId: "otp-9", encryptionTargetBundle: "bundle-9")
+    let controller = makeController(turnkey: turnkey)
+
+    try await controller.sendContactVerificationCode(to: .email("new@example.com"))
+    try await controller.confirmContactVerification("123456")
+
+    #expect(turnkey.sendOtpCalls == [.init(contact: "new@example.com", otpType: .email)])
+    #expect(turnkey.verifyOtpTokenCalls == [
+      .init(otpId: "otp-9", otpCode: "123456", otpEncryptionTargetBundle: "bundle-9")
+    ])
+    // The token is what marks the contact VERIFIED — a login method, not just profile data.
+    #expect(turnkey.setUserEmailCalls == [
+      .init(contact: "new@example.com", verificationToken: turnkey.stubbedVerificationToken)
+    ])
+    #expect(turnkey.setUserPhoneNumberCalls.isEmpty)
+    // No login happened: the session machinery was never touched.
+    #expect(turnkey.completeOtpCalls.isEmpty)
+    #expect(turnkey.clearStoredSessionCalls.isEmpty)
+  }
+
+  @Test("confirmContactVerification attaches a verified phone number")
+  func testAttachPhoneContact() async throws {
+    let turnkey = MockTurnkey(session: MockTurnkey.defaultSession())
+    let controller = makeController(turnkey: turnkey)
+
+    try await controller.sendContactVerificationCode(to: .phone("+15551234567"))
+    try await controller.confirmContactVerification("123456")
+
+    #expect(turnkey.sendOtpCalls.first?.otpType == .sms)
+    #expect(turnkey.setUserPhoneNumberCalls.map(\.contact) == ["+15551234567"])
+    #expect(turnkey.setUserEmailCalls.isEmpty)
+  }
+
+  @Test("a wrong contact-verification code maps to invalidLoginCode and keeps the challenge")
+  func testWrongContactVerificationCodeIsRetryable() async throws {
+    let turnkey = MockTurnkey(session: MockTurnkey.defaultSession())
+    turnkey.verifyOtpTokenError = TurnkeySwiftError.failedToVerifyOtp(
+      underlying: TurnkeyRequestError.apiError(statusCode: 401, payload: nil)
+    )
+    let controller = makeController(turnkey: turnkey)
+    try await controller.sendContactVerificationCode(to: .email("new@example.com"))
+
+    await #expect(throws: RainSDKError.invalidLoginCode) {
+      try await controller.confirmContactVerification("999999")
+    }
+
+    // The challenge survives the wrong code: a retype succeeds without a new send.
+    turnkey.verifyOtpTokenError = nil
+    try await controller.confirmContactVerification("123456")
+    #expect(turnkey.setUserEmailCalls.map(\.contact) == ["new@example.com"])
   }
 
   // MARK: - Key export
@@ -382,7 +689,7 @@ struct TurnkeyManagedAuthTests {
     #expect(provider.authState == .unauthenticated)
     #expect(!provider.hasActiveSession())
     await #expect(throws: RainSDKError.self) {
-      try await provider.sendLoginCode(email: "user@example.com")
+      try await provider.sendLoginCode(to: .email("user@example.com"))
     }
     await #expect(throws: RainSDKError.self) {
       _ = try await provider.exportMnemonic()
@@ -402,7 +709,7 @@ struct TurnkeyManagedAuthTests {
       managedAuth: TurnkeyManagedAuthController(context: turnkey, configurationError: nil)
     )
 
-    try await provider.sendLoginCode(email: "user@example.com")
+    try await provider.sendLoginCode(to: .email("user@example.com"))
     try await provider.confirmLoginCode("123456")
 
     #expect(turnkey.sendOtpCalls.count == 1)
@@ -419,11 +726,11 @@ struct TurnkeyManagedAuthTests {
     let previousImpl = TurnkeyManagedConfigurator.configureImpl
     defer { TurnkeyManagedConfigurator.configureImpl = previousImpl }
     nonisolated(unsafe) var configureCalls = 0
-    TurnkeyManagedConfigurator.configureImpl = { _, _ in configureCalls += 1 }
+    TurnkeyManagedConfigurator.configureImpl = { _, _, _ in configureCalls += 1 }
 
-    #expect(TurnkeyManagedConfigurator.configure(organizationId: organizationId, authProxyConfigId: "p") == nil)
-    #expect(TurnkeyManagedConfigurator.configure(organizationId: organizationId, authProxyConfigId: "p") == nil)
+    #expect(TurnkeyManagedConfigurator.configure(organizationId: organizationId, authProxyConfigId: "p", rpId: nil) == nil)
+    #expect(TurnkeyManagedConfigurator.configure(organizationId: organizationId, authProxyConfigId: "p", rpId: nil) == nil)
     #expect(configureCalls == 1)
-    #expect(TurnkeyManagedConfigurator.configure(organizationId: "other", authProxyConfigId: "p") != nil)
+    #expect(TurnkeyManagedConfigurator.configure(organizationId: "other", authProxyConfigId: "p", rpId: nil) != nil)
   }
 }
