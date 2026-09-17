@@ -121,7 +121,11 @@ Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and Rai
   param but IGNORE it — sessions always store under "com.turnkey.sdk.session" and storeSession
   throws keyAlreadyExists on an occupied key, so the controller needs a passkey session dance
   (pre-purge the default key only when it is NOT the live selection; explicit select after;
-  purge the superseded per-attempt key); passkey signup merges our one-seed `customWallet`
+  purge the superseded per-attempt key; and REFUSE login/signup up front over a LIVE passkey
+  session — the vendor stores the session LAST, so letting the ceremony run would mint an
+  orphan passkey + for signup an orphan account before failing on the occupied key; an EXPIRED
+  session under the selected default key is purged instead, waiting out the vendor's async
+  state flip, and the ceremony proceeds); passkey signup merges our one-seed `customWallet`
   into CreateSubOrgParams (atomic provisioning holds); signup's stampLogin passes
   invalidateExisting: true but LOGIN's does not (single-active-session gap — flag upstream +
   Android). DECISION 2026-09-15 (reverses 2026-09-14's shared-Rain-domain plan): the passkey
