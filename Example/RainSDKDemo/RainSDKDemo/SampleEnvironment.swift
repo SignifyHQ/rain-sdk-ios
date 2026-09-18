@@ -3,14 +3,15 @@ import RainCore
 
 /// Which Rain environment this build of the demo talks to.
 ///
-/// One constant drives three things that have to agree: the Rain API host, the chains the picker
-/// offers, and the operator address the Auth Pull screen prefills. The SDK rejects an Auth Pull
-/// approval on a chain outside the configured environment's set, so they cannot be set separately.
+/// One constant drives three things that have to agree: the Rain API host the demo's own
+/// `RainApiClient` calls, the chains the picker offers, and the operator address the Auth Pull
+/// screen prefills. The SDK itself knows nothing about Rain environments — it only checks that
+/// an Auth Pull config's chains belong to the environment its kind names.
 ///
-/// Left on `.dev` deliberately. `.production` means mainnet: real USDC, real gas, and an allowance
-/// a real card authorization can draw on.
+/// Left on `.sandbox` deliberately. `.production` means mainnet: real USDC, real gas, and an
+/// allowance a real card authorization can draw on.
 enum SampleEnvironment {
-  static let rainApi: RainApiEnvironment = .dev
+  static let rainApi: RainApiEnvironment = .sandbox
 
   /// Rain's Auth Pull operator for ``rainApi`` — the spender an approval names, one address per
   /// environment and the same on every chain within it. Published in Rain's Auth Pull docs:
@@ -23,7 +24,7 @@ enum SampleEnvironment {
     switch rainApi {
     case .production:
       return "0xA3750f692BB9Fc5e62834f9291E3D508d7Ba4F74"
-    case .dev, .custom:
+    case .sandbox:
       return "0x5a6E6b0d5Ea051CfFF9b3dcC2Aa8Dac226458f29"
     }
   }
@@ -34,27 +35,20 @@ enum SampleEnvironment {
     switch rainApi {
     case .production:
       return .production(operatorAddress: authPullOperator)
-    case .dev:
+    case .sandbox:
       return .sandbox(operatorAddress: authPullOperator)
-    case .custom:
-      // A gateway URL implies neither environment, so there is nothing to infer from here.
-      preconditionFailure(
-        "Custom Rain environments require an explicit Auth Pull chain/token configuration"
-      )
     }
   }
 
-  static var isProduction: Bool {
-    if case .production = rainApi { return true }
-    return false
+  static var isProduction: Bool { rainApi == .production }
+
+  /// The Auth Pull chains for this environment — the picker's answer before any SDK exists.
+  static var authPullChains: Set<Int> {
+    isProduction ? RainAuthPullChains.production : RainAuthPullChains.sandbox
   }
 
   /// A human label for the mode banner, so it is obvious which environment a build is pointed at.
   static var displayName: String {
-    switch rainApi {
-    case .dev: return "Sandbox"
-    case .production: return "Production"
-    case .custom: return "Custom"
-    }
+    isProduction ? "Production" : "Sandbox"
   }
 }

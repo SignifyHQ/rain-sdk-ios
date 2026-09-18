@@ -11,8 +11,8 @@ import Foundation
 /// This answers for an *environment*. What a built SDK will actually accept is narrower — the
 /// host's ``RainAuthPullConfig`` intersected with the chains that have an RPC endpoint — and is
 /// exposed as ``RainSdk/authPullChainIds`` / ``RainClient/authPullChainIds``. Gate UI on those;
-/// reach for ``supported(for:)`` only before an SDK exists, and never keep a third copy of the
-/// list, which is how these drift apart.
+/// reach for the static sets only before an SDK exists, and never keep a third copy of the list,
+/// which is how these drift apart.
 ///
 /// **Maintenance**
 /// In-tree like `TokenRegistry`, so the SDK owns updates. Rain is actively adding chains to the
@@ -31,22 +31,13 @@ public enum RainAuthPullChains {
     RainChain.arbitrumMainnet,
   ]
 
-  /// The Auth Pull chains for `environment`.
-  ///
-  /// `.dev` maps to Rain's sandbox set: Rain documents the operator per *sandbox* / *production*,
-  /// and `api-dev.rain.xyz` is the sandbox-side host. A `.custom` base URL cannot safely imply an
-  /// environment, so it fails closed. Custom gateways opt in through an explicit
-  /// ``RainAuthPullConfig``.
-  public static func supported(for environment: RainApiEnvironment) -> Set<Int> {
-    switch environment {
-    case .dev: return sandbox
+  /// The Auth Pull chains a configuration of `kind` may target. A custom configuration can front
+  /// either environment, so it is allowed both known sets.
+  internal static func supported(for kind: RainAuthPullConfig.Kind) -> Set<Int> {
+    switch kind {
+    case .sandbox: return sandbox
     case .production: return production
-    case .custom: return []
+    case .custom: return sandbox.union(production)
     }
-  }
-
-  /// Whether `chainId` is an Auth Pull chain in `environment`.
-  public static func isSupported(chainId: Int, in environment: RainApiEnvironment) -> Bool {
-    supported(for: environment).contains(chainId)
   }
 }

@@ -97,14 +97,15 @@ enum WalletChain: String, CaseIterable, Identifiable {
   }
 
   /// Whether Rain's Auth Pull runs on this chain *in the environment this build is configured for*.
-  /// Read from the SDK rather than restated here. Approvals are ERC-20, so Solana is out either way.
+  /// Read from the SDK's per-environment sets rather than restated here. Approvals are ERC-20, so
+  /// Solana is out either way.
   ///
   /// This is the picker's answer, and it has to exist before any SDK does — the chain list is built
   /// at startup, the SDK only after the user supplies credentials. Once a client exists it is the
   /// stricter authority (`RainClient.authPullChainIds`), since a host's `RainAuthPullConfig` and
   /// RPC map can be narrower than the environment; the Auth Pull screen gates on that instead.
   var supportsAuthPull: Bool {
-    RainAuthPullChains.isSupported(chainId: chainId, in: SampleEnvironment.rainApi)
+    SampleEnvironment.authPullChains.contains(chainId)
   }
 
   /// Rain's Auth Pull operator for the configured environment. See ``SampleEnvironment``.

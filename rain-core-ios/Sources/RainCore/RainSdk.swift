@@ -22,10 +22,6 @@ public final class RainSdk: @unchecked Sendable {
   private let evmChainReader: EVMChainReader
   private let providerContext: ProviderContext
 
-  // Rain issuing API (sessions, contracts, withdrawal signatures).
-  private let rainApiConfig: RainApiConfigStore
-  private let rainApiService: RainApiService
-
   /// Auth Pull targets for this instance, handed to every resolved client so an approval cannot
   /// target another environment's chains, another token, or another spender.
   ///
@@ -38,11 +34,10 @@ public final class RainSdk: @unchecked Sendable {
   /// ``RainAuthPullConfig``'s chains intersected with the chains that have an RPC endpoint. Empty
   /// when no ``Builder/authPullConfig(_:)`` was supplied.
   ///
-  /// This, not ``RainAuthPullChains/supported(for:)``, is what the approval guard enforces. Gate
-  /// host UI on it: `supported(for:)` answers for an environment, this answers for the SDK the host
-  /// built, and the two differ whenever a config is narrower than its environment, an RPC endpoint
-  /// is missing, or the environment is `.custom` — which `supported(for:)` reports as empty however
-  /// the gateway is configured.
+  /// This, not ``RainAuthPullChains/sandbox`` / ``RainAuthPullChains/production``, is what the
+  /// approval guard enforces. Gate host UI on it: the static sets answer for an environment, this
+  /// answers for the SDK the host built, and the two differ whenever a config is narrower than its
+  /// environment or an RPC endpoint is missing.
   public let authPullChainIds: Set<Int>
 
   // Resolved clients are cached by provider id (lazy, resolved-once). We cache the *in-flight
@@ -61,9 +56,7 @@ public final class RainSdk: @unchecked Sendable {
     descriptors: [ProviderId: ProviderDescriptor],
     registrationOrder: [ProviderId],
     registeredTokens: [TokenInfo],
-    rainApiEnvironment: RainApiEnvironment,
-    authPullConfig: RainAuthPullConfig?,
-    initialRainApiCredentials: (apiKey: String, userId: String)?
+    authPullConfig: RainAuthPullConfig?
   ) {
     self.networkConfigs = networkConfigs
     self.descriptors = descriptors
@@ -92,13 +85,6 @@ public final class RainSdk: @unchecked Sendable {
     self.authPullTokenAddresses = trustedTokens
     self.authPullOperator = authPullConfig?.operatorAddress
     self.authPullChainIds = Set(trustedTokens.keys)
-
-    let apiConfig = RainApiConfigStore(baseURL: rainApiEnvironment.baseURL)
-    if let credentials = initialRainApiCredentials {
-      apiConfig.setCredentials(apiKey: credentials.apiKey, userId: credentials.userId)
-    }
-    self.rainApiConfig = apiConfig
-    self.rainApiService = RainApiService(configStore: apiConfig, tokenStore: store, chainReader: reader)
   }
 
   // MARK: - Registry introspection
@@ -164,8 +150,7 @@ public final class RainSdk: @unchecked Sendable {
     }
   }
 
-  /// Tears down all resolved clients and clears the Rain API credentials and cached session
-  /// token. Idempotent.
+  /// Tears down all resolved clients. Idempotent.
   ///
   /// The configuration (network configs, descriptors, token store) is immutable state fixed at
   /// `build()`, so this instance stays usable: the next `provider(_:)` / `first(where:)` call
@@ -186,8 +171,7 @@ public final class RainSdk: @unchecked Sendable {
         if let client = try? await task.value { client.reset() }
       }
     }
-    rainApiConfig.clear()
-    RainLogger.info("Rain SDK: Reset (resolved clients evicted; Rain API credentials cleared)")
+    RainLogger.info("Rain SDK: Reset (resolved clients evicted)")
   }
 
   /// Resolves the first registered provider (in registration order) matching `predicate`, e.g.
@@ -255,7 +239,8 @@ public final class RainSdk: @unchecked Sendable {
   /// Pure encoding — no RPC, so it needs no chain id.
   ///
   /// - Parameters:
-  ///   - executorSignature: Rain's authorization, from ``fetchAdminSignature(chainId:tokenAddress:amountBaseUnits:adminAddress:recipientAddress:isAmountNative:)``.
+  ///   - executorSignature: Rain's authorization for this withdrawal, obtained by the host from
+  ///     the Rain API (`GET /v1/issuing/users/{userId}/signatures/withdrawals`).
   ///   - walletSalt: The salt from ``RainEIP712Message/salt``, unchanged.
   ///   - walletSignature: The wallet's hex signature over ``RainEIP712Message/message``.
   public func buildWithdrawTransactionData(
@@ -297,64 +282,17 @@ public final class RainSdk: @unchecked Sendable {
     Task { await tokenStore.register(tokens) }
   }
 
-  // MARK: - Rain API (issuing)
-
-  /// True once an Api-Key and userId have been supplied (builder or ``configureRainApi(apiKey:userId:)``).
-  public var isRainApiConfigured: Bool { rainApiConfig.isConfigured }
-
-  /// Sets or replaces the Rain program Api-Key and userId at runtime. The cached client
-  /// session token is discarded lazily — the next API call re-mints against the new pair.
-  /// The SDK never persists these values.
-  public func configureRainApi(apiKey: String, userId: String) {
-    rainApiConfig.setCredentials(apiKey: apiKey, userId: userId)
-  }
-
-  /// Fetches the user's collateral contracts (`GET /v1/issuing/users/{userId}/contracts`).
+  /// Metadata (symbol, name, decimals) for a contract token the host knows only by address —
+  /// typically the tokens listed in a Rain collateral contract. Resolution order: the built-in
+  /// registry, host-registered tokens, then on-chain `decimals()` / `symbol()` / `name()` reads
+  /// over the configured RPC (cached once decimals resolve). Needs no wallet provider.
   ///
-  /// Token `name`/`symbol`/`decimals` are enriched from the SDK token store (registry,
-  /// host-registered tokens, or an on-chain read) — best-effort, a failed lookup leaves them
-  /// nil. Needs no wallet provider, only the configured Api-Key/userId and RPC endpoints.
-  ///
-  /// - Throws: `RainSDKError.rainApiNotConfigured` when no credentials were supplied.
-  public func fetchCollateralContracts() async throws -> [RainCollateralContract] {
-    try await rainApiService.fetchCollateralContracts()
-  }
-
-  /// Convenience for the common single-contract case: the first collateral contract.
-  ///
-  /// - Throws: `RainSDKError.noCollateralContracts` when the user has none.
-  public func fetchCollateralContract() async throws -> RainCollateralContract {
-    guard let first = try await fetchCollateralContracts().first else {
-      throw RainSDKError.noCollateralContracts
-    }
-    return first
-  }
-
-  /// Fetches the admin withdrawal signature
-  /// (`GET /v1/issuing/users/{userId}/signatures/withdrawals`) that authorizes a
-  /// ``RainClient/withdrawCollateral(chainId:addresses:amount:decimals:adminSignature:nonce:)`` call.
-  ///
-  /// - Parameters:
-  ///   - amountBaseUnits: Withdrawal amount in the token's base units.
-  ///   - adminAddress: One of the contract's ``RainCollateralContract/adminAddresses``.
-  /// - Throws: `RainSDKError.signatureNotReady` when Rain has not produced the signature yet —
-  ///   retry after the carried `retryAfter` seconds.
-  public func fetchAdminSignature(
-    chainId: Int,
-    tokenAddress: String,
-    amountBaseUnits: BigUInt,
-    adminAddress: String,
-    recipientAddress: String,
-    isAmountNative: Bool = true
-  ) async throws -> RainAdminSignature {
-    try await rainApiService.fetchAdminSignature(
-      chainId: chainId,
-      tokenAddress: tokenAddress,
-      amountBaseUnits: String(amountBaseUnits),
-      adminAddress: adminAddress,
-      recipientAddress: recipientAddress,
-      isAmountNative: isAmountNative
-    )
+  /// Returns `nil` when decimals could not be established — never a guessed default, since
+  /// wrong decimals would scale a withdrawal or approval amount by orders of magnitude. `symbol`
+  /// and `name` inside a non-nil result may still be nil if those reads failed. Solana chains
+  /// resolve from the registry and host-registered tokens only.
+  public func tokenMetadata(chainId: Int, address: String) async -> TokenInfo? {
+    await tokenStore.resolvedTokenInfo(chainId: chainId, address: address)
   }
 
   static func parseISO8601(_ string: String) -> Date? {
@@ -375,9 +313,7 @@ public final class RainSdk: @unchecked Sendable {
     private var descriptors: [ProviderId: ProviderDescriptor] = [:]
     private var registrationOrder: [ProviderId] = []
     private var registeredTokens: [TokenInfo] = []
-    private var rainApiEnvironment: RainApiEnvironment = .dev
     private var authPullConfig: RainAuthPullConfig?
-    private var rainApiCredentials: (apiKey: String, userId: String)?
 
     public init() {}
 
@@ -412,26 +348,11 @@ public final class RainSdk: @unchecked Sendable {
       return self
     }
 
-    /// Selects the Rain issuing API environment. Defaults to ``RainApiEnvironment/dev``.
-    @discardableResult
-    public func rainApiEnvironment(_ environment: RainApiEnvironment) -> Builder {
-      rainApiEnvironment = environment
-      return self
-    }
-
     /// Enables Auth Pull for the exact operator and token contracts in `config`. Without this
     /// call, approval, allowance read, confirmation, and approval-fee methods fail closed.
     @discardableResult
     public func authPullConfig(_ config: RainAuthPullConfig) -> Builder {
       authPullConfig = config
-      return self
-    }
-
-    /// Optionally supplies the Rain program Api-Key and userId at build time — same effect
-    /// as calling ``RainSdk/configureRainApi(apiKey:userId:)`` on the built instance.
-    @discardableResult
-    public func rainApiCredentials(apiKey: String, userId: String) -> Builder {
-      rainApiCredentials = (apiKey: apiKey, userId: userId)
       return self
     }
 
@@ -453,11 +374,6 @@ public final class RainSdk: @unchecked Sendable {
           )
         }
       }
-      guard rainApiEnvironment.baseURL.absoluteString.isValidHTTPURL() else {
-        throw RainSDKError.invalidConfig(
-          details: "Invalid Rain API base URL: \(rainApiEnvironment.baseURL.absoluteString)"
-        )
-      }
       try validateAuthPullConfig()
       // The Rain wallet and the Turnkey provider share one process-wide backend context, so an
       // app can use one or the other — never both at once.
@@ -472,9 +388,7 @@ public final class RainSdk: @unchecked Sendable {
         descriptors: descriptors,
         registrationOrder: registrationOrder,
         registeredTokens: registeredTokens,
-        rainApiEnvironment: rainApiEnvironment,
-        authPullConfig: authPullConfig,
-        initialRainApiCredentials: rainApiCredentials
+        authPullConfig: authPullConfig
       )
     }
 
@@ -483,8 +397,8 @@ public final class RainSdk: @unchecked Sendable {
     private static let zeroAddress = "0x0000000000000000000000000000000000000000"
 
     /// Rejects an Auth Pull configuration that cannot be the one Rain uses: a malformed or zero
-    /// operator or token, an empty target set, an environment mismatch, a chain outside the known
-    /// Auth Pull sets, or no RPC endpoint for any configured chain.
+    /// operator or token, an empty target set, a chain outside the Auth Pull set its kind names, or
+    /// no RPC endpoint for any configured chain.
     private func validateAuthPullConfig() throws {
       guard let config = authPullConfig else { return }
 
@@ -504,31 +418,15 @@ public final class RainSdk: @unchecked Sendable {
         )
       }
 
-      let expectedKind: RainAuthPullConfig.Kind
-      switch rainApiEnvironment {
-      case .dev: expectedKind = .sandbox
-      case .production: expectedKind = .production
-      case .custom: expectedKind = .custom
-      }
-      guard config.kind == expectedKind else {
-        throw RainSDKError.invalidConfig(
-          details: "Auth Pull configuration does not match the configured Rain API environment"
-        )
-      }
-
-      // A custom gateway can front either environment, so its chains are checked against both
-      // known sets rather than against an environment answer that is deliberately empty.
-      let allowedChains: Set<Int>
-      if case .custom = rainApiEnvironment {
-        allowedChains = RainAuthPullChains.sandbox.union(RainAuthPullChains.production)
-      } else {
-        allowedChains = RainAuthPullChains.supported(for: rainApiEnvironment)
-      }
+      // The config's kind names the environment its operator/tokens belong to; its chains must
+      // come from that environment's Auth Pull set. A custom config can front either environment,
+      // so its chains are checked against both known sets.
+      let allowedChains = RainAuthPullChains.supported(for: config.kind)
       let unexpected = Set(config.tokenAddresses.keys).subtracting(allowedChains)
       guard unexpected.isEmpty else {
         throw RainSDKError.invalidConfig(
           details: """
-            Auth Pull chains \(unexpected.sorted()) do not match the configured Rain API environment
+            Auth Pull chains \(unexpected.sorted()) are not Auth Pull chains for this configuration's environment
             """
         )
       }

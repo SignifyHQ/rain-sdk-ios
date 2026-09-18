@@ -48,8 +48,9 @@ public struct RainAuthPullConfig: Sendable, Equatable {
     )
   }
 
-  /// Explicit targets for a custom Rain API gateway. There is no safe environment inference from
-  /// an arbitrary URL, so custom gateways must opt in with an exact chain/token map.
+  /// Explicit targets for a non-standard Rain deployment (staging, a self-hosted gateway). Its
+  /// chains may come from either environment's Auth Pull set; the operator and token map must be
+  /// exact.
   public static func custom(
     operatorAddress: String,
     tokenAddresses: [Int: String]

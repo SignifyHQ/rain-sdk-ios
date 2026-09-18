@@ -124,11 +124,8 @@ final class CollateralWithdrawViewModel: ObservableObject {
       walletAddress = address
       recipientAddress = address
 
-      // Rain provisions one collateral contract per chain family — pick the one matching the
-      // active chain (Solana cluster exact, any EVM otherwise).
-      let contract = try await session.requireRain().fetchCollateralContracts()
-        .first { chain.ownsCollateralContract(chainId: $0.chainId) }
-      guard let contract else {
+      // The collateral contract comes from the Rain API — the host's call, not the SDK's.
+      guard let contract = try await session.fetchCollateralContract(for: chain) else {
         SampleLog.w("Withdraw.contract", "no collateral contract for \(chain.displayName)")
         errorText = "No collateral contract on \(chain.displayName)"
         availableTokens = []
@@ -146,9 +143,8 @@ final class CollateralWithdrawViewModel: ObservableObject {
       contractChainId = contract.chainId
       isSolanaContract = WalletChain.solanaChainIds.contains(contract.chainId)
       adminAddress = contract.adminAddresses.first ?? ""
-      // The SDK enriches token name / symbol / decimals from its token store and on-chain reads.
-      // Fall back to 6 decimals (these collateral tokens are stablecoins) when enrichment
-      // couldn't resolve them.
+      // Token name / symbol / decimals come from the demo's own token list (a host would use its
+      // catalog). Fall back to 6 decimals (these collateral tokens are stablecoins) when unknown.
       availableTokens = contract.tokens.map { token in
         WithdrawTokenOption(
           name: token.name ?? "Token",
@@ -304,10 +300,11 @@ final class CollateralWithdrawViewModel: ObservableObject {
       } else {
         SampleLog.d(tag, "fetching fresh admin signature")
         do {
-          signature = try await session.requireRain().fetchAdminSignature(
+          // Rain's authorization for this withdrawal comes from the Rain API — the host's call.
+          signature = try await session.requireRainApi().fetchAdminSignature(
             chainId: contractChainId,
             tokenAddress: key.tokenAddress,
-            amountBaseUnits: normalized.baseUnits,
+            amountBaseUnits: normalized.baseUnits.description,
             adminAddress: adminAddress,
             recipientAddress: recipientAddress
           )
@@ -368,7 +365,7 @@ final class CollateralWithdrawViewModel: ObservableObject {
         domain: "CollateralWithdraw", code: -1,
         userInfo: [NSLocalizedDescriptionKey: message])
     }
-    if case RainSDKError.signatureNotReady(_, let retryAfter) = error {
+    if case RainApiError.signatureNotReady(_, let retryAfter) = error {
       let hint = retryAfter.map { " — retry in \($0)s" } ?? ""
       return wrap("Withdrawal signature is not ready yet\(hint)")
     }

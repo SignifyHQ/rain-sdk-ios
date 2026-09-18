@@ -5,9 +5,8 @@ import TurnkeySwift
 import RainCore
 
 /// Guards every Turnkey call behind session-expiry checks, proactive refresh, refresh-on-401
-/// retry, and transient-failure backoff, per `TurnkeySessionPolicy`. Mirrors the CST handling
-/// in `RainSessionManager`/`RainApiService.withCst`, adapted to Turnkey's externally-owned
-/// session.
+/// retry, and transient-failure backoff, per `TurnkeySessionPolicy`. Same shape as the Portal and
+/// Privy coordinators, adapted to Turnkey's externally-owned session.
 ///
 /// Terminal auth failures always surface as `RainSDKError.tokenExpired` and fire the host's
 /// `onSessionExpired` hook once per session death; the hook re-arms when a live session is
