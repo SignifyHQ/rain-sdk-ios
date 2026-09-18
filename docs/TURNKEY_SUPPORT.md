@@ -91,7 +91,7 @@ Arbitrum, Optimism, BNB Chain, Monad, Tempo, Robinhood Chain (mainnets and their
 Solana mainnet + devnet. The full list lives in `TurnkeyBroadcastChains` and follows
 [Turnkey's broadcasting docs](https://docs.turnkey.com/features/transaction-management/broadcasting).
 A send on any other chain — Avalanche, Celo, ZKsync, Solana testnet — fails closed with
-`RainSDKError.chainNotSupported` (`RAIN_105`) **before** any contract read or signing prompt:
+`RainSDKError.chainNotSupported` (`RAIN_104`) **before** any contract read or signing prompt:
 `sendNative`, `sendToken`, `withdrawCollateral`, `prepareWithdrawal` and `approveTokenAllowance`
 all check the gate first. Reads are not gated: balances, history and fee estimates work on every
 chain with an RPC endpoint registered, so a chain like Avalanche is read-only through Turnkey.

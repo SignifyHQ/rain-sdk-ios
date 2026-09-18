@@ -22,10 +22,10 @@ struct SendGatingAndSponsorshipTests {
     #expect(provider.sponsorsFees(chainId: 1) == false)
   }
 
-  @Test("chainNotSupported carries RAIN_105 and names the chain")
+  @Test("chainNotSupported carries RAIN_104 and names the chain")
   func errorCode() {
     let error = RainSDKError.chainNotSupported(chainId: 43114, details: "read-only here")
-    #expect(error.errorCode == "RAIN_105")
+    #expect(error.errorCode == "RAIN_104")
     #expect(error.errorDescription?.contains("43114") == true)
     #expect(error.errorDescription?.contains("read-only here") == true)
   }

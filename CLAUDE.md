@@ -27,8 +27,9 @@ import per provider suffices. The 1.x `RainSDK` umbrella module has been REMOVED
   demo ships its own reference `RainApiClient`
   (`Example/.../Core/Services/RainApiClient.swift`). `RainApiEnvironment` is gone from the SDK;
   Auth Pull validation keys off `RainAuthPullConfig.kind` alone (`.custom` may use either
-  environment's chains). RAIN_104 / RAIN_304 RETIRED, RAIN_303 = transactionPending only — never
-  reuse the codes (Android still maps them). No wallet vendor SDKs. EVM ABI encoding + collateral contract reads go through
+  environment's chains). Error codes COMPACTED (no external users yet; Android to follow):
+  `chainNotSupported` moved RAIN_105 → RAIN_104, RAIN_303 = transactionPending only, RAIN_304
+  dropped — the sequence has no gaps. No wallet vendor SDKs. EVM ABI encoding + collateral contract reads go through
   Boilertalk Web3.swift ONLY — web3swift was REMOVED 2026-09-15 (abandoned upstream since 2025;
   its URLSession overload trick stopped compiling on new Xcode). Contract call outputs from
   Boilertalk decode under the ABI output NAME as key ("" for unnamed outputs, not "0").
@@ -154,7 +155,7 @@ Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and Rai
   fail-closed sends on chains Turnkey cannot broadcast on — a mirror of Android's WALL-31 and its
   follow-ups (TurnkeyBroadcastChains, minimal sponsored payloads with the
   gas-station nonce, sponsored Solana sends carrying the System Program key).
-  Core: `Capability.gasSponsorship`; `RainSDKError.chainNotSupported(chainId:details:)` = RAIN_105;
+  Core: `Capability.gasSponsorship`; `RainSDKError.chainNotSupported(chainId:details:)` = RAIN_104 (was 105 until PR F compacted the map);
   `WalletProvider` gains two hooks with default impls — `requireSendSupport(chainId:)` (no-op) and
   `sponsorsFees(chainId:)` (false). `RainSdkManager` gates `withdrawCollateral`,
   `prepareWithdrawal` (signing counts as sending) and `approveTokenAllowance` (after config

@@ -27,13 +27,13 @@ struct TurnkeyBroadcastChainsTests {
     }
   }
 
-  @Test("the refusal names the chain and carries RAIN_105")
+  @Test("the refusal names the chain and carries RAIN_104")
   func errorShape() {
     do {
       try TurnkeyBroadcastChains.requireSendSupport(chainId: 43114)
       Issue.record("Expected chainNotSupported")
     } catch let error as RainSDKError {
-      #expect(error.errorCode == "RAIN_105")
+      #expect(error.errorCode == "RAIN_104")
       #expect(error.errorDescription?.contains("43114") == true)
     } catch {
       Issue.record("Expected RainSDKError, got \(error)")

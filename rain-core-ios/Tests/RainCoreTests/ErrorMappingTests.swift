@@ -49,9 +49,7 @@ struct ErrorMappingTests {
       (.invalidConfig(details: "x"), "RAIN_102"),
       (.providerNotRegistered(details: "x"), "RAIN_102"),
       (.invalidRpcUrl("x"), "RAIN_103"),
-      // RAIN_104 (rainApiNotConfigured) and RAIN_304 (noCollateralContracts) are RETIRED with the
-      // Rain API client's move out of the SDK; RAIN_303 now belongs to transactionPending alone.
-      (.chainNotSupported(chainId: 43114, details: "x"), "RAIN_105"),
+      (.chainNotSupported(chainId: 43114, details: "x"), "RAIN_104"),
       (.tokenExpired, "RAIN_201"),
       (.unauthorized, "RAIN_202"),
       (.invalidLoginCode, "RAIN_203"),

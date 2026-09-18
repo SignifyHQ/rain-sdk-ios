@@ -17,10 +17,7 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// RAIN_103: An RPC URL could not be parsed as a valid URL (no chain ID context)
   case invalidRpcUrl(String)
 
-  // RAIN_104 (rainApiNotConfigured) is RETIRED — the Rain issuing API client left the SDK in v5
-  // (hosts call the Rain API themselves). Do not reuse the code; Android still maps it.
-
-  /// RAIN_105: The active wallet provider cannot broadcast on this chain, so a send (transfer,
+  /// RAIN_104: The active wallet provider cannot broadcast on this chain, so a send (transfer,
   /// withdrawal, approval) was refused before any signing or network work. Reads — balances,
   /// history, fee estimates — are not gated. E.g. Turnkey's managed broadcast does not cover
   /// Avalanche.
@@ -53,8 +50,6 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// resending it risks a duplicate transfer. Resume polling with `statusId` instead.
   case transactionPending(statusId: String)
 
-  // RAIN_303 (signatureNotReady) and RAIN_304 (noCollateralContracts) are RETIRED for the same
-  // reason as RAIN_104; `transactionPending` keeps RAIN_303. Do not reuse RAIN_304.
   
   // MARK: - 4xx: User Action Errors
   
@@ -118,7 +113,7 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
     case .invalidRpcUrl:
       return "RAIN_103"
     case .chainNotSupported:
-      return "RAIN_105"
+      return "RAIN_104"
     case .tokenExpired:
       return "RAIN_201"
     case .unauthorized:
