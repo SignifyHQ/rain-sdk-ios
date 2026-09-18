@@ -395,21 +395,49 @@ struct TurnkeyManagedAuthTests {
   }
 
   @MainActor
-  @Test("passkey login over a live passkey session fails mapped and never logs the user out")
-  func testPasskeyLoginOverLivePasskeySessionFailsSafely() async throws {
-    // The vendor refuses to overwrite an occupied key, and the live selection is never
-    // pre-purged (a cancelled ceremony must not log anyone out).
+  @Test("passkey login and signup over a live passkey session are refused before the ceremony",
+        arguments: [true, false])
+  func testPasskeyOverLivePasskeySessionRefusedUpFront(signup: Bool) async throws {
+    // The vendor stores the session LAST, so letting the ceremony run would mint a passkey (and
+    // for signup an account) only to fail on the occupied default key. Refuse before Face ID.
     let turnkey = MockTurnkey(wallets: [MockTurnkey.dualCurveWallet()], session: MockTurnkey.defaultSession())
     turnkey.selectedStoredSessionKey = MockTurnkey.passkeyDefaultSessionKey
     turnkey.storedSessionKeys = [MockTurnkey.passkeyDefaultSessionKey]
     let controller = makeController(turnkey: turnkey, rpId: "passkeys.rain.xyz")
 
-    await #expect(throws: RainSDKError.self) {
-      try await controller.loginWithPasskey(anchor: ASPresentationAnchor())
+    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+      if signup {
+        try await controller.signUpWithPasskey(anchor: ASPresentationAnchor())
+      } else {
+        try await controller.loginWithPasskey(anchor: ASPresentationAnchor())
+      }
     }
 
+    #expect(turnkey.loginWithPasskeyCallCount == 0)
+    #expect(turnkey.signUpWithPasskeyCallCount == 0)
     #expect(turnkey.clearStoredSessionCalls.isEmpty)
     #expect(turnkey.session != nil)
+    #expect(controller.hasActiveSession())
+  }
+
+  @MainActor
+  @Test("an expired session left under the selected default key is purged and passkey login proceeds")
+  func testPasskeyLoginOverExpiredPasskeySessionProceeds() async throws {
+    let turnkey = MockTurnkey(
+      wallets: [MockTurnkey.dualCurveWallet()], session: MockTurnkey.session(expiringIn: -60)
+    )
+    turnkey.selectedStoredSessionKey = MockTurnkey.passkeyDefaultSessionKey
+    turnkey.storedSessionKeys = [MockTurnkey.passkeyDefaultSessionKey]
+    turnkey.onPasskeyAuth = {
+      turnkey.session = MockTurnkey.defaultSession()
+      turnkey.authState = .authenticated
+    }
+    let controller = makeController(turnkey: turnkey, rpId: "passkeys.rain.xyz")
+
+    try await controller.loginWithPasskey(anchor: ASPresentationAnchor())
+
+    #expect(turnkey.loginWithPasskeyCallCount == 1)
+    #expect(turnkey.clearStoredSessionCalls.first == MockTurnkey.passkeyDefaultSessionKey)
     #expect(controller.hasActiveSession())
   }
 

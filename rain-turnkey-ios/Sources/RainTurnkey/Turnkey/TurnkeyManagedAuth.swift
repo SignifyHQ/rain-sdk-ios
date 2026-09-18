@@ -318,6 +318,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
   internal func loginWithPasskey(anchor: ASPresentationAnchor) async throws {
     try throwIfMisconfigured()
     try requirePasskeysConfigured()
+    try await refuseIfLivePasskeySession()
     let previousKey = context.selectedStoredSessionKey
     preparePasskeyDefaultKey()
     do {
@@ -340,6 +341,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
   internal func signUpWithPasskey(anchor: ASPresentationAnchor) async throws {
     try throwIfMisconfigured()
     try requirePasskeysConfigured()
+    try await refuseIfLivePasskeySession()
     let previousKey = context.selectedStoredSessionKey
     preparePasskeyDefaultKey()
     do {
@@ -380,10 +382,30 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
     return rpId
   }
 
+  /// The vendor refuses to store a passkey session over an occupied default key — and it does so
+  /// as the LAST step of the ceremony (4.0.0: createPasskey → proxySignup → stampLogin →
+  /// storeSession). Over a live passkey session that would mint a keychain passkey (and, for
+  /// signup, a whole Turnkey account) only to fail. We know the outcome up front, so refuse
+  /// before Face ID and before any network call. `invalidConfig` is a state error here, not a
+  /// configuration one, but no closer code exists and a new one would fork the cross-platform
+  /// map. An EXPIRED session still parked under the selected default key protects nothing and
+  /// would also block the store, so it is purged instead and the ceremony proceeds.
+  private func refuseIfLivePasskeySession() async throws {
+    guard context.selectedStoredSessionKey == Self.passkeyDefaultSessionKey,
+          context.session != nil else { return }
+    if hasActiveSession() {
+      throw RainSDKError.invalidConfig(details: "Already signed in with a passkey; log out first")
+    }
+    context.clearStoredSession(sessionKey: Self.passkeyDefaultSessionKey)
+    // Clearing the SELECTED key flips the vendor's live state from a main-actor Task. Let it
+    // settle before the ceremony so the fresh session is auto-selected, not wiped by a late flip.
+    await awaitSessionTeardown()
+  }
+
   /// The vendor refuses to store a passkey session over an occupied default key. Purge a stale
   /// stored session under it — but NEVER the live selection, so a cancelled or failed ceremony
-  /// cannot log anyone out. Consequence: a passkey login over a live passkey session fails with
-  /// a mapped error; hosts should gate on `hasActiveSession()` first.
+  /// cannot log anyone out (a live passkey session is refused earlier, see
+  /// `refuseIfLivePasskeySession`).
   private func preparePasskeyDefaultKey() {
     if context.selectedStoredSessionKey != Self.passkeyDefaultSessionKey {
       context.clearStoredSession(sessionKey: Self.passkeyDefaultSessionKey)
@@ -467,6 +489,12 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
     // The vendor wipes storage synchronously but flips `session` / `authState` from a main-actor
     // Task slightly later. Wait (bounded) for the live state to settle so callers can read
     // `authState` / `hasActiveSession()` immediately after logout returns.
+    await awaitSessionTeardown()
+  }
+
+  /// Bounded wait for the vendor's asynchronous live-state flip after the selected session was
+  /// cleared.
+  private func awaitSessionTeardown() async {
     let deadline = Date().addingTimeInterval(2)
     while Date() < deadline {
       if context.session == nil && context.authState == .unAuthenticated { return }

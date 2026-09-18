@@ -185,7 +185,7 @@ final class RainSDKService: ObservableObject {
   /// email-OTP flow — nothing to configure beyond the hooks.
   @discardableResult
   func prepareRainWallet(
-    passkeyDomain: String? = nil,
+    passkeyDomain: String? = "passkeys.uptop.xyz",
     onSessionExpired: (@Sendable () -> Void)? = nil
   ) -> RainWallet.RainProvider {
     RainLogger.isEnabled = true
