@@ -175,6 +175,28 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
       as: TGetActivitiesResponse.self
     )
   }
+
+  // MARK: Nonces (sponsored sends)
+
+  /// The gas-station nonce a sponsored send fetches; `nil` mirrors Turnkey returning none.
+  var mockGasStationNonce: String? = "7"
+  var getNoncesCalls: [TGetNoncesBody] = []
+  var getNoncesError: Error?
+
+  func getNonces(
+    _ input: TGetNoncesBody
+  ) async throws -> TGetNoncesResponse {
+    getNoncesCalls.append(input)
+    if let getNoncesError { throw getNoncesError }
+    struct NoncesFixture: Encodable {
+      let gasStationNonce: String?
+      let nonce: String?
+    }
+    return MockTurnkey.decode(
+      NoncesFixture(gasStationNonce: mockGasStationNonce, nonce: nil),
+      as: TGetNoncesResponse.self
+    )
+  }
 }
 
 final class MockTurnkey: TurnkeyContextProtocol, @unchecked Sendable {
