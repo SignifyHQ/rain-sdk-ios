@@ -61,7 +61,9 @@ struct RainWalletTests {
       RainWalletConfig()
     )
     #expect(provider.id == .rain)
-    #expect(provider.capabilities == [.multiChain, .biometricGate])
+    // Sponsorship is the product: on by default, and advertised as a capability.
+    #expect(provider.capabilities == [.multiChain, .biometricGate, .gasSponsorship])
+    #expect(RainProvider(RainWalletConfig(sponsorGas: false)).capabilities == [.multiChain, .biometricGate])
   }
 
   // MARK: - Key export

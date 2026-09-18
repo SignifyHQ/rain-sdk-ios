@@ -128,7 +128,14 @@ enum TestManagers {
   static func stubProviderManager(
     configs: [NetworkConfig] = TestFixtures.configs()
   ) async throws -> (RainSdkManager, StubWalletProvider) {
-    let stub = StubWalletProvider()
+    try await stubProviderManager(stub: StubWalletProvider(), configs: configs)
+  }
+
+  /// Same manager over a caller-supplied stub (e.g. `FeeEstimatingStubWalletProvider`).
+  static func stubProviderManager<Stub: StubWalletProvider>(
+    stub: Stub,
+    configs: [NetworkConfig] = TestFixtures.configs()
+  ) async throws -> (RainSdkManager, Stub) {
     let builder = MockTransactionBuilderService(networkConfigs: configs)
     let tokenStore = TokenMetadataStore(chainReader: EVMChainReader(networkConfigs: configs))
     let manager = RainSdkManager(

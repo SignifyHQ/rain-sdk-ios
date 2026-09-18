@@ -234,7 +234,8 @@ struct TurnkeyAdapterTests {
   /// without going through `TestManagers.turnkeyManager` (which constructs its own reader).
   private func makeAdapterWithMockChainReader(
     chainIds: [Int],
-    walletAddress: String = MockTurnkey.defaultWalletAddress
+    walletAddress: String = MockTurnkey.defaultWalletAddress,
+    sponsorGas: Bool = false
   ) -> (TurnkeyWalletProviderAdapter, MockTurnkey, MockChainReader) {
     let configs = chainIds.map { NetworkConfig.testConfig(chainId: $0) }
     let mockTurnkey = MockTurnkey()
@@ -243,6 +244,7 @@ struct TurnkeyAdapterTests {
       turnkey: mockTurnkey,
       networkConfigs: configs,
       walletAddress: walletAddress,
+      sponsorGas: sponsorGas,
       chainReader: mockReader,
       history: ThrowingTurnkeyHistory()
     )
@@ -496,6 +498,7 @@ struct TurnkeyAdapterTests {
     let adapter = TurnkeyWalletProviderAdapter(
       turnkey: mockTurnkey,
       networkConfigs: TestFixtures.configs(),
+      sponsorGas: false,
       chainReader: MockChainReader()
     )
     adapter.pollingIntervalNanoseconds = 1

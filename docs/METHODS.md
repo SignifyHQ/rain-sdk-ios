@@ -36,7 +36,6 @@ module isn't linked simply can't be registered.
 |----------|------|-------------|
 | `providerIds` | `Set<ProviderId>` | Ids of every provider the host registered. |
 | `providers` | `[any ProviderDescriptor]` | The registered provider descriptors (registration order), for capability resolution. |
-| `isRainApiConfigured` | `Bool` | True once a Rain Api-Key and userId have been supplied (builder or `configureRainApi`). |
 | `authPullChainIds` | `Set<Int>` | Chains Auth Pull is enabled on for this instance: the configured `RainAuthPullConfig`'s chains intersected with the chains that have an RPC endpoint. Empty when no `authPullConfig(_:)` was supplied. Also exposed on `RainClient`; see [authPullChainIds](#authpullchainids). |
 
 ### Methods
@@ -77,7 +76,7 @@ let exporter = try await rain.first { $0.capabilities.contains(.export) }
 
 #### reset()
 
-Tears down all resolved clients and clears the Rain API credentials. Idempotent.
+Tears down all resolved clients. Idempotent.
 
 The configuration (network configs, descriptors, token store) is immutable state fixed at
 `build()`, so the instance stays usable: the next `provider(_:)` / `first(where:)` call re-resolves
@@ -136,7 +135,7 @@ ABI-encodes the `withdrawAsset` call for the collateral controller. Pure encodin
 needs no chain ID and cannot fail on the network.
 
 Two distinct salt/signature pairs go in, and the contract names them differently from Rain's API:
-`executorSignature` (what `fetchAdminSignature` returns) encodes into `_executorPublisherSalt` /
+`executorSignature` (Rain's admin withdrawal signature, fetched by the host from the Rain API) encodes into `_executorPublisherSalt` /
 `_executorPublisherSignature`, while the wallet's own pair encodes into `_adminSalts` /
 `_adminSignatures` — the wallet is an admin of the collateral.
 
@@ -166,48 +165,32 @@ result to any provider for signing / broadcast.
 
 ---
 
-### Rain API (issuing)
+### Rain API (issuing) — host responsibility
 
-The SDK talks to the Rain issuing API directly: supply a program **Api-Key** and Rain **userId**
-(builder `rainApiCredentials(apiKey:userId:)` or `configureRainApi(apiKey:userId:)` at runtime)
-and it mints, caches, and refreshes the client session token internally. Credentials are never
-persisted. Select the environment with `rainApiEnvironment(_:)` (`.dev` default, `.production`,
-`.custom(URL)`).
+The SDK does not call the Rain issuing API. A host obtains, through its own Rain integration
+(ideally server-side, keeping the program Api-Key off the device):
 
-#### configureRainApi(apiKey:userId:)
+- the user's collateral contract — `GET /v1/issuing/users/{userId}/contracts` — whose
+  `proxyAddress` / `controllerAddress` / token address feed a `RainWithdrawAddresses`;
+- the admin withdrawal signature — `GET /v1/issuing/users/{userId}/signatures/withdrawals`
+  (query: `chainId`, `token`, `amount` in base units, `adminAddress` from the contract's
+  `adminAddresses`, `recipientAddress`, `isAmountNative`) — whose `signature.salt`,
+  `signature.data` and `expiresAt` feed a `RainAdminSignature`. Until Rain has produced it the
+  response's `status` is not `"ready"` and carries `retryAfter` seconds.
 
-Sets or replaces the Api-Key / userId pair at runtime. The cached session token is discarded
-lazily; the next API call re-mints against the new pair.
+The demo app's `RainApiClient` is a minimal reference implementation.
 
-#### fetchCollateralContracts() async throws -> [RainCollateralContract]
+#### tokenMetadata(chainId:address:) async -> TokenInfo?
 
-Fetches the user's collateral contracts (`GET /v1/issuing/users/{userId}/contracts`). Token
-metadata is enriched from the SDK token store or an on-chain read (best-effort).
+Metadata (symbol, name, decimals) for a contract token known only by address — typically the
+tokens listed in a collateral contract, which the Rain API returns without them. Resolution
+order: built-in registry, host-registered tokens, then on-chain `decimals()` / `symbol()` /
+`name()` reads over the configured RPC (cached once decimals resolve). Needs no wallet provider.
 
-- **Throws:** `RainSDKError.rainApiNotConfigured` when no credentials were supplied.
-
-#### fetchCollateralContract() async throws -> RainCollateralContract
-
-Convenience for the common single-contract case: the first collateral contract.
-
-- **Throws:** `RainSDKError.noCollateralContracts` when the user has none.
-
-#### fetchAdminSignature(chainId:tokenAddress:amountBaseUnits:adminAddress:recipientAddress:isAmountNative:) async throws -> RainAdminSignature
-
-Fetches the admin withdrawal signature (`GET /v1/issuing/users/{userId}/signatures/withdrawals`)
-that authorizes a `withdrawCollateral` call.
-
-- **Throws:** `RainSDKError.signatureNotReady(status:retryAfter:)` while Rain prepares the
-  signature; retry after the carried `retryAfter` seconds.
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `chainId` | `Int` | Target network chain ID. |
-| `tokenAddress` | `String` | Token contract address to withdraw. |
-| `amountBaseUnits` | `BigUInt` | Withdrawal amount in the token's base units. |
-| `adminAddress` | `String` | One of the contract's `adminAddresses`. |
-| `recipientAddress` | `String` | Withdrawal recipient. |
-| `isAmountNative` | `Bool` | Defaults to `true`. |
+- **Returns:** `nil` when decimals could not be established — never a guessed default, since wrong
+  decimals would scale a withdrawal or approval amount by orders of magnitude. `symbol` / `name`
+  inside a non-nil result may still be nil. Solana chains resolve from the registry and
+  host-registered tokens only.
 
 ---
 
@@ -222,10 +205,8 @@ never names a vendor SDK itself.
 | `rpcEndpoints(_ map: [Int: String])` | Same, from a `chainId → RPC URL` map (parity with Android). |
 | `register(_ provider: any ProviderDescriptor)` | Registers a provider adapter (e.g. `PortalProvider`, `TurnkeyProvider`, `PrivyProvider`). Re-registering the same id replaces the prior one. |
 | `registerTokens(_ tokens: [TokenInfo])` | Seeds the shared token store with extra token metadata. |
-| `rainApiEnvironment(_ environment: RainApiEnvironment)` | Selects the Rain issuing API environment (default `.dev`). |
-| `rainApiCredentials(apiKey:userId:)` | Optionally supplies the Rain Api-Key / userId at build time. |
 | `authPullConfig(_ config: RainAuthPullConfig)` | Enables Auth Pull for the exact operator and token contracts in `config` (`.sandbox(operatorAddress:)` / `.production(operatorAddress:)` / `.custom(operatorAddress:tokenAddresses:)`). Without it, the approval, allowance, confirmation, and approval-fee methods fail closed. See [AUTH_PULL.md](AUTH_PULL.md). |
-| `build() throws -> RainSdk` | Validates endpoints (fail-fast on a bad URL / chain id) and returns the SDK. Throws `RainSDKError.invalidConfig` on invalid RPC endpoints, and on an invalid Auth Pull configuration: a malformed or zero operator or token address, an empty token map, an environment mismatch, a chain outside the known Auth Pull sets, or no RPC endpoint for any configured Auth Pull chain. Providers are optional: building with none yields a wallet-agnostic `RainSdk`. |
+| `build() throws -> RainSdk` | Validates endpoints (fail-fast on a bad URL / chain id) and returns the SDK. Throws `RainSDKError.invalidConfig` on invalid RPC endpoints, and on an invalid Auth Pull configuration: a malformed or zero operator or token address, an empty token map, a chain outside the Auth Pull set the config's kind names (`.custom` may use either environment's chains), or no RPC endpoint for any configured Auth Pull chain. Providers are optional: building with none yields a wallet-agnostic `RainSdk`. |
 
 ### Provider adapters
 
@@ -291,7 +272,7 @@ provider, submits on-chain, and returns the transaction hash.
 | `addresses` | `RainWithdrawAddresses` | Proxy, controller, token, recipient addresses. |
 | `amount` | `Decimal` | Amount in human-readable token units (e.g. `100`). |
 | `decimals` | `Int` | Token decimals (e.g. 6 for USDC, 18 for most tokens). Load-bearing on every chain including Solana: it scales the amount and is **not** checked against the SPL mint, so pass the mint's real decimals. |
-| `adminSignature` | `RainAdminSignature` | The withdrawal authorization from `fetchAdminSignature` — salt, signature, and expiry. |
+| `adminSignature` | `RainAdminSignature` | Rain's withdrawal authorization (host-fetched from the Rain API) — salt, signature, and expiry. |
 | `nonce` | `BigUInt?` | Optional; if `nil`, SDK resolves from contract. Omit the argument entirely to get the same behaviour. |
 
 ---
@@ -380,7 +361,7 @@ controller; it does not broadcast.
 | `addresses` | `RainWithdrawAddresses` | All addresses required for the withdrawal. |
 | `amount` | `Decimal` | Human-readable amount to withdraw. |
 | `decimals` | `Int` | Token decimals. |
-| `adminSignature` | `RainAdminSignature` | The withdrawal authorization from `fetchAdminSignature`. |
+| `adminSignature` | `RainAdminSignature` | Rain's withdrawal authorization (host-fetched from the Rain API). |
 | `nonce` | `BigUInt?` | Optional; pin the estimate to the nonce the withdrawal will sign. If `nil`, resolved from the contract. |
 
 ---
@@ -454,7 +435,7 @@ narrowed to the chains that have an RPC endpoint, and the same set the approval 
 Empty until `RainSdk.Builder.authPullConfig(_:)` supplies the trusted targets. Also available on
 `RainSdk` itself, for gating before a client is resolved.
 
-Gate host UI on this rather than on `RainAuthPullChains.supported(for:)`, which answers for an
+Gate host UI on this rather than on `RainAuthPullChains.sandbox` / `.production`, which answer for an
 environment and is the wider set. See [Auth Pull](AUTH_PULL.md#supported-chains-and-assets).
 
 - **Type:** `Set<Int>`
@@ -811,14 +792,12 @@ Bundled providers: **Portal** → `.export`, `.recovery`. **Turnkey** → `.mult
 | **`NetworkConfig`** | `chainId`, `rpcUrl`, optional `networkName`. Also constructible from an `eip155:<chainId>` string. |
 | **`RainWithdrawAddresses`** | `proxyAddress`, `controllerAddress`, `tokenAddress`, `recipientAddress`. Has `validated()` for checksumming. |
 | **`RainEIP712Message`** | `message`, `salt`, `saltHex`. Returned by `buildEIP712Message`. |
-| **`RainAdminSignature`** | `salt` (String), `signature` (hex String), `expiresAt` (String, ISO-8601 or Unix timestamp). Returned by `fetchAdminSignature`. |
-| **`RainCollateralContract`** | Collateral contract from the Rain API: addresses, admin set, tokens (with enriched metadata). |
-| **`RainApiEnvironment`** | `.dev` (default), `.production`, `.custom(URL)`. |
+| **`RainAdminSignature`** | `salt` (String), `signature` (hex String), `expiresAt` (String, ISO-8601 or Unix timestamp). Built by the host from the Rain API's withdrawal-signature response. |
 | **`RainTokenTransferResult`** | `transactionHash` (String): on-chain hash (EVM) or signature (Solana). Returned by `sendNative` and `sendToken`. |
 | **`RainTokenApprovalResult`** | `transactionHash` (String): hash of the ERC-20 `approve` call. Returned by `approveTokenAllowance`. |
 | **`RainTokenAllowance`** | Exact allowance value type; see [RainTokenAllowance](#raintokenallowance). |
 | **`RainAuthPullConfig`** | Trusted Auth Pull targets for one environment: `operatorAddress` plus a `chainId → token contract` map. Built via `.sandbox(operatorAddress:)`, `.production(operatorAddress:)`, or `.custom(operatorAddress:tokenAddresses:)`; passed to `RainSdk.Builder.authPullConfig(_:)`. |
-| **`RainAuthPullChains`** | The Auth Pull chain sets by environment: `.sandbox` (Base Sepolia, Arbitrum Sepolia), `.production` (Base, Arbitrum), `supported(for:)`, `isSupported(chainId:in:)`. Answers for an *environment*; gate UI on `authPullChainIds`, which answers for the built SDK. |
+| **`RainAuthPullChains`** | The Auth Pull chain sets by environment: `.sandbox` (Base Sepolia, Arbitrum Sepolia), `.production` (Base, Arbitrum). |
 | **`RainChain`** | Pinned chain IDs: `.baseMainnet` (8453), `.baseSepolia` (84532), `.arbitrumMainnet` (42161), `.arbitrumSepolia` (421614), `.avalancheMainnet` / `.avalancheTestnet`, and the Solana sentinels. |
 | **`RainTransactionParameters`** | `from`, `to`, `value` (hex wei), `data` (hex calldata). Wallet-agnostic parameter bag returned by `buildTransactionParameters`. |
 | **`Token`** | `.native` or `.contract(address:)`; contract equality is case-insensitive. |
@@ -840,14 +819,13 @@ programmatic handling.
 | `RAIN_101` | `sdkNotInitialized` | Operation called before the SDK's configuration was set up. |
 | `RAIN_102` | `invalidConfig(details:)` / `providerNotRegistered(details:)` | Invalid configuration or parameter (bad RPC URL / chain ID, malformed address or expiry); no provider registered for the requested id; or no provider matched a capability. |
 | `RAIN_103` | `invalidRpcUrl(_:)` | RPC URL could not be parsed as a valid URL. |
-| `RAIN_104` | `rainApiNotConfigured` | A Rain API method was called before an Api-Key and userId were supplied. |
+| `RAIN_104` | `chainNotSupported(chainId:details:)` | The active wallet provider cannot broadcast on this chain, so a send (transfer, withdrawal, approval) was refused before any signing or network work. Reads — balances, history, fee estimates — are not gated. E.g. Turnkey's managed broadcast does not cover Avalanche. |
 | `RAIN_201` | `tokenExpired` | Provider session token expired or invalid. |
 | `RAIN_202` | `unauthorized` | Invalid or missing token / permissions. |
 | `RAIN_203` | `invalidLoginCode` | The one-time login code was rejected (wrong, expired, or already used) — ask the user to retype it or request a new one. Distinct from `RAIN_201`, which means an established session died. |
 | `RAIN_301` | `networkError(underlying:)` | Network/connectivity failure. |
-| `RAIN_302` | `apiError(statusCode:message:)` | The Rain API returned a non-success HTTP status (other than 401/403 → `unauthorized`). |
-| `RAIN_303` | `signatureNotReady(status:retryAfter:)` / `transactionPending(statusId:)` | The withdrawal admin signature is not ready yet, retry after `retryAfter` seconds; or a submitted transaction's hash was not yet visible when status polling stopped. `transactionPending` is not a failure: the transaction may still confirm, so resume polling with `statusId` instead of resending. |
-| `RAIN_304` | `noCollateralContracts` | The contracts endpoint returned no collateral contracts for the configured user. |
+| `RAIN_302` | `apiError(statusCode:message:)` | A wallet-backend API returned a non-success HTTP status (other than 401/403 → `unauthorized`). |
+| `RAIN_303` | `transactionPending(statusId:)` | A send was accepted but its hash is not known yet; resume polling with `statusId`, do not resend. |
 | `RAIN_401` | `userRejected` | User cancelled the signing request in the wallet. |
 | `RAIN_402` | `insufficientFunds(required:available:)` | Balance too low for the requested amount or gas. |
 | `RAIN_403` | `transactionSimulationFailed(underlying:)` | Preflight `eth_call` simulation failed (e.g. contract revert, insufficient funds). |

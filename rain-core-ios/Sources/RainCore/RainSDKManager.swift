@@ -97,6 +97,9 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     nonce: BigUInt?
   ) async throws -> String {
     do {
+      // Before the contract reads and the signing prompt: a chain the provider cannot broadcast
+      // on fails closed here, not after the user has authorised a withdrawal that cannot go out.
+      try walletProvider.requireSendSupport(chainId: chainId)
       let prepared = try await buildPreparedWithdrawal(
         chainId: chainId,
         assetAddresses: addresses,
@@ -142,6 +145,8 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     nonce: BigUInt?
   ) async throws -> RainPreparedWithdrawal {
     do {
+      // Preparing signs too, so it is gated like the broadcast.
+      try walletProvider.requireSendSupport(chainId: chainId)
       return try await buildPreparedWithdrawal(
         chainId: chainId,
         assetAddresses: addresses,
@@ -192,7 +197,6 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
           details: "Withdrawal fee estimation is not supported on Solana"
         )
       }
-
       let (walletAddress, parameters) = try await prepareEvmWithdrawal(
         chainId: chainId,
         assetAddresses: addresses,

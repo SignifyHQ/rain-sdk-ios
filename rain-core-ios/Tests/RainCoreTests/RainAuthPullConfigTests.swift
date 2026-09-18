@@ -55,7 +55,7 @@ struct RainAuthPullConfigTests {
 
     #expect(rain.authPullChainIds == [RainChain.baseSepolia])
     // The environment's set is the wider answer, and the one a host must not gate UI on.
-    #expect(RainAuthPullChains.supported(for: .dev).contains(RainChain.arbitrumSepolia))
+    #expect(RainAuthPullChains.sandbox.contains(RainChain.arbitrumSepolia))
   }
 
   @Test("every configured chain with an RPC is resolved, and nothing else")
@@ -85,14 +85,12 @@ struct RainAuthPullConfigTests {
     #expect(rain.authPullChainIds.isEmpty)
   }
 
-  /// The case the environment set cannot answer at all: `supported(for: .custom)` is empty by
-  /// design, so a custom gateway's own chains are only discoverable through the resolved set.
+  /// A custom config's own chains are only discoverable through the resolved set — the static
+  /// sets cannot know which environment a custom deployment fronts.
   @Test("a custom gateway can enumerate the chains it configured")
   func customGatewayEnumeratesItsChains() throws {
-    let url = try #require(URL(string: "https://rain.example"))
     let rain = try RainSdk.builder()
       .rpcEndpoints(configs([RainChain.baseSepolia, RainChain.arbitrumSepolia]))
-      .rainApiEnvironment(.custom(url))
       .authPullConfig(
         .custom(
           operatorAddress: operatorAddress,
@@ -104,42 +102,39 @@ struct RainAuthPullConfigTests {
       .build()
 
     #expect(rain.authPullChainIds == [RainChain.arbitrumSepolia])
-    #expect(RainAuthPullChains.supported(for: .custom(url)).isEmpty)
   }
 
   // MARK: - Rejected configurations
 
-  @Test("a production config is rejected in the dev environment")
-  func productionConfigRejectedInDev() throws {
-    #expect(throws: RainSDKError.invalidConfig(details: "")) {
-      _ = try RainSdk.builder()
-        .rpcEndpoints(configs([RainChain.baseMainnet, RainChain.arbitrumMainnet]))
-        .authPullConfig(.production(operatorAddress: operatorAddress))
-        .build()
-    }
+  /// The SDK no longer knows a Rain API environment; the config's kind is the environment, and
+  /// its chains come from that environment's set — so a well-formed production config builds
+  /// without any environment knob.
+  @Test("a production config builds on its own")
+  func productionConfigBuilds() throws {
+    let rain = try RainSdk.builder()
+      .rpcEndpoints(configs([RainChain.baseMainnet, RainChain.arbitrumMainnet]))
+      .authPullConfig(.production(operatorAddress: operatorAddress))
+      .build()
+
+    #expect(rain.authPullChainIds == [RainChain.baseMainnet, RainChain.arbitrumMainnet])
   }
 
-  @Test("a sandbox config is rejected in the production environment")
-  func sandboxConfigRejectedInProduction() throws {
-    #expect(throws: RainSDKError.invalidConfig(details: "")) {
-      _ = try RainSdk.builder()
-        .rpcEndpoints(configs([RainChain.baseSepolia]))
-        .rainApiEnvironment(.production)
-        .authPullConfig(.sandbox(operatorAddress: operatorAddress))
-        .build()
-    }
-  }
+  @Test("a custom config may mix chains from both environments")
+  func customConfigMayMixEnvironments() throws {
+    let rain = try RainSdk.builder()
+      .rpcEndpoints(configs([RainChain.baseSepolia, RainChain.baseMainnet]))
+      .authPullConfig(
+        .custom(
+          operatorAddress: operatorAddress,
+          tokenAddresses: [
+            RainChain.baseSepolia: TestFixtures.authPullUsdcAddress,
+            RainChain.baseMainnet: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          ]
+        )
+      )
+      .build()
 
-  @Test("a custom environment requires explicit custom targets")
-  func customRequiresCustomTargets() throws {
-    let url = try #require(URL(string: "https://rain.example"))
-    #expect(throws: RainSDKError.invalidConfig(details: "")) {
-      _ = try RainSdk.builder()
-        .rpcEndpoints(configs([RainChain.baseSepolia, RainChain.arbitrumSepolia]))
-        .rainApiEnvironment(.custom(url))
-        .authPullConfig(.sandbox(operatorAddress: operatorAddress))
-        .build()
-    }
+    #expect(rain.authPullChainIds == [RainChain.baseSepolia, RainChain.baseMainnet])
   }
 
   @Test("a malformed operator address is rejected")
@@ -168,11 +163,9 @@ struct RainAuthPullConfigTests {
 
   @Test("an empty token map is rejected")
   func emptyTokenMapRejected() throws {
-    let url = try #require(URL(string: "https://rain.example"))
     #expect(throws: RainSDKError.invalidConfig(details: "")) {
       _ = try RainSdk.builder()
         .rpcEndpoints(configs([RainChain.baseSepolia]))
-        .rainApiEnvironment(.custom(url))
         .authPullConfig(.custom(operatorAddress: operatorAddress, tokenAddresses: [:]))
         .build()
     }
@@ -180,13 +173,11 @@ struct RainAuthPullConfigTests {
 
   @Test("a malformed or zero token contract is rejected")
   func malformedTokenRejected() throws {
-    let url = try #require(URL(string: "https://rain.example"))
     for token in ["0xnope", "0x0000000000000000000000000000000000000000"] {
       #expect(throws: RainSDKError.invalidConfig(details: "")) {
         _ = try RainSdk.builder()
           .rpcEndpoints(configs([RainChain.baseSepolia]))
-          .rainApiEnvironment(.custom(url))
-          .authPullConfig(
+            .authPullConfig(
             .custom(
               operatorAddress: operatorAddress,
               tokenAddresses: [RainChain.baseSepolia: token]
@@ -200,11 +191,9 @@ struct RainAuthPullConfigTests {
   /// A custom gateway may front either environment, but not a chain Auth Pull does not run on.
   @Test("a chain outside the known Auth Pull sets is rejected")
   func unknownChainRejected() throws {
-    let url = try #require(URL(string: "https://rain.example"))
     #expect(throws: RainSDKError.invalidConfig(details: "")) {
       _ = try RainSdk.builder()
         .rpcEndpoints(configs([RainChain.avalancheTestnet]))
-        .rainApiEnvironment(.custom(url))
         .authPullConfig(
           .custom(
             operatorAddress: operatorAddress,

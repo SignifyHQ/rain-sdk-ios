@@ -94,6 +94,27 @@ public actor TokenMetadataStore {
     return enriched.info.decimals
   }
 
+  /// Strict metadata resolution: known tokens, then the enrichment cache, then on-chain reads —
+  /// and `nil` when decimals could not be established, never the 18-decimal default. The answer
+  /// a host needs before scaling a money amount for a token it only knows by address (e.g. the
+  /// tokens in a Rain collateral contract). Solana chains are registry-only: the on-chain read
+  /// path is EVM-only and an SPL mint carries no on-chain symbol anyway.
+  public func resolvedTokenInfo(chainId: Int, address: String) async -> TokenInfo? {
+    let key = address.lowercased()
+    if let known = knownTokens[chainId]?.first(where: { $0.address.lowercased() == key }) {
+      return known
+    }
+    if let cached = enrichmentCache[chainId]?[key] {
+      return cached
+    }
+    guard !SolanaChains.isSolana(chainId) else { return nil }
+    let enriched = await enrich(chainId: chainId, address: address)
+    guard enriched.decimalsResolved else { return nil }
+
+    enrichmentCache[chainId, default: [:]][key] = enriched.info
+    return enriched.info
+  }
+
   // MARK: - Enrichment
 
   /// An enrichment result plus whether `decimals` came from the chain or the fallback.

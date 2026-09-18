@@ -22,25 +22,12 @@ struct RainAuthPullChainsTests {
     #expect(RainAuthPullChains.sandbox.isDisjoint(with: RainAuthPullChains.production))
   }
 
-  @Test("dev resolves to sandbox and production to production")
-  func environmentMapping() {
-    #expect(RainAuthPullChains.supported(for: .dev) == RainAuthPullChains.sandbox)
+  @Test("a config's kind selects its environment's set; custom may front either")
+  func kindMapping() {
+    #expect(RainAuthPullChains.supported(for: .sandbox) == RainAuthPullChains.sandbox)
     #expect(RainAuthPullChains.supported(for: .production) == RainAuthPullChains.production)
-  }
-
-  @Test("a custom base url fails closed")
-  func customFailsClosed() throws {
-    let url = try #require(URL(string: "https://gateway.example.com"))
-
-    #expect(RainAuthPullChains.supported(for: .custom(url)).isEmpty)
-  }
-
-  @Test("isSupported agrees with supported")
-  func isSupportedAgrees() {
-    #expect(RainAuthPullChains.isSupported(chainId: 84532, in: .dev))
-    #expect(!RainAuthPullChains.isSupported(chainId: 8453, in: .dev))
-    #expect(RainAuthPullChains.isSupported(chainId: 8453, in: .production))
-    #expect(!RainAuthPullChains.isSupported(chainId: 1, in: .production))
+    #expect(RainAuthPullChains.supported(for: .custom)
+      == RainAuthPullChains.sandbox.union(RainAuthPullChains.production))
   }
 
   /// The approval path resolves USDC's decimals from `TokenRegistry`, and refuses to guess. An

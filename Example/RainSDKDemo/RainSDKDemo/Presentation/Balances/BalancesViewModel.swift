@@ -135,12 +135,7 @@ final class BalancesViewModel: ObservableObject {
   }
 
   func fetchCollateralBalances(chain: WalletChain) async {
-    guard let rain = try? session.requireRain() else {
-      SampleLog.w("Balances.collateral", "SDK not initialized")
-      collateralError = "SDK not initialized"
-      return
-    }
-    guard rain.isRainApiConfigured else {
+    guard session.isRainApiConfigured else {
       SampleLog.w("Balances.collateral", "Rain API not configured")
       collateralError = "Rain Api-Key and User ID required"
       return
@@ -151,11 +146,8 @@ final class BalancesViewModel: ObservableObject {
     collateralError = nil
 
     do {
-      // Rain provisions one collateral contract per chain family — pick the one matching the
-      // active chain (Solana cluster exact, any EVM otherwise).
-      let contract = try await rain.fetchCollateralContracts()
-        .first { chain.ownsCollateralContract(chainId: $0.chainId) }
-      guard let contract else {
+      // The collateral contract comes from the Rain API — the host's call, not the SDK's.
+      guard let contract = try await session.fetchCollateralContract(for: chain) else {
         SampleLog.w("Balances.collateral", "no collateral contract for \(chain.displayName)")
         collateralError = "No collateral contract on \(chain.displayName)"
         isCollateralLoading = false

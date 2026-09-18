@@ -17,9 +17,19 @@ import per provider suffices. The 1.x `RainSDK` umbrella module has been REMOVED
 - `RainCore` (`rain-core-ios`) — vendor-free hexagon: `WalletProvider` port, `ProviderDescriptor`
   descriptors, `Capability` model, `RainSdk` builder/registry (caches in-flight resolution Tasks),
   `RainClient` (impl `RainSdkManager`), transaction building, EIP-712, EVM chain reader
-  (JSON-RPC + Multicall3), Solana stack (sentinel ids 900/901/902), token store, Rain issuing API
-  (direct Api-Key auth — CST minting REMOVED 2026-09-15, not enabled for Rain tenants; collateral contracts, admin signatures), Auth Pull (ERC-20 allowance surface),
-  error model. No wallet vendor SDKs. EVM ABI encoding + collateral contract reads go through
+  (JSON-RPC + Multicall3), Solana stack (sentinel ids 900/901/902), token store, Auth Pull
+  (ERC-20 allowance surface), error model. NO Rain issuing API client (REMOVED 2026-09-18, PR F):
+  fetching the collateral contract + admin withdrawal signature is the HOST's job (server-side,
+  Api-Key off-device); the SDK only takes the results as `RainWithdrawAddresses` /
+  `RainAdminSignature`. Token enrichment STAYS in the SDK as a public, wallet-agnostic
+  `RainSdk.tokenMetadata(chainId:address:) -> TokenInfo?` (strict: nil when decimals unresolved,
+  never the 18 default; Solana registry-only) over `TokenMetadataStore.resolvedTokenInfo`. The
+  demo ships its own reference `RainApiClient`
+  (`Example/.../Core/Services/RainApiClient.swift`). `RainApiEnvironment` is gone from the SDK;
+  Auth Pull validation keys off `RainAuthPullConfig.kind` alone (`.custom` may use either
+  environment's chains). Error codes COMPACTED (no external users yet; Android to follow):
+  `chainNotSupported` moved RAIN_105 → RAIN_104, RAIN_303 = transactionPending only, RAIN_304
+  dropped — the sequence has no gaps. No wallet vendor SDKs. EVM ABI encoding + collateral contract reads go through
   Boilertalk Web3.swift ONLY — web3swift was REMOVED 2026-09-15 (abandoned upstream since 2025;
   its URLSession overload trick stopped compiling on new Xcode). Contract call outputs from
   Boilertalk decode under the ABI output NAME as key ("" for unnamed outputs, not "0").
@@ -108,7 +118,7 @@ Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and Rai
   RainTurnkey now also depends on the TurnkeyCrypto product. Demo: "Export keys" card on the
   Rain Wallet tab (tap-to-reveal, `.privacySensitive()`, value never logged; Copy uses a
   local-only pasteboard entry that self-expires after 60 s).
-- PR D (IN PROGRESS 2026-09-14, branch volo/feature/add-passkey-support), passkeys + SMS OTP for
+- PR D (DONE 2026-09-18, merged as #38), passkeys + SMS OTP for
   RainWallet — same SPI shape as managed auth. Public surface: `RainWalletContact`
   (.email/.phone) with `sendLoginCode(to:)` REPLACING `sendLoginCode(email:)` (clean break,
   v5 stance; confirmLoginCode unchanged — SMS reuses the whole OTP pipeline, vendor `.sms`);
@@ -141,3 +151,42 @@ Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and Rai
   sub-org (rejected, or ambiguous for contact-based login lookup?). Demo: email/phone toggle on
   the code flow + three passkey buttons (sign in / create / add). Everything here is a
   cross-platform contract with Android.
+- PR E (IN PROGRESS 2026-09-17, branch volo/feature/handle-gas-sponsorship), gas sponsorship +
+  fail-closed sends on chains Turnkey cannot broadcast on — a mirror of Android's WALL-31 and its
+  follow-ups (TurnkeyBroadcastChains, minimal sponsored payloads with the
+  gas-station nonce, sponsored Solana sends carrying the System Program key).
+  Core: `Capability.gasSponsorship`; `RainSDKError.chainNotSupported(chainId:details:)` = RAIN_104 (was 105 until PR F compacted the map);
+  `WalletProvider` gains two hooks with default impls — `requireSendSupport(chainId:)` (no-op) and
+  `sponsorsFees(chainId:)` (false). `RainSdkManager` gates `withdrawCollateral`,
+  `prepareWithdrawal` (signing counts as sending) and `approveTokenAllowance` (after config
+  validation, before the wallet) — estimates/reads are NEVER gated. DECISION 2026-09-17
+  (diverges from Android, which quotes 0): fee estimates keep returning the REAL on-chain cost
+  even when sponsored, so hosts can show the saving — flag to Android for parity. The Solana
+  composers take `sponsoredFees` (skip the fee-lamport
+  check and dry run — a zero-SOL wallet would false-fail — keep the rent check, and carry the
+  System Program via `SolanaTransactionBuilder.extraReadonlyKeys`, which Turnkey's sponsored
+  path can require).
+  Turnkey: `TurnkeyBroadcastChains` (vendor's managed-broadcast list — EVM mainnets+testnets per
+  docs.turnkey.com broadcasting page; Solana mainnet+devnet ONLY; also owns the get-balances
+  chain list) — every send entry (EVM funnel `sendTransaction`, Solana funnel, both transfer
+  entries) calls `requireSendSupport`. `TurnkeyConfig.sponsorGas` DEFAULTS TRUE (product
+  decision: sponsorship is the product; on orgs without Gas Sponsorship enabled Turnkey rejects
+  sponsored sends → pass false). Sponsored EVM body = minimal payload: no nonce/gas fields,
+  `sponsor: true`, `gasStationNonce` fetched via `client.getNonces(gasStationNonce: true)` per
+  send (Turnkey's one-tx-per-request guarantee needs it; nil → server-side fetch). Solana sends
+  pass `sponsor`. `estimateTransactionFee` quotes the chain cost regardless. Capabilities via
+  `TurnkeyWalletProviderAdapter.capabilities(sponsorGas:)`, shared by descriptor + wallet.
+  `sponsorsFees` = sponsorGas && supportsSend (never sponsor an unsendable chain). RainWallet:
+  `RainWalletConfig.sponsorGas` (default true), capabilities follow the backing provider.
+  Tests construct adapters with `sponsorGas: false` to keep pinning the self-paid body (test
+  helper default), and opt in explicitly for sponsored assertions. Known limitation (v0, both
+  platforms): NO self-broadcast fallback — Avalanche (Rain's README example chain!), Celo,
+  ZKsync are read-only through Turnkey until a signRawPayload + own-RPC path exists or Turnkey
+  adds the chains.
+- PR F (IN PROGRESS 2026-09-18, branch volo/refactor/move-rain-api-out-of-sdk), Rain API out of
+  the SDK — see the RainCore bullet above. Deleted: `Services/RainApi/*`, `RainApiEnvironment`,
+  `RainCollateralContract`, `RainSdk.fetchCollateralContracts/fetchCollateralContract/
+  fetchAdminSignature/configureRainApi/isRainApiConfigured`, builder `rainApiEnvironment(_:)` /
+  `rainApiCredentials(apiKey:userId:)`, error cases `rainApiNotConfigured` / `signatureNotReady` /
+  `noCollateralContracts`, `RainAuthPullChains.supported(for:)/isSupported(chainId:in:)` (now an
+  internal `supported(for: Kind)`). Android has NOT done this yet — iOS leads; flag for parity.

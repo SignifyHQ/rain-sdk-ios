@@ -171,6 +171,15 @@ public struct RainWalletConfig: Sendable {
   /// `webcredentials:<domain>`. Passkeys are bound to this domain forever — changing it strands
   /// every passkey your users created — and the value is one-shot per app launch.
   public let passkeyDomain: String?
+  /// When true (the default), every send on a chain the wallet backend can broadcast on is
+  /// gas-sponsored — transfers, collateral withdrawals, Auth Pull approvals alike: the backend
+  /// builds and pays the network fee and the user needs no native gas token. Fee estimates
+  /// still quote the on-chain cost — what the user saves. Sponsorship cost passes through to
+  /// the partner. Solana sends are sponsored
+  /// too (network fee only — rent for a first-time recipient's token account stays the sender's).
+  /// Set false where sponsorship is not enabled for the backend organization, or the backend
+  /// rejects the sends.
+  public let sponsorGas: Bool
   /// Optional explicit EVM wallet address. When `nil`, the first Ethereum account is used.
   public let walletAddress: String?
   /// Expiry/refresh/retry behavior for the session guarding every wallet call.
@@ -183,11 +192,13 @@ public struct RainWalletConfig: Sendable {
 
   public init(
     passkeyDomain: String? = nil,
+    sponsorGas: Bool = true,
     walletAddress: String? = nil,
     sessionPolicy: RainWalletSessionPolicy = RainWalletSessionPolicy(),
     onSessionExpired: (@Sendable () -> Void)? = nil
   ) {
     self.passkeyDomain = passkeyDomain
+    self.sponsorGas = sponsorGas
     self.walletAddress = walletAddress
     self.sessionPolicy = sessionPolicy
     self.onSessionExpired = onSessionExpired
@@ -225,6 +236,7 @@ public struct RainProvider: ProviderDescriptor {
         rpId: config.passkeyDomain,
         walletAddress: config.walletAddress,
         sessionPolicy: config.sessionPolicy.backingPolicy,
+        sponsorGas: config.sponsorGas,
         onSessionExpired: config.onSessionExpired
       )
     )
@@ -238,7 +250,9 @@ public struct RainProvider: ProviderDescriptor {
 
   public var id: ProviderId { .rain }
 
-  public var capabilities: Set<Capability> { [.multiChain, .biometricGate] }
+  /// Follows the backing provider: EVM + Solana accounts, biometric-gated signing, and
+  /// `.gasSponsorship` when `RainWalletConfig.sponsorGas` is on.
+  public var capabilities: Set<Capability> { backing.capabilities }
 
   public func create(context: ProviderContext) async throws -> any WalletProvider {
     try await backing.create(context: context)

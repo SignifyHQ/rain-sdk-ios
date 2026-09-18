@@ -57,11 +57,11 @@ All four are in the SDK's built-in token registry, so balance and allowance read
 decimals with no `registerTokens` call and no on-chain lookup. The public API is
 token-address-based rather than USDC-only, so it keeps working when Rain adds assets.
 
-`RainAuthPullChains` holds these two sets, keyed by environment:
+`RainAuthPullChains` holds these two sets:
 
 ```swift
-let chains = RainAuthPullChains.supported(for: .dev)   // [84532, 421614]
-RainAuthPullChains.isSupported(chainId: RainChain.baseMainnet, in: .dev)  // false
+RainAuthPullChains.sandbox      // [84532, 421614]
+RainAuthPullChains.production   // [8453, 42161]
 ```
 
 **To gate UI, use `authPullChainIds` instead.** The environment's set is the wider answer; what a
@@ -75,9 +75,8 @@ guard enabled.contains(chainId) else { return }   // don't offer Auth Pull here
 ```
 
 The two differ whenever a configuration is narrower than its environment, an RPC endpoint is
-missing, or the environment is `.custom` — which `supported(for:)` reports as empty however the
-gateway is configured, making the resolved set the only way to enumerate a custom gateway's chains.
-Reach for `supported(for:)` only where no SDK exists yet, such as a chain picker built at startup.
+missing, or the configuration is `.custom` — whose chains only the resolved set can enumerate.
+Reach for the static sets only where no SDK exists yet, such as a chain picker built at startup.
 
 ## Environments must match
 
@@ -89,21 +88,22 @@ succeeds against any address, so nothing downstream would catch it.
 The SDK therefore rejects mismatched chain, token, and operator targets locally with `invalidConfig`
 (`RAIN_102`), before wallet access.
 
-The environment defaults to `.dev`, but Auth Pull itself is disabled until the builder receives a
-trusted configuration:
+The SDK has no Rain-environment setting of its own; the `RainAuthPullConfig` you pass *is* the
+environment (`.sandbox` / `.production`), and its chains must belong to that environment's set.
+Auth Pull is disabled until the builder receives one:
 
 ```swift
 let rain = try RainSdk.builder()
     .rpcEndpoints(rpcEndpoints)
-    .rainApiEnvironment(.dev)
     .authPullConfig(.sandbox(operatorAddress: rainOperatorAddress))
     .register(provider)
     .build()
 ```
 
 The SDK then requires the exact configured operator and canonical USDC contract on every approval,
-allowance read, confirmation, and fee estimate. `.custom` fails closed; a custom gateway must
-explicitly use `RainAuthPullConfig.custom(operatorAddress:tokenAddresses:)`.
+allowance read, confirmation, and fee estimate. A non-standard deployment (staging, a self-hosted
+gateway) uses `RainAuthPullConfig.custom(operatorAddress:tokenAddresses:)`, which may draw chains
+from either environment's set but nothing outside them.
 
 ## The operator address
 
@@ -111,7 +111,7 @@ The spender is Rain's operator: **one address per environment**, the same on eve
 that environment, and different between sandbox and production.
 
 It is trusted builder configuration, deliberately not an SDK constant — read it from Rain rather
-than hardcoding it, and key it off the same environment the SDK is configured with. Rain publishes
+than hardcoding it, and key it off the same environment your Rain API integration targets. Rain publishes
 the current values in its
 [Auth Pull docs](https://docs.rain.xyz/docs/authorization-pull-from-user-wallet).
 

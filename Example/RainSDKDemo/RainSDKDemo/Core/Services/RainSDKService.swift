@@ -84,25 +84,72 @@ final class RainSDKService: ObservableObject {
   /// Network the feature screens operate on, selected via the home-screen dropdown.
   @Published var selectedChain: WalletChain = .avalancheFuji
 
-  // Rain API credentials entered on the home screen. Stashed here because the SDK is built
-  // lazily — applied via the builder at build time and pushed through configureRainApi when
-  // the SDK already exists.
-  private var rainApiKey = ""
-  private var rainUserId = ""
+  /// The demo's Rain API client, built from the Api-Key + userId entered on the home screen.
+  /// Calling the Rain API is the host's job, not the SDK's — see `RainApiClient`. Independent of
+  /// the SDK lifecycle: it needs no wallet, only credentials.
+  private(set) var rainApi: RainApiClient?
 
   private init() {}
 
-  /// True once an Api-Key and userId are available (SDK built or not).
-  var isRainApiConfigured: Bool {
-    rain?.isRainApiConfigured ?? (!rainApiKey.isEmpty && !rainUserId.isEmpty)
+  /// True once an Api-Key and userId have been supplied.
+  var isRainApiConfigured: Bool { rainApi != nil }
+
+  /// Builds (or replaces) the Rain API client from the credentials. Empty input clears it.
+  func configureRainApi(apiKey: String, userId: String) {
+    let key = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
+    let user = userId.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !key.isEmpty, !user.isEmpty else {
+      rainApi = nil
+      return
+    }
+    rainApi = RainApiClient(environment: SampleEnvironment.rainApi, apiKey: key, userId: user)
   }
 
-  /// Stores the Rain Api-Key + userId and forwards them to the SDK when it exists.
-  func configureRainApi(apiKey: String, userId: String) {
-    rainApiKey = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
-    rainUserId = userId.trimmingCharacters(in: .whitespacesAndNewlines)
-    rain?.configureRainApi(apiKey: rainApiKey, userId: rainUserId)
+  /// The Rain API client, or throws when no credentials were supplied.
+  func requireRainApi() throws -> RainApiClient {
+    guard let rainApi else {
+      throw NSError(
+        domain: "RainSDKDemo", code: -1,
+        userInfo: [NSLocalizedDescriptionKey: "Rain Api-Key and User ID required"]
+      )
+    }
+    return rainApi
   }
+
+  /// The user's collateral contract for `chain`, with each token's name/symbol/decimals resolved
+  /// by the SDK from its address (`RainSdk.tokenMetadata`: registry, registered tokens, on-chain
+  /// reads). Rain provisions one contract per chain family (Solana cluster exact, any EVM otherwise).
+  func fetchCollateralContract(for chain: WalletChain) async throws -> CollateralContract? {
+    guard let contract = try await requireRainApi()
+      .fetchCollateralContracts()
+      .first(where: { chain.ownsCollateralContract(chainId: $0.chainId) })
+    else { return nil }
+
+    // Enrichment needs the SDK (RPC endpoints); before it is built the tokens stay unnamed.
+    guard let rain else { return contract }
+    var tokens = contract.tokens
+    for index in tokens.indices {
+      guard let info = await rain.tokenMetadata(chainId: contract.chainId, address: tokens[index].address)
+      else { continue } // decimals unresolvable: leave nil, the screen falls back / warns
+      tokens[index].name = info.name
+      tokens[index].symbol = info.symbol
+      tokens[index].decimals = info.decimals
+    }
+    return CollateralContract(
+      id: contract.id,
+      chainId: contract.chainId,
+      proxyAddress: contract.proxyAddress,
+      controllerAddress: contract.controllerAddress,
+      depositAddress: contract.depositAddress,
+      adminAddresses: contract.adminAddresses,
+      contractVersion: contract.contractVersion,
+      tokens: tokens
+    )
+  }
+
+  /// The tokens this demo knows by name: an SPL mint carries no on-chain symbol (and Turnkey's
+  /// asset index skips devnet), while on EVM the SDK's built-in registry is mainnet-only.
+  static let demoTokens: [TokenInfo] = WalletChain.selectable.map(\.defaultTokenInfo)
 
   /// Builds the SDK with the Portal provider (EVM chains only — Portal holds no Solana account).
   func initializePortal(
@@ -301,23 +348,17 @@ final class RainSDKService: ObservableObject {
 
   // MARK: - Building
 
-  /// Shared builder setup: RPC endpoints, the Rain API credentials, and token naming.
+  /// Shared builder setup: RPC endpoints, token naming, and the Auth Pull targets.
   ///
-  /// An SPL mint carries no on-chain symbol (and Turnkey's asset index skips devnet), while on
-  /// EVM the built-in registry is mainnet-only — so the testnet tokens this demo expects are
-  /// registered here, the same mechanism host apps use.
+  /// The testnet tokens this demo expects are registered here, the same mechanism host apps
+  /// use (see `demoTokens`).
   private func builder(networkConfigs: [NetworkConfig]) -> RainSdk.Builder {
-    let builder = RainSdk.builder()
+    RainSdk.builder()
       .rpcEndpoints(networkConfigs)
-      .registerTokens(WalletChain.selectable.map(\.defaultTokenInfo))
-      // Selects the Rain API host, and with it which Auth Pull configuration is accepted.
-      .rainApiEnvironment(SampleEnvironment.rainApi)
-      // Auth Pull stays disabled until the trusted operator and token targets are supplied.
+      .registerTokens(Self.demoTokens)
+      // Auth Pull stays disabled until the trusted operator and token targets are supplied; the
+      // config's kind (sandbox/production) is what ties it to the Rain environment.
       .authPullConfig(SampleEnvironment.authPullConfig)
-    if !rainApiKey.isEmpty && !rainUserId.isEmpty {
-      builder.rainApiCredentials(apiKey: rainApiKey, userId: rainUserId)
-    }
-    return builder
   }
 
   private func resolve(sdk: RainSdk, providerId: ProviderId, provider: ActiveProvider) async throws {

@@ -49,15 +49,13 @@ struct ErrorMappingTests {
       (.invalidConfig(details: "x"), "RAIN_102"),
       (.providerNotRegistered(details: "x"), "RAIN_102"),
       (.invalidRpcUrl("x"), "RAIN_103"),
-      (.rainApiNotConfigured, "RAIN_104"),
+      (.chainNotSupported(chainId: 43114, details: "x"), "RAIN_104"),
       (.tokenExpired, "RAIN_201"),
       (.unauthorized, "RAIN_202"),
       (.invalidLoginCode, "RAIN_203"),
       (.networkError(underlying: underlying), "RAIN_301"),
       (.apiError(statusCode: 500, message: "x"), "RAIN_302"),
-      (.signatureNotReady(status: "pending", retryAfter: 30), "RAIN_303"),
       (.transactionPending(statusId: "status-1"), "RAIN_303"),
-      (.noCollateralContracts, "RAIN_304"),
       (.userRejected, "RAIN_401"),
       (.insufficientFunds(required: "1", available: "0"), "RAIN_402"),
       (.transactionSimulationFailed(underlying: underlying), "RAIN_403"),
@@ -87,15 +85,13 @@ struct ErrorMappingTests {
          .invalidConfig,
          .providerNotRegistered,
          .invalidRpcUrl,
-         .rainApiNotConfigured,
+         .chainNotSupported,
          .tokenExpired,
          .unauthorized,
          .invalidLoginCode,
          .networkError,
          .apiError,
-         .signatureNotReady,
          .transactionPending,
-         .noCollateralContracts,
          .userRejected,
          .insufficientFunds,
          .transactionSimulationFailed,
@@ -125,11 +121,6 @@ struct ErrorMappingTests {
     #expect(
       RainSDKError.insufficientFunds(required: "1", available: "0")
         != RainSDKError.insufficientTokenBalance(requested: "2", available: "1", token: "t")
-    )
-    // RAIN_303 pair
-    #expect(
-      RainSDKError.signatureNotReady(status: "pending", retryAfter: 30)
-        != RainSDKError.transactionPending(statusId: "s")
     )
     // RAIN_102 family
     #expect(RainSDKError.invalidConfig(details: "x") != RainSDKError.tokenNotFound(token: "t", chainId: 1))

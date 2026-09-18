@@ -15,4 +15,10 @@ public enum Capability: String, Sendable, CaseIterable, Codable {
   case multiChain
   /// Provider gates signing behind a biometric / passkey prompt.
   case biometricGate
+  /// The provider's sends are fee-sponsored — a third party pays the network fee — so core skips
+  /// the self-paid preflights that would charge the fee to the wallet (the Solana fee-lamport
+  /// check and dry run). Fee estimates still quote the on-chain cost — what the user saves.
+  /// Core's operative, per-chain check is
+  /// `WalletProvider.sponsorsFees(chainId:)`; a provider sponsors only where it can broadcast.
+  case gasSponsorship
 }
