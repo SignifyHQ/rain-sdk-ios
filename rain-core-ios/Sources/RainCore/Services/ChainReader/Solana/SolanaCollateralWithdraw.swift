@@ -177,8 +177,10 @@ internal struct SolanaCollateralWithdrawComposer: Sendable {
       extraReadonlyKeys: sponsoredFees ? [SolanaPrograms.system] : []
     )
     // The dry run charges the fee to the owner, so a sponsored withdrawal from a zero-SOL wallet
-    // would false-fail here even though the sponsor pays the real send. A sponsored send's
-    // revert arrives through the provider's send status as the same simulation error instead.
+    // would false-fail here even though the sponsor pays the real send. Without it a program
+    // rejection is only discovered after signing, from the provider's send status: the adapter
+    // maps a status carrying the decoded revert to `transactionSimulationFailed`, so the host
+    // still sees `withdrawalRevertedByNetwork` — just later.
     if !sponsoredFees {
       try await simulate(chainId: chainId, transaction: transaction)
     }

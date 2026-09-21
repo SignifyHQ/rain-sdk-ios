@@ -50,21 +50,23 @@ struct SendGatingAndSponsorshipTests {
     #expect(stub.requireSendSupportCalls == [1])
   }
 
-  @Test("prepareWithdrawal is gated like the broadcast — preparing signs too")
-  func prepareGated() async throws {
+  @Test("prepareWithdrawal is NOT gated — it only signs, and the result is the host's own-RPC path")
+  func prepareNotGated() async throws {
     let (manager, stub) = try await TestManagers.stubProviderManager()
     stub.unsupportedSendChainIds = [1]
 
-    await #expect(throws: RainSDKError.chainNotSupported(chainId: 1, details: "")) {
-      _ = try await manager.prepareWithdrawal(
-        chainId: 1,
-        addresses: TestFixtures.defaultWithdrawAddresses,
-        amount: 1,
-        decimals: 6,
-        adminSignature: TestFixtures.adminSignature(),
-        nonce: 1
-      )
-    }
+    let prepared = try await manager.prepareWithdrawal(
+      chainId: 1,
+      addresses: TestFixtures.defaultWithdrawAddresses,
+      amount: 1,
+      decimals: 6,
+      adminSignature: TestFixtures.adminSignature(),
+      nonce: 1
+    )
+
+    #expect(prepared.evmParameters != nil)
+    #expect(stub.requireSendSupportCalls.isEmpty)
+    #expect(stub.sendTransactionCalls.isEmpty)
   }
 
   @Test("approveTokenAllowance is gated before the wallet is touched")

@@ -92,9 +92,11 @@ Solana mainnet + devnet. The full list lives in `TurnkeyBroadcastChains` and fol
 [Turnkey's broadcasting docs](https://docs.turnkey.com/features/transaction-management/broadcasting).
 A send on any other chain — Avalanche, Celo, ZKsync, Solana testnet — fails closed with
 `RainSDKError.chainNotSupported` (`RAIN_105`) **before** any contract read or signing prompt:
-`sendNative`, `sendToken`, `withdrawCollateral`, `prepareWithdrawal` and `approveTokenAllowance`
-all check the gate first. Reads are not gated: balances, history and fee estimates work on every
-chain with an RPC endpoint registered, so a chain like Avalanche is read-only through Turnkey.
+`sendNative`, `sendToken`, `withdrawCollateral` and `approveTokenAllowance` all check the gate
+first. Reads and signing are not gated: balances, history, fee estimates and `prepareWithdrawal`
+work on every chain with an RPC endpoint registered — Turnkey signs anywhere, it just cannot
+broadcast there. A host that needs Avalanche today can therefore `prepareWithdrawal` and submit
+the returned transaction parameters through its own RPC.
 
 ## Gas sponsorship
 

@@ -13,9 +13,11 @@ public protocol WalletProvider: Sendable {
   func getAddress(chainId: Int) async throws -> String
 
   /// Refuses a send on `chainId` before any work starts. Core calls this at the top of every
-  /// flow that signs and broadcasts (withdrawals, Auth Pull approvals), so a chain the provider
+  /// flow that broadcasts (`withdrawCollateral`, Auth Pull approvals), so a chain the provider
   /// cannot broadcast on fails closed before the contract reads and the signing prompt rather
-  /// than after them. A provider that can broadcast on every configured chain keeps the no-op
+  /// than after them. Flows that only sign or build (`prepareWithdrawal`, estimates) are not
+  /// gated — signing works on every chain, and the prepared transaction is a host's way to
+  /// submit through its own RPC where the provider cannot broadcast. A provider that can broadcast on every configured chain keeps the no-op
   /// default; an adapter whose vendor broadcasts on a fixed set consults its own chain registry.
   ///
   /// - Throws: `RainSDKError.chainNotSupported` when this provider cannot broadcast on `chainId`.

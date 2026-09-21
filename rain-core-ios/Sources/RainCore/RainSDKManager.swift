@@ -145,8 +145,10 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     nonce: BigUInt?
   ) async throws -> RainPreparedWithdrawal {
     do {
-      // Preparing signs too, so it is gated like the broadcast.
-      try walletProvider.requireSendSupport(chainId: chainId)
+      // Deliberately NOT gated on `requireSendSupport`: preparing only signs the EIP-712 message
+      // (or composes the Solana transaction) and never broadcasts, and signing is not limited to
+      // the provider's broadcast chains. The prepared parameters are also what a host can submit
+      // through its own RPC on a chain the provider cannot broadcast on.
       return try await buildPreparedWithdrawal(
         chainId: chainId,
         assetAddresses: addresses,
