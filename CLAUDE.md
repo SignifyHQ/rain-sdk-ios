@@ -28,8 +28,9 @@ import per provider suffices. The 1.x `RainSDK` umbrella module has been REMOVED
   (`Example/.../Core/Services/RainApiClient.swift`). `RainApiEnvironment` is gone from the SDK;
   Auth Pull validation keys off `RainAuthPullConfig.kind` alone (`.custom` may use either
   environment's chains). Error codes COMPACTED (no external users yet; Android to follow):
-  `chainNotSupported` moved RAIN_105 → RAIN_104, RAIN_303 = transactionPending only, RAIN_304
-  dropped — the sequence has no gaps. No wallet vendor SDKs. EVM ABI encoding + collateral contract reads go through
+  `chainNotSupported` moved RAIN_105 → RAIN_104; `apiError` (RAIN_302, nothing threw it once the
+  Rain API client left — the adapters' `.apiError` matches are Turnkey's own type) dropped and
+  `transactionPending` moved RAIN_303 → RAIN_302; RAIN_304 dropped — the sequence has no gaps. No wallet vendor SDKs. EVM ABI encoding + collateral contract reads go through
   Boilertalk Web3.swift ONLY — web3swift was REMOVED 2026-09-15 (abandoned upstream since 2025;
   its URLSession overload trick stopped compiling on new Xcode). Contract call outputs from
   Boilertalk decode under the ABI output NAME as key ("" for unnamed outputs, not "0").

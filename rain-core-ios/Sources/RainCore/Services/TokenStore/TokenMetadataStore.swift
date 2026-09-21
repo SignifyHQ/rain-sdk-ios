@@ -53,66 +53,62 @@ public actor TokenMetadataStore {
   }
 
   /// Resolves metadata for a contract token: known tokens first, then the enrichment
-  /// cache, then a one-time on-chain `decimals()` / `symbol()` read (cached on success).
+  /// cache, then a one-time on-chain `decimals()` / `symbol()` / `name()` read (cached on
+  /// success). A failed `decimals()` read falls back to the 18-decimal default (and is NOT
+  /// cached, so the next lookup re-reads the chain) — display paths tolerate that; money paths
+  /// must use ``resolvedTokenInfo(chainId:address:)`` / ``decimals(chainId:address:)`` instead.
   public func tokenInfo(chainId: Int, address: String) async -> TokenInfo {
-    let key = address.lowercased()
-    if let known = knownTokens[chainId]?.first(where: { $0.address.lowercased() == key }) {
-      return known
-    }
-    if let cached = enrichmentCache[chainId]?[key] {
-      return cached
-    }
-    let enriched = await enrich(chainId: chainId, address: address)
-
-    // A fallback `decimals` is a guess, not a fact: caching it would pin a balance that is
-    // wrong by orders of magnitude for the rest of the process. Retry on the next lookup.
-    guard enriched.decimalsResolved else { return enriched.info }
-
-    enrichmentCache[chainId, default: [:]][key] = enriched.info
-    return enriched.info
+    await resolve(chainId: chainId, address: address).info
   }
 
-  /// A contract token's decimals, or `nil` when they could not be established — the token is not
-  /// in the registry and its on-chain `decimals()` read failed.
-  ///
-  /// Unlike ``tokenInfo(chainId:address:)``, this never substitutes the 18-decimal default.
-  /// Callers that scale a *money amount* must use this: on an approval a guessed 18 against a
-  /// 6-decimal token would silently approve 10^12 times the intended allowance, and `approve`
-  /// has no balance to fail against, so nothing downstream would catch it.
-  public func decimals(chainId: Int, address: String) async -> Int? {
-    let key = address.lowercased()
-    if let known = knownTokens[chainId]?.first(where: { $0.address.lowercased() == key }) {
-      return known.decimals
-    }
-    if let cached = enrichmentCache[chainId]?[key] {
-      return cached.decimals
-    }
-    let enriched = await enrich(chainId: chainId, address: address)
-    guard enriched.decimalsResolved else { return nil }
-
-    enrichmentCache[chainId, default: [:]][key] = enriched.info
-    return enriched.info.decimals
-  }
-
-  /// Strict metadata resolution: known tokens, then the enrichment cache, then on-chain reads —
-  /// and `nil` when decimals could not be established, never the 18-decimal default. The answer
-  /// a host needs before scaling a money amount for a token it only knows by address (e.g. the
-  /// tokens in a Rain collateral contract). Solana chains are registry-only: the on-chain read
-  /// path is EVM-only and an SPL mint carries no on-chain symbol anyway.
+  /// Strict metadata resolution — the same walk as ``tokenInfo(chainId:address:)`` but `nil`
+  /// when decimals could not be established, never the 18-decimal default. The answer a host
+  /// needs before scaling a money amount for a token it only knows by address (e.g. the tokens
+  /// in a Rain collateral contract).
   public func resolvedTokenInfo(chainId: Int, address: String) async -> TokenInfo? {
+    let resolved = await resolve(chainId: chainId, address: address)
+    return resolved.decimalsResolved ? resolved.info : nil
+  }
+
+  /// A contract token's decimals, or `nil` when they could not be established.
+  ///
+  /// Never substitutes the 18-decimal default. Callers that scale a *money amount* must use
+  /// this: on an approval a guessed 18 against a 6-decimal token would silently approve 10^12
+  /// times the intended allowance, and `approve` has no balance to fail against, so nothing
+  /// downstream would catch it.
+  public func decimals(chainId: Int, address: String) async -> Int? {
+    await resolvedTokenInfo(chainId: chainId, address: address)?.decimals
+  }
+
+  // MARK: - Resolution
+
+  /// The single lookup walk every public accessor shares: known tokens (registry + registered),
+  /// then the enrichment cache, then an on-chain read. Only a read whose `decimals()` resolved
+  /// is cached — a fallback decimals is a guess, not a fact, and caching it would pin a value
+  /// wrong by orders of magnitude for the rest of the process. Solana chains stop at the known
+  /// tokens: the on-chain read path is EVM-only and an SPL mint carries no on-chain symbol.
+  private func resolve(chainId: Int, address: String) async -> Enriched {
     let key = address.lowercased()
     if let known = knownTokens[chainId]?.first(where: { $0.address.lowercased() == key }) {
-      return known
+      return Enriched(info: known, decimalsResolved: true)
     }
     if let cached = enrichmentCache[chainId]?[key] {
-      return cached
+      return Enriched(info: cached, decimalsResolved: true)
     }
-    guard !SolanaChains.isSolana(chainId) else { return nil }
+    if SolanaChains.isSolana(chainId) {
+      return Enriched(
+        info: TokenInfo(
+          chainId: chainId, address: address, symbol: nil,
+          decimals: Constants.ERC20.defaultDecimals, name: nil
+        ),
+        decimalsResolved: false
+      )
+    }
     let enriched = await enrich(chainId: chainId, address: address)
-    guard enriched.decimalsResolved else { return nil }
-
-    enrichmentCache[chainId, default: [:]][key] = enriched.info
-    return enriched.info
+    if enriched.decimalsResolved {
+      enrichmentCache[chainId, default: [:]][key] = enriched.info
+    }
+    return enriched
   }
 
   // MARK: - Enrichment

@@ -7,7 +7,9 @@ struct CollateralTokenBalance: Identifiable {
   let symbol: String
   let name: String
   let address: String
-  let decimals: Int
+  /// From `RainSdk.tokenMetadata`; `nil` when unresolved. The API balance is already in whole
+  /// tokens, so display needs no decimals — never guess them for anything that scales an amount.
+  let decimals: Int?
   let balance: Decimal
   let exchangeRate: Double
 
@@ -166,7 +168,7 @@ final class BalancesViewModel: ObservableObject {
           symbol: token.symbol ?? token.name ?? "Unknown",
           name: token.name ?? "",
           address: token.address,
-          decimals: token.decimals ?? 18,
+          decimals: token.decimals,
           balance: token.balanceAmount ?? 0,
           exchangeRate: token.exchangeRate
         )

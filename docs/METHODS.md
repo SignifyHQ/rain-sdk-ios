@@ -824,8 +824,7 @@ programmatic handling.
 | `RAIN_202` | `unauthorized` | Invalid or missing token / permissions. |
 | `RAIN_203` | `invalidLoginCode` | The one-time login code was rejected (wrong, expired, or already used) — ask the user to retype it or request a new one. Distinct from `RAIN_201`, which means an established session died. |
 | `RAIN_301` | `networkError(underlying:)` | Network/connectivity failure. |
-| `RAIN_302` | `apiError(statusCode:message:)` | A wallet-backend API returned a non-success HTTP status (other than 401/403 → `unauthorized`). |
-| `RAIN_303` | `transactionPending(statusId:)` | A send was accepted but its hash is not known yet; resume polling with `statusId`, do not resend. |
+| `RAIN_302` | `transactionPending(statusId:)` | A send was accepted but its hash is not known yet; resume polling with `statusId`, do not resend. |
 | `RAIN_401` | `userRejected` | User cancelled the signing request in the wallet. |
 | `RAIN_402` | `insufficientFunds(required:available:)` | Balance too low for the requested amount or gas. |
 | `RAIN_403` | `transactionSimulationFailed(underlying:)` | Preflight `eth_call` simulation failed (e.g. contract revert, insufficient funds). |

@@ -41,11 +41,7 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// RAIN_301: Connectivity issues preventing communication with APIs or Blockchain nodes
   case networkError(underlying: Error)
 
-  /// RAIN_302: A backend (wallet provider) API returned a non-success HTTP status (other than
-  /// 401/403 → `.unauthorized`)
-  case apiError(statusCode: Int, message: String?)
-
-  /// RAIN_303: The transaction was accepted by the wallet provider but its hash was not yet
+  /// RAIN_302: The transaction was accepted by the wallet provider but its hash was not yet
   /// visible when status polling stopped. NOT a failure — the transaction may still confirm, and
   /// resending it risks a duplicate transfer. Resume polling with `statusId` instead.
   case transactionPending(statusId: String)
@@ -122,10 +118,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "RAIN_203"
     case .networkError:
       return "RAIN_301"
-    case .apiError:
-      return "RAIN_302"
     case .transactionPending:
-      return "RAIN_303"
+      return "RAIN_302"
     case .userRejected:
       return "RAIN_401"
     case .insufficientFunds, .insufficientTokenBalance, .tokenAccountNotFound:
@@ -169,8 +163,6 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "[\(errorCode)] The one-time login code was rejected — wrong, expired, or already used. Retype it or request a new one."
     case .networkError(let underlying):
       return "[\(errorCode)] Connectivity issues preventing communication with APIs or Blockchain nodes. \(underlying.localizedDescription)"
-    case .apiError(let statusCode, let message):
-      return "[\(errorCode)] API error \(statusCode)\(message.map { ": \($0)" } ?? "")."
     case .transactionPending(let statusId):
       return "[\(errorCode)] Transaction submitted but not yet confirmed (statusId=\(statusId)). Not a failure — resume polling with the status id; do not resend."
     case .userRejected:
@@ -216,7 +208,6 @@ extension RainSDKError {
     case .unauthorized: return "unauthorized"
     case .invalidLoginCode: return "invalidLoginCode"
     case .networkError: return "networkError"
-    case .apiError: return "apiError"
     case .transactionPending: return "transactionPending"
     case .userRejected: return "userRejected"
     case .insufficientFunds: return "insufficientFunds"

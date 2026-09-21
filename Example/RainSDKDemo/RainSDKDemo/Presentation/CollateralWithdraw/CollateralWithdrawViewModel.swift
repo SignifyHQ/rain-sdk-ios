@@ -7,12 +7,17 @@ struct WithdrawTokenOption: Identifiable {
   let name: String
   let symbol: String
   let address: String
-  let decimals: Int
+  /// `nil` when the SDK could not establish the token's decimals (`RainSdk.tokenMetadata`
+  /// returned nil). Such a token is shown but cannot be withdrawn: guessing decimals would scale
+  /// the amount by orders of magnitude, so the strict answer is respected here as well.
+  let decimals: Int?
   let balance: Decimal
 
   var id: String { address }
 
   var displayName: String { symbol.isEmpty ? name : "\(name) (\(symbol))" }
+
+  var isWithdrawable: Bool { decimals != nil }
 }
 
 /// Identifies the exact inputs an admin signature was issued for. A cached signature is only
@@ -143,18 +148,23 @@ final class CollateralWithdrawViewModel: ObservableObject {
       contractChainId = contract.chainId
       isSolanaContract = WalletChain.solanaChainIds.contains(contract.chainId)
       adminAddress = contract.adminAddresses.first ?? ""
-      // Token name / symbol / decimals come from the demo's own token list (a host would use its
-      // catalog). Fall back to 6 decimals (these collateral tokens are stablecoins) when unknown.
+      // Token name / symbol / decimals were resolved by the SDK from each address
+      // (`RainSdk.tokenMetadata`, via `RainSDKService.fetchCollateralContract(for:)`). A nil
+      // `decimals` means the SDK could not establish them; the token is listed but disabled —
+      // never guessed, since wrong decimals would scale the withdrawal by orders of magnitude.
       availableTokens = contract.tokens.map { token in
         WithdrawTokenOption(
           name: token.name ?? "Token",
           symbol: token.symbol ?? "",
           address: token.address,
-          decimals: token.decimals ?? 6,
+          decimals: token.decimals,
           balance: token.balanceAmount ?? 0
         )
       }
-      selectedTokenIndex = availableTokens.isEmpty ? -1 : 0
+      for token in availableTokens where !token.isWithdrawable {
+        SampleLog.w("Withdraw.contract", "decimals unresolved for \(token.address); withdrawal disabled")
+      }
+      selectedTokenIndex = availableTokens.firstIndex(where: \.isWithdrawable) ?? -1
     } catch {
       SampleLog.e("Withdraw.contract", "failed: \(error.localizedDescription)")
       errorText = error.localizedDescription
@@ -174,12 +184,12 @@ final class CollateralWithdrawViewModel: ObservableObject {
   /// complete transaction (from/to/value/data); the Solana case is the serialized unsigned
   /// transaction plus the blockhash it was simulated against.
   func prepareWithdrawal(amountOverride: Decimal? = nil) async {
-    await runWithdrawFlow(amountOverride: amountOverride, tag: "Withdraw.prepare") { addresses, amount, token, signature in
+    await runWithdrawFlow(amountOverride: amountOverride, tag: "Withdraw.prepare") { addresses, amount, decimals, signature in
       let prepared = try await self.session.requireClient().prepareWithdrawal(
         chainId: self.contractChainId,
         addresses: addresses,
         amount: amount,
-        decimals: token.decimals,
+        decimals: decimals,
         adminSignature: signature
       )
 
@@ -206,12 +216,12 @@ final class CollateralWithdrawViewModel: ObservableObject {
   /// Estimates the withdrawal fee without broadcasting. EVM only — the SDK throws on a Solana
   /// chain id, which the UI surfaces as-is.
   func estimateFee(amountOverride: Decimal? = nil) async {
-    await runWithdrawFlow(amountOverride: amountOverride, tag: "Withdraw.estimate") { addresses, amount, token, signature in
+    await runWithdrawFlow(amountOverride: amountOverride, tag: "Withdraw.estimate") { addresses, amount, decimals, signature in
       let fee = try await self.session.requireClient().estimateWithdrawalFee(
         chainId: self.contractChainId,
         addresses: addresses,
         amount: amount,
-        decimals: token.decimals,
+        decimals: decimals,
         adminSignature: signature
       )
       self.estimatedFee = "\(fee.plainString) \(self.nativeSymbol)"
@@ -231,12 +241,12 @@ final class CollateralWithdrawViewModel: ObservableObject {
   /// - Parameter amountOverride: when set (e.g. "Withdraw Maximum"), withdraws this amount instead
   ///   of the value typed into the amount field.
   func executeWithdraw(amountOverride: Decimal? = nil) async {
-    await runWithdrawFlow(amountOverride: amountOverride, tag: "Withdraw.execute") { addresses, amount, token, signature in
+    await runWithdrawFlow(amountOverride: amountOverride, tag: "Withdraw.execute") { addresses, amount, decimals, signature in
       let hash = try await self.session.requireClient().withdrawCollateral(
         chainId: self.contractChainId,
         addresses: addresses,
         amount: amount,
-        decimals: token.decimals,
+        decimals: decimals,
         adminSignature: signature
       )
       SampleLog.i("Withdraw.execute", "success — txHash=\(hash)")
@@ -252,9 +262,15 @@ final class CollateralWithdrawViewModel: ObservableObject {
   private func runWithdrawFlow(
     amountOverride: Decimal?,
     tag: String,
-    action: (RainWithdrawAddresses, Decimal, WithdrawTokenOption, RainAdminSignature) async throws -> Void
+    action: (RainWithdrawAddresses, Decimal, Int, RainAdminSignature) async throws -> Void
   ) async {
     guard let token = selectedToken else { return }
+    // Strict, like the SDK: no decimals means no withdrawal. The row is disabled in the UI, so
+    // this only guards against a stale selection.
+    guard let decimals = token.decimals else {
+      errorText = "Token decimals could not be resolved; withdrawal disabled for \(token.displayName)"
+      return
+    }
     guard let rawAmount = amountOverride ?? parsedAmount, rawAmount > 0 else {
       errorText = "Enter a valid amount"
       return
@@ -266,7 +282,7 @@ final class CollateralWithdrawViewModel: ObservableObject {
     // Normalize to the token's precision (round DOWN) so the amount signed for, the base units
     // sent, and the on-chain tx all agree — and so the SDK's scale guard never trips. Rounding
     // down also keeps "Withdraw Maximum" at or below the available balance.
-    guard let normalized = normalizedAmount(rawAmount, decimals: token.decimals) else {
+    guard let normalized = normalizedAmount(rawAmount, decimals: decimals) else {
       errorText = "Amount is below the token's minimum unit"
       return
     }
@@ -325,7 +341,7 @@ final class CollateralWithdrawViewModel: ObservableObject {
         recipientAddress: recipientAddress
       )
 
-      try await action(addresses, normalized.value, token, signature)
+      try await action(addresses, normalized.value, decimals, signature)
     } catch {
       SampleLog.e(tag, "failed: \(error.localizedDescription)")
       errorText = error.localizedDescription
