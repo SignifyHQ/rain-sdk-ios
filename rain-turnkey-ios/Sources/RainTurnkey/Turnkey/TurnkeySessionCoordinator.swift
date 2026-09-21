@@ -66,11 +66,8 @@ internal final class TurnkeySessionCoordinator: @unchecked Sendable {
         guard case .active(let expiresAt) = state else {
           return Just(state).eraseToAnyPublisher()
         }
-        let expiryCheck = Just(())
-          .delay(for: .seconds(max(0, expiresAt - now())), scheduler: DispatchQueue.global())
-          .map { derive(auth, session) }
         return Just(state)
-          .append(expiryCheck)
+          .append(Self.expiryRecheck(expiresAt: expiresAt, now: now))
           .eraseToAnyPublisher()
       }
       .switchToLatest()
@@ -78,6 +75,35 @@ internal final class TurnkeySessionCoordinator: @unchecked Sendable {
       .removeDuplicates()
       .eraseToAnyPublisher()
   }
+
+  /// Emits `.expired` once `now()` has passed `expiresAt`, re-checking until it has. Within one
+  /// `switchToLatest` branch the auth state and session are fixed (a change would start a new
+  /// branch), so expiry is the only thing left to derive. The timer runs on a monotonic Dispatch
+  /// clock while `expiresAt` is wall time, so a single check can fire while `now()` still reads
+  /// a hair short of expiry (clock skew, rounding, NTP adjustment) — a one-shot check would then
+  /// re-derive `.active`, be dropped by `removeDuplicates`, and the session would never report
+  /// expired. Each retry is padded by `expiryRecheckPadding` so the loop converges.
+  private static func expiryRecheck(
+    expiresAt: TimeInterval,
+    now: @escaping @Sendable () -> TimeInterval
+  ) -> AnyPublisher<TurnkeySessionState, Never> {
+    Deferred {
+      Just(())
+        .delay(
+          for: .seconds(max(0, expiresAt - now()) + expiryRecheckPadding),
+          scheduler: DispatchQueue.global()
+        )
+        .flatMap { _ -> AnyPublisher<TurnkeySessionState, Never> in
+          guard expiresAt <= now() else {
+            return expiryRecheck(expiresAt: expiresAt, now: now)
+          }
+          return Just(.expired).eraseToAnyPublisher()
+        }
+    }
+    .eraseToAnyPublisher()
+  }
+
+  private static let expiryRecheckPadding: TimeInterval = 0.05
 
   /// Idempotent call (balances, history, status reads): transient failures are retried.
   internal func executeRead<T>(

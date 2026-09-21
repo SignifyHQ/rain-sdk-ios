@@ -29,12 +29,14 @@ struct TurnkeySessionCoordinatorTests {
     turnkey: MockTurnkey,
     policy: TurnkeySessionPolicy = TurnkeySessionPolicy(),
     onSessionExpired: (@Sendable () -> Void)? = nil,
-    delayRecorder: DelayRecorder = DelayRecorder()
+    delayRecorder: DelayRecorder = DelayRecorder(),
+    now: @escaping @Sendable () -> TimeInterval = { Date().timeIntervalSince1970 }
   ) -> TurnkeySessionCoordinator {
     TurnkeySessionCoordinator(
       turnkey: turnkey,
       policy: policy,
       onSessionExpired: onSessionExpired,
+      now: now,
       sleep: { delayRecorder.record($0) }
     )
   }
@@ -462,6 +464,27 @@ struct TurnkeySessionCoordinatorTests {
       try await Task.sleep(nanoseconds: 10_000_000)
     }
     #expect(states.value.first.map { if case .active = $0 { true } else { false } } == true)
+    #expect(states.value.last == .expired)
+  }
+
+  /// The expiry re-check runs on a monotonic Dispatch timer against a wall-clock `expiresAt`. If
+  /// the coordinator's clock reads behind the timer when it fires, a single check would re-derive
+  /// `.active` and never run again (the CI flake this pins). The check must reschedule itself.
+  @Test("sessionState still reaches expired when the clock lags the expiry timer")
+  func sessionStateExpiresDespiteLaggingClock() async throws {
+    let turnkey = MockTurnkey(session: MockTurnkey.session(expiringIn: 0.3))
+    // A clock 200 ms behind wall time: the first re-check fires with ~200 ms still "remaining".
+    let coordinator = makeCoordinator(turnkey: turnkey, now: { Date().timeIntervalSince1970 - 0.2 })
+
+    let states = LockedBox<[TurnkeySessionState]>([])
+    let cancellable = coordinator.sessionStates.sink { state in
+      states.mutate { $0.append(state) }
+    }
+    defer { cancellable.cancel() }
+
+    for _ in 0..<400 where states.value.last != .expired {
+      try await Task.sleep(nanoseconds: 10_000_000)
+    }
     #expect(states.value.last == .expired)
   }
 
