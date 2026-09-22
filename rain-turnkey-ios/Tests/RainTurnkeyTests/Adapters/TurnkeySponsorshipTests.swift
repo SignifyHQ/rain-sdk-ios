@@ -141,6 +141,58 @@ struct TurnkeySponsorshipTests {
     #expect(fee == Decimal(string: "0.00042")) // 21_000 * 20 gwei
   }
 
+  // MARK: - Sponsored sends skip the dry run: the revert must still surface as a revert
+
+  @Test("a sponsored withdrawal the contract rejects surfaces as withdrawalRevertedByNetwork, not providerError")
+  func sponsoredWithdrawalRevertIsClassified() async throws {
+    let mockTurnkey = MockTurnkey()
+    let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
+    client.sendTransactionStatusQueue = [.revertedOnChain(message: "InsufficientCollateral()")]
+    let (manager, _, builder) = TestManagers.turnkeyManager(turnkey: mockTurnkey, sponsorGas: true)
+    builder.mockNonce = BigUInt(42)
+
+    await #expect(throws: RainSDKError.withdrawalRevertedByNetwork) {
+      _ = try await manager.withdrawCollateral(
+        chainId: 1,
+        addresses: TestFixtures.defaultWithdrawAddresses,
+        amount: 100.0,
+        decimals: 18,
+        adminSignature: TestFixtures.adminSignature(),
+        nonce: nil
+      )
+    }
+  }
+
+  @Test("a failed status WITHOUT a decoded revert stays a providerError")
+  func nonRevertFailureStaysProviderError() async throws {
+    let mockTurnkey = MockTurnkey()
+    let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
+    client.sendTransactionStatusQueue = [.failed(message: "rejected by policy")]
+    let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey, sponsorGas: true)
+
+    await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
+      _ = try await manager.sendNative(chainId: 1, to: TestFixtures.recipientAddress, amount: 1.0)
+    }
+  }
+
+  @Test("sendFailure classifies EVM and Solana revert details, and nothing else")
+  func sendFailureClassification() {
+    func status(_ fixture: MockTurnkeyClient.StatusFixture) -> TGetSendTransactionStatusResponse {
+      MockTurnkeyClient.statusResponse(fixture)
+    }
+    #expect(TurnkeyWalletProviderAdapter.sendFailure(from: status(.broadcasted(hash: "0xaa")), fallbackMessage: "f") == nil)
+    #expect(TurnkeyWalletProviderAdapter.sendFailure(from: status(.pending()), fallbackMessage: "f") == nil)
+
+    let plain = TurnkeyWalletProviderAdapter.sendFailure(from: status(.failed()), fallbackMessage: "f")
+    #expect(plain?.caseIdentifier == "providerError")
+
+    let evm = TurnkeyWalletProviderAdapter.sendFailure(from: status(.revertedOnChain()), fallbackMessage: "f")
+    #expect(evm?.caseIdentifier == "transactionSimulationFailed")
+
+    let sol = TurnkeyWalletProviderAdapter.sendFailure(from: status(.solanaRevertedOnChain()), fallbackMessage: "f")
+    #expect(sol?.caseIdentifier == "transactionSimulationFailed")
+  }
+
   // MARK: - Send gating
 
   @Test("sends on a chain Turnkey cannot broadcast on fail closed before any Turnkey call",

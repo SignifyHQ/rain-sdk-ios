@@ -1144,21 +1144,12 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
         return nil
       }
 
-      let normalized = status.txStatus.uppercased()
-      if normalized.contains("FAILED") || normalized.contains("REJECTED")
-        || status.txError != nil || status.error?.message != nil
-      {
-        let message = status.txError
-          ?? status.error?.message
-          ?? "Turnkey Solana transaction submission failed"
-        throw RainSDKError.providerError(
-          underlying: NSError(
-            domain: "TurnkeyTransaction",
-            code: -1,
-            userInfo: [NSLocalizedDescriptionKey: message]
-          )
-        )
+      if let failure = Self.sendFailure(
+        from: status, fallbackMessage: "Turnkey Solana transaction submission failed"
+      ) {
+        throw failure
       }
+      let normalized = status.txStatus.uppercased()
 
       if let signature = status.solana?.signature, !signature.isEmpty {
         return signature
@@ -1416,20 +1407,10 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
         return txHash
       }
 
-      let normalizedStatus = status.txStatus.uppercased()
-      if normalizedStatus.contains("FAILED") || normalizedStatus.contains("REJECTED")
-        || status.txError != nil || status.error?.message != nil
-      {
-        let message = status.txError
-          ?? status.error?.message
-          ?? "Turnkey transaction submission failed"
-        throw RainSDKError.providerError(
-          underlying: NSError(
-            domain: "TurnkeyTransaction",
-            code: -1,
-            userInfo: [NSLocalizedDescriptionKey: message]
-          )
-        )
+      if let failure = Self.sendFailure(
+        from: status, fallbackMessage: "Turnkey transaction submission failed"
+      ) {
+        throw failure
       }
 
       if attempt + 1 < Self.AdapterConstants.defaultPollingAttempts {
@@ -1501,6 +1482,42 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
     }
 
     return networkConfig.rpcUrl
+  }
+
+  /// Classifies a terminal Turnkey send status. A status that carries a decoded on-chain revert
+  /// — an EVM `revertChain` (top-level or under `error.eth`) or Solana failure details — is the
+  /// program/contract rejecting the transaction, i.e. exactly what a self-paid send's dry run
+  /// would have caught before signing. Sponsored sends skip that dry run, so this is where the
+  /// revert surfaces; it maps to `transactionSimulationFailed` so core's withdrawal path yields
+  /// `withdrawalRevertedByNetwork` (RAIN_405) for both, instead of a generic `providerError`.
+  /// Any other failure (rejected by Turnkey, unknown) stays `providerError`. `nil` = not failed.
+  static func sendFailure(
+    from status: TGetSendTransactionStatusResponse, fallbackMessage: String
+  ) -> RainSDKError? {
+    let normalized = status.txStatus.uppercased()
+    let failed = normalized.contains("FAILED") || normalized.contains("REJECTED")
+      || status.txError != nil || status.error?.message != nil
+    guard failed else { return nil }
+
+    let message = status.txError ?? status.error?.message ?? fallbackMessage
+    let underlying = NSError(
+      domain: "TurnkeyTransaction", code: -1, userInfo: [NSLocalizedDescriptionKey: message]
+    )
+    if Self.carriesOnChainRevert(status.error) {
+      return .transactionSimulationFailed(underlying: underlying)
+    }
+    return .providerError(underlying: underlying)
+  }
+
+  private static func carriesOnChainRevert(_ error: v1TxError?) -> Bool {
+    guard let error else { return false }
+    if let chain = error.revertChain, !chain.isEmpty { return true }
+    if let chain = error.eth?.revertChain, !chain.isEmpty { return true }
+    if let solana = error.solana {
+      return solana.transactionErrorJson != nil || solana.rpcMessage != nil
+        || solana.logs?.isEmpty == false
+    }
+    return false
   }
 
   private func decimalStringToDecimal(

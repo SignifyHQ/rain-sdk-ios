@@ -158,15 +158,23 @@ Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and Rai
   gas-station nonce, sponsored Solana sends carrying the System Program key).
   Core: `Capability.gasSponsorship`; `RainSDKError.chainNotSupported(chainId:details:)` = RAIN_104 (was 105 until PR F compacted the map);
   `WalletProvider` gains two hooks with default impls — `requireSendSupport(chainId:)` (no-op) and
-  `sponsorsFees(chainId:)` (false). `RainSdkManager` gates `withdrawCollateral`,
-  `prepareWithdrawal` (signing counts as sending) and `approveTokenAllowance` (after config
-  validation, before the wallet) — estimates/reads are NEVER gated. DECISION 2026-09-17
+  `sponsorsFees(chainId:)` (false). `RainSdkManager` gates `withdrawCollateral` and
+  `approveTokenAllowance` (after config validation, before the wallet) — estimates/reads AND
+  `prepareWithdrawal` are NEVER gated (review 2026-09-21: prepare only signs, Turnkey signs on
+  every chain, and the prepared params are the host's self-broadcast path for Avalanche; Android
+  still gates prepare at RainSdkManager.kt:177 — flag for parity). DECISION 2026-09-17
   (diverges from Android, which quotes 0): fee estimates keep returning the REAL on-chain cost
   even when sponsored, so hosts can show the saving — flag to Android for parity. The Solana
   composers take `sponsoredFees` (skip the fee-lamport
   check and dry run — a zero-SOL wallet would false-fail — keep the rent check, and carry the
   System Program via `SolanaTransactionBuilder.extraReadonlyKeys`, which Turnkey's sponsored
-  path can require).
+  path can require). Because sponsored sends skip the dry run, a contract/program rejection
+  surfaces only from Turnkey's send status AFTER signing — the adapter's
+  `TurnkeyWalletProviderAdapter.sendFailure(from:)` (review 2026-09-21) maps a FAILED status
+  carrying a decoded revert (`error.revertChain` / `error.eth.revertChain` / `error.solana`
+  details) to `transactionSimulationFailed`, so `mapWithdrawalError` still yields
+  `withdrawalRevertedByNetwork` (RAIN_405); other failures stay `providerError`. Both poll
+  loops use it. Android's poll loops still throw providerError — flag for parity.
   Turnkey: `TurnkeyBroadcastChains` (vendor's managed-broadcast list — EVM mainnets+testnets per
   docs.turnkey.com broadcasting page; Solana mainnet+devnet ONLY; also owns the get-balances
   chain list) — every send entry (EVM funnel `sendTransaction`, Solana funnel, both transfer
