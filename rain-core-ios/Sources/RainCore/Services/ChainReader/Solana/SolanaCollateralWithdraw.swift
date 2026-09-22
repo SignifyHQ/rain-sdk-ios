@@ -33,7 +33,8 @@ internal struct SolanaCollateralWithdrawComposer: Sendable {
     mintAddress: String,
     recipientAddress: String,
     amountBaseUnits: BigUInt,
-    adminSignature: RainAdminSignature
+    adminSignature: RainAdminSignature,
+    sponsoredFees: Bool = false
   ) async throws -> UnsignedSolanaTransfer {
     let ownerKey = try decodeKey(ownerAddress, label: "owner")
     let collateralKey = try decodeKey(collateralAddress, label: "collateral")
@@ -170,9 +171,19 @@ internal struct SolanaCollateralWithdrawComposer: Sendable {
     let transaction = try SolanaTransactionBuilder.buildTransactionBytes(
       feePayer: ownerAddress,
       recentBlockhash: blockhash,
-      instructions: instructions
+      instructions: instructions,
+      // Sponsored sends can require the System Program among the static keys (see the SPL
+      // composer); the withdraw instructions already reference it, so this is a no-op there.
+      extraReadonlyKeys: sponsoredFees ? [SolanaPrograms.system] : []
     )
-    try await simulate(chainId: chainId, transaction: transaction)
+    // The dry run charges the fee to the owner, so a sponsored withdrawal from a zero-SOL wallet
+    // would false-fail here even though the sponsor pays the real send. Without it a program
+    // rejection is only discovered after signing, from the provider's send status: the adapter
+    // maps a status carrying the decoded revert to `transactionSimulationFailed`, so the host
+    // still sees `withdrawalRevertedByNetwork` — just later.
+    if !sponsoredFees {
+      try await simulate(chainId: chainId, transaction: transaction)
+    }
 
     RainLogger.info(
       "Rain SDK: composed Solana collateral withdrawal of \(amountBaseUnits) base units of "

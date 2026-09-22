@@ -20,6 +20,12 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// RAIN_104: A Rain API method was called before an Api-Key and userId were supplied
   case rainApiNotConfigured
 
+  /// RAIN_105: The active wallet provider cannot broadcast on this chain, so a send (transfer,
+  /// withdrawal, approval) was refused before any signing or network work. Reads — balances,
+  /// history, fee estimates — are not gated. E.g. Turnkey's managed broadcast does not cover
+  /// Avalanche.
+  case chainNotSupported(chainId: Int, details: String)
+
   // MARK: - 2xx: Authentication Errors
 
   /// RAIN_201: The wallet provider session token has expired or is no longer valid
@@ -115,6 +121,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "RAIN_103"
     case .rainApiNotConfigured:
       return "RAIN_104"
+    case .chainNotSupported:
+      return "RAIN_105"
     case .tokenExpired:
       return "RAIN_201"
     case .unauthorized:
@@ -164,6 +172,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "[\(errorCode)] The provided RPC URL could not be parsed. RPC URL: \(rpcUrl)."
     case .rainApiNotConfigured:
       return "[\(errorCode)] Rain API is not configured — call configureRainApi(apiKey:userId:) first."
+    case .chainNotSupported(let chainId, let details):
+      return "[\(errorCode)] Sends not supported on chain \(chainId): \(details)"
     case .tokenExpired:
       return "[\(errorCode)] The wallet provider session token has expired or is no longer valid."
     case .unauthorized:
@@ -219,6 +229,7 @@ extension RainSDKError {
     case .providerNotRegistered: return "providerNotRegistered"
     case .invalidRpcUrl: return "invalidRpcUrl"
     case .rainApiNotConfigured: return "rainApiNotConfigured"
+    case .chainNotSupported: return "chainNotSupported"
     case .tokenExpired: return "tokenExpired"
     case .unauthorized: return "unauthorized"
     case .invalidLoginCode: return "invalidLoginCode"

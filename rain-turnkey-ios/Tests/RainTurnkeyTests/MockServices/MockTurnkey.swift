@@ -13,6 +13,10 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
     var txError: String?
     var errorMessage: String?
     var solanaSignature: String?
+    /// Decoded EVM revert chain on `error.revertChain` (a contract rejecting the transaction).
+    var revertChain: [v1RevertChainEntry]?
+    /// Decoded Solana failure details on `error.solana` (the program rejecting the transaction).
+    var solanaFailure: v1SolanaFailureDetails?
 
     static func broadcasted(hash: String) -> StatusFixture {
       StatusFixture(txHash: hash, txStatus: "TX_STATUS_BROADCASTED")
@@ -24,6 +28,23 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
 
     static func failed(message: String = "broadcast failed") -> StatusFixture {
       StatusFixture(txHash: nil, txStatus: "TX_STATUS_FAILED", txError: message)
+    }
+
+    /// Failed with Turnkey's decoded on-chain revert attached — what a sponsored send (no
+    /// client-side dry run) reports when the contract rejects it.
+    static func revertedOnChain(message: String = "execution reverted") -> StatusFixture {
+      StatusFixture(
+        txHash: nil, txStatus: "TX_STATUS_FAILED", errorMessage: message,
+        revertChain: [v1RevertChainEntry(displayMessage: message, errorType: "native")]
+      )
+    }
+
+    /// Failed with Solana program failure details attached.
+    static func solanaRevertedOnChain(message: String = "custom program error: 0x1") -> StatusFixture {
+      StatusFixture(
+        txHash: nil, txStatus: "TX_STATUS_FAILED", errorMessage: message,
+        solanaFailure: v1SolanaFailureDetails(rpcMessage: message)
+      )
     }
 
     /// Solana submission Included on-chain, carrying the signature in the status response.
@@ -149,9 +170,18 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
       fixture = sendTransactionStatusQueue.removeFirst()
     }
 
-    return MockTurnkey.decode(
+    return Self.statusResponse(fixture)
+  }
+
+  /// The vendor status response a fixture stands for.
+  static func statusResponse(_ fixture: StatusFixture) -> TGetSendTransactionStatusResponse {
+    MockTurnkey.decode(
       SendTransactionStatusResponseFixture(
-        error: fixture.errorMessage.map { v1TxError(message: $0) },
+        error: (fixture.errorMessage != nil || fixture.revertChain != nil || fixture.solanaFailure != nil)
+          ? v1TxError(
+            message: fixture.errorMessage, revertChain: fixture.revertChain, solana: fixture.solanaFailure
+          )
+          : nil,
         eth: fixture.txHash.map { v1EthSendTransactionStatus(txHash: $0) },
         solana: fixture.solanaSignature.map { v1SolanaSendTransactionStatus(signature: $0) },
         txError: fixture.txError,
@@ -173,6 +203,28 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
     return MockTurnkey.decode(
       ActivitiesResponseFixture(activities: mockActivities),
       as: TGetActivitiesResponse.self
+    )
+  }
+
+  // MARK: Nonces (sponsored sends)
+
+  /// The gas-station nonce a sponsored send fetches; `nil` mirrors Turnkey returning none.
+  var mockGasStationNonce: String? = "7"
+  var getNoncesCalls: [TGetNoncesBody] = []
+  var getNoncesError: Error?
+
+  func getNonces(
+    _ input: TGetNoncesBody
+  ) async throws -> TGetNoncesResponse {
+    getNoncesCalls.append(input)
+    if let getNoncesError { throw getNoncesError }
+    struct NoncesFixture: Encodable {
+      let gasStationNonce: String?
+      let nonce: String?
+    }
+    return MockTurnkey.decode(
+      NoncesFixture(gasStationNonce: mockGasStationNonce, nonce: nil),
+      as: TGetNoncesResponse.self
     )
   }
 }

@@ -9,17 +9,6 @@ import Web3
 /// Used when the SDK is initialized with `initializeTurnkey(...)`.
 internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedDataSignerProvider, RainTransactionFeeEstimatingProvider, RainSolanaTransfersProvider, @unchecked Sendable {
   private enum AdapterConstants {
-    /// Chains for which the Turnkey `get-balances` API returns data.
-    /// On any other chain, balance reads fall through to `ChainReader`.
-    /// Source: https://docs.turnkey.com/api-reference/queries/get-balances
-    static let turnkeySupportedChains: Set<Int> = [
-      1,        // Ethereum Mainnet
-      11155111, // Sepolia
-      8453,     // Base Mainnet
-      84532,    // Base Sepolia
-      137,      // Polygon Mainnet
-      80002     // Polygon Amoy
-    ]
     static let defaultNativeDecimals = 18
     static let defaultPollingAttempts = 30
     static let pollingIntervalNanoseconds: UInt64 = 1_000_000_000
@@ -75,6 +64,33 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
   private var cachedSessionOrganizationId: String?
   private let cachedAddressLock = NSLock()
 
+  /// Every send, transfer or raw, follows this flag; there is no per-call override. With it on,
+  /// Turnkey's Gas Station builds and fee-covers the outer transaction (gasless for the user).
+  /// Fee estimates still quote the on-chain cost, so hosts can show the saving. See
+  /// `TurnkeyConfig.sponsorGas`.
+  private let sponsorGas: Bool
+
+  // MARK: - Send gating & sponsorship (WalletProvider hooks)
+
+  /// Turnkey broadcasts on a fixed network set; core calls this before withdrawals and approvals,
+  /// and every send entry here re-checks so no path reaches the vendor on an uncovered chain.
+  public func requireSendSupport(chainId: Int) throws {
+    try TurnkeyBroadcastChains.requireSendSupport(chainId: chainId)
+  }
+
+  /// Sponsorship applies exactly where Turnkey can broadcast; elsewhere the wallet pays.
+  public func sponsorsFees(chainId: Int) -> Bool {
+    sponsorGas && TurnkeyBroadcastChains.supportsSend(chainId: chainId)
+  }
+
+  /// The capabilities a Turnkey provider advertises for a given `sponsorGas` setting. Shared
+  /// with `TurnkeyProvider` so the descriptor's set and the resolved wallet's set cannot drift.
+  static func capabilities(sponsorGas: Bool) -> Set<Capability> {
+    var set: Set<Capability> = [.multiChain, .biometricGate]
+    if sponsorGas { set.insert(.gasSponsorship) }
+    return set
+  }
+
   /// Drops the cached addresses and in-flight resolutions when the Turnkey session's organization
   /// changes (logout, or re-auth as a different user). Callers must hold `cachedAddressLock`.
   private func evictAddressCachesIfSessionChanged() {
@@ -91,6 +107,7 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
     turnkey: TurnkeyContextProtocol,
     networkConfigs: [NetworkConfig],
     walletAddress: String? = nil,
+    sponsorGas: Bool = true,
     jsonRpcClient: JsonRpcClient = JsonRpcClient(),
     chainReader: ChainReader,
     solanaSupport: RainSolanaSupport? = nil,
@@ -102,6 +119,7 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
     self.sessions = sessionCoordinator ?? TurnkeySessionCoordinator(turnkey: turnkey)
     self.networkConfigsByChainId = Dictionary(uniqueKeysWithValues: networkConfigs.map { ($0.chainId, $0) })
     self.walletAddressOverride = walletAddress
+    self.sponsorGas = sponsorGas
     self.jsonRpcClient = jsonRpcClient
     // Required (no EVMChainReader fallback): that type is core-internal, and `TurnkeyProvider`
     // always hands in the shared reader from `ProviderContext`.
@@ -125,7 +143,7 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
   /// True when Turnkey's `get-balances` API covers this chain (EVM allowlist or any Solana
   /// cluster). On any other chain, balance reads fall through to the injected `ChainReader`.
   private func usesTurnkeyForBalances(chainId: Int) -> Bool {
-    AdapterConstants.turnkeySupportedChains.contains(chainId) || RainChain.isSolana(chainId)
+    TurnkeyBroadcastChains.balanceApiChainIds.contains(chainId) || RainChain.isSolana(chainId)
   }
 
   public func address() async throws -> String {
@@ -209,10 +227,14 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
     params: WalletTransactionParams
   ) async throws -> String {
     try requireEVM(chainId: chainId, operation: "sendTransaction")
+    // Every EVM broadcast funnels through here — withdrawals, approvals, transfers and
+    // host-composed calldata — so the chain gate on this funnel covers them all.
+    try requireSendSupport(chainId: chainId)
     // The body is rebuilt on a refresh-and-retry so the nonce and gas quotes stay fresh.
     let statusId = try await sessions.executeWrite { session, client in
       let sendInput = try await self.buildTurnkeySendTransactionBody(
         session: session,
+        client: client,
         chainId: chainId,
         params: params
       )
@@ -997,6 +1019,8 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
     to toAddress: String,
     amount: Decimal
   ) async throws -> String {
+    // Gated before composing so no RPC work runs for a cluster Turnkey cannot broadcast on.
+    try requireSendSupport(chainId: chainId)
     let from = try await getAddress(chainId: chainId)
     let unsigned = try await solanaTransferComposer.composeNative(
       chainId: chainId, from: from, to: toAddress, amount: amount
@@ -1024,6 +1048,9 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
     from: String,
     unsigned: UnsignedSolanaTransfer
   ) async throws -> String {
+    // Every Solana broadcast funnels through here; gate it like the EVM funnel so no caller can
+    // reach solSendTransaction on an unsupported cluster (Turnkey covers mainnet + devnet only).
+    try requireSendSupport(chainId: chainId)
     // Baseline for the signature recovery below: the wallet's newest signature before this send.
     let priorSignature = try? await solanaRpcClient.getLatestSignature(chainId: chainId, address: from)
 
@@ -1034,7 +1061,10 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
           caip2: self.caip2For(chainId: chainId),
           recentBlockhash: unsigned.recentBlockhash,
           signWith: from,
-          sponsor: false,
+          // Sponsored: Turnkey covers the network fee (rent for a first-time recipient token
+          // account is a separate Turnkey toggle and stays the sender's). Signature recovery
+          // below keys on this wallet's own signature, so it holds whichever key pays.
+          sponsor: self.sponsorsFees(chainId: chainId),
           unsignedTransaction: unsigned.transactionHex
         )
       ).sendTransactionStatusId
@@ -1076,13 +1106,17 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
     amount: Decimal,
     decimals: Int
   ) async throws -> String {
+    try requireSendSupport(chainId: chainId)
     let from = try await getAddress(chainId: chainId)
     let unsigned = try await solanaTransferComposer.composeSPLToken(
       chainId: chainId,
       from: from,
       mintAddress: mintAddress,
       to: toAddress,
-      amount: amount
+      amount: amount,
+      // A sponsored send skips the self-paid fee check and dry run, and carries the System
+      // Program key Turnkey's sponsored path can require.
+      sponsoredFees: sponsorsFees(chainId: chainId)
     )
     return try await submitSolanaTransaction(chainId: chainId, from: from, unsigned: unsigned)
   }
@@ -1110,21 +1144,12 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
         return nil
       }
 
-      let normalized = status.txStatus.uppercased()
-      if normalized.contains("FAILED") || normalized.contains("REJECTED")
-        || status.txError != nil || status.error?.message != nil
-      {
-        let message = status.txError
-          ?? status.error?.message
-          ?? "Turnkey Solana transaction submission failed"
-        throw RainSDKError.providerError(
-          underlying: NSError(
-            domain: "TurnkeyTransaction",
-            code: -1,
-            userInfo: [NSLocalizedDescriptionKey: message]
-          )
-        )
+      if let failure = Self.sendFailure(
+        from: status, fallbackMessage: "Turnkey Solana transaction submission failed"
+      ) {
+        throw failure
       }
+      let normalized = status.txStatus.uppercased()
 
       if let signature = status.solana?.signature, !signature.isEmpty {
         return signature
@@ -1168,6 +1193,9 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
     params: WalletTransactionParams
   ) async throws -> Decimal {
     try requireEVM(chainId: chainId, operation: "estimateTransactionFee")
+    // Deliberately NOT short-circuited to zero when sponsored: the estimate is what the send
+    // WOULD cost on chain, so a host can show the user what sponsorship saves them. The
+    // sponsored send itself never charges the wallet.
     let estimateHex = try await rpcCallForHex(
       chainId: chainId,
       method: "eth_estimateGas",
@@ -1217,9 +1245,42 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
 
   private func buildTurnkeySendTransactionBody(
     session: Session,
+    client: any TurnkeyClientProtocol,
     chainId: Int,
     params: WalletTransactionParams
   ) async throws -> TEthSendTransactionBody {
+    if sponsorsFees(chainId: chainId) {
+      // Sponsored sends are minimal payloads. Turnkey's Gas Station builds and fee-covers the
+      // outer EIP-7702 transaction, so this wallet's account nonce and self-estimated fees are
+      // the wrong values to pin (the outer tx is not this account's), and estimating gas as if
+      // the sender paid would also reject the zero-balance wallets sponsorship exists for.
+      // Omitted fields are auto-filled by Turnkey.
+      //
+      // Replay protection is the gas-station nonce, and Turnkey's one-transaction-per-request
+      // guarantee holds only when the request carries it. Fetched here with one Turnkey call
+      // (not a chain RPC, so zero-balance wallets are unaffected) and refetched on every
+      // refresh-and-retry rebuild. A nil from Turnkey is omitted, falling back to their
+      // server-side fetch.
+      let gasStationNonce = try await client.getNonces(
+        TGetNoncesBody(
+          organizationId: session.organizationId,
+          address: params.from,
+          caip2: ChainIDFormat.EIP155.format(chainId: chainId),
+          gasStationNonce: true
+        )
+      ).gasStationNonce
+      return TEthSendTransactionBody(
+        organizationId: session.organizationId,
+        caip2: ChainIDFormat.EIP155.format(chainId: chainId),
+        data: normalizedData(params.data),
+        from: params.from,
+        gasStationNonce: gasStationNonce,
+        sponsor: true,
+        to: params.to,
+        value: decimalString(fromHex: params.value)
+      )
+    }
+
     let nonceHex = try await rpcCallForHex(
       chainId: chainId,
       method: "eth_getTransactionCount",
@@ -1346,20 +1407,10 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
         return txHash
       }
 
-      let normalizedStatus = status.txStatus.uppercased()
-      if normalizedStatus.contains("FAILED") || normalizedStatus.contains("REJECTED")
-        || status.txError != nil || status.error?.message != nil
-      {
-        let message = status.txError
-          ?? status.error?.message
-          ?? "Turnkey transaction submission failed"
-        throw RainSDKError.providerError(
-          underlying: NSError(
-            domain: "TurnkeyTransaction",
-            code: -1,
-            userInfo: [NSLocalizedDescriptionKey: message]
-          )
-        )
+      if let failure = Self.sendFailure(
+        from: status, fallbackMessage: "Turnkey transaction submission failed"
+      ) {
+        throw failure
       }
 
       if attempt + 1 < Self.AdapterConstants.defaultPollingAttempts {
@@ -1431,6 +1482,42 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
     }
 
     return networkConfig.rpcUrl
+  }
+
+  /// Classifies a terminal Turnkey send status. A status that carries a decoded on-chain revert
+  /// — an EVM `revertChain` (top-level or under `error.eth`) or Solana failure details — is the
+  /// program/contract rejecting the transaction, i.e. exactly what a self-paid send's dry run
+  /// would have caught before signing. Sponsored sends skip that dry run, so this is where the
+  /// revert surfaces; it maps to `transactionSimulationFailed` so core's withdrawal path yields
+  /// `withdrawalRevertedByNetwork` (RAIN_405) for both, instead of a generic `providerError`.
+  /// Any other failure (rejected by Turnkey, unknown) stays `providerError`. `nil` = not failed.
+  static func sendFailure(
+    from status: TGetSendTransactionStatusResponse, fallbackMessage: String
+  ) -> RainSDKError? {
+    let normalized = status.txStatus.uppercased()
+    let failed = normalized.contains("FAILED") || normalized.contains("REJECTED")
+      || status.txError != nil || status.error?.message != nil
+    guard failed else { return nil }
+
+    let message = status.txError ?? status.error?.message ?? fallbackMessage
+    let underlying = NSError(
+      domain: "TurnkeyTransaction", code: -1, userInfo: [NSLocalizedDescriptionKey: message]
+    )
+    if Self.carriesOnChainRevert(status.error) {
+      return .transactionSimulationFailed(underlying: underlying)
+    }
+    return .providerError(underlying: underlying)
+  }
+
+  private static func carriesOnChainRevert(_ error: v1TxError?) -> Bool {
+    guard let error else { return false }
+    if let chain = error.revertChain, !chain.isEmpty { return true }
+    if let chain = error.eth?.revertChain, !chain.isEmpty { return true }
+    if let solana = error.solana {
+      return solana.transactionErrorJson != nil || solana.rpcMessage != nil
+        || solana.logs?.isEmpty == false
+    }
+    return false
   }
 
   private func decimalStringToDecimal(

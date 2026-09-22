@@ -28,6 +28,12 @@ extension RainSdkManager {
     amount: Decimal?
   ) async throws -> RainTokenApprovalResult {
     do {
+      // Configuration errors first (the documented contract), then the provider's chain gate —
+      // both before the wallet is touched, so an approval on a chain the provider cannot
+      // broadcast on fails closed here rather than at the signing prompt. The fee estimate is
+      // deliberately not gated: estimates are reads.
+      try validateApprovalRequest(chainId: chainId, contractAddress: contractAddress, spender: spender)
+      try walletProvider.requireSendSupport(chainId: chainId)
       let (_, params) = try await buildApproval(
         chainId: chainId,
         contractAddress: contractAddress,

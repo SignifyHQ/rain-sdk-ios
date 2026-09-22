@@ -77,6 +77,9 @@ enum TestManagers {
     builder: MockTransactionBuilderService? = nil,
     configs: [NetworkConfig] = TestFixtures.configs(),
     walletAddress: String? = nil,
+    // Tests pin the self-paid send body and RPC-based estimates unless they opt into
+    // sponsorship explicitly; the SDK's own default is true.
+    sponsorGas: Bool = false,
     registeredTokens: [TokenInfo] = [],
     authPullChainIds: Set<Int> = RainAuthPullChains.sandbox,
     authPullTokenAddresses: [Int: String]? = nil,
@@ -95,6 +98,7 @@ enum TestManagers {
       turnkey: resolvedTurnkey,
       networkConfigs: configs,
       walletAddress: walletAddress,
+      sponsorGas: sponsorGas,
       chainReader: reader,
       tokenStore: tokenStore,
       history: history
@@ -105,7 +109,7 @@ enum TestManagers {
       transactionBuilder: resolvedBuilder,
       tokenStore: tokenStore,
       providerId: .turnkey,
-      capabilities: [.multiChain, .biometricGate],
+      capabilities: TurnkeyWalletProviderAdapter.capabilities(sponsorGas: sponsorGas),
       authPullChainIds: authPullChainIds,
       authPullOperator: TestFixtures.authPullOperator,
       authPullTokenAddresses: authPullTokenAddresses

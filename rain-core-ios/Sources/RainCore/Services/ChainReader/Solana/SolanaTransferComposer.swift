@@ -79,12 +79,19 @@ public struct UnsignedSolanaTransfer: Sendable {
   /// that owns it both receives the transfer and seeds the token-account derivation. The transfer
   /// is simulated against the cluster while still unsigned, so a failure surfaces as a typed error
   /// rather than as a broadcast that quietly fails on chain.
+  ///
+  /// `sponsoredFees` opts out of the two self-paid preflights — the fee-lamport check and the
+  /// dry run — for a provider whose sends are fee-sponsored: both would false-fail exactly the
+  /// zero-SOL wallets sponsorship exists for. The rent check stays, because rent sponsorship is a
+  /// separate toggle. A sponsored send's failures then surface through the provider's send
+  /// status instead of as a typed preflight error.
   @_spi(RainAdapter) public func composeSPLToken(
     chainId: Int,
     from fromAddress: String,
     mintAddress: String,
     to toAddress: String,
-    amount: Decimal
+    amount: Decimal,
+    sponsoredFees: Bool = false
   ) async throws -> UnsignedSolanaTransfer {
     try Self.validateAddress(fromAddress, label: "sender")
     try Self.validateAddress(toAddress, label: "recipient")
@@ -141,7 +148,10 @@ public struct UnsignedSolanaTransfer: Sendable {
 
     let createDestination = !(try await rpcClient.accountExists(chainId: chainId, address: destination))
     try await requireLamportsForFees(
-      chainId: chainId, address: fromAddress, includeAccountRent: createDestination
+      chainId: chainId,
+      address: fromAddress,
+      includeAccountRent: createDestination,
+      feesSponsored: sponsoredFees
     )
 
     let blockhash = try await rpcClient.getLatestBlockhash(chainId: chainId)
@@ -155,9 +165,17 @@ public struct UnsignedSolanaTransfer: Sendable {
       amount: try Self.u64BaseUnits(baseUnits, amount: amount),
       decimals: UInt8(mint.decimals),
       recentBlockhash: blockhash,
-      createDestinationAccount: createDestination
+      createDestinationAccount: createDestination,
+      // Sponsored Solana sends can require the System Program among the static account keys. A
+      // transfer into an existing token account never references it (only the token program
+      // does), so it is carried explicitly; the self-paid message is unchanged.
+      extraReadonlyKeys: sponsoredFees ? [SolanaPrograms.system] : []
     )
-    try await simulate(chainId: chainId, transaction: transaction)
+    // The dry run charges the fee to the sender, so for a sponsored transfer it would false-fail
+    // exactly the zero-SOL wallets sponsorship exists for.
+    if !sponsoredFees {
+      try await simulate(chainId: chainId, transaction: transaction)
+    }
 
     RainLogger.debug(
       """
@@ -212,13 +230,18 @@ public struct UnsignedSolanaTransfer: Sendable {
 
   /// Fails early when the wallet cannot cover the network fee (plus token-account rent when the
   /// transfer has to create one). Simulation would catch this too, but only as an opaque program
-  /// error — SOL for fees is a distinct problem from the token balance itself.
+  /// error — SOL for fees is a distinct problem from the token balance itself. Fee sponsorship
+  /// covers the network fee only: rent for a token account the transaction creates is still the
+  /// sender's, so with `feesSponsored` the fee drops out of the requirement and rent stays.
   private func requireLamportsForFees(
     chainId: Int,
     address: String,
-    includeAccountRent: Bool
+    includeAccountRent: Bool,
+    feesSponsored: Bool
   ) async throws {
-    let required = Self.feeLamports + (includeAccountRent ? Self.tokenAccountRentLamports : 0)
+    let required = (feesSponsored ? 0 : Self.feeLamports)
+      + (includeAccountRent ? Self.tokenAccountRentLamports : 0)
+    if required == 0 { return }
     let lamports = try await rpcClient.getBalanceLamports(chainId: chainId, address: address)
     guard lamports >= BigUInt(required.description) ?? 0 else {
       RainLogger.warning(

@@ -652,6 +652,10 @@ private final class FlakyTurnkeyClient: TurnkeyClientProtocol, @unchecked Sendab
   ) async throws -> TGetSendTransactionStatusResponse {
     try await inner.getSendTransactionStatus(input)
   }
+
+  func getNonces(_ input: TGetNoncesBody) async throws -> TGetNoncesResponse {
+    try await inner.getNonces(input)
+  }
 }
 
 /// Minimal lock-guarded box for collecting publisher emissions across threads in tests.

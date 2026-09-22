@@ -83,6 +83,39 @@ After the Turnkey-backed `client` is resolved, every wallet operation routes thr
 
 Chains covered by Turnkey's `get-balances` API (Ethereum, Sepolia, Base, Base Sepolia, Polygon, Polygon Amoy, plus Solana clusters) read balances through Turnkey; any other configured chain falls through to Rain's chain reader over your RPC endpoints.
 
+## Which chains can send
+
+Turnkey's `ethSendTransaction` / `solSendTransaction` are the SDK's only send path on this
+provider, and they exist solely on Turnkey's managed-broadcast networks: Ethereum, Base, Polygon,
+Arbitrum, Optimism, BNB Chain, Monad, Tempo, Robinhood Chain (mainnets and their testnets), and
+Solana mainnet + devnet. The full list lives in `TurnkeyBroadcastChains` and follows
+[Turnkey's broadcasting docs](https://docs.turnkey.com/features/transaction-management/broadcasting).
+A send on any other chain — Avalanche, Celo, ZKsync, Solana testnet — fails closed with
+`RainSDKError.chainNotSupported` (`RAIN_105`) **before** any contract read or signing prompt:
+`sendNative`, `sendToken`, `withdrawCollateral` and `approveTokenAllowance` all check the gate
+first. Reads and signing are not gated: balances, history, fee estimates and `prepareWithdrawal`
+work on every chain with an RPC endpoint registered — Turnkey signs anywhere, it just cannot
+broadcast there. A host that needs Avalanche today can therefore `prepareWithdrawal` and submit
+the returned transaction parameters through its own RPC.
+
+## Gas sponsorship
+
+`TurnkeyConfig(sponsorGas:)` defaults to **true**: every send on a broadcast chain is
+fee-sponsored by Turnkey's Gas Station — transfers, collateral withdrawals, Auth Pull approvals
+and raw `sendTransaction` calls alike. The user needs no native gas token; the cost passes
+through to the partner. `estimateGas` / `estimateWithdrawalFee` still quote the on-chain cost
+the send would have — deliberately, so a host can show the user what sponsorship saves them.
+Sponsored sends are minimal payloads —
+Turnkey builds the outer transaction, so the SDK pins no nonce or gas quote; replay protection
+is Turnkey's gas-station nonce, fetched per send. Solana sends are sponsored too, network fee
+only: rent for a first-time recipient's token account is a separate Turnkey toggle and stays the
+sender's, so the SDK's rent preflight still runs while the fee check and dry run are skipped.
+
+Sponsorship must be enabled on the Turnkey organization (Enterprise feature, dashboard); on an
+organization where it is not, Turnkey rejects sponsored sends — pass `sponsorGas: false` there,
+and the wallet pays its own fees with the SDK's own nonce/gas quoting. With `sponsorGas` on the
+provider advertises `Capability.gasSponsorship`.
+
 ## Solana notes
 
 The Turnkey adapter is the SDK's multi-chain provider (it advertises `.multiChain`): Solana sentinel chain ids (`RainChain.solanaMainnet` 900 / `solanaDevnet` 901 / `solanaTestnet` 902) route `getWalletAddress(chainId:)`, balances, `sendNative`, `sendToken`, `withdrawCollateral`, and `getTransactions` to the Turnkey Solana account.

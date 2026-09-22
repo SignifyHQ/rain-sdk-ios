@@ -149,6 +149,52 @@ struct SolanaTransactionBuilderSPLTests {
       """)
   }
 
+  @Test("a sponsored transfer carries the System Program as an extra read-only key, placed last")
+  func sponsoredTransferCarriesSystemProgram() throws {
+    let plain = try SolanaTransactionBuilder.buildSPLTransferBytes(
+      owner: Self.owner, source: Self.source, destination: Self.destination,
+      destinationOwner: Self.recipient, mint: Self.mint, tokenProgramId: SolanaPrograms.splToken,
+      amount: 1_500_000, decimals: 6, recentBlockhash: Self.blockhash,
+      createDestinationAccount: false
+    )
+    let sponsored = try SolanaTransactionBuilder.buildSPLTransferBytes(
+      owner: Self.owner, source: Self.source, destination: Self.destination,
+      destinationOwner: Self.recipient, mint: Self.mint, tokenProgramId: SolanaPrograms.splToken,
+      amount: 1_500_000, decimals: 6, recentBlockhash: Self.blockhash,
+      createDestinationAccount: false,
+      extraReadonlyKeys: [SolanaPrograms.system]
+    )
+
+    // Header (after the 1 + 64 byte signature section): required signers, readonly signed,
+    // readonly unsigned, then the compact-u16 key count.
+    let header = 65
+    #expect(plain[header + 2] == 2 && plain[header + 3] == 5)
+    #expect(sponsored[header + 2] == 3 && sponsored[header + 3] == 6)
+    // The extra key is the last static key, and the message is exactly one key longer.
+    let sponsoredLastKey = Array(sponsored[(header + 4 + 5 * 32)..<(header + 4 + 6 * 32)])
+    #expect(sponsoredLastKey == [UInt8](repeating: 0, count: 32))
+    #expect(sponsored.count == plain.count + 32)
+  }
+
+  @Test("an extra key already in the table is not repeated")
+  func extraKeyDeduplicated() throws {
+    // The create-account instruction already references the System Program.
+    let plain = try SolanaTransactionBuilder.buildSPLTransferBytes(
+      owner: Self.owner, source: Self.source, destination: Self.destination,
+      destinationOwner: Self.recipient, mint: Self.mint, tokenProgramId: SolanaPrograms.splToken,
+      amount: 1_500_000, decimals: 6, recentBlockhash: Self.blockhash,
+      createDestinationAccount: true
+    )
+    let sponsored = try SolanaTransactionBuilder.buildSPLTransferBytes(
+      owner: Self.owner, source: Self.source, destination: Self.destination,
+      destinationOwner: Self.recipient, mint: Self.mint, tokenProgramId: SolanaPrograms.splToken,
+      amount: 1_500_000, decimals: 6, recentBlockhash: Self.blockhash,
+      createDestinationAccount: true,
+      extraReadonlyKeys: [SolanaPrograms.system]
+    )
+    #expect(sponsored == plain)
+  }
+
   @Test("TransferChecked data is the tag, u64 amount and decimals")
   func instructionData() {
     #expect(
