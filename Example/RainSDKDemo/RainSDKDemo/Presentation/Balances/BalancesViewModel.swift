@@ -7,7 +7,9 @@ struct CollateralTokenBalance: Identifiable {
   let symbol: String
   let name: String
   let address: String
-  let decimals: Int
+  /// From `RainSdk.tokenMetadata`; `nil` when unresolved. The API balance is already in whole
+  /// tokens, so display needs no decimals — never guess them for anything that scales an amount.
+  let decimals: Int?
   let balance: Decimal
   let exchangeRate: Double
 
@@ -135,12 +137,7 @@ final class BalancesViewModel: ObservableObject {
   }
 
   func fetchCollateralBalances(chain: WalletChain) async {
-    guard let rain = try? session.requireRain() else {
-      SampleLog.w("Balances.collateral", "SDK not initialized")
-      collateralError = "SDK not initialized"
-      return
-    }
-    guard rain.isRainApiConfigured else {
+    guard session.isRainApiConfigured else {
       SampleLog.w("Balances.collateral", "Rain API not configured")
       collateralError = "Rain Api-Key and User ID required"
       return
@@ -151,11 +148,8 @@ final class BalancesViewModel: ObservableObject {
     collateralError = nil
 
     do {
-      // Rain provisions one collateral contract per chain family — pick the one matching the
-      // active chain (Solana cluster exact, any EVM otherwise).
-      let contract = try await rain.fetchCollateralContracts()
-        .first { chain.ownsCollateralContract(chainId: $0.chainId) }
-      guard let contract else {
+      // The collateral contract comes from the Rain API — the host's call, not the SDK's.
+      guard let contract = try await session.fetchCollateralContract(for: chain) else {
         SampleLog.w("Balances.collateral", "no collateral contract for \(chain.displayName)")
         collateralError = "No collateral contract on \(chain.displayName)"
         isCollateralLoading = false
@@ -174,7 +168,7 @@ final class BalancesViewModel: ObservableObject {
           symbol: token.symbol ?? token.name ?? "Unknown",
           name: token.name ?? "",
           address: token.address,
-          decimals: token.decimals ?? 18,
+          decimals: token.decimals,
           balance: token.balanceAmount ?? 0,
           exchangeRate: token.exchangeRate
         )

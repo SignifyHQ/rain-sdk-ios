@@ -44,6 +44,47 @@ struct TokenMetadataStoreTests {
     #expect(reader.nameCalls.count == 1)
   }
 
+  @Test("resolvedTokenInfo is strict: nil when decimals fail, the chain answer otherwise, then cached")
+  func testResolvedTokenInfoIsStrict() async throws {
+    let reader = MockChainReader()
+    reader.stubbedDecimals = 6
+    reader.stubbedSymbol = "EURC"
+    reader.stubbedMetadataError = URLError(.cannotConnectToHost)
+    let store = TokenMetadataStore(chainReader: reader)
+
+    // No guessed 18: the caller must not scale a money amount on a failed read.
+    #expect(await store.resolvedTokenInfo(chainId: 1, address: Self.unknownToken) == nil)
+
+    reader.stubbedMetadataError = nil
+    let resolved = await store.resolvedTokenInfo(chainId: 1, address: Self.unknownToken)
+    #expect(resolved?.decimals == 6)
+    #expect(resolved?.symbol == "EURC")
+    #expect(reader.decimalsCalls.count == 2)
+
+    _ = await store.resolvedTokenInfo(chainId: 1, address: Self.unknownToken)
+    #expect(reader.decimalsCalls.count == 2) // cached
+
+    // Registry and host-registered tokens answer without RPC.
+    let usdc = await store.resolvedTokenInfo(chainId: 1, address: TestFixtures.usdcAddress)
+    #expect(usdc?.decimals == 6)
+    #expect(reader.decimalsCalls.count == 2)
+  }
+
+  @Test("resolvedTokenInfo on a Solana chain is registry-only: no EVM read, nil when unknown")
+  func testResolvedTokenInfoSolanaIsRegistryOnly() async throws {
+    let reader = MockChainReader()
+    let store = TokenMetadataStore(chainReader: reader)
+    let mint = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+
+    #expect(await store.resolvedTokenInfo(chainId: RainChain.solanaDevnet, address: mint) == nil)
+    #expect(reader.decimalsCalls.isEmpty)
+
+    await store.register([TokenInfo(chainId: RainChain.solanaDevnet, address: mint, symbol: "USDC", decimals: 6, name: "USD Coin")])
+    let registered = await store.resolvedTokenInfo(chainId: RainChain.solanaDevnet, address: mint)
+    #expect(registered?.symbol == "USDC")
+    #expect(reader.decimalsCalls.isEmpty)
+  }
+
   @Test("a fallback decimals is not cached so a later lookup re-reads the chain")
   func testFallbackDecimalsIsNotCached() async throws {
     // A transient RPC failure must not pin the 18-decimals guess for the process lifetime:

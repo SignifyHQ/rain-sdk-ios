@@ -162,19 +162,16 @@ struct SDKInitializationTests {
 
   // MARK: - reset()
 
-  @Test("reset evicts resolved clients and clears Rain API credentials; the SDK stays usable")
+  @Test("reset evicts resolved clients; the SDK stays usable")
   func testReset() async throws {
     let sdk = try RainSdk.builder()
       .rpcEndpoints([NetworkConfig.testConfig(chainId: 1)])
       .register(StubProvider())
-      .rainApiCredentials(apiKey: "key", userId: "user")
       .build()
 
     let first = try await sdk.provider(.turnkey)
-    #expect(sdk.isRainApiConfigured)
 
     sdk.reset()
-    #expect(!sdk.isRainApiConfigured)
 
     // The instance stays usable after reset: the next resolution re-runs create(context:)
     // and yields a fresh client.

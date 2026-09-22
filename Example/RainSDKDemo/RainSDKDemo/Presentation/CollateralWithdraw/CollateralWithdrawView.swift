@@ -81,12 +81,21 @@ struct CollateralWithdrawView: View {
               Text("Balance: \(token.balance.formatted(places: 2))")
                 .font(.caption)
                 .foregroundColor(.secondary)
+              if !token.isWithdrawable {
+                // The SDK could not resolve this token's decimals (`tokenMetadata` returned nil).
+                // Guessing would scale the amount by orders of magnitude, so the token stays
+                // visible but cannot be withdrawn — the behaviour a host should copy.
+                Text("⚠️ Decimals unknown — withdrawal disabled")
+                  .font(.caption)
+                  .foregroundColor(.orange)
+              }
             }
             Spacer()
             if index == viewModel.selectedTokenIndex {
               Text("✅")
             }
           }
+          .opacity(token.isWithdrawable ? 1 : 0.55)
           .padding(12)
           .frame(maxWidth: .infinity, alignment: .leading)
           .background(index == viewModel.selectedTokenIndex
@@ -102,6 +111,7 @@ struct CollateralWithdrawView: View {
           )
         }
         .buttonStyle(.plain)
+        .disabled(!token.isWithdrawable)
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)

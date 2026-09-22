@@ -25,10 +25,10 @@ transaction history.
 | Screen | What it exercises |
 |---|---|
 | **Home** | Provider choice (Portal / Turnkey / Privy), Rain API credentials, auth, `RainSdk` build, active-chain dropdown, feature grid |
-| **Wallet & QR** 💳 | `getWalletAddress(chainId:)` and the collateral deposit address from `fetchCollateralContracts()`, each with a QR code from `generateAddressQRCode(address:)` |
+| **Wallet & QR** 💳 | `getWalletAddress(chainId:)` and the collateral deposit address from the demo's `RainApiClient` (Rain API — a host call, not SDK), each with a QR code from `generateAddressQRCode(address:)` |
 | **Balances** 💰 | Collateral balances (Rain API) and the wallet's own native + auto-discovered token balances (`getBalance`, `getTokenBalances`) |
 | **Send Tokens** 📤 | `sendNative` and `sendToken` (ERC-20 on EVM, SPL on Solana) |
-| **Withdraw** 🏦 | `fetchAdminSignature` + `withdrawCollateral` (build, sign, submit), incl. Withdraw Maximum |
+| **Withdraw** 🏦 | admin signature from the demo's `RainApiClient`, then `withdrawCollateral` (build, sign, submit), incl. Withdraw Maximum |
 | **Auth Pull** 🔐 | `getTokenAllowance`, `approveTokenAllowance` (unlimited / capped / revoke), `confirmTokenAllowance`, and `estimateApprovalFee` against the trusted operator and token the SDK was built with (see `SampleEnvironment.authPullConfig`) |
 | **History** 📜 | `getTransactions(chainId:limit:offset:order:)`, latest 20 newest-first, with SEND / RECEIVE / SELF labels |
 

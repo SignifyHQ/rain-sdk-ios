@@ -36,11 +36,8 @@ final class WalletInfoViewModel: ObservableObject {
       walletAddress = address
       walletQR = try await qrImage(client: client, address: address)
 
-      // Rain provisions one collateral contract per chain family (e.g. Base Sepolia for EVM,
-      // chain id 901 for Solana devnet) — pick the one for the active chain.
-      let contract = try await session.requireRain().fetchCollateralContracts()
-        .first { chain.ownsCollateralContract(chainId: $0.chainId) }
-      guard let contract else {
+      // The collateral contract comes from the Rain API — the host's call, not the SDK's.
+      guard let contract = try await session.fetchCollateralContract(for: chain) else {
         SampleLog.w("WalletInfo", "no collateral contract for \(chain.displayName)")
         errorText = "No collateral contract on \(chain.displayName)"
         isLoading = false

@@ -1,8 +1,8 @@
 import Foundation
 import Web3
 
-/// The four addresses a collateral withdrawal needs. Field names follow
-/// ``RainCollateralContract``, which is where a host gets them.
+/// The four addresses a collateral withdrawal needs. Field names follow the Rain API's collateral
+/// contract object (`GET /v1/issuing/users/{userId}/contracts`), which is where a host gets them.
 public struct RainWithdrawAddresses: Sendable, Hashable {
   /// The collateral proxy contract holding the asset.
   public let proxyAddress: String

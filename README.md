@@ -116,7 +116,7 @@ session surface) is unchanged.
 | `manager.portal` accessor | `PortalProvider(_, onPortalCreated:)` hook |
 | `manager.turnkey` accessor | none — the host already owns its `TurnkeyContext` |
 | `setWalletProvider` | none: a resolved `RainClient` is immutable; register multiple providers and resolve each instead |
-| `reset()` | `RainSdk.reset()`, which tears down resolved clients (they re-resolve on next access) and clears Rain API credentials |
+| `reset()` | `RainSdk.reset()`, which tears down resolved clients (they re-resolve on next access) |
 
 Business methods (`sendToken`, `withdrawCollateral`, balances, …) kept their names on
 `RainClient`; renamed/retyped 1.x variants remain as deprecated shims (see `Deprecated.swift`
@@ -260,39 +260,35 @@ let erc20 = try await client.sendToken(
 )
 ```
 
-### 8. Rain API: collateral contracts & admin signature
+### 8. Rain API: collateral contracts & admin signature (host responsibility)
 
-The SDK talks to the Rain issuing API directly — supply your program **Api-Key** and Rain
-**userId**; every request authenticates directly with the Api-Key header. Credentials
-are never persisted by the SDK. In production, prefer minting server-to-server and keeping the
-Api-Key off the device.
+The SDK does **not** call the Rain issuing API. The two things a withdrawal needs from Rain — the
+user's collateral contract (addresses) and Rain's admin withdrawal signature — come from your own
+integration, ideally server-to-server so the program **Api-Key** never ships in the app:
+
+- `GET /v1/issuing/users/{userId}/contracts` → `proxyAddress`, `controllerAddress`,
+  `adminAddresses`, `tokens[]` → build a `RainWithdrawAddresses`.
+- `GET /v1/issuing/users/{userId}/signatures/withdrawals?chainId=&token=&amount=&adminAddress=&recipientAddress=&isAmountNative=`
+  → `signature.salt` / `signature.data` / `expiresAt` → build a `RainAdminSignature`. While Rain
+  prepares the signature the response carries `status != "ready"` and a `retryAfter`; poll.
+
+Token name/symbol/decimals are not in the contracts response; resolve them from the address with
+`rain.tokenMetadata(chainId:address:)` (registry → registered tokens → on-chain reads; `nil` when
+decimals cannot be established, never a guess).
 
 ```swift
-let rain = try RainSdk.builder()
-    .rpcEndpoints([84532: "https://sepolia.base.org"])
-    .rainApiEnvironment(.dev) // default; .production / .custom(URL) available
-    .rainApiCredentials(apiKey: "…", userId: "…") // or configureRainApi(...) at runtime
-    .build()
-
-// Or set / replace credentials later (e.g. entered in your UI):
-rain.configureRainApi(apiKey: "…", userId: "…")
-
-// GET /v1/issuing/users/{userId}/contracts — token name/symbol/decimals are enriched from
-// the SDK token store or an on-chain read (best-effort; nil when unresolvable)
-let contract = try await rain.fetchCollateralContract()   // first, or RainSDKError.noCollateralContracts
-let contracts = try await rain.fetchCollateralContracts() // full list
-
-// GET /v1/issuing/users/{userId}/signatures/withdrawals
-// Throws RainSDKError.signatureNotReady(status:retryAfter:) while Rain prepares the signature.
-let adminSignature = try await rain.fetchAdminSignature(
-    chainId: contract.chainId,
+let addresses = RainWithdrawAddresses(
+    proxyAddress: contract.proxyAddress,
+    controllerAddress: contract.controllerAddress,
     tokenAddress: contract.tokens[0].address,
-    amountBaseUnits: BigUInt(100_000_000), // base units
-    adminAddress: contract.adminAddresses[0],
     recipientAddress: "0x…"
 )
-// adminSignature.salt / .signature / .expiresAt feed withdrawCollateral below
+let adminSignature = RainAdminSignature(salt: sig.salt, signature: sig.data, expiresAt: sig.expiresAt)
+// both feed withdrawCollateral below
 ```
+
+The demo app ships a minimal reference client
+(`Example/RainSDKDemo/RainSDKDemo/Core/Services/RainApiClient.swift`).
 
 ### 9. Withdraw collateral
 
@@ -394,7 +390,6 @@ part is the SDK's; the pull itself is Rain's.
 ```swift
 let rain = try RainSdk.builder()
     .rpcEndpoints(rpcEndpoints)
-    .rainApiEnvironment(.dev)
     .authPullConfig(.sandbox(operatorAddress: rainOperatorAddress))
     .register(provider)
     .build()
@@ -437,8 +432,8 @@ Pull configuration.
 
 Gate your UI on `rain.authPullChainIds` (also on `RainClient`), which is what the approval guard
 enforces: the configuration narrowed to chains with an RPC endpoint.
-`RainAuthPullChains.supported(for:)` answers for an environment and is the wider set — use it only
-before an SDK exists. `RainTokenAllowance.rawAmount` is the exact base-unit value and the one to
+`RainAuthPullChains.sandbox` / `.production` answer for an environment and are the wider sets — use
+them only before an SDK exists. `RainTokenAllowance.rawAmount` is the exact base-unit value and the one to
 compare against; `decimalAmount` is for display and rounds past 38 significant digits, so gate on
 `isUnlimited` before rendering a number. Full guide: [Auth Pull](docs/AUTH_PULL.md).
 
