@@ -53,19 +53,19 @@ struct TokenMetadataStoreTests {
     let store = TokenMetadataStore(chainReader: reader)
 
     // No guessed 18: the caller must not scale a money amount on a failed read.
-    #expect(await store.resolvedTokenInfo(chainId: 1, address: Self.unknownToken) == nil)
+    #expect(try await store.resolvedTokenInfo(chainId: 1, address: Self.unknownToken) == nil)
 
     reader.stubbedMetadataError = nil
-    let resolved = await store.resolvedTokenInfo(chainId: 1, address: Self.unknownToken)
+    let resolved = try await store.resolvedTokenInfo(chainId: 1, address: Self.unknownToken)
     #expect(resolved?.decimals == 6)
     #expect(resolved?.symbol == "EURC")
     #expect(reader.decimalsCalls.count == 2)
 
-    _ = await store.resolvedTokenInfo(chainId: 1, address: Self.unknownToken)
+    _ = try await store.resolvedTokenInfo(chainId: 1, address: Self.unknownToken)
     #expect(reader.decimalsCalls.count == 2) // cached
 
     // Registry and host-registered tokens answer without RPC.
-    let usdc = await store.resolvedTokenInfo(chainId: 1, address: TestFixtures.usdcAddress)
+    let usdc = try await store.resolvedTokenInfo(chainId: 1, address: TestFixtures.usdcAddress)
     #expect(usdc?.decimals == 6)
     #expect(reader.decimalsCalls.count == 2)
   }
@@ -76,11 +76,11 @@ struct TokenMetadataStoreTests {
     let store = TokenMetadataStore(chainReader: reader)
     let mint = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
 
-    #expect(await store.resolvedTokenInfo(chainId: RainChain.solanaDevnet, address: mint) == nil)
+    #expect(try await store.resolvedTokenInfo(chainId: RainChain.solanaDevnet, address: mint) == nil)
     #expect(reader.decimalsCalls.isEmpty)
 
-    await store.register([TokenInfo(chainId: RainChain.solanaDevnet, address: mint, symbol: "USDC", decimals: 6, name: "USD Coin")])
-    let registered = await store.resolvedTokenInfo(chainId: RainChain.solanaDevnet, address: mint)
+    try await store.register([TokenInfo(chainId: RainChain.solanaDevnet, address: mint, symbol: "USDC", decimals: 6, name: "USD Coin")])
+    let registered = try await store.resolvedTokenInfo(chainId: RainChain.solanaDevnet, address: mint)
     #expect(registered?.symbol == "USDC")
     #expect(reader.decimalsCalls.isEmpty)
   }
@@ -114,7 +114,7 @@ struct TokenMetadataStoreTests {
     let reader = MockChainReader()
     let store = TokenMetadataStore(chainReader: reader)
 
-    await store.register([
+    try await store.register([
       TokenInfo(chainId: 1, address: Self.unknownToken, symbol: "FOO", decimals: 12, name: "Foo Token")
     ])
 
@@ -133,14 +133,14 @@ struct TokenMetadataStoreTests {
     let reader = MockChainReader()
     let store = TokenMetadataStore(chainReader: reader)
 
-    await store.register([
+    try await store.register([
       TokenInfo(chainId: 1, address: TestFixtures.usdcAddress, symbol: "USDX", decimals: 18, name: "Not USDC")
     ])
 
     let info = await store.tokenInfo(chainId: 1, address: TestFixtures.usdcAddress)
     #expect(info.symbol == "USDC")
     #expect(info.decimals == 6)
-    #expect(await store.decimals(chainId: 1, address: TestFixtures.usdcAddress) == 6)
+    #expect(try await store.decimals(chainId: 1, address: TestFixtures.usdcAddress) == 6)
     let entries = await store.registeredTokens(for: 1)
     #expect(entries.filter { $0.address.lowercased() == TestFixtures.usdcAddress.lowercased() }.count == 1)
     #expect(reader.decimalsCalls.isEmpty)
@@ -154,7 +154,7 @@ struct TokenMetadataStoreTests {
       seedTokens: [TokenInfo(chainId: 1, address: TestFixtures.usdcAddress.lowercased(), symbol: "USDC", decimals: 18, name: nil)]
     )
 
-    #expect(await store.decimals(chainId: 1, address: TestFixtures.usdcAddress) == 6)
+    #expect(try await store.decimals(chainId: 1, address: TestFixtures.usdcAddress) == 6)
     #expect(reader.decimalsCalls.isEmpty)
   }
 
@@ -163,11 +163,11 @@ struct TokenMetadataStoreTests {
     let reader = MockChainReader()
     let store = TokenMetadataStore(chainReader: reader)
 
-    await store.register([
+    try await store.register([
       TokenInfo(chainId: 1, address: Self.unknownToken, symbol: "FOO", decimals: 12, name: nil)
     ])
-    await store.register([
-      TokenInfo(chainId: 1, address: Self.unknownToken.uppercased(), symbol: "FOO", decimals: 8, name: "Foo")
+    try await store.register([
+      TokenInfo(chainId: 1, address: "0x" + Self.unknownToken.dropFirst(2).uppercased(), symbol: "FOO", decimals: 8, name: "Foo")
     ])
 
     let info = await store.tokenInfo(chainId: 1, address: Self.unknownToken)
@@ -228,5 +228,45 @@ struct TokenMetadataStoreTests {
     // The ETH-like fallback would label an unlisted chain's gas token wrongly.
     #expect(await store.nativeCurrency(for: 123456).symbol == "ETH")
     #expect(await store.nativeCurrencyOrNil(for: 123456) == nil)
+  }
+
+  @Test("register validates the whole list first: a bad entry registers nothing")
+  func testRegisterValidatesBeforeStoring() async throws {
+    let store = TokenMetadataStore(chainReader: MockChainReader())
+    let good = TokenInfo(chainId: 1, address: Self.unknownToken, symbol: "FOO", decimals: 12, name: nil)
+
+    await #expect(throws: RainError.invalidConfig(details: "")) {
+      try await store.register([good, TokenInfo(chainId: 1, address: "0xnope", symbol: "X", decimals: 6, name: nil)])
+    }
+    await #expect(throws: RainError.invalidConfig(details: "")) {
+      try await store.register([good, TokenInfo(chainId: 1, address: Self.unknownToken, symbol: "X", decimals: 78, name: nil)])
+    }
+    await #expect(throws: RainError.invalidConfig(details: "")) {
+      // Bare address: the store keys by the string as given, so it would never match its 0x twin.
+      try await store.register([TokenInfo(chainId: 1, address: String(Self.unknownToken.dropFirst(2)), symbol: "X", decimals: 6, name: nil)])
+    }
+    await #expect(throws: RainError.invalidConfig(details: "")) {
+      // Mixed case with a wrong EIP-55 checksum.
+      try await store.register([TokenInfo(chainId: 1, address: "0xa0b86991C6218B36c1d19d4a2e9eb0ce3606eb48", symbol: "X", decimals: 6, name: nil)])
+    }
+    await #expect(throws: RainError.invalidConfig(details: "")) {
+      try await store.register([TokenInfo(chainId: RainChain.solanaDevnet, address: "not-base58!", symbol: "X", decimals: 6, name: nil)])
+    }
+    #expect(await store.registeredTokens(for: 1).contains { $0.address == Self.unknownToken } == false)
+  }
+
+  @Test("an on-chain decimals outside 0...77 is refused by the strict accessors and never cached")
+  func testOutOfRangeChainDecimalsRefused() async throws {
+    let reader = MockChainReader()
+    reader.stubbedDecimals = 200
+    let store = TokenMetadataStore(chainReader: reader)
+
+    await #expect(throws: RainError.invalidConfig(details: "")) {
+      _ = try await store.resolvedTokenInfo(chainId: 1, address: Self.unknownToken)
+    }
+    await #expect(throws: RainError.invalidConfig(details: "")) {
+      _ = try await store.decimals(chainId: 1, address: Self.unknownToken)
+    }
+    #expect(reader.decimalsCalls.count == 2) // not cached: each lookup re-reads and re-refuses
   }
 }

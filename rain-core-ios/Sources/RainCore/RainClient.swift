@@ -71,7 +71,8 @@ public protocol RainClient: Sendable {
   /// native token. EVM only — throws on a Solana chain id.
   ///
   /// Builds — and therefore **signs** — a complete withdrawal to estimate against, so the wallet
-  /// prompts for an EIP-712 signature (e.g. Turnkey biometrics) even though nothing broadcasts.
+  /// produces a real EIP-712 signature (a user-visible prompt on providers that gate signing) even
+  /// though nothing broadcasts.
   /// To quote a fee without a second prompt, call ``prepareWithdrawal(chainId:addresses:amount:decimals:adminSignature:nonce:)``
   /// once and estimate on the result with ``estimateWithdrawalFee(chainId:prepared:)``.
   func estimateWithdrawalFee(
@@ -99,17 +100,6 @@ public protocol RainClient: Sendable {
   /// Returns the wallet address for a specific chain's family (Solana account for Solana
   /// sentinel chains, EVM address otherwise).
   func getWalletAddress(chainId: Int) async throws -> String
-
-  /// Generates a square QR code (PNG) encoding the current wallet address.
-  @available(
-    *, deprecated,
-    message: "Call generateAddressQRCode(address: nil, …) — it encodes the wallet's own address when address is nil."
-  )
-  func generateWalletAddressQRCode(
-    dimension: Int,
-    backgroundColor: CGColor?,
-    foregroundColor: CGColor?
-  ) async throws -> Data
 
   /// Generates a square QR code (PNG) encoding `address`, or the wallet's own address when
   /// `address` is `nil`.
@@ -218,8 +208,8 @@ public protocol RainClient: Sendable {
   func getTokenAllowance(
     chainId: Int,
     contractAddress: String,
-    owner: String?,
-    spender: String
+    spender: String,
+    owner: String?
   ) async throws -> RainTokenAllowance
 
   /// Estimates the total fee (estimated gas × gas price) to submit the approval, in the chain's
@@ -248,9 +238,10 @@ public protocol RainClient: Sendable {
   ///   - amount: The allowance that was requested, so the result can be checked against it. `nil`
   ///     means the unlimited approval.
   ///   - owner: The wallet whose allowance to read. `nil` reads this client's own wallet.
-  /// - Throws: `RainSDKError.transactionSimulationFailed` when the mined transaction reverted,
-  ///   `.networkError` when confirmation times out, and `.internalLogicError` when the mined
-  ///   allowance contradicts the request.
+  /// - Throws: `RainError.transactionSimulationFailed` when the mined transaction reverted,
+  ///   `.transactionPending(statusId:)` (carrying the hash) when the confirmation window lapses
+  ///   without a receipt — not a failure; resume polling rather than re-approving — and
+  ///   `.internalError` when the mined allowance contradicts the request.
   func confirmTokenAllowance(
     transactionHash: String,
     chainId: Int,
@@ -263,9 +254,12 @@ public protocol RainClient: Sendable {
   // MARK: - Token metadata
 
   /// Registers token metadata so balance and transfer calls can resolve symbol/decimals without an
-  /// on-chain read. Additive: re-registering a host-added address replaces its entry; built-in
-  /// registry tokens are trusted and cannot be overridden.
-  func registerTokens(_ tokens: [TokenInfo])
+  /// on-chain read. Entries are stored before this returns. Additive: re-registering a host-added
+  /// address replaces its entry; built-in registry tokens are trusted and cannot be overridden.
+  ///
+  /// - Throws: `RainError.invalidConfig` when any entry has a malformed address for its chain
+  ///   family or decimals outside 0...77 — the whole list is checked first, so nothing is stored.
+  func registerTokens(_ tokens: [TokenInfo]) async throws
 }
 
 public extension RainClient {
@@ -383,8 +377,8 @@ public extension RainClient {
     try await getTokenAllowance(
       chainId: chainId,
       contractAddress: contractAddress,
-      owner: nil,
-      spender: spender
+      spender: spender,
+      owner: nil
     )
   }
 

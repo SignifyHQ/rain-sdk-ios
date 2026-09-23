@@ -2,9 +2,9 @@ import CoreGraphics
 import Foundation
 import QRCode
 
-/// Renders address QR codes as PNG data. Shared by
-/// ``RainClient/generateAddressQRCode(address:dimension:backgroundColor:foregroundColor:)`` and
-/// ``RainClient/generateWalletAddressQRCode(dimension:backgroundColor:foregroundColor:)``.
+/// Renders address QR codes as PNG data for
+/// ``RainClient/generateAddressQRCode(address:dimension:backgroundColor:foregroundColor:)``
+/// (`address: nil` encodes the wallet's own address).
 enum QRCodeRenderer {
   /// Default colours, applied when a caller passes `nil`: dark modules on a light background,
   /// the orientation scanners expect.
@@ -27,7 +27,7 @@ enum QRCodeRenderer {
       .pupil.shape(QRCode.PupilShape.Square())
       .generate.image(dimension: dimension, representation: .png())
     else {
-      throw RainSDKError.internalLogicError(details: "QR code image generation failed")
+      throw RainError.internalError(details: "QR code image generation failed")
     }
     return image
   }

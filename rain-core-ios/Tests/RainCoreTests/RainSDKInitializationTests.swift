@@ -19,6 +19,16 @@ struct SDKInitializationTests {
     }
   }
 
+  /// A descriptor that counts `close()` calls through a shared box, like the real adapters whose
+  /// struct copies share one coordinator.
+  private final class CloseCounter: @unchecked Sendable { var count = 0 }
+  private struct ClosableProvider: ProviderDescriptor {
+    var id: ProviderId = .turnkey
+    let counter: CloseCounter
+    func create(context: ProviderContext) async throws -> any WalletProvider { StubWalletProvider() }
+    func close() { counter.count += 1 }
+  }
+
   // MARK: - builder() validation
 
   @Test("build succeeds with valid configs and a registered provider")
@@ -41,14 +51,14 @@ struct SDKInitializationTests {
     do {
       try body()
       Issue.record("Expected invalidConfig, but no error was thrown")
-    } catch let error as RainSDKError {
+    } catch let error as RainError {
       guard case .invalidConfig(let details) = error else {
         Issue.record("Expected .invalidConfig, got \(error)")
         return
       }
       #expect(details == expectedDetails)
     } catch {
-      Issue.record("Expected RainSDKError.invalidConfig, got \(error)")
+      Issue.record("Expected RainError.invalidConfig, got \(error)")
     }
   }
 
@@ -117,7 +127,7 @@ struct SDKInitializationTests {
       .rpcEndpoints([NetworkConfig.testConfig(chainId: 1)])
       .build()
 
-    await #expect(throws: RainSDKError.providerNotRegistered(details: "No provider registered for id 'portal'")) {
+    await #expect(throws: RainError.providerNotRegistered(details: "No provider registered for id 'portal'")) {
       _ = try await sdk.provider(.portal)
     }
   }
@@ -131,7 +141,7 @@ struct SDKInitializationTests {
       .register(StubProvider())
       .build()
 
-    await #expect(throws: RainSDKError.providerNotRegistered(details: "No provider registered for id 'privy'")) {
+    await #expect(throws: RainError.providerNotRegistered(details: "No provider registered for id 'privy'")) {
       _ = try await sdk.provider(.privy)
     }
   }
@@ -179,6 +189,103 @@ struct SDKInitializationTests {
     let firstIdentity = ObjectIdentifier(first as AnyObject)
     let secondIdentity = ObjectIdentifier(second as AnyObject)
     #expect(firstIdentity != secondIdentity)
+  }
+
+  @Test("close is terminal: providers are closed and every entry point throws sdkNotInitialized")
+  func testCloseIsTerminal() async throws {
+    let counter = CloseCounter()
+    let sdk = try RainSdk.builder()
+      .rpcEndpoints([NetworkConfig.testConfig(chainId: 1)])
+      .register(ClosableProvider(counter: counter))
+      .build()
+    _ = try await sdk.provider(.turnkey)
+
+    sdk.close()
+    sdk.close() // idempotent
+
+    #expect(counter.count == 2)
+    await #expect(throws: RainError.sdkNotInitialized) { _ = try await sdk.provider(.turnkey) }
+    await #expect(throws: RainError.sdkNotInitialized) { _ = try await sdk.first { _ in true } }
+    await #expect(throws: RainError.sdkNotInitialized) {
+      _ = try await sdk.tokenMetadata(chainId: 1, address: TestFixtures.usdcAddress)
+    }
+    await #expect(throws: RainError.sdkNotInitialized) { try await sdk.registerTokens([]) }
+  }
+
+  @Test("build closes a descriptor that a re-register of the same id replaced, but not a copy of the live one")
+  func testBuildClosesReplacedDescriptors() throws {
+    let first = CloseCounter(), second = CloseCounter()
+    let live = ClosableProvider(counter: second)
+    _ = try RainSdk.builder()
+      .rpcEndpoints([NetworkConfig.testConfig(chainId: 1)])
+      .register(ClosableProvider(counter: first))
+      .register(live)
+      .register(live) // a copy of the live descriptor: shares its internals, must not be closed
+      .build()
+
+    #expect(first.count == 1)
+    #expect(second.count == 0)
+  }
+
+  @Test("a failing build leaves replaced descriptors open")
+  func testFailingBuildDoesNotClose() {
+    let first = CloseCounter()
+    #expect(throws: RainError.invalidConfig(details: "")) {
+      _ = try RainSdk.builder() // no RPC endpoints → invalid
+        .register(ClosableProvider(counter: first))
+        .register(ClosableProvider(counter: CloseCounter()))
+        .build()
+    }
+    #expect(first.count == 0)
+  }
+
+  @Test("tokenMetadata throws invalidConfig for a chain without an RPC endpoint or a malformed address")
+  func testTokenMetadataRefusesBadInput() async throws {
+    let sdk = try RainSdk.builder()
+      .rpcEndpoints([NetworkConfig.testConfig(chainId: 1)])
+      .build()
+
+    await #expect(throws: RainError.invalidConfig(details: "")) {
+      _ = try await sdk.tokenMetadata(chainId: 999, address: TestFixtures.usdcAddress)
+    }
+    await #expect(throws: RainError.invalidConfig(details: "")) {
+      _ = try await sdk.tokenMetadata(chainId: 1, address: "0xnope")
+    }
+    await #expect(throws: RainError.invalidConfig(details: "")) {
+      _ = try await sdk.tokenMetadata(chainId: 1, address: String(TestFixtures.usdcAddress.dropFirst(2)))
+    }
+    // A well-formed registry token still resolves.
+    #expect(try await sdk.tokenMetadata(chainId: 1, address: TestFixtures.usdcAddress)?.decimals == 6)
+  }
+
+  @Test("registerTokens stores before returning and rejects a malformed list whole")
+  func testRegisterTokensOrderedAndValidated() async throws {
+    let sdk = try RainSdk.builder()
+      .rpcEndpoints([NetworkConfig.testConfig(chainId: 1)])
+      .build()
+    let foo = TokenInfo(chainId: 1, address: "0x00000000000000000000000000000000000000ff", symbol: "FOO", decimals: 12, name: nil)
+
+    try await sdk.registerTokens([foo])
+    #expect(try await sdk.tokenMetadata(chainId: 1, address: foo.address)?.symbol == "FOO")
+
+    await #expect(throws: RainError.invalidConfig(details: "")) {
+      try await sdk.registerTokens([
+        TokenInfo(chainId: 1, address: "0x00000000000000000000000000000000000000ee", symbol: "OK", decimals: 6, name: nil),
+        TokenInfo(chainId: 1, address: "0x00000000000000000000000000000000000000dd", symbol: "BAD", decimals: 99, name: nil),
+      ])
+    }
+    // (That nothing from the rejected list landed is pinned at the store level in
+    // TokenMetadataStoreTests — checking it here would trigger an on-chain read.)
+  }
+
+  @Test("build rejects a malformed seed token")
+  func testBuildRejectsBadSeedToken() {
+    #expect(throws: RainError.invalidConfig(details: "")) {
+      _ = try RainSdk.builder()
+        .rpcEndpoints([NetworkConfig.testConfig(chainId: 1)])
+        .registerTokens([TokenInfo(chainId: 1, address: "0xnope", symbol: "X", decimals: 6, name: nil)])
+        .build()
+    }
   }
 
   @Test("reset is idempotent and client-level reset is a safe no-op")

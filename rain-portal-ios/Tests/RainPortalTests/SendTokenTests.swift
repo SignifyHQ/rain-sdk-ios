@@ -20,7 +20,7 @@ struct SendTokenTests {
     mockPortal.mockAddresses.removeAll()
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainError.walletUnavailable()) {
       _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
@@ -37,7 +37,7 @@ struct SendTokenTests {
     mockPortal.mockAddresses.removeAll()
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainError.walletUnavailable()) {
       _ = try await manager.sendToken(
         chainId: 1,
         contractAddress: TestFixtures.tokenAddress,
@@ -149,26 +149,5 @@ struct SendTokenTests {
     let explicitData = stub.sendTransactionCalls.last?.params.data
 
     #expect(resolvedData == explicitData)
-  }
-
-  // MARK: - Deprecated alias (1.0.0 source compat)
-
-  @available(*, deprecated)
-  @Test("deprecated sendERC20Token forwards to sendToken and returns the tx hash string")
-  func testDeprecatedSendERC20TokenForwards() async throws {
-    let (manager, stub) = try await TestManagers.stubProviderManager()
-    let expectedHash = "0x" + String(repeating: "c", count: 64)
-    stub.sendTransactionHashToReturn = expectedHash
-
-    let hash: String = try await manager.sendERC20Token(
-      chainId: 1,
-      contractAddress: TestFixtures.tokenAddress,
-      to: TestFixtures.recipientAddress,
-      amount: 100.0,
-      decimals: 6
-    )
-
-    #expect(hash == expectedHash)
-    #expect(stub.sendTransactionCalls[0].params.to == TestFixtures.tokenAddress)
   }
 }

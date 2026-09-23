@@ -3,7 +3,7 @@ import Foundation
 @testable import RainCore
 
 /// Covers the client's QR surface: `generateAddressQRCode` encodes any address (with `nil` falling
-/// back to the wallet's own), and `generateWalletAddressQRCode` stays the wallet-address shortcut.
+/// back to the wallet's own), (nil encodes the wallet's own address) stays the wallet-address shortcut.
 @Suite("QR Code Generation Tests")
 struct QRCodeGenerationTests {
 
@@ -42,18 +42,6 @@ struct QRCodeGenerationTests {
     let recipient = try await manager.generateAddressQRCode(address: TestFixtures.recipientAddress)
 
     #expect(wallet != recipient)
-  }
-
-  @Test("generateWalletAddressQRCode matches the wallet address QR")
-  func walletShortcutMatchesAddressCall() async throws {
-    let (manager, stub) = try await TestManagers.stubProviderManager()
-    stub.addressToReturn = TestFixtures.walletAddress
-
-    let shortcut = try await manager.generateWalletAddressQRCode()
-    let explicit = try await manager.generateAddressQRCode(address: TestFixtures.walletAddress)
-
-    #expect(isPNG(shortcut))
-    #expect(shortcut == explicit)
   }
 
   @Test("Dimension is honoured")

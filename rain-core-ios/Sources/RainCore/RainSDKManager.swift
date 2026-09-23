@@ -82,8 +82,8 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
 
   /// Registers token metadata into the store shared with the owning `RainSdk`, so every resolved
   /// client sees it. Fire-and-forget, to keep registration synchronous for callers.
-  func registerTokens(_ tokens: [TokenInfo]) {
-    Task { await tokenStore.register(tokens) }
+  func registerTokens(_ tokens: [TokenInfo]) async throws {
+    try await tokenStore.register(tokens)
   }
 
   // MARK: - Collateral / fees
@@ -112,7 +112,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
       switch prepared {
       case let .solana(unsigned):
         guard let solanaProvider = walletProvider as? any RainSolanaTransfersProvider else {
-          throw RainSDKError.internalLogicError(
+          throw RainError.internalError(
             details: "The active wallet provider does not support Solana transfers"
           )
         }
@@ -177,7 +177,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
       )
       return try await estimateTransactionFee(chainId: chainId, address: from, params: params)
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -195,7 +195,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
       // TODO(v2.1): a Solana estimate is the flat per-signature fee plus token-account rent when
       // `UnsignedSolanaTransfer.createsRecipientAccount` is true.
       guard !SolanaChains.isSolana(chainId) else {
-        throw RainSDKError.internalLogicError(
+        throw RainError.internalError(
           details: "Withdrawal fee estimation is not supported on Solana"
         )
       }
@@ -223,7 +223,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
   ) async throws -> Decimal {
     do {
       guard let parameters = prepared.evmParameters else {
-        throw RainSDKError.internalLogicError(
+        throw RainError.internalError(
           details: "Withdrawal fee estimation is not supported on Solana"
         )
       }
@@ -243,7 +243,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     do {
       return try await walletProvider.address()
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -251,21 +251,8 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     do {
       return try await walletProvider.getAddress(chainId: chainId)
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
-  }
-
-  func generateWalletAddressQRCode(
-    dimension: Int = 256,
-    backgroundColor: CGColor? = nil,
-    foregroundColor: CGColor? = nil
-  ) async throws -> Data {
-    try await generateAddressQRCode(
-      address: nil,
-      dimension: dimension,
-      backgroundColor: backgroundColor,
-      foregroundColor: foregroundColor
-    )
   }
 
   func generateAddressQRCode(
@@ -289,7 +276,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     do {
       return try await walletProvider.getBalance(chainId: chainId, token: token)
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -297,7 +284,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     do {
       return try await walletProvider.getBalances(chainId: chainId)
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -315,7 +302,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
             return try await provider.getBalances(chainId: chainId)
           } catch let cancellation as CancellationError {
             throw cancellation
-          } catch let error as RainSDKError where error == .tokenExpired {
+          } catch let error as RainError where error == .tokenExpired {
             throw error
           } catch {
             return []
@@ -346,7 +333,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
         order: order
       )
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -360,7 +347,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     do {
       if SolanaChains.isSolana(chainId) {
         guard let solanaProvider = walletProvider as? any RainSolanaTransfersProvider else {
-          throw RainSDKError.internalLogicError(
+          throw RainError.internalError(
             details: "The active wallet provider does not support Solana transfers"
           )
         }
@@ -371,7 +358,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
       // A typo'd recipient would otherwise broadcast as-is and the funds are gone; validate and
       // checksum up front, as the withdrawal path does.
       guard let recipient = try? RainWithdrawAddresses.checksummed(to, label: "to") else {
-        throw RainSDKError.invalidRecipient(address: to, reason: "not a valid EVM address")
+        throw RainError.invalidRecipient(address: to, reason: "not a valid EVM address")
       }
       let from = try await walletProvider.address()
       let decimals = await tokenStore.nativeCurrency(for: chainId).decimals
@@ -386,7 +373,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
       let hash = try await walletProvider.sendTransaction(chainId: chainId, params: params)
       return RainTokenTransferResult(transactionHash: hash)
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -400,7 +387,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
     do {
       if SolanaChains.isSolana(chainId) {
         guard let solanaProvider = walletProvider as? any RainSolanaTransfersProvider else {
-          throw RainSDKError.internalLogicError(
+          throw RainError.internalError(
             details: "The active wallet provider does not support Solana transfers"
           )
         }
@@ -420,7 +407,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
       // Validated here for a precise error — the ABI encoder would reject a malformed address
       // anyway, but only as an opaque "Failed to encode ERC-20".
       guard let recipient = try? RainWithdrawAddresses.checksummed(to, label: "to") else {
-        throw RainSDKError.invalidRecipient(address: to, reason: "not a valid EVM address")
+        throw RainError.invalidRecipient(address: to, reason: "not a valid EVM address")
       }
       let from = try await walletProvider.address()
       let resolvedDecimals = await resolveDecimals(
@@ -445,7 +432,7 @@ final class RainSdkManager: RainClient, @unchecked Sendable {
       let hash = try await walletProvider.sendTransaction(chainId: chainId, params: params)
       return RainTokenTransferResult(transactionHash: hash)
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 

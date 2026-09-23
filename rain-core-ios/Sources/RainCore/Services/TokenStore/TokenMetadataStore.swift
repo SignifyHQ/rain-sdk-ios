@@ -29,7 +29,10 @@ public actor TokenMetadataStore {
 
   /// Adds host-supplied tokens. A token replaces an earlier host registration with the same
   /// address (case-insensitive) on the same chain. Built-in registry tokens are never replaced.
-  public func register(_ tokens: [TokenInfo]) {
+  /// Registers host tokens. The whole list is validated first (address well-formed for its chain
+  /// family, decimals in 0...77) so one bad entry registers nothing — throws `invalidConfig`.
+  public func register(_ tokens: [TokenInfo]) throws {
+    try TokenInfoValidation.requireValid(tokens)
     for token in tokens {
       Self.upsert(token, into: &knownTokens)
     }
@@ -65,9 +68,16 @@ public actor TokenMetadataStore {
   /// when decimals could not be established, never the 18-decimal default. The answer a host
   /// needs before scaling a money amount for a token it only knows by address (e.g. the tokens
   /// in a Rain collateral contract).
-  public func resolvedTokenInfo(chainId: Int, address: String) async -> TokenInfo? {
+  ///
+  /// - Throws: `RainError.invalidConfig` when the chain reports `decimals()` outside 0...77 — a
+  ///   token no money path can scale by. Nothing is cached then.
+  public func resolvedTokenInfo(chainId: Int, address: String) async throws -> TokenInfo? {
     let resolved = await resolve(chainId: chainId, address: address)
-    return resolved.decimalsResolved ? resolved.info : nil
+    guard resolved.decimalsResolved else { return nil }
+    try TokenInfoValidation.requireValidChainDecimals(
+      resolved.info.decimals, chainId: chainId, address: address
+    )
+    return resolved.info
   }
 
   /// A contract token's decimals, or `nil` when they could not be established.
@@ -76,8 +86,8 @@ public actor TokenMetadataStore {
   /// this: on an approval a guessed 18 against a 6-decimal token would silently approve 10^12
   /// times the intended allowance, and `approve` has no balance to fail against, so nothing
   /// downstream would catch it.
-  public func decimals(chainId: Int, address: String) async -> Int? {
-    await resolvedTokenInfo(chainId: chainId, address: address)?.decimals
+  public func decimals(chainId: Int, address: String) async throws -> Int? {
+    try await resolvedTokenInfo(chainId: chainId, address: address)?.decimals
   }
 
   // MARK: - Resolution
@@ -105,7 +115,9 @@ public actor TokenMetadataStore {
       )
     }
     let enriched = await enrich(chainId: chainId, address: address)
-    if enriched.decimalsResolved {
+    // Cache only a chain answer a money path can use; an out-of-range decimals is refused by the
+    // strict accessors and must meet the same refusal on the next lookup.
+    if enriched.decimalsResolved, TokenInfoValidation.decimalsRange.contains(enriched.info.decimals) {
       enrichmentCache[chainId, default: [:]][key] = enriched.info
     }
     return enriched

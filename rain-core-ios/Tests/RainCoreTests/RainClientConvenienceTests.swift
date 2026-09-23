@@ -244,10 +244,6 @@ private final class SpyRainClient: RainClient, @unchecked Sendable {
   func getWalletAddress() async throws -> String { fatalError("unused") }
   func getWalletAddress(chainId: Int) async throws -> String { fatalError("unused") }
 
-  func generateWalletAddressQRCode(
-    dimension: Int, backgroundColor: CGColor?, foregroundColor: CGColor?
-  ) async throws -> Data { fatalError("unused") }
-
   func generateAddressQRCode(
     address: String?, dimension: Int, backgroundColor: CGColor?, foregroundColor: CGColor?
   ) async throws -> Data { fatalError("unused") }
@@ -276,7 +272,7 @@ private final class SpyRainClient: RainClient, @unchecked Sendable {
   }
 
   func getTokenAllowance(
-    chainId: Int, contractAddress: String, owner: String?, spender: String
+    chainId: Int, contractAddress: String, spender: String, owner: String?
   ) async throws -> RainTokenAllowance {
     lock.withLock {
       _allowanceCalls.append(
@@ -326,5 +322,5 @@ private final class SpyRainClient: RainClient, @unchecked Sendable {
     )
   }
 
-  func registerTokens(_ tokens: [TokenInfo]) {}
+  func registerTokens(_ tokens: [TokenInfo]) async throws {}
 }

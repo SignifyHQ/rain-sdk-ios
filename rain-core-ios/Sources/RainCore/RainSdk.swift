@@ -50,6 +50,13 @@ public final class RainSdk: @unchecked Sendable {
   }
   private var resolveBoxes: [ProviderId: ResolveBox] = [:]
   private let clientsLock = NSLock()
+  /// Set once by ``close()``; guarded by `clientsLock`.
+  private var isClosed = false
+
+  /// Throws `sdkNotInitialized` after ``close()``: a closed registry hands out nothing.
+  private func requireOpen() throws {
+    if clientsLock.withLock({ isClosed }) { throw RainError.sdkNotInitialized }
+  }
 
   fileprivate init(
     networkConfigs: [NetworkConfig],
@@ -100,10 +107,11 @@ public final class RainSdk: @unchecked Sendable {
   /// Resolves (and caches) the wallet-bound ``RainClient`` for the given provider id.
   /// Suspends because `create(context:)` may materialize / probe the vendor wallet on first access.
   ///
-  /// - Throws: `RainSDKError.providerNotRegistered` if no provider is registered under `id`.
+  /// - Throws: `RainError.providerNotRegistered` if no provider is registered under `id`.
   public func provider(_ id: ProviderId) async throws -> RainClient {
+    try requireOpen()
     guard descriptors[id] != nil else {
-      throw RainSDKError.providerNotRegistered(details: "No provider registered for id '\(id.rawValue)'")
+      throw RainError.providerNotRegistered(details: "No provider registered for id '\(id.rawValue)'")
     }
 
     // Get-or-create the shared resolution Task under the lock — the only critical section. The
@@ -118,7 +126,7 @@ public final class RainSdk: @unchecked Sendable {
         do {
           walletProvider = try await descriptor.create(context: providerContext)
         } catch {
-          throw RainSDKError.from(underlying: error)
+          throw RainError.from(underlying: error)
         }
         return RainSdkManager(
           walletProvider: walletProvider,
@@ -174,18 +182,33 @@ public final class RainSdk: @unchecked Sendable {
     RainLogger.info("Rain SDK: Reset (resolved clients evicted)")
   }
 
+  /// Full teardown: ``reset()``, then ``ProviderDescriptor/close()`` on every registered
+  /// descriptor so vendor clients and session watchers stop and no `onSessionExpired` hook can
+  /// fire again. Idempotent.
+  ///
+  /// Terminal, unlike ``reset()``: ``provider(_:)``, ``first(where:)``, ``tokenMetadata(chainId:address:)``
+  /// and ``registerTokens(_:)`` throw `RainError.sdkNotInitialized` afterwards. Build a new
+  /// `RainSdk` via ``builder()`` for the next login. Same contract as the Android SDK.
+  public func close() {
+    clientsLock.withLock { isClosed = true }
+    reset()
+    for descriptor in providers { descriptor.close() }
+    RainLogger.info("Rain SDK: Closed (providers torn down)")
+  }
+
   /// Resolves the first registered provider (in registration order) matching `predicate`, e.g.
   /// `rain.first { $0.capabilities.contains(.export) }`.
   ///
-  /// - Throws: `RainSDKError.providerNotRegistered` if no registered provider matches.
+  /// - Throws: `RainError.providerNotRegistered` if no registered provider matches.
   public func first(where predicate: (any ProviderDescriptor) -> Bool) async throws -> RainClient {
+    try requireOpen()
     for id in registrationOrder {
       guard let descriptor = descriptors[id] else { continue }
       if predicate(descriptor) {
         return try await provider(id)
       }
     }
-    throw RainSDKError.providerNotRegistered(details: "No registered provider matches the requested capability")
+    throw RainError.providerNotRegistered(details: "No registered provider matches the requested capability")
   }
 
   // MARK: - Wallet-agnostic transaction building
@@ -277,9 +300,16 @@ public final class RainSdk: @unchecked Sendable {
     )
   }
 
-  /// Registers additional tokens so their metadata resolves without an on-chain lookup.
-  public func registerTokens(_ tokens: [TokenInfo]) {
-    Task { await tokenStore.register(tokens) }
+  /// Registers additional tokens so their metadata resolves without an on-chain lookup. Entries
+  /// are stored before this returns, so a register-then-query is ordered. The whole list is
+  /// validated first — address well-formed for its chain family (EIP-55 checksum when
+  /// mixed-case; base58 32 bytes on Solana), decimals in 0...77 — and one bad entry registers
+  /// nothing.
+  ///
+  /// - Throws: `RainError.invalidConfig` on a malformed entry; `sdkNotInitialized` after ``close()``.
+  public func registerTokens(_ tokens: [TokenInfo]) async throws {
+    try requireOpen()
+    try await tokenStore.register(tokens)
   }
 
   /// Metadata (symbol, name, decimals) for a contract token the host knows only by address —
@@ -287,12 +317,22 @@ public final class RainSdk: @unchecked Sendable {
   /// registry, host-registered tokens, then on-chain `decimals()` / `symbol()` / `name()` reads
   /// over the configured RPC (cached once decimals resolve). Needs no wallet provider.
   ///
-  /// Returns `nil` when decimals could not be established — never a guessed default, since
-  /// wrong decimals would scale a withdrawal or approval amount by orders of magnitude. `symbol`
-  /// and `name` inside a non-nil result may still be nil if those reads failed. Solana chains
-  /// resolve from the registry and host-registered tokens only.
-  public func tokenMetadata(chainId: Int, address: String) async -> TokenInfo? {
-    await tokenStore.resolvedTokenInfo(chainId: chainId, address: address)
+  /// Returns `nil` only when decimals could not be established (RPC failure, unknown SPL mint)
+  /// — never a guessed default, since wrong decimals would scale a withdrawal or approval amount
+  /// by orders of magnitude. `symbol` and `name` inside a non-nil result may still be nil if
+  /// those reads failed. Solana chains resolve from the registry and host-registered tokens only.
+  ///
+  /// - Throws: `RainError.invalidConfig` for a chain with no RPC endpoint, a malformed `address`
+  ///   (EVM: `0x` + 40 hex, EIP-55 checksum when mixed-case; Solana: base58 32 bytes), or an
+  ///   on-chain `decimals()` outside 0...77; `sdkNotInitialized` after ``close()``. Same contract
+  ///   as the Android SDK.
+  public func tokenMetadata(chainId: Int, address: String) async throws -> TokenInfo? {
+    try requireOpen()
+    guard rpcEndpoints[chainId] != nil else {
+      throw RainError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
+    }
+    try TokenInfoValidation.requireValidAddress(chainId: chainId, address: address)
+    return try await tokenStore.resolvedTokenInfo(chainId: chainId, address: address)
   }
 
   static func parseISO8601(_ string: String) -> Date? {
@@ -312,6 +352,10 @@ public final class RainSdk: @unchecked Sendable {
     private var networkConfigs: [NetworkConfig] = []
     private var descriptors: [ProviderId: ProviderDescriptor] = [:]
     private var registrationOrder: [ProviderId] = []
+    /// Descriptors displaced by a later `register` of the same id; closed by `build()` once the
+    /// registry is valid, so a replaced provider's session watcher does not outlive the registry
+    /// and a failed build leaves the host's objects untouched.
+    private var replaced: [any ProviderDescriptor] = []
     private var registeredTokens: [TokenInfo] = []
     private var authPullConfig: RainAuthPullConfig?
 
@@ -331,17 +375,40 @@ public final class RainSdk: @unchecked Sendable {
       return self
     }
 
-    /// Registers a provider descriptor, keyed by its `id`. Re-registering an id replaces it.
+    /// Registers a provider descriptor, keyed by its `id`. Re-registering an id replaces the
+    /// prior descriptor, and `build()` closes the replaced one (see ``ProviderDescriptor/close()``).
+    /// Registering a copy of the descriptor already held under that id is a no-op — descriptors
+    /// are values, so a copy shares the live one's internals and must not be closed.
     @discardableResult
     public func register(_ provider: any ProviderDescriptor) -> Builder {
-      if descriptors[provider.id] == nil {
+      if let previous = descriptors[provider.id] {
+        if !Self.isSameDescriptor(previous, provider) { replaced.append(previous) }
+      } else {
         registrationOrder.append(provider.id)
       }
       descriptors[provider.id] = provider
       return self
     }
 
-    /// Seeds the token store with token metadata.
+    /// Descriptors are structs, so "the same descriptor" means copies of one value: the same
+    /// concrete type whose class-typed stored properties (coordinator, context, controller…) are
+    /// the very same instances. Two separately constructed descriptors, even with equal configs,
+    /// hold different instances. A descriptor with no class-typed properties has nothing shared
+    /// to protect, so it is never treated as a copy.
+    private static func isSameDescriptor(_ a: any ProviderDescriptor, _ b: any ProviderDescriptor) -> Bool {
+      guard type(of: a) == type(of: b) else { return false }
+      let lhs = referenceIdentities(of: a), rhs = referenceIdentities(of: b)
+      return !lhs.isEmpty && lhs == rhs
+    }
+
+    private static func referenceIdentities(of value: Any) -> [ObjectIdentifier] {
+      Mirror(reflecting: value).children.compactMap { child in
+        type(of: child.value) is AnyClass ? ObjectIdentifier(child.value as AnyObject) : nil
+      }
+    }
+
+    /// Seeds the token store with token metadata. Validated at `build()` like every other
+    /// register path — a malformed entry fails the build with `invalidConfig`.
     @discardableResult
     public func registerTokens(_ tokens: [TokenInfo]) -> Builder {
       registeredTokens.append(contentsOf: tokens)
@@ -362,27 +429,32 @@ public final class RainSdk: @unchecked Sendable {
     /// **wallet-agnostic** `RainSdk` — the transaction-building methods (`buildEIP712Message`,
     /// `buildWithdrawTransactionData`, `buildTransactionParameters`) work, while `provider(_:)` /
     /// `first(where:)` will throw until a provider is registered.
-    /// - Throws: `RainSDKError.invalidConfig` if no/invalid RPC endpoints were provided.
+    /// - Throws: `RainError.invalidConfig` if no/invalid RPC endpoints were provided.
     public func build() throws -> RainSdk {
       guard !networkConfigs.isEmpty else {
-        throw RainSDKError.invalidConfig(details: "At least one RPC endpoint is required")
+        throw RainError.invalidConfig(details: "At least one RPC endpoint is required")
       }
       for config in networkConfigs {
         guard config.chainId > 0, config.rpcUrl.isValidHTTPURL() else {
-          throw RainSDKError.invalidConfig(
+          throw RainError.invalidConfig(
             details: "Invalid RPC endpoint for chainId \(config.chainId): \(config.rpcUrl)"
           )
         }
       }
+      try TokenInfoValidation.requireValid(registeredTokens)
       try validateAuthPullConfig()
       // The Rain wallet and the Turnkey provider share one process-wide backend context, so an
       // app can use one or the other — never both at once.
       if descriptors[.rain] != nil, descriptors[.turnkey] != nil {
-        throw RainSDKError.invalidConfig(
+        throw RainError.invalidConfig(
           details: "The Rain wallet provider and the Turnkey provider cannot both be registered; "
             + "they share one process-wide wallet backend"
         )
       }
+      // Ownership moves here: descriptors replaced during registration are closed only once the
+      // registry is valid, so a throwing build leaves the host's objects untouched.
+      for descriptor in replaced { descriptor.close() }
+      replaced.removeAll()
       return RainSdk(
         networkConfigs: networkConfigs,
         descriptors: descriptors,
@@ -403,17 +475,17 @@ public final class RainSdk: @unchecked Sendable {
       guard let config = authPullConfig else { return }
 
       guard config.operatorAddress.isValidEthereumAddress else {
-        throw RainSDKError.invalidConfig(
+        throw RainError.invalidConfig(
           details: "Invalid Auth Pull operator: \(config.operatorAddress)"
         )
       }
       guard config.operatorAddress.caseInsensitiveCompare(Self.zeroAddress) != .orderedSame else {
-        throw RainSDKError.invalidConfig(
+        throw RainError.invalidConfig(
           details: "Auth Pull operator must not be the zero address"
         )
       }
       guard !config.tokenAddresses.isEmpty else {
-        throw RainSDKError.invalidConfig(
+        throw RainError.invalidConfig(
           details: "Auth Pull must configure at least one token contract"
         )
       }
@@ -424,7 +496,7 @@ public final class RainSdk: @unchecked Sendable {
       let allowedChains = RainAuthPullChains.supported(for: config.kind)
       let unexpected = Set(config.tokenAddresses.keys).subtracting(allowedChains)
       guard unexpected.isEmpty else {
-        throw RainSDKError.invalidConfig(
+        throw RainError.invalidConfig(
           details: """
             Auth Pull chains \(unexpected.sorted()) are not Auth Pull chains for this configuration's environment
             """
@@ -435,7 +507,7 @@ public final class RainSdk: @unchecked Sendable {
         guard address.isValidEthereumAddress,
               address.caseInsensitiveCompare(Self.zeroAddress) != .orderedSame
         else {
-          throw RainSDKError.invalidConfig(
+          throw RainError.invalidConfig(
             details: "Invalid Auth Pull token contract for chainId=\(chainId): \(address)"
           )
         }
@@ -443,7 +515,7 @@ public final class RainSdk: @unchecked Sendable {
 
       let configuredChains = Set(networkConfigs.map(\.chainId))
       guard !configuredChains.isDisjoint(with: config.tokenAddresses.keys) else {
-        throw RainSDKError.invalidConfig(
+        throw RainError.invalidConfig(
           details: "No RPC endpoint configured for any trusted Auth Pull chain"
         )
       }

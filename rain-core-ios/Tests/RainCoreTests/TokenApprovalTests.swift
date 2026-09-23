@@ -131,7 +131,7 @@ struct TokenApprovalTests {
   func negativeAmountRejected() async throws {
     let (manager, stub, _, _) = TestManagers.approvalManager(registeredTokens: [usdcInfo])
 
-    await #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+    await #expect(throws: RainError.invalidAmount(amount: "", reason: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: chainId,
         contractAddress: usdc,
@@ -146,7 +146,7 @@ struct TokenApprovalTests {
   func overPreciseAmountRejected() async throws {
     let (manager, stub, _, _) = TestManagers.approvalManager(registeredTokens: [usdcInfo])
 
-    await #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+    await #expect(throws: RainError.invalidAmount(amount: "", reason: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: chainId,
         contractAddress: usdc,
@@ -161,7 +161,7 @@ struct TokenApprovalTests {
   func malformedSpenderRejected() async throws {
     let (manager, stub, _, _) = TestManagers.approvalManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: chainId,
         contractAddress: usdc,
@@ -175,7 +175,7 @@ struct TokenApprovalTests {
   func malformedContractRejected() async throws {
     let (manager, stub, _, _) = TestManagers.approvalManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: chainId,
         contractAddress: "0x1234",
@@ -189,7 +189,7 @@ struct TokenApprovalTests {
   func invalidChainIdRejected() async throws {
     let (manager, _, _, _) = TestManagers.approvalManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: 0,
         contractAddress: usdc,
@@ -202,7 +202,7 @@ struct TokenApprovalTests {
   func solanaChainIdRejected() async throws {
     let (manager, stub, _, _) = TestManagers.approvalManager()
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    await #expect(throws: RainError.internalError(details: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: RainChain.solanaDevnet,
         contractAddress: usdc,
@@ -220,7 +220,7 @@ struct TokenApprovalTests {
 
     // Base mainnet is an Auth Pull chain, but not this environment's — approving here would mine a
     // real mainnet allowance for the sandbox operator.
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: RainChain.baseMainnet,
         contractAddress: usdc,
@@ -236,7 +236,7 @@ struct TokenApprovalTests {
       authPullChainIds: RainAuthPullChains.production
     )
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: RainChain.baseSepolia,
         contractAddress: usdc,
@@ -250,7 +250,7 @@ struct TokenApprovalTests {
   func nonAuthPullChainRejected() async throws {
     let (manager, stub, _, _) = TestManagers.approvalManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: 1,
         contractAddress: usdc,
@@ -264,7 +264,7 @@ struct TokenApprovalTests {
   func allowanceReadAppliesEnvironmentGate() async throws {
     let (manager, _, reader, _) = TestManagers.approvalManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.getTokenAllowance(
         chainId: RainChain.baseMainnet,
         contractAddress: usdc,
@@ -301,14 +301,14 @@ struct TokenApprovalTests {
     let manager = TestManagers.authPullDisabledManager()
 
     #expect(manager.authPullChainIds.isEmpty)
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: chainId,
         contractAddress: usdc,
         spender: spender
       )
     }
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.getTokenAllowance(
         chainId: chainId,
         contractAddress: usdc,
@@ -323,7 +323,7 @@ struct TokenApprovalTests {
   func untrustedSpenderRejected() async throws {
     let (manager, stub, _, builder) = TestManagers.approvalManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: chainId,
         contractAddress: usdc,
@@ -338,7 +338,7 @@ struct TokenApprovalTests {
   func untrustedTokenRejected() async throws {
     let (manager, stub, _, builder) = TestManagers.approvalManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: chainId,
         contractAddress: unknownToken,
@@ -383,7 +383,7 @@ struct TokenApprovalTests {
 
     // Arbitrum Sepolia is an Auth Pull chain for this environment, but not for this client.
     #expect(RainAuthPullChains.sandbox.contains(RainChain.arbitrumSepolia))
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: RainChain.arbitrumSepolia,
         contractAddress: usdc,
@@ -456,7 +456,7 @@ struct TokenApprovalTests {
     reader.stubbedReceiptStatus = true
     reader.stubbedAllowance = BigUInt(500)
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    await #expect(throws: RainError.internalError(details: "")) {
       _ = try await manager.confirmTokenAllowance(
         transactionHash: "0x" + String(repeating: "e", count: 64),
         chainId: chainId,
@@ -473,7 +473,7 @@ struct TokenApprovalTests {
     reader.stubbedReceiptStatus = true
     reader.stubbedAllowance = 0
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    await #expect(throws: RainError.internalError(details: "")) {
       _ = try await manager.confirmTokenAllowance(
         transactionHash: "0x" + String(repeating: "f", count: 64),
         chainId: chainId,
@@ -566,7 +566,7 @@ struct TokenApprovalTests {
     reader.stubbedReceiptBlockNumber = "0x2a"
     reader.stubbedAllowanceByBlock = ["0x2a": BigUInt(10_000_000)]
     reader.stubbedAllowanceFailures = [
-      RainSDKError.internalLogicError(details: "RPC error [-32000]: header not found")
+      RainError.internalError(details: "RPC error [-32000]: header not found")
     ]
     let (manager, _, _, _) = TestManagers.approvalManager(
       registeredTokens: [usdcInfo],
@@ -599,7 +599,7 @@ struct TokenApprovalTests {
       reader: reader
     )
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    await #expect(throws: RainError.internalError(details: "")) {
       _ = try await manager.confirmTokenAllowance(
         transactionHash: "0x" + String(repeating: "5", count: 64),
         chainId: chainId,
@@ -643,14 +643,14 @@ struct TokenApprovalTests {
   @Test("an invalid hash is rejected at once rather than retried for the whole window")
   func invalidHashIsNotRetried() async throws {
     let reader = MockChainReader()
-    reader.stubbedReceiptFailures = [RainSDKError.invalidConfig(details: "Invalid transaction hash")]
+    reader.stubbedReceiptFailures = [RainError.invalidConfig(details: "Invalid transaction hash")]
     let (manager, _, _, _) = TestManagers.approvalManager(
       registeredTokens: [usdcInfo],
       reader: reader,
       approvalConfirmationInterval: .milliseconds(1)
     )
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.confirmTokenAllowance(
         transactionHash: "0x" + String(repeating: "7", count: 64),
         chainId: chainId,
@@ -684,7 +684,7 @@ struct TokenApprovalTests {
         amount: 250
       )
       Issue.record("expected transactionPending")
-    } catch RainSDKError.transactionPending(let statusId) {
+    } catch RainError.transactionPending(let statusId) {
       #expect(statusId == hash)
     }
     #expect(reader.receiptCalls.count == RainSdkManager.ApprovalConfirmation.attempts)
@@ -702,7 +702,7 @@ struct TokenApprovalTests {
       approvalConfirmationInterval: .milliseconds(1)
     )
 
-    await #expect(throws: RainSDKError.transactionPending(statusId: "")) {
+    await #expect(throws: RainError.transactionPending(statusId: "")) {
       _ = try await manager.confirmTokenAllowance(
         transactionHash: "0x" + String(repeating: "9", count: 64),
         chainId: chainId,
@@ -750,7 +750,7 @@ struct TokenApprovalTests {
     let (manager, _, reader, _) = TestManagers.approvalManager(registeredTokens: [usdcInfo])
     reader.stubbedReceiptStatus = false
 
-    await #expect(throws: RainSDKError.transactionSimulationFailed(underlying: RainSDKError.walletUnavailable)) {
+    await #expect(throws: RainError.transactionSimulationFailed(underlying: RainError.walletUnavailable())) {
       _ = try await manager.confirmTokenAllowance(
         transactionHash: "0x" + String(repeating: "b", count: 64),
         chainId: chainId,
@@ -765,7 +765,7 @@ struct TokenApprovalTests {
   func confirmationValidatesTargets() async throws {
     let (manager, _, reader, _) = TestManagers.approvalManager(registeredTokens: [usdcInfo])
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.confirmTokenAllowance(
         transactionHash: "0x" + String(repeating: "a", count: 64),
         chainId: chainId,
@@ -781,9 +781,9 @@ struct TokenApprovalTests {
   @Test("a user rejection in the wallet surfaces as userRejected")
   func userRejectionPropagates() async throws {
     let (manager, stub, _, _) = TestManagers.approvalManager()
-    stub.sendTransactionError = RainSDKError.userRejected
+    stub.sendTransactionError = RainError.userRejected
 
-    await #expect(throws: RainSDKError.userRejected) {
+    await #expect(throws: RainError.userRejected) {
       _ = try await manager.approveTokenAllowance(
         chainId: chainId,
         contractAddress: usdc,
@@ -795,26 +795,26 @@ struct TokenApprovalTests {
   @Test("a simulation revert keeps its own code rather than the withdrawal one")
   func simulationFailurePropagates() async throws {
     let (manager, stub, _, _) = TestManagers.approvalManager()
-    stub.sendTransactionError = RainSDKError.transactionSimulationFailed(
-      underlying: RainSDKError.internalLogicError(details: "reverted")
+    stub.sendTransactionError = RainError.transactionSimulationFailed(
+      underlying: RainError.internalError(details: "reverted")
     )
 
-    let error = await #expect(throws: RainSDKError.self) {
+    let error = await #expect(throws: RainError.self) {
       _ = try await manager.approveTokenAllowance(
         chainId: chainId,
         contractAddress: usdc,
         spender: spender
       )
     }
-    #expect(error?.errorCode == "RAIN_403")
+    #expect(error?.code == "RAIN_403")
   }
 
   @Test("an encoding failure surfaces as a typed SDK error")
   func encodingFailurePropagates() async throws {
     let (manager, stub, _, builder) = TestManagers.approvalManager()
-    builder.stubbedApproveError = RainSDKError.internalLogicError(details: "Failed to encode ERC-20 approve")
+    builder.stubbedApproveError = RainError.internalError(details: "Failed to encode ERC-20 approve")
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    await #expect(throws: RainError.internalError(details: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: chainId,
         contractAddress: usdc,
@@ -830,7 +830,7 @@ struct TokenApprovalTests {
     let (manager, stub, _, _) = TestManagers.approvalManager()
     stub.sendTransactionError = VendorError()
 
-    let error = await #expect(throws: RainSDKError.self) {
+    let error = await #expect(throws: RainError.self) {
       _ = try await manager.approveTokenAllowance(
         chainId: chainId,
         contractAddress: usdc,
@@ -838,7 +838,7 @@ struct TokenApprovalTests {
       )
     }
     // Classified as a provider failure, not passed through as the vendor's own type.
-    #expect(error?.errorCode == "RAIN_501")
+    #expect(error?.code == "RAIN_501")
   }
 
   // MARK: - getTokenAllowance
@@ -881,8 +881,8 @@ struct TokenApprovalTests {
     _ = try await manager.getTokenAllowance(
       chainId: chainId,
       contractAddress: usdc,
-      owner: other,
-      spender: spender
+      spender: spender,
+      owner: other
     )
 
     #expect(reader.allowanceCalls[0].owner == other)
@@ -892,12 +892,12 @@ struct TokenApprovalTests {
   func malformedOwnerRejected() async throws {
     let (manager, _, reader, _) = TestManagers.approvalManager(registeredTokens: [usdcInfo])
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.getTokenAllowance(
         chainId: chainId,
         contractAddress: usdc,
-        owner: "0xnope",
-        spender: spender
+        spender: spender,
+        owner: "0xnope"
       )
     }
     #expect(reader.allowanceCalls.isEmpty)
@@ -965,11 +965,11 @@ struct TokenApprovalTests {
     let (manager, stub, reader, builder) = TestManagers.approvalManager(
       authPullTokenAddresses: [RainChain.baseSepolia: unknownToken]
     )
-    reader.stubbedMetadataError = RainSDKError.networkError(
-      underlying: RainSDKError.internalLogicError(details: "rpc down")
+    reader.stubbedMetadataError = RainError.networkError(
+      underlying: RainError.internalError(details: "rpc down")
     )
 
-    await #expect(throws: RainSDKError.tokenNotFound(token: "", chainId: 0)) {
+    await #expect(throws: RainError.tokenNotFound(token: "", chainId: 0)) {
       _ = try await manager.approveTokenAllowance(
         chainId: chainId,
         contractAddress: unknownToken,
@@ -986,8 +986,8 @@ struct TokenApprovalTests {
     let (manager, _, reader, builder) = TestManagers.approvalManager(
       authPullTokenAddresses: [RainChain.baseSepolia: unknownToken]
     )
-    reader.stubbedMetadataError = RainSDKError.networkError(
-      underlying: RainSDKError.internalLogicError(details: "rpc down")
+    reader.stubbedMetadataError = RainError.networkError(
+      underlying: RainError.internalError(details: "rpc down")
     )
 
     _ = try await manager.approveTokenAllowance(
@@ -1005,11 +1005,11 @@ struct TokenApprovalTests {
       authPullTokenAddresses: [RainChain.baseSepolia: unknownToken]
     )
     reader.stubbedAllowance = BigUInt(250_000_000)
-    reader.stubbedMetadataError = RainSDKError.networkError(
-      underlying: RainSDKError.internalLogicError(details: "rpc down")
+    reader.stubbedMetadataError = RainError.networkError(
+      underlying: RainError.internalError(details: "rpc down")
     )
 
-    await #expect(throws: RainSDKError.tokenNotFound(token: "", chainId: 0)) {
+    await #expect(throws: RainError.tokenNotFound(token: "", chainId: 0)) {
       _ = try await manager.getTokenAllowance(
         chainId: chainId,
         contractAddress: unknownToken,
@@ -1028,7 +1028,7 @@ struct TokenApprovalTests {
     )
 
     // 40_000 overflows Int16, which the scaling math would trap on — a crash, not an error.
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: chainId,
         contractAddress: unknownToken,
@@ -1047,7 +1047,7 @@ struct TokenApprovalTests {
     reader.stubbedAllowance = BigUInt(1)
     reader.stubbedDecimals = 40_000
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.getTokenAllowance(
         chainId: chainId,
         contractAddress: unknownToken,
@@ -1059,11 +1059,11 @@ struct TokenApprovalTests {
   @Test("a failed allowance read surfaces as a typed SDK error")
   func allowanceReadFailurePropagates() async throws {
     let (manager, _, reader, _) = TestManagers.approvalManager(registeredTokens: [usdcInfo])
-    reader.stubbedAllowanceError = RainSDKError.networkError(
-      underlying: RainSDKError.internalLogicError(details: "boom")
+    reader.stubbedAllowanceError = RainError.networkError(
+      underlying: RainError.internalError(details: "boom")
     )
 
-    await #expect(throws: RainSDKError.networkError(underlying: RainSDKError.walletUnavailable)) {
+    await #expect(throws: RainError.networkError(underlying: RainError.walletUnavailable())) {
       _ = try await manager.getTokenAllowance(
         chainId: chainId,
         contractAddress: usdc,
@@ -1076,7 +1076,7 @@ struct TokenApprovalTests {
   func allowanceRejectsSolana() async throws {
     let (manager, _, reader, _) = TestManagers.approvalManager()
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    await #expect(throws: RainError.internalError(details: "")) {
       _ = try await manager.getTokenAllowance(
         chainId: RainChain.solanaDevnet,
         contractAddress: usdc,
@@ -1103,11 +1103,11 @@ struct TokenApprovalTests {
     #expect(stub.sendTransactionCalls.isEmpty)
   }
 
-  @Test("fee estimation on a provider that cannot estimate throws internalLogicError")
+  @Test("fee estimation on a provider that cannot estimate throws internalError")
   func feeEstimationUnsupportedProvider() async throws {
     let (manager, _, _, _) = TestManagers.approvalManager()
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    await #expect(throws: RainError.internalError(details: "")) {
       _ = try await manager.estimateApprovalFee(
         chainId: chainId,
         contractAddress: usdc,
@@ -1120,7 +1120,7 @@ struct TokenApprovalTests {
   func feeEstimationValidates() async throws {
     let (manager, _, _, builder) = TestManagers.approvalManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try await manager.estimateApprovalFee(
         chainId: chainId,
         contractAddress: usdc,

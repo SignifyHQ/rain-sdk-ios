@@ -129,8 +129,17 @@ final class RainSDKService: ObservableObject {
     guard let rain else { return contract }
     var tokens = contract.tokens
     for index in tokens.indices {
-      guard let info = await rain.tokenMetadata(chainId: contract.chainId, address: tokens[index].address)
-      else { continue } // decimals unresolvable: leave nil, the screen falls back / warns
+      // Throws for a malformed address, a chain without an RPC endpoint, or decimals the SDK
+      // refuses (outside 0...77); nil means the chain simply could not answer. Both leave the
+      // token unnamed and un-withdrawable in the UI, with the reason logged.
+      let info: TokenInfo?
+      do {
+        info = try await rain.tokenMetadata(chainId: contract.chainId, address: tokens[index].address)
+      } catch {
+        SampleLog.w("RainApi", "token \(tokens[index].address) rejected: \(error.localizedDescription)")
+        continue
+      }
+      guard let info else { continue }
       tokens[index].name = info.name
       tokens[index].symbol = info.symbol
       tokens[index].decimals = info.decimals
@@ -184,7 +193,7 @@ final class RainSDKService: ObservableObject {
   /// one — every address lookup would fail with `walletUnavailable` until this runs.
   @discardableResult
   func ensurePortalWallet() async throws -> Bool {
-    guard let portal = portalBox.value else { throw RainSDKError.sdkNotInitialized }
+    guard let portal = portalBox.value else { throw RainError.sdkNotInitialized }
 
     // Two independent facts: the signing share lives in this device's keychain, the wallet
     // itself lives on the Portal client. Creating on a client that already has one fails.
@@ -247,7 +256,7 @@ final class RainSDKService: ObservableObject {
   /// Rain-backed client.
   func initializeRainWallet() async throws {
     guard let provider = rainWalletProvider else {
-      throw RainSDKError.invalidConfig(details: "Call prepareRainWallet before initializeRainWallet")
+      throw RainError.invalidConfig(details: "Call prepareRainWallet before initializeRainWallet")
     }
     closeActiveProvider()
     let sdk = try builder(networkConfigs: WalletChain.networkConfigs)
@@ -285,7 +294,7 @@ final class RainSDKService: ObservableObject {
   func refreshSession() async throws {
     switch providerHandle {
     case .none:
-      throw RainSDKError.sdkNotInitialized
+      throw RainError.sdkNotInitialized
     case .turnkey(let provider):
       try await provider.refreshSession()
     case .privy(let provider):
@@ -300,7 +309,7 @@ final class RainSDKService: ObservableObject {
   /// Portal only: installs a host-minted token for the same Portal client.
   func updatePortalSessionToken(_ sessionToken: String) async throws {
     guard case .portal(let provider) = providerHandle else {
-      throw RainSDKError.sdkNotInitialized
+      throw RainError.sdkNotInitialized
     }
     try await provider.updateSessionToken(sessionToken)
   }
@@ -324,13 +333,13 @@ final class RainSDKService: ObservableObject {
 
   /// The built registry, or throws `sdkNotInitialized` if no `initialize*` has run.
   func requireRain() throws -> RainSdk {
-    guard let rain else { throw RainSDKError.sdkNotInitialized }
+    guard let rain else { throw RainError.sdkNotInitialized }
     return rain
   }
 
   /// The resolved provider client, or throws `sdkNotInitialized` before initialization.
   func requireClient() throws -> RainClient {
-    guard let client else { throw RainSDKError.sdkNotInitialized }
+    guard let client else { throw RainError.sdkNotInitialized }
     return client
   }
 
