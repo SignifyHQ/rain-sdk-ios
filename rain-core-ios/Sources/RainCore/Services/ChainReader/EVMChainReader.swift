@@ -199,7 +199,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
   ) async throws -> MinedReceipt? {
     guard transactionHash.range(of: Self.transactionHashPattern, options: .regularExpression) != nil
     else {
-      throw RainSDKError.invalidConfig(details: "Invalid transaction hash: \(transactionHash)")
+      throw RainError.invalidConfig(details: "Invalid transaction hash: \(transactionHash)")
     }
     let rpcUrl = try resolveRpcUrl(chainId: chainId)
     let response = try await jsonRpcClient.call(
@@ -210,23 +210,23 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
     // A pending transaction has a hash but no receipt, which the node reports as a null result.
     guard let result = response["result"], !(result is NSNull) else { return nil }
     guard let receipt = result as? [String: Any] else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Malformed transaction receipt for \(transactionHash)"
       )
     }
     guard let status = receipt["status"] as? String else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Transaction receipt for \(transactionHash) carries no status field"
       )
     }
     // Kept, not discarded: without it a caller can only read at whatever head answers next.
     guard let blockNumber = receipt["blockNumber"] as? String else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Transaction receipt for \(transactionHash) carries no blockNumber field"
       )
     }
     guard blockNumber.range(of: Self.hexQuantityPattern, options: .regularExpression) != nil else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Malformed receipt blockNumber for \(transactionHash): \(blockNumber)"
       )
     }
@@ -238,7 +238,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
     case 1: succeeded = true
     case 0: succeeded = false
     default:
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Malformed transaction receipt status for \(transactionHash): \(status)"
       )
     }
@@ -307,7 +307,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
     // Expect native + one entry per token.
     let expectedCount = tokens.count + 1
     guard results.count == expectedCount else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Multicall3 returned \(results.count) results, expected \(expectedCount) on chain \(chainId)"
       )
     }
@@ -315,7 +315,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
     // Index 0 is the native balance.
     let nativeResult = results[0]
     guard nativeResult.success else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Multicall3 native balance call reverted on chain \(chainId)"
       )
     }
@@ -435,10 +435,10 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
   /// this, parse failures bubble up from `JsonRpcClient` with `chainId: 0`.
   private func resolveRpcUrl(chainId: Int) throws -> String {
     guard let config = networkConfigResolver(chainId) else {
-      throw RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
+      throw RainError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
     }
     guard URL(string: config.rpcUrl) != nil else {
-      throw RainSDKError.invalidConfig(
+      throw RainError.invalidConfig(
         details: "Invalid RPC URL for chainId=\(chainId): \(config.rpcUrl)"
       )
     }
@@ -447,7 +447,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
 
   private func validate(ethereumAddress: String, label: String) throws {
     guard ethereumAddress.isValidEthereumAddress else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Invalid Ethereum \(label): \(ethereumAddress)"
       )
     }

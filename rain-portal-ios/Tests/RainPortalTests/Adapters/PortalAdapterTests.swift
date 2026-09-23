@@ -50,7 +50,7 @@ struct PortalAdapterTests {
     )
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
+    await #expect(throws: RainError.providerError(underlying: NSError(domain: "x", code: 0))) {
       _ = try await manager.getBalance(chainId: 1, token: .native)
     }
   }
@@ -105,7 +105,7 @@ struct PortalAdapterTests {
     )
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
+    await #expect(throws: RainError.providerError(underlying: NSError(domain: "x", code: 0))) {
       _ = try await manager.getBalance(chainId: 1, token: .contract(address: TestFixtures.usdcAddress))
     }
   }
@@ -123,7 +123,7 @@ struct PortalAdapterTests {
 
     // This read wraps Portal errors itself so a read-path revert is never a failed simulation;
     // auth must still classify, otherwise the host cannot tell it needs to re-authenticate.
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await manager.getBalance(chainId: 1, token: .contract(address: TestFixtures.usdcAddress))
     }
   }
@@ -222,7 +222,7 @@ struct PortalAdapterTests {
     )
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
+    await #expect(throws: RainError.providerError(underlying: NSError(domain: "x", code: 0))) {
       _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
@@ -242,7 +242,7 @@ struct PortalAdapterTests {
     )
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
+    await #expect(throws: RainError.providerError(underlying: NSError(domain: "x", code: 0))) {
       _ = try await manager.sendToken(
         chainId: 1,
         contractAddress: TestFixtures.tokenAddress,
@@ -265,7 +265,7 @@ struct PortalAdapterTests {
     )
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    await #expect(throws: RainSDKError.transactionSimulationFailed(underlying: NSError(domain: "x", code: 0))) {
+    await #expect(throws: RainError.transactionSimulationFailed(underlying: NSError(domain: "x", code: 0))) {
       _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
@@ -286,7 +286,7 @@ struct PortalAdapterTests {
     )
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
@@ -412,7 +412,7 @@ struct PortalAdapterTests {
       mockPortal.setMockResponse(chainId: "eip155:1", method: .eth_estimateGas, result: malformed)
       let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-      await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+      await #expect(throws: RainError.internalError(details: "")) {
         _ = try await manager.estimateGas(
           chainId: 1,
           from: TestFixtures.walletAddress,
@@ -434,7 +434,7 @@ struct PortalAdapterTests {
     )
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
+    await #expect(throws: RainError.providerError(underlying: NSError(domain: "x", code: 0))) {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -458,7 +458,7 @@ struct PortalAdapterTests {
     let (manager, _, builder) = TestManagers.portalManager(portal: mockPortal)
     builder.mockNonce = BigUInt(1)
 
-    await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
+    await #expect(throws: RainError.providerError(underlying: NSError(domain: "x", code: 0))) {
       _ = try await manager.estimateWithdrawalFee(
         chainId: 1,
         addresses: TestFixtures.defaultWithdrawAddresses,

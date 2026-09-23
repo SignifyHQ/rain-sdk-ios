@@ -6,7 +6,7 @@ import Foundation
 /// The Rain SDK's only send path on Turnkey is `ethSendTransaction` / `solSendTransaction`,
 /// which exist solely on Turnkey's managed-broadcast networks — there is no self-broadcast
 /// fallback (v0 decision). A send on any other chain would fail opaquely deep in the vendor
-/// call, so `requireSendSupport` refuses it up front with `RainSDKError.chainNotSupported`.
+/// call, so `requireSendSupport` refuses it up front with `RainError.chainNotSupported`.
 ///
 /// Reads (balances, history, fee estimation) are deliberately NOT gated here; they need an RPC
 /// endpoint registered for the chain (some balances also come from Turnkey's own indexer).
@@ -67,11 +67,11 @@ internal enum TurnkeyBroadcastChains {
     RainChain.isSolana(chainId) ? solanaChainIds.contains(chainId) : evmChainIds.contains(chainId)
   }
 
-  /// Throws `RainSDKError.chainNotSupported` when `chainId` has no Turnkey-managed broadcast.
+  /// Throws `RainError.chainNotSupported` when `chainId` has no Turnkey-managed broadcast.
   /// Call at the top of every send entry point, before any wallet or network work.
   static func requireSendSupport(chainId: Int) throws {
     guard supportsSend(chainId: chainId) else {
-      throw RainSDKError.chainNotSupported(
+      throw RainError.chainNotSupported(
         chainId: chainId,
         details: "Turnkey-managed broadcast does not cover this chain; this wallet can read "
           + "balances and history on it, but cannot send. See "

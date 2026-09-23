@@ -108,7 +108,7 @@ struct SolanaChainReaderTests {
       MockURLProtocol.stub(method: "getAccountInfo", result: ["value": NSNull()])
       let reader = makeReader()
 
-      await #expect(throws: RainSDKError.tokenNotFound(token: Self.mint, chainId: SolanaChains.mainnet)) {
+      await #expect(throws: RainError.tokenNotFound(token: Self.mint, chainId: SolanaChains.mainnet)) {
         _ = try await reader.getBalance(
           chainId: SolanaChains.mainnet, walletAddress: address,
           token: .contract(address: Self.mint), tokenInfo: nil)
@@ -182,7 +182,7 @@ struct SolanaChainReaderTests {
         result: ["value": ["owner": SolanaPrograms.system, "data": ["parsed": ["type": "account"]]]]
       )
       let reader = makeReader()
-      await #expect(throws: RainSDKError.tokenNotFound(token: Self.mint, chainId: SolanaChains.mainnet)) {
+      await #expect(throws: RainError.tokenNotFound(token: Self.mint, chainId: SolanaChains.mainnet)) {
         _ = try await reader.getDecimals(chainId: SolanaChains.mainnet, tokenAddress: Self.mint)
       }
     }
@@ -247,7 +247,7 @@ struct SolanaChainReaderTests {
   @Test("invalid Solana address throws")
   func invalidAddressThrows() async {
     let reader = makeReader()
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await reader.getNativeBalance(chainId: SolanaChains.mainnet, walletAddress: "not-base58-0OIl")
     }
   }

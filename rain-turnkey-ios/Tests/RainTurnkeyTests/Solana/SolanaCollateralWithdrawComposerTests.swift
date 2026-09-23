@@ -173,7 +173,7 @@ struct SolanaCollateralWithdrawComposerTests {
       try stubHappyPath()
 
       await #expect(
-        throws: RainSDKError.walletNotAuthorized(walletAddress: executor, proxyAddress: collateral)
+        throws: RainError.walletNotAuthorized(walletAddress: executor, proxyAddress: collateral)
       ) {
         _ = try await makeComposer().composeWithdraw(
           chainId: devnet,
@@ -194,7 +194,7 @@ struct SolanaCollateralWithdrawComposerTests {
       // The coordinator account has a different Anchor discriminator — a realistic wrong type.
       try stubHappyPath(collateralOverride: coordinatorData)
 
-      await #expect(throws: RainSDKError.self) {
+      await #expect(throws: RainError.self) {
         _ = try await makeComposer().composeWithdraw(
           chainId: devnet,
           ownerAddress: owner,
@@ -308,8 +308,8 @@ struct SolanaCollateralWithdrawComposerTests {
       )
 
       await #expect(
-        throws: RainSDKError.transactionSimulationFailed(
-          underlying: RainSDKError.internalLogicError(details: "")
+        throws: RainError.transactionSimulationFailed(
+          underlying: RainError.internalError(details: "")
         )
       ) {
         _ = try await makeComposer().composeWithdraw(

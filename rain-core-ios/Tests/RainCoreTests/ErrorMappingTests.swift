@@ -4,21 +4,21 @@ import Foundation
 
 /// Turnkey + generic error-mapping cases. Portal error mapping is registered at runtime by
 /// `PortalProvider` (so RainCore never imports PortalSwift); those cases live in `RainPortalTests`.
-@Suite("RainSDKError Mapping Tests")
+@Suite("RainError Mapping Tests")
 struct ErrorMappingTests {
 
 
-  @Test("from(_:) returns RainSDKError unchanged when input is already a RainSDKError")
-  func testRainSDKErrorPassthrough() {
-    let original = RainSDKError.invalidConfig(details: "x")
-    let mapped = RainSDKError.from(underlying: original)
+  @Test("from(_:) returns RainError unchanged when input is already a RainError")
+  func testRainErrorPassthrough() {
+    let original = RainError.invalidConfig(details: "x")
+    let mapped = RainError.from(underlying: original)
     #expect(mapped == original)
   }
 
   @Test("from(_:) maps NSURLErrorDomain errors to networkError")
   func testNSURLErrorMapsToNetworkError() {
     let underlying = NSError(domain: NSURLErrorDomain, code: NSURLErrorTimedOut, userInfo: nil)
-    let mapped = RainSDKError.from(underlying: underlying)
+    let mapped = RainError.from(underlying: underlying)
 
     if case .networkError = mapped {
       // OK
@@ -30,7 +30,7 @@ struct ErrorMappingTests {
   @Test("from(_:) maps unknown NSError to providerError")
   func testUnknownErrorMapsToProviderError() {
     let underlying = NSError(domain: "SomeRandomDomain", code: 123, userInfo: nil)
-    let mapped = RainSDKError.from(underlying: underlying)
+    let mapped = RainError.from(underlying: underlying)
 
     if case .providerError = mapped {
       // OK
@@ -44,22 +44,22 @@ struct ErrorMappingTests {
   @Test("error codes match the cross-platform map")
   func testErrorCodeParityMap() {
     let underlying = NSError(domain: "Test", code: 1, userInfo: nil)
-    let expected: [(RainSDKError, String)] = [
+    let expected: [(RainError, String)] = [
       (.sdkNotInitialized, "RAIN_101"),
       (.invalidConfig(details: "x"), "RAIN_102"),
       (.providerNotRegistered(details: "x"), "RAIN_102"),
       (.invalidRpcUrl("x"), "RAIN_103"),
       (.chainNotSupported(chainId: 43114, details: "x"), "RAIN_104"),
       (.tokenExpired, "RAIN_201"),
-      (.unauthorized, "RAIN_202"),
+      (.unauthorized(), "RAIN_202"),
       (.invalidLoginCode, "RAIN_203"),
       (.networkError(underlying: underlying), "RAIN_301"),
       (.transactionPending(statusId: "status-1"), "RAIN_302"),
       (.userRejected, "RAIN_401"),
       (.insufficientFunds(required: "1", available: "0"), "RAIN_402"),
       (.transactionSimulationFailed(underlying: underlying), "RAIN_403"),
-      (.walletUnavailable, "RAIN_404"),
-      (.withdrawalRevertedByNetwork, "RAIN_405"),
+      (.walletUnavailable(), "RAIN_404"),
+      (.withdrawalRevertedByNetwork(), "RAIN_405"),
       (.invalidAmount(amount: "1.005", reason: "too many decimals"), "RAIN_406"),
       (.walletNotAuthorized(walletAddress: "0x1", proxyAddress: "0x2"), "RAIN_407"),
       // Token-transfer failures reuse existing codes on purpose — the code map is shared with the
@@ -69,16 +69,16 @@ struct ErrorMappingTests {
       (.tokenNotFound(token: "mint", chainId: 103), "RAIN_102"),
       (.invalidRecipient(address: "addr", reason: "because"), "RAIN_102"),
       (.providerError(underlying: underlying), "RAIN_501"),
-      (.internalLogicError(details: "x"), "RAIN_502"),
+      (.internalError(details: "x"), "RAIN_502"),
     ]
     for (error, code) in expected {
-      #expect(error.errorCode == code)
+      #expect(error.code == code)
       requireMappedCase(error)
     }
   }
 
-  /// Fails to compile when a `RainSDKError` case is added but not listed here.
-  private func requireMappedCase(_ error: RainSDKError) {
+  /// Fails to compile when a `RainError` case is added but not listed here.
+  private func requireMappedCase(_ error: RainError) {
     switch error {
     case .sdkNotInitialized,
          .invalidConfig,
@@ -102,7 +102,7 @@ struct ErrorMappingTests {
          .tokenNotFound,
          .invalidRecipient,
          .providerError,
-         .internalLogicError:
+         .internalError:
       break
     }
   }
@@ -113,31 +113,31 @@ struct ErrorMappingTests {
   func testEqualityDistinguishesCasesSharingACode() {
     // RAIN_402 trio
     #expect(
-      RainSDKError.insufficientFunds(required: "1", available: "0")
-        != RainSDKError.tokenAccountNotFound(walletAddress: "w", token: "t")
+      RainError.insufficientFunds(required: "1", available: "0")
+        != RainError.tokenAccountNotFound(walletAddress: "w", token: "t")
     )
     #expect(
-      RainSDKError.insufficientFunds(required: "1", available: "0")
-        != RainSDKError.insufficientTokenBalance(requested: "2", available: "1", token: "t")
+      RainError.insufficientFunds(required: "1", available: "0")
+        != RainError.insufficientTokenBalance(requested: "2", available: "1", token: "t")
     )
     // RAIN_102 family
-    #expect(RainSDKError.invalidConfig(details: "x") != RainSDKError.tokenNotFound(token: "t", chainId: 1))
-    #expect(RainSDKError.invalidConfig(details: "x") != RainSDKError.providerNotRegistered(details: "x"))
+    #expect(RainError.invalidConfig(details: "x") != RainError.tokenNotFound(token: "t", chainId: 1))
+    #expect(RainError.invalidConfig(details: "x") != RainError.providerNotRegistered(details: "x"))
     #expect(
-      RainSDKError.tokenNotFound(token: "t", chainId: 1)
-        != RainSDKError.invalidRecipient(address: "a", reason: "r")
+      RainError.tokenNotFound(token: "t", chainId: 1)
+        != RainError.invalidRecipient(address: "a", reason: "r")
     )
   }
 
   @Test("== treats same-case values as equal regardless of payload")
   func testEqualityIsPayloadInsensitive() {
-    #expect(RainSDKError.invalidConfig(details: "a") == RainSDKError.invalidConfig(details: "b"))
+    #expect(RainError.invalidConfig(details: "a") == RainError.invalidConfig(details: "b"))
     #expect(
-      RainSDKError.insufficientFunds(required: "1", available: "0")
-        == RainSDKError.insufficientFunds(required: "9", available: "8")
+      RainError.insufficientFunds(required: "1", available: "0")
+        == RainError.insufficientFunds(required: "9", available: "8")
     )
-    #expect(RainSDKError.unauthorized == RainSDKError.unauthorized)
-    #expect(RainSDKError.tokenExpired == RainSDKError.tokenExpired)
+    #expect(RainError.unauthorized() == RainError.unauthorized())
+    #expect(RainError.tokenExpired == RainError.tokenExpired)
   }
 
   // MARK: - Untyped vendor prose
@@ -158,19 +158,19 @@ struct ErrorMappingTests {
       "Transaction cancelled by user",
       "Request denied by the user",
     ] {
-      let mapped = RainSDKError.from(underlying: VendorProseError(message))
-      #expect(mapped == RainSDKError.userRejected, "expected userRejected for: \(message)")
+      let mapped = RainError.from(underlying: VendorProseError(message))
+      #expect(mapped == RainError.userRejected, "expected userRejected for: \(message)")
     }
   }
 
   @Test("from(_:) maps EIP-1193 code 4001 to userRejected")
   func testCode4001MapsToUserRejected() {
     for message in ["code: 4001, message: nope", "RPC error [4001]", "Provider error (4001)"] {
-      let mapped = RainSDKError.from(underlying: VendorProseError(message))
-      #expect(mapped == RainSDKError.userRejected, "expected userRejected for: \(message)")
+      let mapped = RainError.from(underlying: VendorProseError(message))
+      #expect(mapped == RainError.userRejected, "expected userRejected for: \(message)")
     }
     let coded = NSError(domain: "vendor", code: 4001, userInfo: nil)
-    #expect(RainSDKError.from(underlying: coded) == RainSDKError.userRejected)
+    #expect(RainError.from(underlying: coded) == RainError.userRejected)
   }
 
   @Test("from(_:) maps an insufficient-funds phrase to insufficientFunds")
@@ -181,14 +181,14 @@ struct ErrorMappingTests {
       "Transfer: insufficient lamports 100, need 5000",
       "Attempt to debit an account but found no record of a prior credit.",
     ] {
-      let mapped = RainSDKError.from(underlying: VendorProseError(message))
-      #expect(mapped.errorCode == "RAIN_402", "expected RAIN_402 for: \(message)")
+      let mapped = RainError.from(underlying: VendorProseError(message))
+      #expect(mapped.code == "RAIN_402", "expected RAIN_402 for: \(message)")
     }
   }
 
   @Test("from(_:) leaves an unrecognized message as providerError")
   func testUnrecognizedProseStaysProviderError() {
-    let mapped = RainSDKError.from(underlying: VendorProseError("nonce too low"))
+    let mapped = RainError.from(underlying: VendorProseError("nonce too low"))
     if case .providerError = mapped {} else {
       Issue.record("expected providerError, got \(mapped)")
     }
@@ -204,7 +204,7 @@ struct ErrorMappingTests {
       "insufficient permissions for this operation",
       "nonce 4001 too low",
     ] {
-      let mapped = RainSDKError.from(underlying: VendorProseError(message))
+      let mapped = RainError.from(underlying: VendorProseError(message))
       if case .providerError = mapped {} else {
         Issue.record("expected providerError for: \(message), got \(mapped)")
       }
@@ -216,22 +216,22 @@ struct ErrorMappingTests {
 
   @Test("from(_:) classifies a plain Swift error whose case text says insufficient funds")
   func testPlainErrorInsufficientFunds() {
-    let mapped = RainSDKError.from(underlying: PlainVendorError.insufficientFundsForTransfer)
-    #expect(mapped == RainSDKError.insufficientFunds(required: "unknown", available: "unknown"))
+    let mapped = RainError.from(underlying: PlainVendorError.insufficientFundsForTransfer)
+    #expect(mapped == RainError.insufficientFunds(required: "unknown", available: "unknown"))
 
-    let prose = RainSDKError.from(underlying: PlainVendorError.prose("insufficient funds for gas"))
-    #expect(prose == RainSDKError.insufficientFunds(required: "unknown", available: "unknown"))
+    let prose = RainError.from(underlying: PlainVendorError.prose("insufficient funds for gas"))
+    #expect(prose == RainError.insufficientFunds(required: "unknown", available: "unknown"))
   }
 
   @Test("from(_:) classifies a plain Swift error whose case text says the user rejected")
   func testPlainErrorUserRejection() {
-    #expect(RainSDKError.from(underlying: PlainVendorError.userRejectedSignature) == RainSDKError.userRejected)
-    #expect(RainSDKError.from(underlying: PlainVendorError.prose("denied by user")) == RainSDKError.userRejected)
+    #expect(RainError.from(underlying: PlainVendorError.userRejectedSignature) == RainError.userRejected)
+    #expect(RainError.from(underlying: PlainVendorError.prose("denied by user")) == RainError.userRejected)
   }
 
   @Test("from(_:) does not classify Task cancellation as a user rejection")
   func testCancellationErrorIsNotUserRejected() {
-    let mapped = RainSDKError.from(underlying: CancellationError())
+    let mapped = RainError.from(underlying: CancellationError())
     if case .providerError = mapped {} else {
       Issue.record("expected providerError, got \(mapped)")
     }

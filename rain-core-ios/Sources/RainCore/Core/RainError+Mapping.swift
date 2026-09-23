@@ -1,13 +1,13 @@
 import AuthenticationServices
 import Foundation
 
-// MARK: - Map provider errors to RainSDKError
+// MARK: - Map provider errors to RainError
 
-extension RainSDKError {
-  /// A closure that attempts to map a vendor error into a `RainSDKError`, returning `nil` if it
+extension RainError {
+  /// A closure that attempts to map a vendor error into a `RainError`, returning `nil` if it
   /// doesn't recognize the error. Out-of-core adapters (e.g. `RainPortal`) register one of these
   /// so their vendor errors classify correctly without core importing the vendor SDK.
-  public typealias ErrorMapper = @Sendable (_ error: Error) -> RainSDKError?
+  public typealias ErrorMapper = @Sendable (_ error: Error) -> RainError?
 
   /// Registered adapter mappers, consulted (in registration order) before the built-in fallbacks.
   nonisolated(unsafe) private static var externalMappers: [ErrorMapper] = []
@@ -23,7 +23,7 @@ extension RainSDKError {
     externalMappers.append(mapper)
   }
 
-  private static func mapExternal(_ error: Error) -> RainSDKError? {
+  private static func mapExternal(_ error: Error) -> RainError? {
     externalMappersLock.lock()
     let mappers = externalMappers
     externalMappersLock.unlock()
@@ -33,11 +33,11 @@ extension RainSDKError {
     return nil
   }
 
-  /// Maps a thrown error (e.g. from Turnkey, or an adapter-registered vendor) to a `RainSDKError`.
+  /// Maps a thrown error (e.g. from Turnkey, or an adapter-registered vendor) to a `RainError`.
   /// Typed cases (session expired, network, user cancellation) are mapped first, then untyped
   /// vendor prose by keyword; everything else is `providerError(underlying:)`.
-  public static func from(underlying error: Error) -> RainSDKError {
-    if let rain = error as? RainSDKError { return rain }
+  public static func from(underlying error: Error) -> RainError {
+    if let rain = error as? RainError { return rain }
 
     // Adapter-registered mappers (Turnkey, Portal, Privy) get first crack at their own
     // vendor errors.
@@ -63,7 +63,7 @@ extension RainSDKError {
 
   /// Classifies an untyped vendor error by its message, or by EIP-1193 code 4001 when the error
   /// carries one.
-  private static func mapByKeyword(_ error: Error) -> RainSDKError? {
+  private static func mapByKeyword(_ error: Error) -> RainError? {
     // Task cancellation is not a wallet-UI rejection, and its type name would match "cancel".
     if error is CancellationError { return nil }
 
@@ -94,7 +94,7 @@ extension RainSDKError {
 
   /// Classifies free-text vendor prose into `.userRejected` / `.insufficientFunds`, or `nil` when
   /// the message matches neither. Shared with adapters so every vendor is held to one standard.
-  public static func fromVendorMessage(_ message: String) -> RainSDKError? {
+  public static func fromVendorMessage(_ message: String) -> RainError? {
     let text = normalizedVendorText(message)
     guard !text.isEmpty else { return nil }
     if text.range(of: #"\bcode\W{0,3}4001\b|[\[(]4001[\])]"#, options: .regularExpression) != nil {

@@ -15,7 +15,7 @@ struct AmountHelpersTests {
 
   @Test("amount with more decimal places than the token throws")
   func overPrecisionThrows() {
-    #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+    #expect(throws: RainError.invalidAmount(amount: "", reason: "")) {
       try AmountHelpers.toBaseUnits(amount: Decimal(string: "0.1234567")!, decimals: 6)
     }
   }
@@ -47,7 +47,7 @@ struct AmountHelpersTests {
   /// larger value into a completely different allowance.
   @Test("an amount above uint256 max is rejected")
   func aboveUInt256MaxRejected() {
-    #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+    #expect(throws: RainError.invalidAmount(amount: "", reason: "")) {
       try AmountHelpers.toBaseUnits(amount: Decimal(string: "1e60")!, decimals: 18)
     }
   }
@@ -60,7 +60,7 @@ struct AmountHelpersTests {
 
   @Test("negative amount throws instead of trapping")
   func negativeAmountThrows() {
-    #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+    #expect(throws: RainError.invalidAmount(amount: "", reason: "")) {
       try AmountHelpers.toBaseUnits(amount: -1, decimals: 18)
     }
   }
@@ -68,10 +68,10 @@ struct AmountHelpersTests {
   @Test("NaN amount throws invalidAmount instead of converting")
   func nanAmountThrows() {
     // Double.nan.asDecimal surfaces as Decimal.nan; it must never reach base units as 0.
-    #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+    #expect(throws: RainError.invalidAmount(amount: "", reason: "")) {
       try AmountHelpers.toBaseUnits(amount: Double.nan.asDecimal, decimals: 18)
     }
-    #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+    #expect(throws: RainError.invalidAmount(amount: "", reason: "")) {
       try AmountHelpers.toBaseUnits(amount: Decimal.nan, decimals: 18)
     }
   }
@@ -80,10 +80,10 @@ struct AmountHelpersTests {
   func absurdDecimalsThrow() throws {
     // `Int16(decimals)` in the scaling step traps on overflow — a process crash, not an error —
     // and `decimals` can come from a contract's own `decimals()` read.
-    #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+    #expect(throws: RainError.invalidAmount(amount: "", reason: "")) {
       try AmountHelpers.toBaseUnits(amount: 1, decimals: 40_000)
     }
-    #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+    #expect(throws: RainError.invalidAmount(amount: "", reason: "")) {
       try AmountHelpers.toBaseUnits(amount: 1, decimals: -1)
     }
     // The bounds themselves stay usable.

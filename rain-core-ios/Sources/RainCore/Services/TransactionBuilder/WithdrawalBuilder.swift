@@ -67,24 +67,24 @@ enum WithdrawalBuilder {
           let tokenAddress = EthereumAddress.parse(validated.tokenAddress),
           let recipientAddress = EthereumAddress.parse(validated.recipientAddress)
     else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Error building transaction parameters for withdrawal. One of the addresses could not be built"
       )
     }
 
     // Rain's API returns the executor salt base64-encoded and the signature as hex.
     guard let executorSaltData = Data(base64Encoded: executorSignature.salt) else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Failed to convert withdrawal salt base 64 string to Data"
       )
     }
     guard let executorSignatureData = Data(hexString: executorSignature.signature, length: 65) else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Failed to convert withdrawal signature hex string to Data"
       )
     }
     guard let walletSignatureData = Data(hexString: walletSignature, length: 65) else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Failed to convert admin signature hex string to Data or invalid length"
       )
     }
@@ -116,7 +116,7 @@ enum WithdrawalBuilder {
     let trimmed = expiresAt.trimmingCharacters(in: .whitespacesAndNewlines)
     if let timestamp = Int(trimmed) { return timestamp }
     if let date = RainSdk.parseISO8601(trimmed) { return Int(date.timeIntervalSince1970) }
-    throw RainSDKError.invalidConfig(
+    throw RainError.invalidConfig(
       details: "Invalid expiresAt format: \(expiresAt). Expected a unix-seconds or ISO-8601 string."
     )
   }

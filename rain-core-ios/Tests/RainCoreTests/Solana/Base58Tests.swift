@@ -49,6 +49,6 @@ struct Base58Tests {
 
   @Test("decode rejects characters outside the alphabet")
   func rejectsInvalidChars() {
-    #expect(throws: RainSDKError.self) { try Base58.decode("0OIl") }
+    #expect(throws: RainError.self) { try Base58.decode("0OIl") }
   }
 }

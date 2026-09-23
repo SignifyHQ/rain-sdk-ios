@@ -62,7 +62,7 @@ struct SolanaTransactionBuilderTests {
       data: []
     )
 
-    #expect(throws: RainSDKError.invalidConfig(details: "Transaction requires 1 signer(s) besides the fee payer")) {
+    #expect(throws: RainError.invalidConfig(details: "Transaction requires 1 signer(s) besides the fee payer")) {
       _ = try SolanaTransactionBuilder.buildTransactionBytes(
         feePayer: from,
         recentBlockhash: blockhash,
@@ -85,7 +85,7 @@ struct SolanaTransactionBuilderTests {
   @Test("rejects non-32-byte addresses")
   func rejectsBadAddress() {
     let tooShort = Base58.encode([UInt8](repeating: 0, count: 31))
-    #expect(throws: RainSDKError.self) {
+    #expect(throws: RainError.self) {
       _ = try SolanaTransactionBuilder.buildTransferHex(
         from: tooShort, to: to, lamports: 1, recentBlockhash: blockhash)
     }
@@ -205,7 +205,7 @@ struct SolanaTransactionBuilderSPLTests {
 
   @Test("rejects a malformed mint before serializing")
   func rejectsBadMint() {
-    #expect(throws: RainSDKError.self) {
+    #expect(throws: RainError.self) {
       _ = try SolanaTransactionBuilder.buildSPLTransferHex(
         owner: Self.owner,
         source: Self.source,

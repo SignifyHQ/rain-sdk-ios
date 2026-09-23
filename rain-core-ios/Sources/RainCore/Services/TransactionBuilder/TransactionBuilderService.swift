@@ -40,7 +40,7 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
 
     guard let ethereumCollateralAddress = EthereumAddress.parse(proxyAddress) else {
       RainLogger.error("Rain SDK: Error getting contract's nonce. Could not build proxy address or RPC URL is missing")
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Invalid proxy address or RPC URL for chain ID \(chainId)"
       )
     }
@@ -53,16 +53,16 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
         address: ethereumCollateralAddress
       )
       guard let invocation = contract["adminNonce"]?() else {
-        throw RainSDKError.internalLogicError(details: "Collateral ABI is missing adminNonce")
+        throw RainError.internalError(details: "Collateral ABI is missing adminNonce")
       }
 
       let nonce: BigUInt = try await contractValue(invocation, method: "adminNonce")
       return nonce
-    } catch let error as RainSDKError {
+    } catch let error as RainError {
       throw error
     } catch {
       RainLogger.error("Rain SDK: Error calling contract for nonce - \(error.localizedDescription)")
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -90,7 +90,7 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
         if let value = (outputs?[""] ?? outputs?.values.first) as? T {
           continuation.resume(returning: value)
         } else {
-          continuation.resume(throwing: error ?? RainSDKError.internalLogicError(
+          continuation.resume(throwing: error ?? RainError.internalError(
             details: "\(method) value not found in contract response"
           ))
         }
@@ -202,7 +202,7 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     
     guard let messageString = String(data: jsonData, encoding: .utf8) else {
       RainLogger.error("Rain SDK: Error building EIP-712 message. Could not build message string")
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Failed to serialize EIP-712 message to JSON"
       )
     }
@@ -225,7 +225,7 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     guard withdrawAssetParameter.executorSalt.count == 32,
           withdrawAssetParameter.walletSalt.count == 32 else {
       RainLogger.error("Rain SDK: Error building withdrawal. bytes32 salt is not 32 bytes (executor=\(withdrawAssetParameter.executorSalt.count), wallet=\(withdrawAssetParameter.walletSalt.count))")
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Withdrawal salt must be 32 bytes (executor=\(withdrawAssetParameter.executorSalt.count), wallet=\(withdrawAssetParameter.walletSalt.count))"
       )
     }
@@ -241,7 +241,7 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
 
     guard let address = EthereumAddress.parse(walletAddress) else {
       RainLogger.error("Rain SDK: encodeBalanceOfCall — invalid wallet address or RPC URL for chain \(chainId)")
-      throw RainSDKError.internalLogicError(details: "Invalid wallet address or RPC URL for chain ID \(chainId)")
+      throw RainError.internalError(details: "Invalid wallet address or RPC URL for chain ID \(chainId)")
     }
 
     let web3 = Web3(rpcURL: rpcURL)
@@ -249,7 +249,7 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
 
     guard let encoded = contract.balanceOf(address: address).encodeABI() else {
       RainLogger.error("Rain SDK: encodeBalanceOfCall — ABI encoding failed")
-      throw RainSDKError.internalLogicError(details: "Could not encode balanceOf call")
+      throw RainError.internalError(details: "Could not encode balanceOf call")
     }
 
     return encoded.hex()
@@ -276,7 +276,7 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     guard let ethereumToAddress = EthereumAddress.parse(toAddress)
     else {
       RainLogger.error("Rain SDK: Error building ERC-20 transfer parameters")
-      throw RainSDKError.internalLogicError(details: "Failed to encode ERC-20")
+      throw RainError.internalError(details: "Failed to encode ERC-20")
     }
     
     let tx = contract
@@ -299,7 +299,7 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     guard let tx
     else {
       RainLogger.error("Rain SDK: Error building ERC-20 transfer. Could not encode transfer call")
-      throw RainSDKError.internalLogicError(details: "Failed to encode ERC-20")
+      throw RainError.internalError(details: "Failed to encode ERC-20")
     }
     
     return tx.data.hex()
@@ -320,7 +320,7 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     // silently truncated into a completely different allowance. Checked here as well as at the
     // scaling layer, because this entry point also takes base units directly.
     guard amount <= RainTokenAllowance.unlimitedRawAmount else {
-      throw RainSDKError.invalidAmount(
+      throw RainError.invalidAmount(
         amount: amount.description,
         reason: "approval amount must fit in uint256"
       )
@@ -337,7 +337,7 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     guard let ethereumSpenderAddress = EthereumAddress.parse(spender)
     else {
       RainLogger.error("Rain SDK: Error building ERC-20 approve parameters")
-      throw RainSDKError.internalLogicError(details: "Failed to encode ERC-20 approve")
+      throw RainError.internalError(details: "Failed to encode ERC-20 approve")
     }
 
     let tx = contract
@@ -360,7 +360,7 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     guard let tx
     else {
       RainLogger.error("Rain SDK: Error building ERC-20 approve. Could not encode approve call")
-      throw RainSDKError.internalLogicError(details: "Failed to encode ERC-20 approve")
+      throw RainError.internalError(details: "Failed to encode ERC-20 approve")
     }
 
     return tx.data.hex()
@@ -373,16 +373,16 @@ private extension TransactionBuilderService {
   /// Get RPC URL for a specific chain ID
   /// - Parameter chainId: The chain identifier
   /// - Returns: RPC URL string
-  /// - Throws: RainSDKError if RPC URL not found
+  /// - Throws: RainError if RPC URL not found
   func getRpcURL(chainId: Int) throws -> String {
     guard let config = networkConfigsByChainId[chainId] else {
       RainLogger.error("Rain SDK: Error getting RPC URL. Chain ID \(chainId) not found in network configs")
-      throw RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
+      throw RainError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
     }
 
     guard config.rpcUrl.isValidHTTPURL() else {
       RainLogger.error("Rain SDK: Error getting RPC URL. Invalid RPC URL for chain ID \(chainId)")
-      throw RainSDKError.invalidConfig(
+      throw RainError.invalidConfig(
         details: "Invalid RPC URL for chainId=\(chainId): \(config.rpcUrl)"
       )
     }

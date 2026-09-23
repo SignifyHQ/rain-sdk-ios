@@ -35,7 +35,7 @@ class StubWalletProvider: WalletProvider, @unchecked Sendable {
   func requireSendSupport(chainId: Int) throws {
     requireSendSupportCalls.append(chainId)
     if unsupportedSendChainIds.contains(chainId) {
-      throw RainSDKError.chainNotSupported(chainId: chainId, details: "stub cannot broadcast here")
+      throw RainError.chainNotSupported(chainId: chainId, details: "stub cannot broadcast here")
     }
   }
 

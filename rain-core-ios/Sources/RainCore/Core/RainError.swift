@@ -2,7 +2,7 @@ import Foundation
 
 /// Errors that can occur in the Rain SDK
 /// Structured with error codes for easy identification and debugging
-public enum RainSDKError: Error, LocalizedError, Equatable {
+public enum RainError: Error, LocalizedError, Equatable {
   // MARK: - 1xx: Initialization Errors
   
   /// RAIN_101: Business methods were called before initialize() was successfully completed
@@ -28,8 +28,9 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// RAIN_201: The wallet provider session token has expired or is no longer valid
   case tokenExpired
 
-  /// RAIN_202: Invalid Rain API Key or insufficient permissions for the requested operation
-  case unauthorized
+  /// RAIN_202: The backend rejected the caller's credentials or permissions for this operation.
+  /// `details` says which backend and why (e.g. a Turnkey 403, an empty Portal session token).
+  case unauthorized(details: String = "Invalid credentials or insufficient permissions")
 
   /// RAIN_203: The one-time login code was rejected (wrong, expired, or already used) — ask the
   /// user to retype it or request a new one. Distinct from `tokenExpired`, which means an
@@ -58,11 +59,14 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// RAIN_403: Transaction simulation (preflight) failed before submission, e.g. a contract revert surfaced by `eth_call`
   case transactionSimulationFailed(underlying: Error)
 
-  /// RAIN_404: No wallet address available from the wallet provider (e.g. user has not connected or created a wallet)
-  case walletUnavailable
+  /// RAIN_404: No wallet address available from the wallet provider (e.g. the user has not
+  /// connected or created a wallet, or the provider holds no account for this chain family).
+  case walletUnavailable(details: String = "No wallet address from the wallet provider")
 
-  /// RAIN_405: Withdrawal reverted because the same amount was withdrawn in a short period; backend returned an already-used withdrawal signature
-  case withdrawalRevertedByNetwork
+  /// RAIN_405: The collateral contract rejected the withdrawal (reverted on chain or in the
+  /// preflight) — typically an already-used or expired admin signature, or a duplicate amount
+  /// inside the cooldown window. `details` carries the decoded reason when one is available.
+  case withdrawalRevertedByNetwork(details: String = "Withdrawal reverted by the network")
 
   /// RAIN_406: The amount is invalid for the token — more decimal places than the token supports, or negative/unrepresentable
   case invalidAmount(amount: String, reason: String)
@@ -95,12 +99,12 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   case providerError(underlying: Error)
   
   /// RAIN_502: Error processing EIP-712 data or internal state management failure
-  case internalLogicError(details: String)
+  case internalError(details: String)
   
   // MARK: - Error Code
   
   /// The error code (e.g., "RAIN_101")
-  public var errorCode: String {
+  public var code: String {
     switch self {
     case .sdkNotInitialized:
       return "RAIN_101"
@@ -136,7 +140,7 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "RAIN_407"
     case .providerError:
       return "RAIN_501"
-    case .internalLogicError:
+    case .internalError:
       return "RAIN_502"
     }
   }
@@ -146,56 +150,56 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   public var errorDescription: String? {
     switch self {
     case .sdkNotInitialized:
-      return "[\(errorCode)] Business methods were called before initialize() was successfully completed."
+      return "[\(code)] Business methods were called before initialize() was successfully completed."
     case .invalidConfig(let details):
-      return "[\(errorCode)] \(details)"
+      return "[\(code)] \(details)"
     case .providerNotRegistered(let details):
-      return "[\(errorCode)] \(details)"
+      return "[\(code)] \(details)"
     case .invalidRpcUrl(let rpcUrl):
-      return "[\(errorCode)] The provided RPC URL could not be parsed. RPC URL: \(rpcUrl)."
+      return "[\(code)] The provided RPC URL could not be parsed. RPC URL: \(rpcUrl)."
     case .chainNotSupported(let chainId, let details):
-      return "[\(errorCode)] Sends not supported on chain \(chainId): \(details)"
+      return "[\(code)] Sends not supported on chain \(chainId): \(details)"
     case .tokenExpired:
-      return "[\(errorCode)] The wallet provider session token has expired or is no longer valid."
-    case .unauthorized:
-      return "[\(errorCode)] Invalid credentials or insufficient permissions for the requested operation."
+      return "[\(code)] The wallet provider session token has expired or is no longer valid."
+    case .unauthorized(let details):
+      return "[\(code)] \(details)."
     case .invalidLoginCode:
-      return "[\(errorCode)] The one-time login code was rejected — wrong, expired, or already used. Retype it or request a new one."
+      return "[\(code)] The one-time login code was rejected — wrong, expired, or already used. Retype it or request a new one."
     case .networkError(let underlying):
-      return "[\(errorCode)] Connectivity issues preventing communication with APIs or Blockchain nodes. \(underlying.localizedDescription)"
+      return "[\(code)] Connectivity issues preventing communication with APIs or Blockchain nodes. \(underlying.localizedDescription)"
     case .transactionPending(let statusId):
-      return "[\(errorCode)] Transaction submitted but not yet confirmed (statusId=\(statusId)). Not a failure — resume polling with the status id; do not resend."
+      return "[\(code)] Transaction submitted but not yet confirmed (statusId=\(statusId)). Not a failure — resume polling with the status id; do not resend."
     case .userRejected:
-      return "[\(errorCode)] The user manually cancelled the signature request within the wallet UI."
+      return "[\(code)] The user manually cancelled the signature request within the wallet UI."
     case .insufficientFunds(let required, let available):
-      return "[\(errorCode)] The wallet balance is too low for the withdrawal amount or the required gas fees. Required: \(required). Available: \(available)."
+      return "[\(code)] The wallet balance is too low for the withdrawal amount or the required gas fees. Required: \(required). Available: \(available)."
     case .transactionSimulationFailed(let underlying):
-      return "[\(errorCode)] Transaction simulation failed before submission. \(underlying.localizedDescription)"
-    case .walletUnavailable:
-      return "[\(errorCode)] No wallet address available from the wallet provider."
-    case .withdrawalRevertedByNetwork:
-      return "[\(errorCode)] Execution reverted by the network. Please try again in a few minutes."
+      return "[\(code)] Transaction simulation failed before submission. \(underlying.localizedDescription)"
+    case .walletUnavailable(let details):
+      return "[\(code)] \(details)."
+    case .withdrawalRevertedByNetwork(let details):
+      return "[\(code)] \(details). Please try again in a few minutes."
     case .invalidAmount(let amount, let reason):
-      return "[\(errorCode)] Invalid amount (\(amount)): \(reason)."
+      return "[\(code)] Invalid amount (\(amount)): \(reason)."
     case .walletNotAuthorized(let walletAddress, let proxyAddress):
-      return "[\(errorCode)] Wallet \(walletAddress) is not an admin of collateral contract \(proxyAddress)."
+      return "[\(code)] Wallet \(walletAddress) is not an admin of collateral contract \(proxyAddress)."
     case .insufficientTokenBalance(let requested, let available, let token):
-      return "[\(errorCode)] Insufficient balance for \(token): requested \(requested), available \(available)."
+      return "[\(code)] Insufficient balance for \(token): requested \(requested), available \(available)."
     case .tokenAccountNotFound(let walletAddress, let token):
-      return "[\(errorCode)] Wallet \(walletAddress) holds no account for token \(token)."
+      return "[\(code)] Wallet \(walletAddress) holds no account for token \(token)."
     case .tokenNotFound(let token, let chainId):
-      return "[\(errorCode)] No token found at \(token) on chainId=\(chainId)."
+      return "[\(code)] No token found at \(token) on chainId=\(chainId)."
     case .invalidRecipient(let address, let reason):
-      return "[\(errorCode)] Invalid recipient \(address): \(reason)."
+      return "[\(code)] Invalid recipient \(address): \(reason)."
     case .providerError(let underlying):
-      return "[\(errorCode)] An unhandled error occurred within the wallet provider. \(underlying.localizedDescription)"
-    case .internalLogicError(let details):
-      return "[\(errorCode)] Error processing EIP-712 data or internal state management failure. Details: \(details)"
+      return "[\(code)] An unhandled error occurred within the wallet provider. \(underlying.localizedDescription)"
+    case .internalError(let details):
+      return "[\(code)] Error processing EIP-712 data or internal state management failure. Details: \(details)"
     }
   }
 }
-extension RainSDKError {
-  /// Stable per-case name, payload-insensitive. Several cases share an errorCode, so equality
+extension RainError {
+  /// Stable per-case name, payload-insensitive. Several cases share an code, so equality
   /// needs this to keep e.g. .insufficientFunds and .tokenAccountNotFound distinct.
   internal var caseIdentifier: String {
     switch self {
@@ -221,12 +225,12 @@ extension RainSDKError {
     case .tokenNotFound: return "tokenNotFound"
     case .invalidRecipient: return "invalidRecipient"
     case .providerError: return "providerError"
-    case .internalLogicError: return "internalLogicError"
+    case .internalError: return "internalError"
     }
   }
 
   /// Same enum case (payload-insensitive) and same published error code.
-  public static func == (lhs: RainSDKError, rhs: RainSDKError) -> Bool {
-    lhs.errorCode == rhs.errorCode && lhs.caseIdentifier == rhs.caseIdentifier
+  public static func == (lhs: RainError, rhs: RainError) -> Bool {
+    lhs.code == rhs.code && lhs.caseIdentifier == rhs.caseIdentifier
   }
 }

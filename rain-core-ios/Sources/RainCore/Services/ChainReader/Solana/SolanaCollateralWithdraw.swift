@@ -48,7 +48,7 @@ internal struct SolanaCollateralWithdrawComposer: Sendable {
       chainId: chainId,
       address: collateralAddress
     ) else {
-      throw RainSDKError.invalidConfig(
+      throw RainError.invalidConfig(
         details: "No collateral account at \(collateralAddress) on chainId=\(chainId)"
       )
     }
@@ -56,13 +56,13 @@ internal struct SolanaCollateralWithdrawComposer: Sendable {
     _ = try decodeKey(programId, label: "collateral program")
 
     guard let collateral = SolanaCollateralAccounts.parseSingleSigner(collateralAccount.data) else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Collateral \(collateralAddress) is not a single-signer account; only "
           + "single-signer Solana collateral is supported"
       )
     }
     guard collateral.owner == ownerKey else {
-      throw RainSDKError.walletNotAuthorized(
+      throw RainError.walletNotAuthorized(
         walletAddress: ownerAddress,
         proxyAddress: collateralAddress
       )
@@ -73,13 +73,13 @@ internal struct SolanaCollateralWithdrawComposer: Sendable {
       chainId: chainId,
       address: coordinatorAddress
     ) else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Coordinator account missing for \(collateralAddress)"
       )
     }
     guard let executor = try SolanaCollateralAccounts
       .parseCoordinatorExecutors(coordinatorAccount.data).first else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Coordinator has no executors to verify the Rain signature against"
       )
     }
@@ -89,7 +89,7 @@ internal struct SolanaCollateralWithdrawComposer: Sendable {
     let expiresAtEpochSeconds = try parseExpiresAt(adminSignature.expiresAt)
 
     guard let mint = try await rpcClient.getMintInfo(chainId: chainId, mint: mintAddress) else {
-      throw RainSDKError.tokenNotFound(token: mintAddress, chainId: chainId)
+      throw RainError.tokenNotFound(token: mintAddress, chainId: chainId)
     }
 
     // Funds are held in the ATA of the collateral-authority PDA (the API's depositAddress).
@@ -202,15 +202,15 @@ internal struct SolanaCollateralWithdrawComposer: Sendable {
   private func parseExpiresAt(_ value: String) throws -> Int64 {
     if let seconds = Int64(value) { return seconds }
     if let date = RainSdk.parseISO8601(value) { return Int64(date.timeIntervalSince1970) }
-    throw RainSDKError.internalLogicError(details: "Unparseable signature expiry: '\(value)'")
+    throw RainError.internalError(details: "Unparseable signature expiry: '\(value)'")
   }
 
   private func decodeBase64(_ value: String, label: String, expectedSize: Int) throws -> [UInt8] {
     guard let data = Data(base64Encoded: value) else {
-      throw RainSDKError.internalLogicError(details: "Rain \(label) is not valid base64")
+      throw RainError.internalError(details: "Rain \(label) is not valid base64")
     }
     guard data.count == expectedSize else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Rain \(label) must be \(expectedSize) bytes, got \(data.count)"
       )
     }
@@ -220,7 +220,7 @@ internal struct SolanaCollateralWithdrawComposer: Sendable {
   private func decodeKey(_ address: String, label: String) throws -> [UInt8] {
     let bytes = (try? Base58.decode(address)) ?? []
     guard bytes.count == 32 else {
-      throw RainSDKError.internalLogicError(details: "Invalid Solana \(label) address: \(address)")
+      throw RainError.internalError(details: "Invalid Solana \(label) address: \(address)")
     }
     return bytes
   }
@@ -235,8 +235,8 @@ internal struct SolanaCollateralWithdrawComposer: Sendable {
       "Rain SDK: Solana withdrawal simulation failed: \(simulation.error ?? "unknown"); "
         + "logs: \(simulation.logs.joined(separator: " | "))"
     )
-    throw RainSDKError.transactionSimulationFailed(
-      underlying: RainSDKError.internalLogicError(
+    throw RainError.transactionSimulationFailed(
+      underlying: RainError.internalError(
         details: simulation.error ?? "Solana withdrawal simulation failed"
       )
     )
@@ -395,7 +395,7 @@ internal enum SolanaCollateralAccounts {
     mutating func string() throws -> String {
       let length = Int(try u32())
       guard length <= data.count else {
-        throw RainSDKError.internalLogicError(details: "Implausible borsh string length: \(length)")
+        throw RainError.internalError(details: "Implausible borsh string length: \(length)")
       }
       let start = try next(length)
       return String(decoding: data[start..<(start + length)], as: UTF8.self)
@@ -404,7 +404,7 @@ internal enum SolanaCollateralAccounts {
     private mutating func next(_ size: Int) throws -> Int {
       let start = offset
       guard size >= 0, start + size <= data.count else {
-        throw RainSDKError.internalLogicError(
+        throw RainError.internalError(
           details: "Truncated Solana account data at offset \(start)"
         )
       }

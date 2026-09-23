@@ -51,7 +51,7 @@ public struct UnsignedSolanaTransfer: Sendable {
     amount: Decimal
   ) async throws -> UnsignedSolanaTransfer {
     guard amount >= 0 else {
-      throw RainSDKError.invalidAmount(amount: "\(amount)", reason: "must not be negative")
+      throw RainError.invalidAmount(amount: "\(amount)", reason: "must not be negative")
     }
     let lamports = try Self.exactBaseUnits(
       amount: amount,
@@ -97,16 +97,16 @@ public struct UnsignedSolanaTransfer: Sendable {
     try Self.validateAddress(toAddress, label: "recipient")
     try Self.validateAddress(mintAddress, label: "mint")
     guard fromAddress != toAddress else {
-      throw RainSDKError.invalidRecipient(address: toAddress, reason: "the recipient is this wallet")
+      throw RainError.invalidRecipient(address: toAddress, reason: "the recipient is this wallet")
     }
 
     // Checked before scaling, so a negative amount reports what is actually wrong with it rather
     // than the decimal-places message scaling would produce.
     guard amount > 0 else {
-      throw RainSDKError.invalidAmount(amount: "\(amount)", reason: "must be greater than zero")
+      throw RainError.invalidAmount(amount: "\(amount)", reason: "must be greater than zero")
     }
     guard let mint = try await rpcClient.getMintInfo(chainId: chainId, mint: mintAddress) else {
-      throw RainSDKError.tokenNotFound(token: mintAddress, chainId: chainId)
+      throw RainError.tokenNotFound(token: mintAddress, chainId: chainId)
     }
     let baseUnits = try Self.exactBaseUnits(
       amount: amount,
@@ -118,7 +118,7 @@ public struct UnsignedSolanaTransfer: Sendable {
     // *of* a token account — a well-formed address nobody can spend from.
     if let recipientAccount = try await rpcClient.getAccountInfo(chainId: chainId, address: toAddress),
        SolanaPrograms.isTokenProgram(recipientAccount.ownerProgram) {
-      throw RainSDKError.invalidRecipient(
+      throw RainError.invalidRecipient(
         address: toAddress,
         reason: "this address belongs to a token program (a token account or a mint); "
           + "pass the recipient's wallet address instead"
@@ -134,10 +134,10 @@ public struct UnsignedSolanaTransfer: Sendable {
 
     guard let sourceAccount = try await rpcClient.getTokenAccount(chainId: chainId, address: source)
     else {
-      throw RainSDKError.tokenAccountNotFound(walletAddress: fromAddress, token: mintAddress)
+      throw RainError.tokenAccountNotFound(walletAddress: fromAddress, token: mintAddress)
     }
     guard sourceAccount.rawAmount >= baseUnits else {
-      throw RainSDKError.insufficientTokenBalance(
+      throw RainError.insufficientTokenBalance(
         requested: "\(amount)",
         available: EthereumConverter
           .baseUnitsToDecimal(sourceAccount.rawAmount, decimals: mint.decimals)
@@ -202,7 +202,7 @@ public struct UnsignedSolanaTransfer: Sendable {
     do {
       return try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
     } catch {
-      throw RainSDKError.invalidAmount(
+      throw RainError.invalidAmount(
         amount: "\(amount)",
         reason: "\(unitLabel) supports at most \(decimals) decimal places"
       )
@@ -214,7 +214,7 @@ public struct UnsignedSolanaTransfer: Sendable {
   /// zero) that still simulates and broadcasts fine, which is worse than failing.
   private static func u64BaseUnits(_ baseUnits: BigUInt, amount: Decimal) throws -> UInt64 {
     guard let value = UInt64(baseUnits.description) else {
-      throw RainSDKError.invalidAmount(
+      throw RainError.invalidAmount(
         amount: "\(amount)",
         reason: "is too large to encode — Solana amounts are 64-bit"
       )
@@ -224,7 +224,7 @@ public struct UnsignedSolanaTransfer: Sendable {
 
   private static func validateAddress(_ address: String, label: String) throws {
     guard (try? Base58.decode(address))?.count == 32 else {
-      throw RainSDKError.internalLogicError(details: "Invalid Solana \(label) address: \(address)")
+      throw RainError.internalError(details: "Invalid Solana \(label) address: \(address)")
     }
   }
 
@@ -247,7 +247,7 @@ public struct UnsignedSolanaTransfer: Sendable {
       RainLogger.warning(
         "Rain SDK: wallet \(address) holds \(lamports) lamports, needs \(required) for this transfer"
       )
-      throw RainSDKError.insufficientFunds(
+      throw RainError.insufficientFunds(
         required: SolanaConverter.lamportsToSol(required).description,
         available: SolanaConverter.lamportsToSol(lamports).description
       )
@@ -268,8 +268,8 @@ public struct UnsignedSolanaTransfer: Sendable {
       logs: \(simulation.logs.joined(separator: " | "))
       """
     )
-    throw RainSDKError.transactionSimulationFailed(
-      underlying: RainSDKError.internalLogicError(
+    throw RainError.transactionSimulationFailed(
+      underlying: RainError.internalError(
         details: simulation.error ?? "Solana transaction simulation failed"
       )
     )

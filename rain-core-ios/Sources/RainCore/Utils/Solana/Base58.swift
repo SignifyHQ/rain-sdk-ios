@@ -59,7 +59,7 @@ import Foundation
     return result
   }
 
-  /// Decodes a Base58 string to raw bytes. Throws `RainSDKError.internalLogicError` on an
+  /// Decodes a Base58 string to raw bytes. Throws `RainError.internalError` on an
   /// invalid character.
   static func decode(_ input: String) throws -> [UInt8] {
     if input.isEmpty { return [] }
@@ -78,7 +78,7 @@ import Foundation
 
     while idx < chars.count {
       guard let digit = indexes[chars[idx]] else {
-        throw RainSDKError.internalLogicError(details: "Invalid Base58 character '\(chars[idx])'")
+        throw RainError.internalError(details: "Invalid Base58 character '\(chars[idx])'")
       }
       var carry = digit
       var j = 0

@@ -42,7 +42,7 @@ struct RainSolanaChainReaderTests {
 
   @Test("an unconfigured cluster surfaces invalidConfig")
   func unconfiguredCluster() async {
-    await #expect(throws: RainSDKError.invalidConfig(
+    await #expect(throws: RainError.invalidConfig(
       details: "No RPC endpoint configured for chainId=\(SolanaChains.mainnet)"
     )) {
       _ = try await makeReader().latestBlockhash(chainId: SolanaChains.mainnet)
@@ -89,16 +89,16 @@ struct SolanaTransferComposerNativeTests {
       let support = makeSupport()
 
       // 0.4 lamports: the amount cannot be represented, so it fails instead of sending zero.
-      await #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+      await #expect(throws: RainError.invalidAmount(amount: "", reason: "")) {
         _ = try await support.composeNativeTransfer(
           chainId: SolanaChains.devnet, from: from, to: to,
           amount: Decimal(string: "0.0000000004")!)
       }
-      await #expect(throws: RainSDKError.self) {
+      await #expect(throws: RainError.self) {
         _ = try await support.composeNativeTransfer(
           chainId: SolanaChains.devnet, from: from, to: to, amount: -1)
       }
-      await #expect(throws: RainSDKError.self) {
+      await #expect(throws: RainError.self) {
         _ = try await support.composeNativeTransfer(
           chainId: SolanaChains.devnet, from: from, to: "not-base58", amount: 1)
       }

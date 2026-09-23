@@ -8,10 +8,12 @@ extension RainSdkManager {
   /// duplicate withdrawal or an already-used signature), so it surfaces as
   /// `.withdrawalRevertedByNetwork` (RAIN_405) here and only here; plain sends and reads keep
   /// `.transactionSimulationFailed` (RAIN_403) / their own codes.
-  func mapWithdrawalError(_ error: Error) -> RainSDKError {
-    let mapped = RainSDKError.from(underlying: error)
-    if case .transactionSimulationFailed = mapped {
-      return .withdrawalRevertedByNetwork
+  func mapWithdrawalError(_ error: Error) -> RainError {
+    let mapped = RainError.from(underlying: error)
+    if case .transactionSimulationFailed(let underlying) = mapped {
+      return .withdrawalRevertedByNetwork(
+        details: "Withdrawal reverted by the network: \(underlying.localizedDescription)"
+      )
     }
     return mapped
   }
@@ -20,18 +22,18 @@ extension RainSdkManager {
   /// call or signature prompt.
   func validateWithdrawRequest(chainId: Int, amount: Decimal, decimals: Int) throws {
     guard chainId > 0 else {
-      throw RainSDKError.invalidConfig(
+      throw RainError.invalidConfig(
         details: "Invalid chainId: \(chainId). Must be a positive integer."
       )
     }
     guard amount > 0 else {
-      throw RainSDKError.invalidAmount(
+      throw RainError.invalidAmount(
         amount: "\(amount)",
         reason: "amount must be greater than zero"
       )
     }
     guard decimals >= 0 else {
-      throw RainSDKError.invalidAmount(
+      throw RainError.invalidAmount(
         amount: "\(amount)",
         reason: "decimals must be non-negative, got \(decimals)"
       )
@@ -112,7 +114,7 @@ extension RainSdkManager {
     nonce: BigUInt?
   ) async throws -> (walletAddress: String, parameters: RainTransactionParameters) {
     guard let signerProvider = walletProvider as? any RainTypedDataSignerProvider else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Current wallet provider does not support EIP-712 signing"
       )
     }
@@ -127,7 +129,7 @@ extension RainSdkManager {
       walletAddress: walletAddress,
       chainId: chainId
     ) == false {
-      throw RainSDKError.walletNotAuthorized(
+      throw RainError.walletNotAuthorized(
         walletAddress: walletAddress,
         proxyAddress: assetAddresses.proxyAddress
       )
@@ -182,7 +184,7 @@ extension RainSdkManager {
   /// Estimates total transaction fee (estimated gas × gas price) in native token via the backing provider.
   func estimateTransactionFee(chainId: Int, address: String, params: WalletTransactionParams) async throws -> Decimal {
     guard let estimatingProvider = walletProvider as? any RainTransactionFeeEstimatingProvider else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Current wallet provider does not support fee estimation"
       )
     }

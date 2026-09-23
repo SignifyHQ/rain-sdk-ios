@@ -77,7 +77,7 @@ struct PortalSessionCoordinatorTests {
     let coordinator = makeCoordinator(onSessionExpired: { hookCalls.increment() })
 
     for _ in 0..<2 {
-      await #expect(throws: RainSDKError.tokenExpired) {
+      await #expect(throws: RainError.tokenExpired) {
         _ = try await coordinator.executeRead { throw self.unauthorized }
       }
     }
@@ -89,7 +89,7 @@ struct PortalSessionCoordinatorTests {
   func mpcAuthFailure() async throws {
     let hookCalls = Counter()
     let coordinator = makeCoordinator(onSessionExpired: { hookCalls.increment() })
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeWrite { throw self.invalidApiKey() }
     }
     #expect(hookCalls.value == 1)
@@ -98,11 +98,11 @@ struct PortalSessionCoordinatorTests {
   @Test("once expired, calls fail fast without running the block")
   func failFastWhenExpired() async throws {
     let coordinator = makeCoordinator()
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { throw self.unauthorized }
     }
     let runs = Counter()
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { runs.increment() }
     }
     #expect(runs.value == 0)
@@ -115,7 +115,7 @@ struct PortalSessionCoordinatorTests {
       policy: PortalSessionPolicy(autoRefresh: false),
       onSessionTokenNeeded: { mints.increment(); return "new" }
     )
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { throw self.unauthorized }
     }
     #expect(mints.value == 0)
@@ -167,7 +167,7 @@ struct PortalSessionCoordinatorTests {
       onSessionTokenNeeded: { mints.increment(); return "still-bad" },
       onSessionExpired: { hookCalls.increment() }
     )
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { attempts.increment(); throw self.unauthorized }
     }
     #expect(attempts.value == 2)
@@ -185,7 +185,7 @@ struct PortalSessionCoordinatorTests {
       onSessionExpired: { hookCalls.increment() },
       installer: installer
     )
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { throw self.unauthorized }
     }
     #expect(installer.tokens.isEmpty)
@@ -200,7 +200,7 @@ struct PortalSessionCoordinatorTests {
       onSessionTokenNeeded: { throw BackendDown() },
       onSessionExpired: { hookCalls.increment() }
     )
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { throw self.unauthorized }
     }
     #expect(hookCalls.value == 1)
@@ -217,7 +217,7 @@ struct PortalSessionCoordinatorTests {
       onSessionExpired: { hookCalls.increment() },
       installer: installer
     )
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { throw self.unauthorized }
     }
     #expect(hookCalls.value == 1)
@@ -234,7 +234,7 @@ struct PortalSessionCoordinatorTests {
       onSessionExpired: { hookCalls.increment() },
       installer: installer
     )
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { throw self.unauthorized }
     }
     #expect(coordinator.currentState() == .expired)
@@ -263,11 +263,11 @@ struct PortalSessionCoordinatorTests {
       onSessionTokenNeeded: { tokens.next() },
       onSessionExpired: { hookCalls.increment() }
     )
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { throw self.unauthorized }
     }
     #expect(hookCalls.value == 1)
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { throw self.unauthorized }
     }
     #expect(hookCalls.value == 2)
@@ -340,13 +340,13 @@ struct PortalSessionCoordinatorTests {
     // b's first attempt lands while a's mint is in flight and b's rejection arrives after it
     // failed — b must not ask the host again.
     async let a: Void = {
-      await #expect(throws: RainSDKError.tokenExpired) {
+      await #expect(throws: RainError.tokenExpired) {
         _ = try await coordinator.executeRead { throw self.unauthorized }
       }
     }()
     async let b: Void = {
       try? await Task.sleep(nanoseconds: 10_000_000)
-      await #expect(throws: RainSDKError.tokenExpired) {
+      await #expect(throws: RainError.tokenExpired) {
         _ = try await coordinator.executeRead {
           try await Task.sleep(nanoseconds: 60_000_000)
           throw self.unauthorized
@@ -385,7 +385,7 @@ struct PortalSessionCoordinatorTests {
     let coordinator = makeCoordinator()
     let result = try await coordinator.executeRead {
       if attempts.increment() == 1 {
-        throw RainSDKError.providerError(underlying: URLError(.timedOut))
+        throw RainError.providerError(underlying: URLError(.timedOut))
       }
       return "ok"
     }
@@ -406,7 +406,7 @@ struct PortalSessionCoordinatorTests {
   func refreshNowWithoutHook() async throws {
     let hookCalls = Counter()
     let coordinator = makeCoordinator(onSessionExpired: { hookCalls.increment() })
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       try await coordinator.refreshNow()
     }
     #expect(hookCalls.value == 1)
@@ -416,7 +416,7 @@ struct PortalSessionCoordinatorTests {
   func installNow() async throws {
     let installer = InstallRecorder()
     let coordinator = makeCoordinator(installer: installer)
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { throw self.unauthorized }
     }
     try await coordinator.installNow("host-minted")
@@ -438,7 +438,7 @@ struct PortalSessionCoordinatorTests {
     do {
       try await coordinator.installNow("garbage")
       Issue.record("installNow should have thrown")
-    } catch let error as RainSDKError {
+    } catch let error as RainError {
       guard case .invalidConfig = error else {
         Issue.record("expected invalidConfig, got \(error)")
         return
@@ -459,11 +459,11 @@ struct PortalSessionCoordinatorTests {
     let installer = InstallRecorder()
     let hookCalls = Counter()
     let coordinator = makeCoordinator(onSessionExpired: { hookCalls.increment() }, installer: installer)
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { throw self.unauthorized }
     }
     installer.failWith = NSError(domain: "portal", code: 7)
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       try await coordinator.installNow("garbage")
     }
     #expect(coordinator.currentState() == .expired)
@@ -473,7 +473,7 @@ struct PortalSessionCoordinatorTests {
   @Test("installNow rejects a blank token")
   func installNowBlank() async throws {
     let coordinator = makeCoordinator()
-    await #expect(throws: RainSDKError.invalidConfig(details: "Portal session token must not be empty")) {
+    await #expect(throws: RainError.invalidConfig(details: "Portal session token must not be empty")) {
       try await coordinator.installNow("  ")
     }
   }
@@ -545,7 +545,7 @@ struct PortalSessionCoordinatorTests {
     let coordinator = makeCoordinator(onSessionExpired: { hookCalls.increment() })
     coordinator.onSessionDeath { deathCalls.increment() }
     coordinator.stop()
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { throw self.unauthorized }
     }
     #expect(hookCalls.value == 0)
@@ -563,7 +563,7 @@ struct PortalSessionCoordinatorTests {
     let order = Order()
     let coordinator = makeCoordinator(onSessionExpired: { order.add("hook") })
     coordinator.onSessionDeath { order.add("evict") }
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { throw self.unauthorized }
     }
     #expect(order.value == ["evict", "hook"])
@@ -582,7 +582,7 @@ struct PortalSessionCoordinatorTests {
     let cancellable = coordinator.sessionStates.sink { seen.add($0) }
     defer { cancellable.cancel() }
     _ = try await coordinator.executeRead { "ok" }
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { throw self.unauthorized }
     }
     #expect(seen.value == [.unknown, .active, .expired])

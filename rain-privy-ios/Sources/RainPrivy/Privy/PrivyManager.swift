@@ -232,8 +232,8 @@ actor PrivyManager {
 
   /// Issues an RPC request through the wallet's provider.
   ///
-  /// Failures bubble up raw (only logged here): `RainSDKError.from(underlying:)` short-circuits
-  /// on any `RainSDKError`, so pre-wrapping would bypass ``PrivyErrorMapping`` and hide
+  /// Failures bubble up raw (only logged here): `RainError.from(underlying:)` short-circuits
+  /// on any `RainError`, so pre-wrapping would bypass ``PrivyErrorMapping`` and hide
   /// user-rejection / insufficient-funds behind a generic `.providerError`.
   /// `CancellationError` is rethrown as-is.
   private static func request(
@@ -274,10 +274,10 @@ actor PrivyManager {
     override: String?
   ) async throws -> any PrivyEthereumSigner {
     guard let wallets = await source.embeddedEthereumWallets() else {
-      throw RainSDKError.tokenExpired
+      throw RainError.tokenExpired
     }
     guard !wallets.isEmpty else {
-      throw RainSDKError.walletUnavailable
+      throw RainError.walletUnavailable(details: "Privy user has no embedded wallet for this chain")
     }
     guard let override, !override.isEmpty else {
       return wallets[0]
@@ -285,7 +285,7 @@ actor PrivyManager {
     guard let match = wallets.first(where: {
       $0.address.caseInsensitiveCompare(override) == .orderedSame
     }) else {
-      throw RainSDKError.walletUnavailable
+      throw RainError.walletUnavailable(details: "Privy user has no embedded wallet for this chain")
     }
     return match
   }
@@ -296,10 +296,10 @@ actor PrivyManager {
     source: any PrivyWalletSource
   ) async throws -> any PrivySolanaAccount {
     guard let wallets = await source.embeddedSolanaWallets() else {
-      throw RainSDKError.tokenExpired
+      throw RainError.tokenExpired
     }
     guard let wallet = wallets.first else {
-      throw RainSDKError.walletUnavailable
+      throw RainError.walletUnavailable(details: "Privy user has no embedded wallet for this chain")
     }
     return wallet
   }

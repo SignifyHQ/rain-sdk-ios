@@ -133,7 +133,7 @@ struct PrivyTokenApprovalTests {
     let signer = FakeSigner(address: Self.wallet)
     let manager = Self.privyManager(host: host, signer: signer)
 
-    await #expect(throws: RainSDKError.transactionSimulationFailed(
+    await #expect(throws: RainError.transactionSimulationFailed(
       underlying: NSError(domain: "", code: 0)
     )) {
       _ = try await manager.approveTokenAllowance(

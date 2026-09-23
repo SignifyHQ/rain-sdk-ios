@@ -22,7 +22,7 @@ struct PortalProviderValidationTests {
   @Test("create throws unauthorized for an empty session token")
   func testCreateEmptyToken() async {
     let provider = PortalProvider(PortalConfig(sessionToken: ""))
-    await #expect(throws: RainSDKError.unauthorized) {
+    await #expect(throws: RainError.unauthorized()) {
       _ = try await provider.create(context: makeContext())
     }
   }

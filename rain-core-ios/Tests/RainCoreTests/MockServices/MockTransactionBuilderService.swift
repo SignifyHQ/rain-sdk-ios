@@ -96,7 +96,7 @@ final class MockTransactionBuilderService: TransactionBuilderProtocol {
     )
     
     guard let messageString = String(data: jsonData, encoding: .utf8) else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Failed to serialize EIP-712 message to JSON"
       )
     }

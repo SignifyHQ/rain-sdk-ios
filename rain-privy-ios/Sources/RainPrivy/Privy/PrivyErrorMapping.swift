@@ -3,7 +3,7 @@ import PrivySDK
 import RainCore
 
 /// Registers Privy vendor-error mapping with `RainCore`'s extensible error mapper, so Privy errors
-/// classify into `RainSDKError` cases (`.userRejected`, `.insufficientFunds`, `.tokenExpired`, …)
+/// classify into `RainError` cases (`.userRejected`, `.insufficientFunds`, `.tokenExpired`, …)
 /// without RainCore importing PrivySDK.
 enum PrivyErrorMapping {
   nonisolated(unsafe) private static var registered = false
@@ -14,13 +14,13 @@ enum PrivyErrorMapping {
     lock.lock(); defer { lock.unlock() }
     guard !registered else { return }
     registered = true
-    RainSDKError.registerErrorMapper(map)
+    RainError.registerErrorMapper(map)
   }
 
-  /// Returns a classified `RainSDKError` for a Privy vendor error, or `nil` for anything this
+  /// Returns a classified `RainError` for a Privy vendor error, or `nil` for anything this
   /// adapter doesn't own (so core's built-in fallbacks still run). Internal (not private) so
   /// the session coordinator can classify auth failures without re-stating vendor shapes.
-  static func map(_ error: Error) -> RainSDKError? {
+  static func map(_ error: Error) -> RainError? {
     guard let privyError = error as? PrivyError else { return nil }
     switch privyError.errorCode {
     case .authenticationFailure(let reason):
@@ -37,7 +37,7 @@ enum PrivyErrorMapping {
   private static func mapAuthenticationFailure(
     _ reason: PrivyErrorCode.AuthenticationFailureReason,
     error: PrivyError
-  ) -> RainSDKError {
+  ) -> RainError {
     switch reason {
     case .notLoggedIn, .invalidJwt, .sessionExpired:
       return .tokenExpired
@@ -45,7 +45,7 @@ enum PrivyErrorMapping {
       return .userRejected
     case .failureDuringAuthentication(let underlying):
       // May wrap ASAuthorizationError.canceled / a network error; recurse so it classifies.
-      return RainSDKError.from(underlying: underlying)
+      return RainError.from(underlying: underlying)
     default:
       return .providerError(underlying: error)
     }
@@ -54,13 +54,13 @@ enum PrivyErrorMapping {
   private static func mapEmbeddedWalletFailure(
     _ reason: PrivyErrorCode.EmbeddedWalletFailureReason,
     error: PrivyError
-  ) -> RainSDKError {
+  ) -> RainError {
     switch reason {
     case .noWalletAvailable, .creationFailed:
-      return .walletUnavailable
+      return .walletUnavailable(details: "Privy has no embedded wallet available (\(reason))")
     case .unsupportedChain, .rpcUrlNotFound:
       // A misconfiguration rather than a provider failure at runtime.
-      return .internalLogicError(details: "Privy: \(error.localizedDescription)")
+      return .internalError(details: "Privy: \(error.localizedDescription)")
     // The EIP-1193 and Solana send paths surface node / user-facing failures as these
     // message-carrying cases; classify by message.
     case .jsonRpcError(let message),
@@ -78,7 +78,7 @@ enum PrivyErrorMapping {
   }
 
   /// Classifies Privy's free-text RPC error messages by core's shared vendor-phrase standard.
-  private static func classify(message: String, fallback: PrivyError) -> RainSDKError {
-    RainSDKError.fromVendorMessage(message) ?? .providerError(underlying: fallback)
+  private static func classify(message: String, fallback: PrivyError) -> RainError {
+    RainError.fromVendorMessage(message) ?? .providerError(underlying: fallback)
   }
 }

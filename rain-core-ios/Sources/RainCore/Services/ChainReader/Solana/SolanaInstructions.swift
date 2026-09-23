@@ -55,13 +55,13 @@ internal enum SolanaInstructions {
     message: [UInt8]
   ) throws -> Instruction {
     guard signer.count == 32 else {
-      throw RainSDKError.internalLogicError(details: "ed25519 signer must be 32 bytes, got \(signer.count)")
+      throw RainError.internalError(details: "ed25519 signer must be 32 bytes, got \(signer.count)")
     }
     guard signature.count == 64 else {
-      throw RainSDKError.internalLogicError(details: "ed25519 signature must be 64 bytes, got \(signature.count)")
+      throw RainError.internalError(details: "ed25519 signature must be 64 bytes, got \(signature.count)")
     }
     guard message.count == 32 else {
-      throw RainSDKError.internalLogicError(details: "ed25519 message must be 32 bytes, got \(message.count)")
+      throw RainError.internalError(details: "ed25519 message must be 32 bytes, got \(message.count)")
     }
 
     let pubkeyOffset = 2 + 14 // count + padding + one offsets struct
@@ -110,13 +110,13 @@ internal enum SolanaInstructions {
     coordinatorSignatureSalt: [UInt8]
   ) throws -> Instruction {
     guard let amount = UInt64(exactly: amountBaseUnits) else {
-      throw RainSDKError.invalidAmount(
+      throw RainError.invalidAmount(
         amount: amountBaseUnits.description,
         reason: "withdrawal amount is out of u64 range"
       )
     }
     guard coordinatorSignatureSalt.count == 32 else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Coordinator signature salt must be 32 bytes, got \(coordinatorSignatureSalt.count)"
       )
     }

@@ -66,7 +66,7 @@ internal final class SolanaChainReader: ChainReader, @unchecked Sendable {
     tokenInfo: TokenInfo?
   ) async throws -> Balance {
     guard let mintInfo = try await solanaRpcClient.getMintInfo(chainId: chainId, mint: mint) else {
-      throw RainSDKError.tokenNotFound(token: mint, chainId: chainId)
+      throw RainError.tokenNotFound(token: mint, chainId: chainId)
     }
     let tokenAccount = try SolanaProgramAddress.associatedTokenAddress(
       owner: walletAddress,
@@ -195,7 +195,7 @@ internal final class SolanaChainReader: ChainReader, @unchecked Sendable {
   /// A mint's scale, read from the mint account.
   func getDecimals(chainId: Int, tokenAddress: String) async throws -> Int {
     guard let mint = try await solanaRpcClient.getMintInfo(chainId: chainId, mint: tokenAddress) else {
-      throw RainSDKError.tokenNotFound(token: tokenAddress, chainId: chainId)
+      throw RainError.tokenNotFound(token: tokenAddress, chainId: chainId)
     }
     return mint.decimals
   }
@@ -221,7 +221,7 @@ internal final class SolanaChainReader: ChainReader, @unchecked Sendable {
     spender: String,
     atBlock: String
   ) async throws -> BigUInt {
-    throw RainSDKError.internalLogicError(
+    throw RainError.internalError(
       details: "ERC-20 allowances are not supported on Solana (chainId=\(chainId))"
     )
   }
@@ -230,7 +230,7 @@ internal final class SolanaChainReader: ChainReader, @unchecked Sendable {
     chainId: Int,
     transactionHash: String
   ) async throws -> MinedReceipt? {
-    throw RainSDKError.internalLogicError(
+    throw RainError.internalError(
       details: "EVM transaction receipts are not supported on Solana (chainId=\(chainId))"
     )
   }
@@ -238,7 +238,7 @@ internal final class SolanaChainReader: ChainReader, @unchecked Sendable {
   private func validate(solanaAddress address: String) throws {
     let valid = ((try? Base58.decode(address))?.count == 32)
     guard valid else {
-      throw RainSDKError.internalLogicError(details: "Invalid Solana wallet address: \(address)")
+      throw RainError.internalError(details: "Invalid Solana wallet address: \(address)")
     }
   }
 }

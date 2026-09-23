@@ -6,7 +6,7 @@ import Foundation
 /// wallet and indexer call, and exposes no JWT expiry. So there is no proactive-refresh window
 /// to configure — hardening here is auth-state guarding, a re-auth hook, and transient-failure
 /// backoff. An auth failure that survives Privy's own internal refresh means the session is
-/// truly dead and surfaces as `RainSDKError.tokenExpired` (never retried by Rain).
+/// truly dead and surfaces as `RainError.tokenExpired` (never retried by Rain).
 public struct PrivySessionPolicy: Sendable {
   /// Retries (beyond the first attempt) for transient network failures on idempotent reads.
   /// Writes (sends, signing) are never retried.

@@ -50,7 +50,7 @@ PortalProvider(
 ```
 
 - **Auth classification** — `PortalRequestsError.unauthorized` / MPC `INVALID_API_KEY` at any
-  call site surfaces as `RainSDKError.tokenExpired`.
+  call site surfaces as `RainError.tokenExpired`.
 - **Refresh** — the SDK asks `onSessionTokenNeeded` for a token, rebuilds the vendor `Portal`
   with the same RPC config, re-fires `onPortalCreated`, and retries the call once (safe for
   sends: Portal rejects a bad token before executing). Refreshes are single-flighted. Device MPC
@@ -60,7 +60,7 @@ PortalProvider(
 - **Transient backoff** — reads retry HTTP 5xx/429/408 and network failures with exponential
   backoff; sends and signing never retry on transient failures.
 - **Re-auth hook** — when no fresh token can be installed, the call throws
-  `RainSDKError.tokenExpired` and `onSessionExpired` fires once; it re-arms after a successful
+  `RainError.tokenExpired` and `onSessionExpired` fires once; it re-arms after a successful
   refresh.
 
 Observing: `provider.sessionState` (`AnyPublisher<PortalSessionState, Never>`) and

@@ -56,7 +56,7 @@ struct SolanaRpcClientTests {
   @Test("unconfigured chain throws invalidConfig")
   func unconfiguredChain() async {
     let client = SolanaRpcClient(networkConfigs: [])
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await client.getBalanceLamports(chainId: SolanaChains.mainnet, address: address)
     }
   }

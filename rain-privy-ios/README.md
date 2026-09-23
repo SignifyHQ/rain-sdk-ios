@@ -31,7 +31,7 @@ balance / fee reads against Rain's configured endpoints, and Privy error mapping
 Custody (signing, broadcasting) routes through Privy's EIP-1193 embedded wallet; transaction
 history comes from Privy's indexer on the chains it supports (unsupported chains return an empty
 list). Resolving `rain.provider(.privy)` probes for an embedded Ethereum wallet and throws
-`RainSDKError.walletUnavailable` if none is available.
+`RainError.walletUnavailable` if none is available.
 
 Advertised capabilities: `.export`, `.recovery`, `.multiChain`.
 
@@ -62,11 +62,11 @@ PrivyProvider(
 What every wallet call now does:
 
 1. **Auth-state check** — Privy's auth state is consulted before the request: an
-   unauthenticated state throws `RainSDKError.tokenExpired` without a round-trip, and a call
+   unauthenticated state throws `RainError.tokenExpired` without a round-trip, and a call
    racing Privy's async credential restore waits out `.loading` (bounded at ~10s) instead of
    misreporting expiry.
 2. **Terminal auth failures** — an auth failure that reaches Rain means Privy already tried
-   its own internal refresh, so it surfaces immediately as `RainSDKError.tokenExpired` (never
+   its own internal refresh, so it surfaces immediately as `RainError.tokenExpired` (never
    retried) and fires the hook. Privy's `sessionExpired` error code now maps to
    `.tokenExpired` too.
 3. **Transient backoff** — idempotent reads (address resolution, history) retry network

@@ -266,7 +266,7 @@ struct TurnkeySolanaTests {
   func solanaBalancesRpcFallback() async throws {
     let turnkey = dualCurveTurnkey()
     let client = turnkey.turnkeyClient as! MockTurnkeyClient
-    client.walletAddressBalancesError = RainSDKError.providerError(
+    client.walletAddressBalancesError = RainError.providerError(
       underlying: NSError(domain: "test", code: 1))
 
     try await MockURLProtocol.withInstalled {
@@ -331,7 +331,7 @@ struct TurnkeySolanaTests {
   func splBalanceFallbackKeepsRegisteredNaming() async throws {
     let turnkey = dualCurveTurnkey()
     let client = turnkey.turnkeyClient as! MockTurnkeyClient
-    client.walletAddressBalancesError = RainSDKError.providerError(
+    client.walletAddressBalancesError = RainError.providerError(
       underlying: NSError(domain: "test", code: 1))
 
     try await MockURLProtocol.withInstalled {
@@ -596,7 +596,7 @@ struct TurnkeySolanaTests {
       stubComposerReads(sourceAmount: "1000", destinationExists: true)
       let (manager, _, _) = TestManagers.turnkeyManager(turnkey: turnkey, configs: configs())
 
-      await #expect(throws: RainSDKError.insufficientTokenBalance(
+      await #expect(throws: RainError.insufficientTokenBalance(
         requested: "", available: "", token: Self.mint
       )) {
         _ = try await manager.sendToken(
@@ -620,7 +620,7 @@ struct TurnkeySolanaTests {
       ])
       let (manager, _, _) = TestManagers.turnkeyManager(turnkey: turnkey, configs: configs())
 
-      await #expect(throws: RainSDKError.tokenAccountNotFound(
+      await #expect(throws: RainError.tokenAccountNotFound(
         walletAddress: MockTurnkey.defaultSolanaAddress, token: Self.mint
       )) {
         _ = try await manager.sendToken(
@@ -643,7 +643,7 @@ struct TurnkeySolanaTests {
       ])
       let (manager, _, _) = TestManagers.turnkeyManager(turnkey: turnkey, configs: configs())
 
-      await #expect(throws: RainSDKError.invalidRecipient(address: recipient, reason: "")) {
+      await #expect(throws: RainError.invalidRecipient(address: recipient, reason: "")) {
         _ = try await manager.sendToken(
           chainId: Self.chainId, contractAddress: Self.mint, to: recipient, amount: 1, decimals: nil)
       }
@@ -665,8 +665,8 @@ struct TurnkeySolanaTests {
       )
       let (manager, _, _) = TestManagers.turnkeyManager(turnkey: turnkey, configs: configs())
 
-      await #expect(throws: RainSDKError.transactionSimulationFailed(
-        underlying: RainSDKError.internalLogicError(details: "")
+      await #expect(throws: RainError.transactionSimulationFailed(
+        underlying: RainError.internalError(details: "")
       )) {
         _ = try await manager.sendToken(
           chainId: Self.chainId, contractAddress: Self.mint, to: recipient, amount: 1, decimals: nil)
@@ -686,7 +686,7 @@ struct TurnkeySolanaTests {
       MockURLProtocol.stub(method: "getBalance", result: ["value": 1_000]) // under the 5000-lamport fee
       let (manager, _, _) = TestManagers.turnkeyManager(turnkey: turnkey, configs: configs())
 
-      await #expect(throws: RainSDKError.insufficientFunds(required: "", available: "")) {
+      await #expect(throws: RainError.insufficientFunds(required: "", available: "")) {
         _ = try await manager.sendToken(
           chainId: Self.chainId, contractAddress: Self.mint, to: recipient, amount: 1, decimals: nil)
       }
@@ -711,7 +711,7 @@ struct TurnkeySolanaTests {
 
       // 100 tokens at 18 decimals = 1e20 base units, past UInt64.max (~1.8e19). Truncating would
       // have broadcast a transfer of zero that simulates and "succeeds".
-      await #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+      await #expect(throws: RainError.invalidAmount(amount: "", reason: "")) {
         _ = try await manager.sendToken(
           chainId: Self.chainId, contractAddress: Self.mint, to: recipient, amount: 100, decimals: nil)
       }
@@ -729,7 +729,7 @@ struct TurnkeySolanaTests {
       _ = try await manager.sendToken(
         chainId: Self.chainId, contractAddress: Self.mint, to: recipient, amount: -1, decimals: nil)
       Issue.record("expected a negative amount to be rejected")
-    } catch let error as RainSDKError {
+    } catch let error as RainError {
       #expect(error.errorDescription?.contains("greater than zero") == true)
     }
     #expect(client.solSendTransactionCalls.isEmpty)
@@ -741,7 +741,7 @@ struct TurnkeySolanaTests {
     let client = turnkey.turnkeyClient as! MockTurnkeyClient
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: turnkey, configs: configs())
 
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await manager.sendToken(
         chainId: Self.chainId, contractAddress: Self.mint, to: "not-base58-0OIl", amount: 1, decimals: nil)
     }

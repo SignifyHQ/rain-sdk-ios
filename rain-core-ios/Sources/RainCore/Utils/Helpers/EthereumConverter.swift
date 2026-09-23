@@ -33,7 +33,7 @@ public enum EthereumConverter {
   public static func parseHexToIntStrict(_ hex: String) throws -> Int {
     let value = try parseHexToBigUIntStrict(hex)
     guard let narrowed = Int(exactly: value) else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Hex value does not fit in a non-negative Int: \(hex)"
       )
     }
@@ -85,7 +85,7 @@ public enum EthereumConverter {
   /// hex-encoded uint256 RPC payload to a human-readable `Decimal`, throwing on malformed input
   /// instead of collapsing it to a silent zero.
   ///
-  /// - Throws: `RainSDKError.internalLogicError` when `hex` is empty (`""` or a bare `"0x"`) or
+  /// - Throws: `RainError.internalError` when `hex` is empty (`""` or a bare `"0x"`) or
   ///   contains non-hex characters. `"0x0"` parses to zero as usual.
   public static func parseHexToDecimalStrict(_ hex: String, decimals: Int) throws -> Decimal {
     baseUnitsToDecimal(try parseHexToBigUIntStrict(hex), decimals: decimals)
@@ -124,12 +124,12 @@ public enum EthereumConverter {
   /// reads), where the raw base-unit value must be preserved and a garbage RPC payload must
   /// surface as an error rather than a silent zero.
   ///
-  /// - Throws: `RainSDKError.internalLogicError` when `hex` is empty (`""` or a bare `"0x"`) or
+  /// - Throws: `RainError.internalError` when `hex` is empty (`""` or a bare `"0x"`) or
   ///   contains non-hex characters. `"0x0"` parses to zero as usual.
   public static func parseHexToBigUIntStrict(_ hex: String) throws -> BigUInt {
     let cleanHex = hex.strippingHexPrefix
     guard !cleanHex.isEmpty, let value = BigUInt(cleanHex, radix: 16) else {
-      throw RainSDKError.internalLogicError(details: "Malformed hex payload: \(hex)")
+      throw RainError.internalError(details: "Malformed hex payload: \(hex)")
     }
     return value
   }

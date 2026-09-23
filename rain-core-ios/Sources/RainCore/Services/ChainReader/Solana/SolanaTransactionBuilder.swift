@@ -203,7 +203,7 @@ internal enum SolanaTransactionBuilder {
     )
     let extraSigners = accounts.filter(\.isSigner).count - 1
     guard extraSigners == 0 else {
-      throw RainSDKError.invalidConfig(
+      throw RainError.invalidConfig(
         details: "Transaction requires \(extraSigners) signer(s) besides the fee payer"
       )
     }
@@ -332,7 +332,7 @@ internal enum SolanaTransactionBuilder {
     out.append(contentsOf: compactU16(instructions.count))
     for instruction in instructions {
       guard let programIndex = indexByPubkey[instruction.programId] else {
-        throw RainSDKError.internalLogicError(
+        throw RainError.internalError(
           details: "Program \(instruction.programId) missing from the account table"
         )
       }
@@ -340,7 +340,7 @@ internal enum SolanaTransactionBuilder {
       out.append(contentsOf: compactU16(instruction.accounts.count))
       for account in instruction.accounts {
         guard let index = indexByPubkey[account.pubkey] else {
-          throw RainSDKError.internalLogicError(
+          throw RainError.internalError(
             details: "Account \(account.pubkey) missing from the account table"
           )
         }
@@ -366,10 +366,10 @@ internal enum SolanaTransactionBuilder {
     do {
       bytes = try Base58.decode(address)
     } catch {
-      throw RainSDKError.internalLogicError(details: "Invalid Solana \(label) address: \(address)")
+      throw RainError.internalError(details: "Invalid Solana \(label) address: \(address)")
     }
     guard bytes.count == publicKeyLength else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Invalid Solana \(label) address (expected 32 bytes, got \(bytes.count)): \(address)"
       )
     }

@@ -20,7 +20,7 @@ public protocol WalletProvider: Sendable {
   /// submit through its own RPC where the provider cannot broadcast. A provider that can broadcast on every configured chain keeps the no-op
   /// default; an adapter whose vendor broadcasts on a fixed set consults its own chain registry.
   ///
-  /// - Throws: `RainSDKError.chainNotSupported` when this provider cannot broadcast on `chainId`.
+  /// - Throws: `RainError.chainNotSupported` when this provider cannot broadcast on `chainId`.
   func requireSendSupport(chainId: Int) throws
 
   /// True when this provider pays the network fee for sends on `chainId`, so core skips the
@@ -41,7 +41,7 @@ public protocol WalletProvider: Sendable {
   ///   - chainId: The target blockchain network identifier.
   ///   - token: `.native` or a `.contract(address:)`.
   /// - Returns: A `Balance` with exact `rawAmount` plus resolved decimals / symbol / name.
-  /// - Throws: RainSDKError if wallet is unavailable or the request fails.
+  /// - Throws: RainError if wallet is unavailable or the request fails.
   func getBalance(
     chainId: Int,
     token: Token
@@ -50,7 +50,7 @@ public protocol WalletProvider: Sendable {
   /// Fetches all non-zero balances for the current wallet on the given network.
   /// - Parameter chainId: The target blockchain network identifier.
   /// - Returns: One `Balance` per non-zero token plus the native balance (always included).
-  /// - Throws: RainSDKError if wallet is unavailable or the request fails.
+  /// - Throws: RainError if wallet is unavailable or the request fails.
   func getBalances(
     chainId: Int
   ) async throws -> [Balance]
@@ -62,7 +62,7 @@ public protocol WalletProvider: Sendable {
   ///   - offset: Optional offset for pagination.
   ///   - order: Optional sort order (e.g. newest first).
   /// - Returns: List of high-level `RainTransaction` records.
-  /// - Throws: RainSDKError if wallet is unavailable or the request fails.
+  /// - Throws: RainError if wallet is unavailable or the request fails.
   func getTransactions(
     chainId: Int,
     limit: Int?,

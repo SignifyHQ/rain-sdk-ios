@@ -29,7 +29,7 @@ struct PortalProviderSessionTests {
     func build(_ token: String, _ rpcConfig: [String: String]) throws -> PortalRequestProtocol {
       lock.withLock { recorded.append((token, rpcConfig)) }
       guard let client = lock.withLock({ clients[token] }) else {
-        throw RainSDKError.internalLogicError(details: "no client scripted for \(token)")
+        throw RainError.internalError(details: "no client scripted for \(token)")
       }
       return client
     }
@@ -100,7 +100,7 @@ struct PortalProviderSessionTests {
     let wallet = try await provider.create(context: makeContext())
 
     for _ in 0..<2 {
-      await #expect(throws: RainSDKError.tokenExpired) {
+      await #expect(throws: RainError.tokenExpired) {
         _ = try await wallet.address()
       }
     }
@@ -138,10 +138,10 @@ struct PortalProviderSessionTests {
       onPortalCreated: nil,
       portalFactory: FactoryRecorder([:]).build
     )
-    await #expect(throws: RainSDKError.sdkNotInitialized) {
+    await #expect(throws: RainError.sdkNotInitialized) {
       try await provider.refreshSession()
     }
-    await #expect(throws: RainSDKError.sdkNotInitialized) {
+    await #expect(throws: RainError.sdkNotInitialized) {
       try await provider.updateSessionToken("two")
     }
     #expect(expired.value == 0)
@@ -187,20 +187,20 @@ struct PortalProviderSessionTests {
     )
     let wallet = try await provider.create(context: makeContext())
     provider.close()
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await wallet.address()
     }
     #expect(expired.value == 0)
   }
 
-  @Test("a factory failure at create surfaces as a RainSDKError")
+  @Test("a factory failure at create surfaces as a RainError")
   func factoryFailureAtCreate() async throws {
     let provider = PortalProvider(
       PortalConfig(sessionToken: "broken"),
       onPortalCreated: nil,
       portalFactory: FactoryRecorder([:]).build
     )
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await provider.create(context: makeContext())
     }
   }

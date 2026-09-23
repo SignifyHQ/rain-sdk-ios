@@ -83,7 +83,7 @@ internal final class PrivyWalletProvider: WalletProvider, RainTypedDataSignerPro
       if error is CancellationError { throw error }
       // Node errors the RPC client already classified (insufficient funds, simulation failure)
       // surface as themselves; anything else is a simulation failure.
-      if let rainError = error as? RainSDKError {
+      if let rainError = error as? RainError {
         switch rainError {
         case .insufficientFunds, .transactionSimulationFailed:
           throw rainError
@@ -91,7 +91,7 @@ internal final class PrivyWalletProvider: WalletProvider, RainTypedDataSignerPro
           break
         }
       }
-      throw RainSDKError.transactionSimulationFailed(underlying: error)
+      throw RainError.transactionSimulationFailed(underlying: error)
     }
 
     let transaction = EthereumRpcRequest.UnsignedEthTransaction(
@@ -381,7 +381,7 @@ internal final class PrivyWalletProvider: WalletProvider, RainTypedDataSignerPro
   /// full history is assembled from one native-asset query plus token-address queries over the
   /// registered tokens (chunked to the server's 10-filter cap). Every query is essential: any
   /// failure (native or token chunk) fails the whole call rather than returning silently
-  /// partial history, bubbling up raw so ``PrivyErrorMapping`` / `RainSDKError.from` classify
+  /// partial history, bubbling up raw so ``PrivyErrorMapping`` / `RainError.from` classify
   /// it at the SDK boundary. Privy paginates by cursor while the SDK contract is limit/offset,
   /// so each query collects pages until `offset + limit` rows are gathered (or history is
   /// exhausted); the merged rows are deduped, sorted by `createdAt` per `order` (newest first
@@ -571,7 +571,7 @@ internal final class PrivyWalletProvider: WalletProvider, RainTypedDataSignerPro
   /// `eth_*` to a Solana node, which answers `-32601` and surfaces as an opaque RAIN_502.
   private static func requireEVM(chainId: Int, operation: String) throws {
     guard RainChain.isSolana(chainId) else { return }
-    throw RainSDKError.invalidConfig(
+    throw RainError.invalidConfig(
       details: "Privy provider does not support \(operation) on Solana; use sendNative for SOL transfers"
     )
   }
@@ -579,14 +579,14 @@ internal final class PrivyWalletProvider: WalletProvider, RainTypedDataSignerPro
   /// CAIP-2 + RPC URL Privy broadcasts to, so it uses the same node Rain reads from.
   private func solanaCluster(for chainId: Int) throws -> (caip2: String, rpcUrl: String) {
     guard let caip2 = RainChain.solanaCaip2(for: chainId) else {
-      throw RainSDKError.invalidConfig(details: "Not a known Solana chainId: \(chainId)")
+      throw RainError.invalidConfig(details: "Not a known Solana chainId: \(chainId)")
     }
     return (caip2, try rpcUrl(for: chainId))
   }
 
   private func rpcUrl(for chainId: Int) throws -> String {
     guard let rpcUrl = rpcEndpoints[chainId], !rpcUrl.isEmpty else {
-      throw RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
+      throw RainError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
     }
     return rpcUrl
   }
