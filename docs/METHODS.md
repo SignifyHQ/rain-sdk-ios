@@ -50,7 +50,7 @@ Resolves the `RainClient` backed by the provider registered under `id`, material
 wallet on first access and caching it thereafter.
 
 - **Returns:** `RainClient` bound to that provider.
-- **Throws:** `RainSDKError.providerNotRegistered` if no provider was registered for `id`.
+- **Throws:** `RainError.providerNotRegistered` if no provider was registered for `id`.
 - **Async:** Yes (materializes the vendor wallet; e.g. Turnkey probes its wallet list).
 
 | Parameter | Type | Description |
@@ -67,7 +67,7 @@ let exporter = try await rain.first { $0.capabilities.contains(.export) }
 ```
 
 - **Returns:** `RainClient` for the first matching provider.
-- **Throws:** `RainSDKError.providerNotRegistered` if no registered provider matches.
+- **Throws:** `RainError.providerNotRegistered` if no registered provider matches.
 - **Async:** Yes.
 
 | Parameter | Type | Description |
@@ -85,12 +85,28 @@ the provider from scratch. Build a new `RainSdk` via `builder()` to change confi
 
 - **Async:** No
 
-#### registerTokens(_ tokens: [TokenInfo])
+#### close()
+
+Full teardown: `reset()`, then `close()` on every registered provider descriptor so vendor
+clients and session watchers stop and no `onSessionExpired` hook can fire again. Idempotent.
+
+Terminal, unlike `reset()`: `provider(_:)`, `first(where:)`, `tokenMetadata` and
+`registerTokens` throw `RainError.sdkNotInitialized` afterwards. Build a new `RainSdk` for the
+next login. Same contract as Android's `RainSdk.close()`.
+
+- **Async:** No
+
+#### registerTokens(_ tokens: [TokenInfo]) async throws
 
 Registers additional tokens on the live token store so their metadata (decimals / symbol / name)
-resolves without an on-chain lookup. Built-in registry tokens are trusted and cannot be overridden:
-a registration naming one is ignored with a warning. Also available on the builder
-(`Builder.registerTokens`).
+resolves without an on-chain lookup. Entries are stored before the call returns, so a
+register-then-query is ordered. The whole list is validated first — EVM address `0x` + 40 hex
+with a correct EIP-55 checksum when mixed-case, Solana mint base58 decoding to 32 bytes, decimals
+in `0...77` — and one bad entry registers nothing. Built-in registry tokens are trusted and
+cannot be overridden: a registration naming one is ignored with a warning. Also available on the
+builder (`Builder.registerTokens`, validated at `build()`).
+
+- **Throws:** `RainError.invalidConfig` on a malformed entry; `sdkNotInitialized` after `close()`.
 
 ---
 
@@ -118,7 +134,7 @@ into it.
 - **Returns:** `RainEIP712Message` — `message` (typed-data JSON), `salt` (32 raw bytes), and
   `saltHex`. Feed `salt` straight back into `buildWithdrawTransactionData`; a re-generated salt
   would not match the signature.
-- **Throws:** `RainSDKError` if message construction fails or inputs are invalid.
+- **Throws:** `RainError` if message construction fails or inputs are invalid.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
@@ -140,7 +156,7 @@ Two distinct salt/signature pairs go in, and the contract names them differently
 `_adminSignatures` — the wallet is an admin of the collateral.
 
 - **Returns:** `String`: hex-encoded calldata (e.g. `"0x..."`).
-- **Throws:** `RainSDKError` if ABI encoding or validation fails.
+- **Throws:** `RainError` if ABI encoding or validation fails.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
@@ -180,17 +196,20 @@ The SDK does not call the Rain issuing API. A host obtains, through its own Rain
 
 The demo app's `RainApiClient` is a minimal reference implementation.
 
-#### tokenMetadata(chainId:address:) async -> TokenInfo?
+#### tokenMetadata(chainId:address:) async throws -> TokenInfo?
 
 Metadata (symbol, name, decimals) for a contract token known only by address — typically the
 tokens listed in a collateral contract, which the Rain API returns without them. Resolution
 order: built-in registry, host-registered tokens, then on-chain `decimals()` / `symbol()` /
 `name()` reads over the configured RPC (cached once decimals resolve). Needs no wallet provider.
 
-- **Returns:** `nil` when decimals could not be established — never a guessed default, since wrong
-  decimals would scale a withdrawal or approval amount by orders of magnitude. `symbol` / `name`
-  inside a non-nil result may still be nil. Solana chains resolve from the registry and
-  host-registered tokens only.
+- **Returns:** `nil` only when decimals could not be established (RPC failure, unknown SPL mint)
+  — never a guessed default, since wrong decimals would scale a withdrawal or approval amount by
+  orders of magnitude. `symbol` / `name` inside a non-nil result may still be nil. Solana chains
+  resolve from the registry and host-registered tokens only.
+- **Throws:** `RainError.invalidConfig` for a chain with no RPC endpoint, a malformed `address`
+  (same rules as `registerTokens`), or an on-chain `decimals()` outside `0...77`;
+  `sdkNotInitialized` after `close()`. Same contract as Android.
 
 ---
 
@@ -204,9 +223,9 @@ never names a vendor SDK itself.
 | `rpcEndpoints(_ configs: [NetworkConfig])` | Sets the network configurations every provider shares. **Required.** |
 | `rpcEndpoints(_ map: [Int: String])` | Same, from a `chainId → RPC URL` map (parity with Android). |
 | `register(_ provider: any ProviderDescriptor)` | Registers a provider adapter (e.g. `PortalProvider`, `TurnkeyProvider`, `PrivyProvider`). Re-registering the same id replaces the prior one. |
-| `registerTokens(_ tokens: [TokenInfo])` | Seeds the shared token store with extra token metadata. |
+| `registerTokens(_ tokens: [TokenInfo])` | Seeds the shared token store with extra token metadata. Validated at `build()` (address well-formed for its chain family, decimals in 0...77); a malformed entry fails the build with `invalidConfig`. |
 | `authPullConfig(_ config: RainAuthPullConfig)` | Enables Auth Pull for the exact operator and token contracts in `config` (`.sandbox(operatorAddress:)` / `.production(operatorAddress:)` / `.custom(operatorAddress:tokenAddresses:)`). Without it, the approval, allowance, confirmation, and approval-fee methods fail closed. See [AUTH_PULL.md](AUTH_PULL.md). |
-| `build() throws -> RainSdk` | Validates endpoints (fail-fast on a bad URL / chain id) and returns the SDK. Throws `RainSDKError.invalidConfig` on invalid RPC endpoints, and on an invalid Auth Pull configuration: a malformed or zero operator or token address, an empty token map, a chain outside the Auth Pull set the config's kind names (`.custom` may use either environment's chains), or no RPC endpoint for any configured Auth Pull chain. Providers are optional: building with none yields a wallet-agnostic `RainSdk`. |
+| `build() throws -> RainSdk` | Validates endpoints (fail-fast on a bad URL / chain id) and returns the SDK. Throws `RainError.invalidConfig` on invalid RPC endpoints, and on an invalid Auth Pull configuration: a malformed or zero operator or token address, an empty token map, a chain outside the Auth Pull set the config's kind names (`.custom` may use either environment's chains), or no RPC endpoint for any configured Auth Pull chain. Providers are optional: building with none yields a wallet-agnostic `RainSdk`. |
 
 ### Provider adapters
 
@@ -263,7 +282,7 @@ Full withdrawal flow: builds the calldata, obtains the admin EIP-712 signature v
 provider, submits on-chain, and returns the transaction hash.
 
 - **Returns:** `String`: transaction hash (EVM) or transaction signature (Solana).
-- **Throws:** `RainSDKError` if construction, signing, or submission fails.
+- **Throws:** `RainError` if construction, signing, or submission fails.
 - **Async:** Yes
 
 | Parameter | Type | Description |
@@ -288,7 +307,7 @@ the transaction.
 - **Returns:** `RainPreparedWithdrawal` — `.evm(RainTransactionParameters)` carrying a complete,
   submittable transaction (`from` / `to` / `value` / `data`), or `.solana(UnsignedSolanaTransfer)`
   carrying the serialized unsigned transaction plus its `recentBlockhash`.
-- **Throws:** `RainSDKError` if construction or signing fails.
+- **Throws:** `RainError` if construction or signing fails.
 - **Async:** Yes
 
 > A Solana blockhash is valid for roughly 150 slots (60–90 seconds). Submit promptly or re-prepare.
@@ -302,7 +321,7 @@ Use `evmParameters` / `solanaTransfer` to read the payload without writing a `sw
 Returns the current wallet address from the backing provider.
 
 - **Returns:** `String`: hex-encoded wallet address (e.g. `"0x..."`).
-- **Throws:** `RainSDKError` if the address cannot be retrieved.
+- **Throws:** `RainError` if the address cannot be retrieved.
 - **Async:** Yes
 
 ---
@@ -316,7 +335,7 @@ a Solana sentinel chain id (900 / 901 / 902). EVM-only providers return the hex 
 
 - **Parameters:** `chainId: Int`
 - **Returns:** `String`: the wallet address for that chain's family.
-- **Throws:** `RainSDKError` if the address cannot be retrieved.
+- **Throws:** `RainError` if the address cannot be retrieved.
 - **Async:** Yes
 
 ---
@@ -326,7 +345,7 @@ a Solana sentinel chain id (900 / 901 / 902). EVM-only providers return the hex 
 Estimates the gas fee required for a transaction.
 
 - **Returns:** `Decimal`: estimated gas fee in the chain's native token (e.g. AVAX).
-- **Throws:** `RainSDKError` if estimation fails.
+- **Throws:** `RainError` if estimation fails.
 - **Async:** Yes
 
 | Parameter | Type | Description |
@@ -346,12 +365,12 @@ Internally builds + signs the EIP-712 payload, then runs `eth_estimateGas` again
 controller; it does not broadcast.
 
 > **This prompts the wallet to sign.** Building the estimate mints a fully signed withdrawal
-> authorization, so the user sees a signature prompt (e.g. Turnkey biometrics) for a fee quote.
+> authorization — a user-visible prompt on providers that gate signing — for a fee quote.
 > To quote without a second prompt, call `prepareWithdrawal` once and pass the result to
 > `estimateWithdrawalFee(chainId:prepared:)` below.
 
 - **Returns:** `Decimal`: estimated withdrawal fee in the chain's native token.
-- **Throws:** `RainSDKError` if estimation fails, or if `chainId` is a Solana chain — Solana fee
+- **Throws:** `RainError` if estimation fails, or if `chainId` is a Solana chain — Solana fee
   estimation is not implemented.
 - **Async:** Yes
 
@@ -373,7 +392,7 @@ Estimates the total fee for a withdrawal already built by `prepareWithdrawal`, r
 so the flow is: prepare once (one signature), quote the fee on the preparation, then submit.
 
 - **Returns:** `Decimal`: estimated withdrawal fee in the chain's native token.
-- **Throws:** `RainSDKError` if estimation fails.
+- **Throws:** `RainError` if estimation fails.
 - **Async:** Yes
 
 | Parameter | Type | Description |
@@ -389,7 +408,7 @@ Sends native tokens (e.g. ETH, AVAX, SOL) from the current wallet. Routed by `ch
 sentinel chain ids (900 / 901 / 902) go through the provider's Solana path when it supports one.
 
 - **Returns:** `RainTokenTransferResult`: carrying the transaction hash (EVM) or signature (Solana).
-- **Throws:** `RainSDKError` if the send fails or the provider does not support the chain family.
+- **Throws:** `RainError` if the send fails or the provider does not support the chain family.
   A malformed EVM recipient fails as `invalidRecipient` before anything is broadcast.
 - **Async:** Yes
 
@@ -406,7 +425,7 @@ sentinel chain ids (900 / 901 / 902) go through the provider's Solana path when 
 Sends ERC-20 (EVM) or SPL (Solana) tokens from the current wallet. Routed by `chainId`.
 
 - **Returns:** `RainTokenTransferResult`: carrying the transaction hash.
-- **Throws:** `RainSDKError` if the send fails. A malformed EVM recipient fails as
+- **Throws:** `RainError` if the send fails. A malformed EVM recipient fails as
   `invalidRecipient` before anything is broadcast.
 - **On Solana:** supported by the providers that hold a Solana account (Turnkey and Privy; Portal
   throws). `decimals` does not scale the amount — the mint's on-chain value is authoritative, and
@@ -453,8 +472,8 @@ Auth Pull is disabled until `RainSdk.Builder.authPullConfig(_:)` supplies the tr
 per-chain token targets. The SDK rejects any different chain, token, or spender before wallet access.
 
 - **Returns:** `RainTokenApprovalResult`: carrying the transaction hash of the `approve` call.
-- **Throws:** `RainSDKError` if the approval fails. EVM only — a Solana `chainId` throws
-  `internalLogicError`, since SPL delegation is not an ERC-20 allowance. A `chainId` outside
+- **Throws:** `RainError` if the approval fails. EVM only — a Solana `chainId` throws
+  `internalError`, since SPL delegation is not an ERC-20 allowance. A `chainId` outside
   `authPullChainIds` throws `invalidConfig`.
 - **Async:** Yes
 
@@ -492,21 +511,21 @@ _ = try await client.approveTokenAllowance(
 
 ---
 
-### getTokenAllowance(chainId:contractAddress:owner:spender:)
+### getTokenAllowance(chainId:contractAddress:spender:owner:)
 
 Reads the ERC-20 allowance `spender` currently holds over `owner`'s balance. Call it before
 approving (to skip a redundant transaction) and after (to confirm the approval was mined).
 
 - **Returns:** `RainTokenAllowance`; see [RainTokenAllowance](#raintokenallowance).
-- **Throws:** `RainSDKError` if the read fails. EVM only.
+- **Throws:** `RainError` if the read fails. EVM only.
 - **Async:** Yes
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `chainId` | `Int` | Target EVM network chain ID. |
 | `contractAddress` | `String` | ERC-20 token contract. |
-| `owner` | `String?` | Wallet whose balance is approved. `nil` reads this client's own wallet, which is the only case that touches the wallet provider at all. |
 | `spender` | `String` | Address whose allowance is being read — Rain's operator. |
+| `owner` | `String?` | Wallet whose balance is approved. `nil` reads this client's own wallet, which is the only case that touches the wallet provider at all. |
 
 Convenience overload: `getTokenAllowance(chainId:contractAddress:spender:)`.
 
@@ -519,7 +538,7 @@ token. Nothing is broadcast and no signature is requested; the fee is priced aga
 calldata `approveTokenAllowance` would send.
 
 - **Returns:** `Decimal` — fee in the chain's native currency (e.g. ETH).
-- **Throws:** `RainSDKError`; `internalLogicError` when the backing provider cannot estimate fees.
+- **Throws:** `RainError`; `internalError` when the backing provider cannot estimate fees.
 - **Async:** Yes
 
 Parameters are identical to `approveTokenAllowance`. Convenience overload:
@@ -539,12 +558,12 @@ RPC failures on either read (a 429, a timeout, a node that has not reached the b
 retried within the window rather than ending the confirmation.
 
 - **Returns:** `RainTokenAllowance` — the allowance actually in place after the transaction mined.
-- **Throws:** `RainSDKError`. A reverted receipt throws `transactionSimulationFailed`. A window that
+- **Throws:** `RainError`. A reverted receipt throws `transactionSimulationFailed`. A window that
   expires with no receipt throws `transactionPending` with the transaction hash as `statusId` (not
   confirmed *yet* — re-read the allowance or confirm again rather than re-approving). A receipt that
   mined but whose allowance could not be read back within the window rethrows the last read failure
-  (`networkError` when it was not already a `RainSDKError`). `invalidConfig` for a malformed hash is
-  final and is not retried. `internalLogicError` is thrown only when the mined allowance contradicts
+  (`networkError` when it was not already a `RainError`). `invalidConfig` for a malformed hash is
+  final and is not retried. `internalError` is thrown only when the mined allowance contradicts
   the request: a revoke that left a spendable allowance, or an approval whose allowance is still zero.
 - **Async:** Yes
 
@@ -615,7 +634,7 @@ All balance methods return rich `Balance` values rather than lossy `Double`s.
 Fetches a single balance (native or a contract token) for the current wallet.
 
 - **Returns:** `Balance`: exact `rawAmount` plus resolved decimals / symbol / name.
-- **Throws:** `RainSDKError` if the request fails.
+- **Throws:** `RainError` if the request fails.
 - **Async:** Yes
 
 | Parameter | Type | Description |
@@ -632,7 +651,7 @@ always included; zero-balance contract tokens are omitted. Supersedes the deprec
 `getBalances(chainId:)`, which returned a lossy `[String: Double]`.
 
 - **Returns:** `[Balance]`: one per non-zero token plus the native balance.
-- **Throws:** `RainSDKError` if the request fails.
+- **Throws:** `RainError` if the request fails.
 - **Async:** Yes
 
 | Parameter | Type | Description |
@@ -648,7 +667,7 @@ Fetches balances across every configured chain in parallel, flattened into a sin
 contributes no entries rather than failing the whole call.
 
 - **Returns:** `[Balance]`: a flat list spanning all healthy configured chains.
-- **Throws:** `RainSDKError` if the request fails.
+- **Throws:** `RainError` if the request fails.
 - **Async:** Yes
 
 ---
@@ -662,7 +681,7 @@ Solana account rather than the EVM one) or a Rain collateral deposit address.
 A convenience overload, `generateAddressQRCode(address:)`, applies the defaults below.
 
 - **Returns:** `Data`: PNG image bytes.
-- **Throws:** `RainSDKError` if the wallet address is needed but unavailable, or QR generation fails.
+- **Throws:** `RainError` if the wallet address is needed but unavailable, or QR generation fails.
 - **Async:** Yes
 
 | Parameter | Type | Description |
@@ -674,30 +693,12 @@ A convenience overload, `generateAddressQRCode(address:)`, applies the defaults 
 
 ---
 
-### generateWalletAddressQRCode(dimension:backgroundColor:foregroundColor:)
-
-**Deprecated** — the same as `generateAddressQRCode(address: nil, …)`, which encodes the wallet's
-own address when `address` is `nil`. Android has no counterpart; call `generateAddressQRCode`
-instead so both platforms expose one QR method.
-
-- **Returns:** `Data`: PNG image bytes.
-- **Throws:** `RainSDKError` if the wallet is unavailable or QR generation fails.
-- **Async:** Yes
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `dimension` | `Int` | Output width/height in pixels (default `256`). |
-| `backgroundColor` | `CGColor?` | Optional; default white. |
-| `foregroundColor` | `CGColor?` | Optional; default black. |
-
----
-
 ### getTransactions(chainId:limit:offset:order:)
 
 Fetches transaction history for the current wallet on the given network.
 
 - **Returns:** `[RainTransaction]`: transaction records. `value` is a `Decimal?` in human-readable units — `nil` when decimals could not be resolved, with `rawValue` still populated.
-- **Throws:** `RainSDKError` if transaction history cannot be retrieved.
+- **Throws:** `RainError` if transaction history cannot be retrieved.
 - **On Solana:** rows cover native SOL (`category: "external"`) and SPL tokens
   (`category: .token`, with the mint in `tokenAddress` and the raw amount in `rawValue`); token accounts are
   reported as the wallets behind them where they can be resolved. What is listed depends on the
@@ -717,13 +718,16 @@ is a valid call.
 
 ---
 
-### registerTokens(_ tokens: [TokenInfo])
+### registerTokens(_ tokens: [TokenInfo]) async throws
 
 Registers token metadata so balance and transfer calls resolve symbol / decimals without an
 on-chain read. The store is shared with the owning `RainSdk`, so every resolved client sees the
-registration. Also available on `RainSdk` and on the builder.
+registration; entries are stored before the call returns. The whole list is validated first (see
+`RainSdk.registerTokens`) and one bad entry registers nothing. Also available on `RainSdk` and on
+the builder.
 
-- **Async:** No
+- **Throws:** `RainError.invalidConfig` on a malformed entry.
+- **Async:** Yes
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
@@ -742,24 +746,14 @@ re-resolve on next access.
 
 ---
 
-## Deprecated (compatibility shims)
+## Removed in v5
 
-Source-compat shims retained so code written against 1.0.0 keeps compiling with only deprecation
-warnings. Each delegates to the precise current API and collapses the result to the old shape.
-Slated for removal in the next major version.
-
-| Deprecated | Replacement | Notes |
-|------------|-------------|-------|
-| `generateWalletAddressQRCode(dimension:backgroundColor:foregroundColor:)` | `generateAddressQRCode(address: nil, …)` | One QR method across both platforms; `nil` already means the wallet's own address. |
-| `sendToken(chainId:contractAddress:to:amount: Double, decimals: Int)` | `sendToken(chainId:contractAddress:to:amount:)` | `amount` is now `Decimal`; `decimals` optional (SDK resolves it). |
-| `sendERC20Token(chainId:contractAddress:to:amount:decimals:) -> String` | `sendToken(...)` | Returns the `.transactionHash` String. |
-| `sendNativeToken(chainId:to:amount:) -> String` | `sendNative(chainId:to:amount:)` | Returns the `.transactionHash` String. |
-| `getNativeBalance(chainId:) -> Double` | `getBalance(chainId:, token: .native)` | Read `.decimalAmount` for exact precision. |
-| `getERC20Balance(chainId:tokenAddress:decimals:) -> Double` | `getBalance(chainId:, token: .contract(address:))` | `decimals` argument ignored; SDK resolves decimals itself. |
-| `getERC20Balances(chainId:) -> [String: Double]` | `getTokenBalances(chainId:)` | Drops the native entry; non-zero ERC-20s only, as `Double`. |
-| `getBalances(chainId:) -> [String: Double]` | `getTokenBalances(chainId:)` | Lossy `Double` map keyed by contract address; native under the `""` key. |
-| `RainSdk.composeTransactionParameters(...) -> ETHTransactionParam` | `buildTransactionParameters(...)` | Lives in `RainPortal`; maps the Rain-owned result to Portal's `ETHTransactionParam`. |
-| `EthereumConverter.parseHexToDouble(_:decimals:)` | `EthereumConverter.parseHexToDecimal(_:decimals:)` | `Double` loses precision above 2^53 base units. |
+The 1.x compatibility shims (`generateWalletAddressQRCode`, `sendERC20Token`, `sendNativeToken`,
+the `Double`-based `sendToken`, `getNativeBalance`, `getERC20Balance(s)`, `getBalances`,
+`RainSdk.composeTransactionParameters`) are gone. Use the precise current API:
+`generateAddressQRCode(address: nil, …)`, `sendToken` / `sendNative` (returning
+`RainTokenTransferResult`), `getBalance` / `getTokenBalances` (returning `Balance` with exact
+`rawAmount`), and `buildTransactionParameters`. Same surface as the Android SDK.
 
 ---
 
@@ -774,10 +768,11 @@ capability every provider has.
 | `.export` | The wallet's key material can be exported / backed up. |
 | `.recovery` | The wallet supports a recovery ceremony. |
 | `.multiChain` | The provider holds accounts across multiple chain families (e.g. EVM + Solana). |
-| `.biometricGate` | Signing is gated behind a device biometric / passkey prompt. |
+| `.biometricGate` | Every signature is gated behind a device biometric / passkey prompt. No bundled provider advertises it (Turnkey signs with a `.none`-policy enclave key); reserved for third-party adapters. |
 
-Bundled providers: **Portal** → `.export`, `.recovery`. **Turnkey** → `.multiChain`,
-`.biometricGate`. **Privy** → `.export`, `.recovery`, `.multiChain`.
+Bundled providers: **Portal** → `.export`, `.recovery`. **Turnkey** and **Rain wallet** →
+`.export`, `.multiChain`, plus `.gasSponsorship` when `sponsorGas` is on. **Privy** → `.export`,
+`.recovery`, `.multiChain`.
 
 ---
 
@@ -811,8 +806,8 @@ Bundled providers: **Portal** → `.export`, `.recovery`. **Turnkey** → `.mult
 
 ## Errors
 
-All async methods can throw `RainSDKError`. Each error includes an `errorCode` property for
-programmatic handling.
+All async methods can throw `RainError`. Each error carries a stable `code` string (`"RAIN_xxx"`)
+for programmatic handling — the same codes as the Android SDK.
 
 | Code | Case | Meaning |
 |------|------|--------|
@@ -821,19 +816,19 @@ programmatic handling.
 | `RAIN_103` | `invalidRpcUrl(_:)` | RPC URL could not be parsed as a valid URL. |
 | `RAIN_104` | `chainNotSupported(chainId:details:)` | The active wallet provider cannot broadcast on this chain, so a send (transfer, withdrawal, approval) was refused before any signing or network work. Reads — balances, history, fee estimates — are not gated. E.g. Turnkey's managed broadcast does not cover Avalanche. |
 | `RAIN_201` | `tokenExpired` | Provider session token expired or invalid. |
-| `RAIN_202` | `unauthorized` | Invalid or missing token / permissions. |
+| `RAIN_202` | `unauthorized(details:)` | The backend rejected the caller's credentials or permissions; `details` names which backend and why. |
 | `RAIN_203` | `invalidLoginCode` | The one-time login code was rejected (wrong, expired, or already used) — ask the user to retype it or request a new one. Distinct from `RAIN_201`, which means an established session died. |
 | `RAIN_301` | `networkError(underlying:)` | Network/connectivity failure. |
 | `RAIN_302` | `transactionPending(statusId:)` | A send was accepted but its hash is not known yet; resume polling with `statusId`, do not resend. |
 | `RAIN_401` | `userRejected` | User cancelled the signing request in the wallet. |
 | `RAIN_402` | `insufficientFunds(required:available:)` | Balance too low for the requested amount or gas. |
 | `RAIN_403` | `transactionSimulationFailed(underlying:)` | Preflight `eth_call` simulation failed (e.g. contract revert, insufficient funds). |
-| `RAIN_404` | `walletUnavailable` | The backing provider returned no usable wallet address. |
-| `RAIN_405` | `withdrawalRevertedByNetwork` | Withdrawal reverted on-chain (e.g. duplicate withdrawal, already-used signature). |
+| `RAIN_404` | `walletUnavailable(details:)` | The backing provider returned no usable wallet address for this chain family. |
+| `RAIN_405` | `withdrawalRevertedByNetwork(details:)` | The collateral contract rejected the withdrawal (e.g. already-used or expired admin signature, duplicate amount inside the cooldown); `details` carries the decoded reason when available. |
 | `RAIN_406` | `invalidAmount(amount:reason:)` | The amount is invalid for the token (more decimal places than the token supports, or unrepresentable). |
 | `RAIN_407` | `walletNotAuthorized(walletAddress:proxyAddress:)` | The signing wallet is not an admin of the collateral contract. |
 | `RAIN_501` | `providerError(underlying:)` | Portal, Turnkey, Privy, or other provider error. |
-| `RAIN_502` | `internalLogicError(details:)` | EIP-712 encoding, ABI encoding, or internal processing error. |
+| `RAIN_502` | `internalError(details:)` | EIP-712 encoding, ABI encoding, or internal processing error. |
 
 ### Error handling example
 
@@ -841,12 +836,12 @@ programmatic handling.
 do {
     let client = try await rain.provider(.portal)
     let txHash = try await client.withdrawCollateral(...)
-} catch let error as RainSDKError {
+} catch let error as RainError {
     switch error {
     case .providerNotRegistered: /* Unknown provider id */ break
     case .insufficientFunds: /* Not enough balance */ break
     case .networkError(let underlying): /* Network issue */ break
-    default: print("\(error.errorCode): \(error.localizedDescription)")
+    default: print("\(error.code): \(error.localizedDescription)")
     }
 }
 ```
