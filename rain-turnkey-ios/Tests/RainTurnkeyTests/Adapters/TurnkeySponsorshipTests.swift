@@ -22,7 +22,7 @@ struct TurnkeyBroadcastChainsTests {
         arguments: [43114, 43113, RainChain.solanaTestnet, 999_999])
   func uncoveredChains(chainId: Int) {
     #expect(!TurnkeyBroadcastChains.supportsSend(chainId: chainId))
-    #expect(throws: RainSDKError.chainNotSupported(chainId: chainId, details: "")) {
+    #expect(throws: RainError.chainNotSupported(chainId: chainId, details: "")) {
       try TurnkeyBroadcastChains.requireSendSupport(chainId: chainId)
     }
   }
@@ -32,11 +32,11 @@ struct TurnkeyBroadcastChainsTests {
     do {
       try TurnkeyBroadcastChains.requireSendSupport(chainId: 43114)
       Issue.record("Expected chainNotSupported")
-    } catch let error as RainSDKError {
-      #expect(error.errorCode == "RAIN_104")
+    } catch let error as RainError {
+      #expect(error.code == "RAIN_104")
       #expect(error.errorDescription?.contains("43114") == true)
     } catch {
-      Issue.record("Expected RainSDKError, got \(error)")
+      Issue.record("Expected RainError, got \(error)")
     }
   }
 }
@@ -51,9 +51,9 @@ struct TurnkeySponsorshipTests {
   @Test("the descriptor and the resolved wallet advertise gasSponsorship only when sponsorGas is on")
   func capabilitiesFollowTheFlag() {
     #expect(TurnkeyWalletProviderAdapter.capabilities(sponsorGas: true)
-      == [.multiChain, .biometricGate, .gasSponsorship])
+      == [.export, .multiChain, .gasSponsorship])
     #expect(TurnkeyWalletProviderAdapter.capabilities(sponsorGas: false)
-      == [.multiChain, .biometricGate])
+      == [.export, .multiChain])
   }
 
   @Test("sponsorship applies exactly where Turnkey can broadcast")
@@ -151,7 +151,7 @@ struct TurnkeySponsorshipTests {
     let (manager, _, builder) = TestManagers.turnkeyManager(turnkey: mockTurnkey, sponsorGas: true)
     builder.mockNonce = BigUInt(42)
 
-    await #expect(throws: RainSDKError.withdrawalRevertedByNetwork) {
+    await #expect(throws: RainError.withdrawalRevertedByNetwork()) {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -170,7 +170,7 @@ struct TurnkeySponsorshipTests {
     client.sendTransactionStatusQueue = [.failed(message: "rejected by policy")]
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey, sponsorGas: true)
 
-    await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
+    await #expect(throws: RainError.providerError(underlying: NSError(domain: "x", code: 0))) {
       _ = try await manager.sendNative(chainId: 1, to: TestFixtures.recipientAddress, amount: 1.0)
     }
   }
@@ -205,7 +205,7 @@ struct TurnkeySponsorshipTests {
       turnkey: mockTurnkey, configs: configs, sponsorGas: sponsorGas
     )
 
-    await #expect(throws: RainSDKError.chainNotSupported(chainId: 43114, details: "")) {
+    await #expect(throws: RainError.chainNotSupported(chainId: 43114, details: "")) {
       _ = try await manager.sendNative(chainId: 43114, to: TestFixtures.recipientAddress, amount: 1.0)
     }
     #expect(client.ethSendTransactionCalls.isEmpty)
@@ -217,7 +217,7 @@ struct TurnkeySponsorshipTests {
     let configs = [NetworkConfig.testConfig(chainId: 43114)]
     let (manager, _, builder) = TestManagers.turnkeyManager(configs: configs)
 
-    await #expect(throws: RainSDKError.chainNotSupported(chainId: 43114, details: "")) {
+    await #expect(throws: RainError.chainNotSupported(chainId: 43114, details: "")) {
       _ = try await manager.withdrawCollateral(
         chainId: 43114,
         addresses: TestFixtures.defaultWithdrawAddresses,

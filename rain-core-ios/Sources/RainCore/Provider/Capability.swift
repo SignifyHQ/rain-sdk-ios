@@ -13,7 +13,9 @@ public enum Capability: String, Sendable, CaseIterable, Codable {
   case recovery
   /// Provider manages more than one chain family (e.g. Turnkey EVM + Solana).
   case multiChain
-  /// Provider gates signing behind a biometric / passkey prompt.
+  /// Provider gates every signature behind a biometric / passkey prompt. No bundled provider
+  /// advertises this today — Turnkey signs with a `.none`-policy enclave key, Portal and Privy sign
+  /// silently once authenticated — it is kept for third-party adapters.
   case biometricGate
   /// The provider's sends are fee-sponsored — a third party pays the network fee — so core skips
   /// the self-paid preflights that would charge the fee to the wallet (the Solana fee-lamport

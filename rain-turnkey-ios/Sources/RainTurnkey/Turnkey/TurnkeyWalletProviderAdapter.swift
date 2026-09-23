@@ -86,7 +86,11 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
   /// The capabilities a Turnkey provider advertises for a given `sponsorGas` setting. Shared
   /// with `TurnkeyProvider` so the descriptor's set and the resolved wallet's set cannot drift.
   static func capabilities(sponsorGas: Bool) -> Set<Capability> {
-    var set: Set<Capability> = [.multiChain, .biometricGate]
+    // `.export`: managed mode exports the seed phrase and per-account keys. NOT `.biometricGate`:
+    // the vendor signs with a Secure Enclave key created under `SecureEnclaveConfig(authPolicy:
+    // .none)` (swift-sdk 4.0.0 `SecureEnclaveStamper.createKeyPair()`), so nothing gates signing;
+    // passkeys/biometrics only appear at login. Same set as the Android adapter.
+    var set: Set<Capability> = [.export, .multiChain]
     if sponsorGas { set.insert(.gasSponsorship) }
     return set
   }
@@ -176,7 +180,7 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
         // the vendor's raw refresh-wallets failure.
         try await sessions.executeRead { _, _ in try await self.turnkey.refreshWallets() }
         if let walletAddress = resolve(self) { return walletAddress }
-        throw RainSDKError.walletUnavailable
+        throw RainError.walletUnavailable(details: "Turnkey session has no account for this chain family")
       }
       self[keyPath: inFlight] = task
       return task
@@ -309,7 +313,7 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
       }
     } catch let cancellation as CancellationError {
       throw cancellation
-    } catch let error as RainSDKError where error == .tokenExpired {
+    } catch let error as RainError where error == .tokenExpired {
       // A dead session must surface, not be masked by the node fallback — the coordinator
       // already tried a refresh before this error was thrown.
       throw error
@@ -402,7 +406,7 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
         turnkeyBalances = try await fetchBalances(chainId: chainId, walletAddress: walletAddress)
       } catch let cancellation as CancellationError {
         throw cancellation
-      } catch let error as RainSDKError where error == .tokenExpired {
+      } catch let error as RainError where error == .tokenExpired {
         // A dead session must surface, not be masked by the node fallback.
         throw error
       } catch {
@@ -507,7 +511,7 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
       return try await indexedEvmTransactions(chainId: chainId, limit: limit, offset: offset, order: order)
     } catch let cancellation as CancellationError {
       throw cancellation
-    } catch let error as RainSDKError where error == .tokenExpired {
+    } catch let error as RainError where error == .tokenExpired {
       // The activity path needs the same session, so falling back would only fail again.
       throw error
     } catch TurnkeySwiftError.invalidSession {
@@ -1140,7 +1144,7 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
             )
           )
         }
-      } catch let error as RainSDKError where error == .tokenExpired {
+      } catch let error as RainError where error == .tokenExpired {
         return nil
       }
 
@@ -1221,7 +1225,7 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
   /// `sendToken`.
   private func requireEVM(chainId: Int, operation: String) throws {
     guard RainChain.isSolana(chainId) else { return }
-    throw RainSDKError.invalidConfig(
+    throw RainError.invalidConfig(
       details: "Turnkey provider does not support \(operation) on Solana; use sendNative for SOL transfers"
     )
   }
@@ -1304,7 +1308,7 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
     // 21,000 is the intrinsic cost of a bare transfer with no calldata; a contract call sent with
     // it runs out of gas and reverts, burning the fee. Fail loudly instead of underestimating.
     guard parsedGas > 0 || normalizedData(params.data) == "0x" else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "eth_estimateGas returned no usable gas limit for a contract call"
       )
     }
@@ -1399,8 +1403,8 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
             )
           )
         }
-      } catch let error as RainSDKError where error == .tokenExpired {
-        throw RainSDKError.transactionPending(statusId: sendTransactionStatusId)
+      } catch let error as RainError where error == .tokenExpired {
+        throw RainError.transactionPending(statusId: sendTransactionStatusId)
       }
 
       if let txHash = status.eth?.txHash, !txHash.isEmpty {
@@ -1421,7 +1425,7 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
     // A poll timeout is not a failure: Turnkey accepted the submission and the transaction may
     // still confirm. Carrying the status id lets the host resume polling instead of resending,
     // which would risk a duplicate transfer.
-    throw RainSDKError.transactionPending(statusId: sendTransactionStatusId)
+    throw RainError.transactionPending(statusId: sendTransactionStatusId)
   }
 
   private func isNativeAsset(_ balance: v1AssetBalance, caip2: String) -> Bool {
@@ -1456,9 +1460,9 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
     let rpcURL = try getRpcURL(chainId: chainId)
     do {
       return try await jsonRpcClient.callForHexResult(rpcUrl: rpcURL, method: method, params: params)
-    } catch RainSDKError.invalidRpcUrl(let url) {
+    } catch RainError.invalidRpcUrl(let url) {
       // Upgrade to invalidConfig with the chainId we have on hand.
-      throw RainSDKError.invalidConfig(details: "Invalid RPC URL for chainId=\(chainId): \(url)")
+      throw RainError.invalidConfig(details: "Invalid RPC URL for chainId=\(chainId): \(url)")
     }
   }
 
@@ -1478,7 +1482,7 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
 
   private func getRpcURL(chainId: Int) throws -> String {
     guard let networkConfig = networkConfigsByChainId[chainId] else {
-      throw RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
+      throw RainError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
     }
 
     return networkConfig.rpcUrl
@@ -1493,7 +1497,7 @@ internal final class TurnkeyWalletProviderAdapter: WalletProvider, RainTypedData
   /// Any other failure (rejected by Turnkey, unknown) stays `providerError`. `nil` = not failed.
   static func sendFailure(
     from status: TGetSendTransactionStatusResponse, fallbackMessage: String
-  ) -> RainSDKError? {
+  ) -> RainError? {
     let normalized = status.txStatus.uppercased()
     let failed = normalized.contains("FAILED") || normalized.contains("REJECTED")
       || status.txError != nil || status.error?.message != nil
