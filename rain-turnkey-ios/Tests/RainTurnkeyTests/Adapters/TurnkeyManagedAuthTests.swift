@@ -12,7 +12,7 @@ struct TurnkeyManagedAuthTests {
 
   private func makeController(
     turnkey: MockTurnkey,
-    configurationError: RainSDKError? = nil,
+    configurationError: RainError? = nil,
     rpId: String? = nil
   ) -> TurnkeyManagedAuthController {
     TurnkeyManagedAuthController(
@@ -38,7 +38,7 @@ struct TurnkeyManagedAuthTests {
   func testConfirmWithoutSend() async {
     let controller = makeController(turnkey: MockTurnkey(session: nil))
 
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       try await controller.confirmLoginCode("123456")
     }
   }
@@ -78,7 +78,7 @@ struct TurnkeyManagedAuthTests {
     // Both chain families already provisioned — nothing to create or derive.
     #expect(turnkey.createWalletCalls.isEmpty)
     #expect(turnkey.addAccountsCalls.isEmpty)
-    #expect(controller.authState == .authenticated)
+    #expect(controller.currentAuthState() == .authenticated)
   }
 
   @Test("a wrong code leaves an already-active session untouched")
@@ -92,13 +92,13 @@ struct TurnkeyManagedAuthTests {
     let controller = makeController(turnkey: turnkey)
     try await controller.sendLoginCode(to: .email("user@example.com"))
 
-    await #expect(throws: RainSDKError.invalidLoginCode) {
+    await #expect(throws: RainError.invalidLoginCode) {
       try await controller.confirmLoginCode("999999")
     }
 
     #expect(turnkey.clearStoredSessionCalls.isEmpty)
     #expect(turnkey.session != nil)
-    #expect(controller.authState == .authenticated)
+    #expect(controller.currentAuthState() == .authenticated)
     #expect(controller.hasActiveSession())
   }
 
@@ -162,7 +162,7 @@ struct TurnkeyManagedAuthTests {
     #expect(turnkey.addAccountsCalls.isEmpty)
   }
 
-  @Test("a vendor auth error surfaces as a mapped RainSDKError, never raw")
+  @Test("a vendor auth error surfaces as a mapped RainError, never raw")
   func testAuthErrorMapping() async {
     let turnkey = MockTurnkey(session: nil)
     turnkey.sendOtpError = TurnkeySwiftError.invalidSession
@@ -171,10 +171,10 @@ struct TurnkeyManagedAuthTests {
     do {
       try await controller.sendLoginCode(to: .email("user@example.com"))
       Issue.record("Expected an error")
-    } catch let error as RainSDKError {
+    } catch let error as RainError {
       #expect(error == .tokenExpired)
     } catch {
-      Issue.record("Expected RainSDKError, got \(error)")
+      Issue.record("Expected RainError, got \(error)")
     }
   }
 
@@ -185,7 +185,7 @@ struct TurnkeyManagedAuthTests {
       configurationError: .invalidConfig(details: "mismatch")
     )
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "mismatch")) {
+    await #expect(throws: RainError.invalidConfig(details: "mismatch")) {
       try await controller.sendLoginCode(to: .email("user@example.com"))
     }
   }
@@ -196,11 +196,11 @@ struct TurnkeyManagedAuthTests {
   func testAuthStateMapping() {
     let turnkey = MockTurnkey(session: nil)
     let controller = makeController(turnkey: turnkey)
-    #expect(controller.authState == .unauthenticated)
+    #expect(controller.currentAuthState() == .unauthenticated)
 
     turnkey.session = MockTurnkey.defaultSession()
     turnkey.authState = .authenticated
-    #expect(controller.authState == .authenticated)
+    #expect(controller.currentAuthState() == .authenticated)
   }
 
   @Test("hasActiveSession is true only for an unexpired session")
@@ -252,8 +252,8 @@ struct TurnkeyManagedAuthTests {
     #expect(turnkey.clearStoredSessionCallCount == 1)
     // The mock flips live state from a main-actor Task like the vendor; logout must have waited.
     #expect(!controller.hasActiveSession())
-    #expect(controller.authState == .unauthenticated)
-    await #expect(throws: RainSDKError.self) {
+    #expect(controller.currentAuthState() == .unauthenticated)
+    await #expect(throws: RainError.self) {
       try await controller.confirmLoginCode("123456") // pending OTP was dropped
     }
   }
@@ -332,7 +332,7 @@ struct TurnkeyManagedAuthTests {
     let turnkey = MockTurnkey(session: nil)
     let controller = makeController(turnkey: turnkey)
 
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       try await controller.sendLoginCode(to: contact)
     }
     #expect(turnkey.sendOtpCalls.isEmpty)
@@ -405,7 +405,7 @@ struct TurnkeyManagedAuthTests {
     turnkey.storedSessionKeys = [MockTurnkey.passkeyDefaultSessionKey]
     let controller = makeController(turnkey: turnkey, rpId: "passkeys.rain.xyz")
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    await #expect(throws: RainError.invalidConfig(details: "")) {
       if signup {
         try await controller.signUpWithPasskey(anchor: ASPresentationAnchor())
       } else {
@@ -468,13 +468,13 @@ struct TurnkeyManagedAuthTests {
     let controller = makeController(turnkey: turnkey) // rpId: nil
 
     let anchor = ASPresentationAnchor()
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       try await controller.loginWithPasskey(anchor: anchor)
     }
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       try await controller.signUpWithPasskey(anchor: anchor)
     }
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       try await controller.addPasskey(anchor: anchor)
     }
     #expect(turnkey.loginWithPasskeyCallCount == 0)
@@ -499,7 +499,7 @@ struct TurnkeyManagedAuthTests {
   func testContactVerificationRequiresSession() async {
     let controller = makeController(turnkey: MockTurnkey(session: nil))
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       try await controller.sendContactVerificationCode(to: .email("new@example.com"))
     }
   }
@@ -549,7 +549,7 @@ struct TurnkeyManagedAuthTests {
     let controller = makeController(turnkey: turnkey)
     try await controller.sendContactVerificationCode(to: .email("new@example.com"))
 
-    await #expect(throws: RainSDKError.invalidLoginCode) {
+    await #expect(throws: RainError.invalidLoginCode) {
       try await controller.confirmContactVerification("999999")
     }
 
@@ -621,7 +621,7 @@ struct TurnkeyManagedAuthTests {
     let turnkey = MockTurnkey(wallets: [MockTurnkey.defaultWallet()])
     let controller = makeController(turnkey: turnkey)
 
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await controller.exportPrivateKey(family: .solana)
     }
     #expect(turnkey.exportAccountKeyCalls.isEmpty)
@@ -647,7 +647,7 @@ struct TurnkeyManagedAuthTests {
     }
   }
 
-  @Test("export with no session surfaces a mapped RainSDKError, never raw")
+  @Test("export with no session surfaces a mapped RainError, never raw")
   func testExportWithoutSessionMapsError() async {
     let turnkey = MockTurnkey(wallets: [], session: nil)
     let controller = makeController(turnkey: turnkey)
@@ -656,11 +656,11 @@ struct TurnkeyManagedAuthTests {
       _ = try await controller.exportMnemonic()
       Issue.record("Expected exportMnemonic to throw")
     } catch {
-      #expect(error is RainSDKError)
+      #expect(error is RainError)
     }
   }
 
-  @Test("a vendor export failure surfaces as a mapped RainSDKError, never raw")
+  @Test("a vendor export failure surfaces as a mapped RainError, never raw")
   func testExportVendorErrorMapsError() async {
     let turnkey = MockTurnkey(wallets: [MockTurnkey.dualCurveWallet()])
     turnkey.exportMnemonicError = TurnkeySwiftError.failedToExportWallet(
@@ -672,7 +672,7 @@ struct TurnkeyManagedAuthTests {
       _ = try await controller.exportMnemonic()
       Issue.record("Expected exportMnemonic to throw")
     } catch {
-      #expect(error is RainSDKError)
+      #expect(error is RainError)
     }
   }
 
@@ -686,15 +686,15 @@ struct TurnkeyManagedAuthTests {
       managedAuth: nil // what a BYO construction yields
     )
 
-    #expect(provider.authState == .unauthenticated)
+    #expect(provider.currentAuthState() == .unauthenticated)
     #expect(!provider.hasActiveSession())
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       try await provider.sendLoginCode(to: .email("user@example.com"))
     }
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await provider.exportMnemonic()
     }
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await provider.exportPrivateKey(family: .ethereum)
     }
   }

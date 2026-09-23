@@ -30,7 +30,7 @@ final class StubBackendContext: TurnkeyContextProtocol, @unchecked Sendable {
     encoding: PayloadEncoding,
     hashFunction: HashFunction
   ) async throws -> SignRawPayloadResult {
-    throw RainSDKError.walletUnavailable
+    throw RainError.walletUnavailable()
   }
 
   func sendOtp(contact: String, otpType: OtpType) async throws -> OtpChallenge {

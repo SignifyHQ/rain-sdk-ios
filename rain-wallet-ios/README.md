@@ -28,10 +28,12 @@ let rain = try RainSdk.builder()
 let client = try await rain.provider(.rain)
 ```
 
-`authState` (and its publisher `authStates`) reports `.loading` / `.authenticated` /
-`.unauthenticated`; `sessionState` / `currentSessionState()` expose the session over time
-(`RainWalletSessionState`), `refreshSession()` forces a refresh, `logout()` clears the stored
-session, and `close()` stops the passive session watcher when discarding a provider.
+`authState` / `currentAuthState()` report `.loading` / `.authenticated` / `.unauthenticated` over
+time and right now; `sessionState` / `currentSessionState()` do the same for the session
+(`RainWalletSessionState`, `.active(expiresAtEpochSeconds:)` while live). `refreshSession()`
+forces a refresh, `logout()` clears the stored session, and `close()` makes the provider inert
+when you discard it — the session watcher stops and every auth/export call throws
+`invalidConfig` afterwards.
 Configure expiry/refresh/retry behavior via `RainWalletConfig.sessionPolicy`
 (`RainWalletSessionPolicy`) and react to unrecoverable expiry via `onSessionExpired`.
 
@@ -73,4 +75,4 @@ Notes:
   (`RainSdk.build()` rejects the combination); they share one process-wide wallet backend.
 - Multi-chain: the same provider serves EVM chains and Solana clusters
   (`RainChain.solanaMainnet` / `.solanaDevnet` / `.solanaTestnet`). Advertised capabilities:
-  `.multiChain`, `.biometricGate`.
+  `.export`, `.multiChain`, plus `.gasSponsorship` when `sponsorGas` is on.

@@ -55,7 +55,7 @@ public enum RainWalletAuthState: Sendable, Equatable {
 /// Inputs are normalized before use: emails are trimmed, and phone numbers have user-visible
 /// formatting (spaces, dashes, dots, parentheses) stripped down to E.164. What remains must be a
 /// plausible contact — `+` and 6–15 digits for a phone — or the call throws
-/// `RainSDKError.invalidConfig` locally instead of a wrapped backend rejection.
+/// `RainError.invalidConfig` locally instead of a wrapped backend rejection.
 public enum RainWalletContact: Sendable, Equatable {
   /// An email address.
   case email(String)
@@ -89,7 +89,7 @@ public enum RainWalletSessionState: Sendable, Equatable {
   /// The SDK is still restoring persisted sessions (app launch).
   case loading
   /// A session exists and has not expired.
-  case active(expiresAt: TimeInterval)
+  case active(expiresAtEpochSeconds: TimeInterval)
   /// The session has expired. Re-authenticate.
   case expired
   /// No session (never logged in, logged out, or expired out).
@@ -98,7 +98,7 @@ public enum RainWalletSessionState: Sendable, Equatable {
   internal init(_ state: TurnkeySessionState) {
     switch state {
     case .loading: self = .loading
-    case .active(let expiresAt): self = .active(expiresAt: expiresAt)
+    case .active(let expiresAt): self = .active(expiresAtEpochSeconds: expiresAt)
     case .expired: self = .expired
     case .unauthenticated: self = .unauthenticated
     }
@@ -118,11 +118,10 @@ public struct RainWalletSessionPolicy: Sendable {
   /// Refresh the session when it is within this window of expiring.
   public var refreshBufferSeconds: TimeInterval
   /// When true the SDK refreshes the session itself; when false an expired session surfaces as
-  /// `RainSDKError.tokenExpired` and re-auth is the host's job.
+  /// `RainError.tokenExpired` and re-auth is the host's job.
   public var autoRefresh: Bool
-  /// TTL (in seconds, as a string) requested for refreshed sessions; `nil` uses the backend
-  /// default (900 seconds).
-  public var refreshExpirationSeconds: String?
+  /// TTL in seconds requested for refreshed sessions; `nil` uses the backend default (900).
+  public var refreshExpirationSeconds: Int?
   /// Retries (beyond the first attempt) for transient failures on idempotent reads.
   public var maxTransientRetries: Int
   /// First backoff delay; doubles per retry up to `maxRetryDelay`.
@@ -130,14 +129,22 @@ public struct RainWalletSessionPolicy: Sendable {
   /// Backoff ceiling.
   public var maxRetryDelay: TimeInterval
 
+  /// Traps on an invalid policy (a programmer error, like Android's `IllegalArgumentException`):
+  /// buffer, retries and delays must be non-negative, `refreshExpirationSeconds` positive when
+  /// set, and `maxRetryDelay >= initialRetryDelay`.
   public init(
     refreshBufferSeconds: TimeInterval = 60,
     autoRefresh: Bool = true,
-    refreshExpirationSeconds: String? = nil,
+    refreshExpirationSeconds: Int? = nil,
     maxTransientRetries: Int = 2,
     initialRetryDelay: TimeInterval = 0.5,
     maxRetryDelay: TimeInterval = 4
   ) {
+    precondition(refreshBufferSeconds >= 0, "refreshBufferSeconds must be >= 0")
+    precondition(refreshExpirationSeconds.map { $0 > 0 } ?? true, "refreshExpirationSeconds must be > 0")
+    precondition(maxTransientRetries >= 0, "maxTransientRetries must be >= 0")
+    precondition(initialRetryDelay >= 0, "initialRetryDelay must be >= 0")
+    precondition(maxRetryDelay >= initialRetryDelay, "maxRetryDelay must be >= initialRetryDelay")
     self.refreshBufferSeconds = refreshBufferSeconds
     self.autoRefresh = autoRefresh
     self.refreshExpirationSeconds = refreshExpirationSeconds
@@ -164,7 +171,7 @@ public struct RainWalletSessionPolicy: Sendable {
 /// and authentication configuration) is embedded in the SDK — hosts configure only behavior.
 public struct RainWalletConfig: Sendable {
   /// The passkey relying-party domain — a web domain YOUR app controls (e.g. "example.com").
-  /// `nil` disables the passkey methods (they throw `RainSDKError.invalidConfig`).
+  /// `nil` disables the passkey methods (they throw `RainError.invalidConfig`).
   ///
   /// Requirements: the domain serves `/.well-known/apple-app-site-association` listing your
   /// app under `webcredentials`, and the app carries the Associated Domains entitlement
@@ -180,8 +187,6 @@ public struct RainWalletConfig: Sendable {
   /// Set false where sponsorship is not enabled for the backend organization, or the backend
   /// rejects the sends.
   public let sponsorGas: Bool
-  /// Optional explicit EVM wallet address. When `nil`, the first Ethereum account is used.
-  public let walletAddress: String?
   /// Expiry/refresh/retry behavior for the session guarding every wallet call.
   public let sessionPolicy: RainWalletSessionPolicy
   /// Re-auth hook: invoked once per session death when the session dies and cannot be refreshed.
@@ -193,13 +198,11 @@ public struct RainWalletConfig: Sendable {
   public init(
     passkeyDomain: String? = nil,
     sponsorGas: Bool = true,
-    walletAddress: String? = nil,
     sessionPolicy: RainWalletSessionPolicy = RainWalletSessionPolicy(),
     onSessionExpired: (@Sendable () -> Void)? = nil
   ) {
     self.passkeyDomain = passkeyDomain
     self.sponsorGas = sponsorGas
-    self.walletAddress = walletAddress
     self.sessionPolicy = sessionPolicy
     self.onSessionExpired = onSessionExpired
   }
@@ -227,6 +230,22 @@ internal enum RainWalletBackend {
 /// relaunches. The Rain wallet provider cannot be registered alongside the Turnkey provider.
 public struct RainProvider: ProviderDescriptor {
   private let backing: TurnkeyProvider
+  /// Flipped by ``close()``. A reference so every copy of this value sees the same lifecycle.
+  private let lifecycle = Lifecycle()
+
+  private final class Lifecycle: @unchecked Sendable {
+    private let lock = NSLock()
+    private var closed = false
+    var isClosed: Bool { lock.withLock { closed } }
+    func close() { lock.withLock { closed = true } }
+  }
+
+  /// Auth and export calls refuse after ``close()`` — the provider is inert, not "logged out".
+  private func requireOpen() throws {
+    if lifecycle.isClosed {
+      throw RainError.invalidConfig(details: "This RainProvider was closed; build a new one")
+    }
+  }
 
   public init(_ config: RainWalletConfig = RainWalletConfig()) {
     self.backing = TurnkeyProvider(
@@ -234,7 +253,6 @@ public struct RainProvider: ProviderDescriptor {
         organizationId: RainWalletBackend.organizationId,
         authProxyConfigId: RainWalletBackend.authConfigId,
         rpId: config.passkeyDomain,
-        walletAddress: config.walletAddress,
         sessionPolicy: config.sessionPolicy.backingPolicy,
         sponsorGas: config.sponsorGas,
         onSessionExpired: config.onSessionExpired
@@ -250,8 +268,10 @@ public struct RainProvider: ProviderDescriptor {
 
   public var id: ProviderId { .rain }
 
-  /// Follows the backing provider: EVM + Solana accounts, biometric-gated signing, and
-  /// `.gasSponsorship` when `RainWalletConfig.sponsorGas` is on.
+  /// Follows the backing provider: `.export` (recovery phrase and per-account keys),
+  /// `.multiChain` (EVM + Solana accounts), and `.gasSponsorship` when
+  /// `RainWalletConfig.sponsorGas` is on. Signing is not biometric-gated; passkeys and Face ID
+  /// appear only at login.
   public var capabilities: Set<Capability> { backing.capabilities }
 
   public func create(context: ProviderContext) async throws -> any WalletProvider {
@@ -260,19 +280,22 @@ public struct RainProvider: ProviderDescriptor {
 
   // MARK: Authentication (email one-time codes)
 
-  /// Where authentication stands. `.unauthenticated` in a fresh install; `.authenticated` once a
-  /// session is live (restored, or established via the login-code flow).
-  public var authState: RainWalletAuthState {
-    RainWalletAuthState(backing.authState)
+  /// Where authentication stands, over time. Emits on every auth change; finishes never.
+  /// `.unauthenticated` in a fresh install; `.authenticated` once a session is live (restored,
+  /// or established via a login code or passkey). Pairs with ``currentAuthState()`` the way
+  /// ``sessionState`` pairs with ``currentSessionState()``.
+  public var authState: AnyPublisher<RainWalletAuthState, Never> {
+    backing.authState.map(RainWalletAuthState.init).removeDuplicates().eraseToAnyPublisher()
   }
 
-  /// `authState` over time. Emits on every auth change; finishes never.
-  public var authStates: AnyPublisher<RainWalletAuthState, Never> {
-    backing.authStates.map(RainWalletAuthState.init).removeDuplicates().eraseToAnyPublisher()
+  /// Snapshot of ``authState`` right now. `.unauthenticated` after ``close()``.
+  public func currentAuthState() -> RainWalletAuthState {
+    lifecycle.isClosed ? .unauthenticated : RainWalletAuthState(backing.currentAuthState())
   }
 
   /// Sends a one-time login code to an email address or phone number (SMS).
   public func sendLoginCode(to contact: RainWalletContact) async throws {
+    try requireOpen()
     try await backing.sendLoginCode(to: contact.backing)
   }
 
@@ -283,6 +306,7 @@ public struct RainProvider: ProviderDescriptor {
   /// else, so logging in on a second device logs the first one out (where `onSessionExpired`
   /// fires on its next use). Same behavior on the Android SDK.
   public func confirmLoginCode(_ code: String) async throws {
+    try requireOpen()
     try await backing.confirmLoginCode(code)
   }
 
@@ -291,6 +315,7 @@ public struct RainProvider: ProviderDescriptor {
   /// Signs an existing user in with a passkey. `anchor` is the window/scene the system passkey
   /// sheet presents from.
   public func loginWithPasskey(anchor: ASPresentationAnchor) async throws {
+    try requireOpen()
     try await backing.loginWithPasskey(anchor: anchor)
   }
 
@@ -298,12 +323,14 @@ public struct RainProvider: ProviderDescriptor {
   /// atomically. Every call mints a fresh account — returning users must use
   /// ``loginWithPasskey(anchor:)`` (or a login code), or they end up with a second, empty wallet.
   public func signUpWithPasskey(anchor: ASPresentationAnchor) async throws {
+    try requireOpen()
     try await backing.signUpWithPasskey(anchor: anchor)
   }
 
   /// Registers a passkey on the current account (active session required) so the user can sign
   /// in with it next time.
   public func addPasskey(anchor: ASPresentationAnchor) async throws {
+    try requireOpen()
     try await backing.addPasskey(anchor: anchor)
   }
 
@@ -314,12 +341,14 @@ public struct RainProvider: ProviderDescriptor {
   /// confirmed, the contact is a login method for this account. Accounts are never merged: if
   /// the contact already belongs to another account, attaching it here does not move wallets.
   public func sendContactVerificationCode(to contact: RainWalletContact) async throws {
+    try requireOpen()
     try await backing.sendContactVerificationCode(to: contact.backing)
   }
 
   /// Confirms the code from ``sendContactVerificationCode(to:)`` and attaches the contact,
-  /// verified. A wrong code throws `RainSDKError.invalidLoginCode` — re-prompt and retry.
+  /// verified. A wrong code throws `RainError.invalidLoginCode` — re-prompt and retry.
   public func confirmContactVerification(_ code: String) async throws {
+    try requireOpen()
     try await backing.confirmContactVerification(code)
   }
 
@@ -327,6 +356,7 @@ public struct RainProvider: ProviderDescriptor {
   /// `authState` / `hasActiveSession()` reflect the logout, so it is safe to read them right
   /// after.
   public func logout() async throws {
+    try requireOpen()
     try await backing.logout()
   }
 
@@ -338,7 +368,7 @@ public struct RainProvider: ProviderDescriptor {
 
   /// True when an unexpired session is already loaded and the login-code flow can be skipped.
   public func hasActiveSession() -> Bool {
-    backing.hasActiveSession()
+    !lifecycle.isClosed && backing.hasActiveSession()
   }
 
   // MARK: Key export
@@ -350,9 +380,10 @@ public struct RainProvider: ProviderDescriptor {
   /// The SDK never logs or persists the returned value. Everything after the return is the
   /// host's responsibility: gate the call (e.g. behind biometrics), show the phrase without
   /// screenshots/screen recording where possible, and don't place it on the pasteboard.
-  /// Requires an active session — throws `RainSDKError.tokenExpired` otherwise.
+  /// Requires an active session — throws `RainError.tokenExpired` otherwise.
   public func exportRecoveryPhrase() async throws -> String {
-    try await backing.exportMnemonic()
+    try requireOpen()
+    return try await backing.exportMnemonic()
   }
 
   /// Exports one account's private key, decrypted on-device: `.ethereum` as a 0x-prefixed
@@ -361,9 +392,10 @@ public struct RainProvider: ProviderDescriptor {
   ///
   /// The SDK never logs or persists the returned value; gating and safe display are the host's
   /// responsibility (see ``exportRecoveryPhrase()``). Requires an active session — throws
-  /// `RainSDKError.tokenExpired` otherwise.
+  /// `RainError.tokenExpired` otherwise.
   public func exportPrivateKey(_ account: RainWalletKeyAccount) async throws -> String {
-    try await backing.exportPrivateKey(family: account == .ethereum ? .ethereum : .solana)
+    try requireOpen()
+    return try await backing.exportPrivateKey(family: account == .ethereum ? .ethereum : .solana)
   }
 
   // MARK: Session
@@ -380,14 +412,20 @@ public struct RainProvider: ProviderDescriptor {
   }
 
   /// Forces a session refresh (extended expiry) regardless of remaining lifetime. Throws
-  /// `RainSDKError.tokenExpired` when the session cannot be refreshed — re-authenticate.
+  /// `RainError.tokenExpired` when the session cannot be refreshed — re-authenticate.
   public func refreshSession() async throws {
     try await backing.refreshSession()
   }
 
-  /// Stops the passive session watcher. Call when discarding this provider (e.g. rebuilding the
-  /// SDK for a new login) so a stale provider can never fire its expiry hook again.
+  /// Stops the passive session watcher and makes this provider inert. Call it when discarding the
+  /// provider (e.g. rebuilding the SDK for a new login) so a stale provider can never fire its
+  /// expiry hook again. Afterwards every authentication and export call throws
+  /// `RainError.invalidConfig` (RAIN_102), `authState` reads `.unauthenticated` and
+  /// ``hasActiveSession()`` is false. ``sessionState`` / ``currentSessionState()`` keep reporting
+  /// the process-wide backend session, so cancel your subscription when you discard the provider.
+  /// Idempotent. Same contract as the Android SDK.
   public func close() {
+    lifecycle.close()
     backing.close()
   }
 }

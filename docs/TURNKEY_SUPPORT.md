@@ -58,7 +58,7 @@ let rain = try RainSdk.builder()
 let client = try await rain.provider(.turnkey)
 ```
 
-`rain.provider(_:)` is `async`: resolving the Turnkey provider probes the Turnkey wallet list (refreshing it once if needed) and throws `RainSDKError.walletUnavailable` if no usable Ethereum account is available. You can register other adapters (e.g. `PortalProvider`, `PrivyProvider`) on the same builder and resolve each independently; providers do not replace one another.
+`rain.provider(_:)` is `async`: resolving the Turnkey provider probes the Turnkey wallet list (refreshing it once if needed) and throws `RainError.walletUnavailable` if no usable Ethereum account is available. You can register other adapters (e.g. `PortalProvider`, `PrivyProvider`) on the same builder and resolve each independently; providers do not replace one another.
 
 ### Host contract for the `TurnkeyContext`
 
@@ -91,7 +91,7 @@ Arbitrum, Optimism, BNB Chain, Monad, Tempo, Robinhood Chain (mainnets and their
 Solana mainnet + devnet. The full list lives in `TurnkeyBroadcastChains` and follows
 [Turnkey's broadcasting docs](https://docs.turnkey.com/features/transaction-management/broadcasting).
 A send on any other chain — Avalanche, Celo, ZKsync, Solana testnet — fails closed with
-`RainSDKError.chainNotSupported` (`RAIN_105`) **before** any contract read or signing prompt:
+`RainError.chainNotSupported` (`RAIN_105`) **before** any contract read or signing prompt:
 `sendNative`, `sendToken`, `withdrawCollateral` and `approveTokenAllowance` all check the gate
 first. Reads and signing are not gated: balances, history, fee estimates and `prepareWithdrawal`
 work on every chain with an RPC endpoint registered — Turnkey signs anywhere, it just cannot
@@ -138,19 +138,19 @@ Rain exposes no vendor getters (core references no concrete vendor type). You al
 
 ## Error handling
 
-Turnkey-specific errors are mapped into the standard `RainSDKError` hierarchy (see `RainSDKError+Mapping.swift` in `RainCore`):
+Turnkey-specific errors are mapped into the standard `RainError` hierarchy (see `RainError+Mapping.swift` in `RainCore`):
 
 | Turnkey error | Mapped to |
 |---------------|-----------|
-| `TurnkeySwiftError.invalidSession` | `RainSDKError.tokenExpired` |
-| `TurnkeyRequestError.apiError` with HTTP 401 | `RainSDKError.tokenExpired` |
-| `TurnkeyRequestError.apiError` with HTTP 403 | `RainSDKError.unauthorized` |
-| `TurnkeyRequestError.network` | `RainSDKError.networkError` |
-| Config / setup errors (`invalidConfiguration`, `missingAuthProxyConfiguration`, `invalidRefreshTTL`, `publicKeyMissing`, `signingNotSupported`, `invalidJWT`, `invalidResponse`, `keyAlreadyExists`, `keyNotFound`, `keyIndexFailed`, `keychainAddFailed`, `oauthInvalidURL`, `oauthMissingIDToken`) | `RainSDKError.internalLogicError` |
-| Wrapper errors (`failedToSignPayload`, `failedToFetchWallets`, …) | Unwrapped recursively; e.g. a wrapped `ASAuthorizationError.canceled` (passkey prompt dismissed) surfaces as `RainSDKError.userRejected` |
-| Anything else | `RainSDKError.providerError` |
+| `TurnkeySwiftError.invalidSession` | `RainError.tokenExpired` |
+| `TurnkeyRequestError.apiError` with HTTP 401 | `RainError.tokenExpired` |
+| `TurnkeyRequestError.apiError` with HTTP 403 | `RainError.unauthorized` |
+| `TurnkeyRequestError.network` | `RainError.networkError` |
+| Config / setup errors (`invalidConfiguration`, `missingAuthProxyConfiguration`, `invalidRefreshTTL`, `publicKeyMissing`, `signingNotSupported`, `invalidJWT`, `invalidResponse`, `keyAlreadyExists`, `keyNotFound`, `keyIndexFailed`, `keychainAddFailed`, `oauthInvalidURL`, `oauthMissingIDToken`) | `RainError.internalError` |
+| Wrapper errors (`failedToSignPayload`, `failedToFetchWallets`, …) | Unwrapped recursively; e.g. a wrapped `ASAuthorizationError.canceled` (passkey prompt dismissed) surfaces as `RainError.userRejected` |
+| Anything else | `RainError.providerError` |
 
-Network errors raised during direct RPC calls (balances, fee estimation) surface as `RainSDKError.networkError`.
+Network errors raised during direct RPC calls (balances, fee estimation) surface as `RainError.networkError`.
 
 ## Session expiry, refresh, and retry
 
@@ -180,7 +180,7 @@ TurnkeyProvider(
 What every wallet call now does:
 
 1. **Expiry check** — the session's JWT `exp` is checked before the request. An
-   already-expired session throws `RainSDKError.tokenExpired` (or is refreshed first, see
+   already-expired session throws `RainError.tokenExpired` (or is refreshed first, see
    below) instead of burning a round-trip on a guaranteed 401.
 2. **Proactive refresh** — with `autoRefresh` on (the default), a session expired or inside
    `refreshBufferSeconds` of expiry is refreshed through Turnkey's `refreshSession` before the
@@ -190,7 +190,7 @@ What every wallet call now does:
    `exp`, is treated as a death.
 3. **Refresh-on-401** — a call rejected with HTTP 401 / `invalidSession` is refreshed and
    retried exactly once. A 401 means Turnkey rejected the request before executing it, so this
-   is safe for sends too. A second 401 surfaces as `RainSDKError.tokenExpired`.
+   is safe for sends too. A second 401 surfaces as `RainError.tokenExpired`.
 4. **Transient backoff** — idempotent reads (balances, history, transaction-status polls)
    retry HTTP 5xx/429/408 and network failures with exponential backoff. Sends and signing
    are never retried on transient failures.
@@ -199,7 +199,7 @@ What every wallet call now does:
    call in flight, via a passive watcher over Turnkey's auth state.
 
 With `autoRefresh: false` Rain never touches the session: expired sessions and 401s surface
-as `RainSDKError.tokenExpired` immediately and refresh/re-auth is entirely the host's job.
+as `RainError.tokenExpired` immediately and refresh/re-auth is entirely the host's job.
 
 ### Observing session state
 
@@ -208,7 +208,7 @@ as `RainSDKError.tokenExpired` immediately and refresh/re-auth is entirely the h
 ```swift
 let provider = TurnkeyProvider(TurnkeyConfig(turnkey: turnkeyContext))
 
-provider.currentSessionState()  // .loading | .active(expiresAt:) | .expired | .unauthenticated
+provider.currentSessionState()  // .loading | .active(expiresAtEpochSeconds:) | .expired | .unauthenticated
 
 let cancellable = provider.sessionState.sink { state in
   if state == .expired || state == .unauthenticated {

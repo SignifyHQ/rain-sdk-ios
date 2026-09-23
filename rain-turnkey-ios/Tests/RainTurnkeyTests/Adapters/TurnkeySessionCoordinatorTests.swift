@@ -10,7 +10,7 @@ import TurnkeyTypes
 @Suite("TurnkeySessionCoordinator")
 struct TurnkeySessionCoordinatorTests {
   /// Turnkey mapping now registers via TurnkeyErrorMapping (like Portal/Privy);
-  /// tests exercising RainSDKError.from with Turnkey errors must ensure it ran.
+  /// tests exercising RainError.from with Turnkey errors must ensure it ran.
   init() { TurnkeyErrorMapping.registerOnce() }
 
 
@@ -65,7 +65,7 @@ struct TurnkeySessionCoordinatorTests {
     let client = turnkey.turnkeyClient as! MockTurnkeyClient
     let coordinator = makeCoordinator(turnkey: turnkey)
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await self.readActivities(coordinator)
     }
     #expect(client.getActivitiesCalls.isEmpty)
@@ -80,7 +80,7 @@ struct TurnkeySessionCoordinatorTests {
       policy: TurnkeySessionPolicy(autoRefresh: false)
     )
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await self.readActivities(coordinator)
     }
     #expect(client.getActivitiesCalls.isEmpty)
@@ -134,7 +134,7 @@ struct TurnkeySessionCoordinatorTests {
     turnkey.onRefreshSession = { turnkey.session = MockTurnkey.defaultSession() }
     let coordinator = makeCoordinator(
       turnkey: turnkey,
-      policy: TurnkeySessionPolicy(refreshExpirationSeconds: "1800")
+      policy: TurnkeySessionPolicy(refreshExpirationSeconds: 1800)
     )
 
     _ = try await readActivities(coordinator)
@@ -154,10 +154,10 @@ struct TurnkeySessionCoordinatorTests {
       onSessionExpired: { hookCalls.record(1) }
     )
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await self.readActivities(coordinator)
     }
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await self.readActivities(coordinator)
     }
     #expect(hookCalls.delays.count == 1)
@@ -196,7 +196,7 @@ struct TurnkeySessionCoordinatorTests {
       onSessionExpired: { hookCalls.record(1) }
     )
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await self.readActivities(coordinator)
     }
     #expect(client.getActivitiesCalls.isEmpty)
@@ -233,7 +233,7 @@ struct TurnkeySessionCoordinatorTests {
       onSessionExpired: { hookCalls.record(1) }
     )
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await self.readActivities(coordinator)
     }
     #expect(turnkey.refreshSessionCallCount == 1)
@@ -267,7 +267,7 @@ struct TurnkeySessionCoordinatorTests {
       policy: TurnkeySessionPolicy(autoRefresh: false)
     )
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await self.readActivities(coordinator)
     }
     #expect(turnkey.refreshSessionCallCount == 0)
@@ -388,7 +388,7 @@ struct TurnkeySessionCoordinatorTests {
       onSessionExpired: { hookCalls.record(1) }
     )
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       try await coordinator.refreshNow()
     }
     #expect(hookCalls.delays.count == 1)
@@ -624,7 +624,7 @@ struct TurnkeySessionCoordinatorTests {
       onSessionExpired: { hookCalls.record(1) }
     )
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await self.readActivities(coordinator)
     }
     #expect(hookCalls.delays.isEmpty)

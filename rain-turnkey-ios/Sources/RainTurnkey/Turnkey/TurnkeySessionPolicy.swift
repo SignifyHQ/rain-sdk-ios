@@ -14,10 +14,11 @@ public struct TurnkeySessionPolicy: Sendable {
   /// Refresh the session when it is within this window of expiring.
   public var refreshBufferSeconds: TimeInterval
   /// When true the SDK calls Turnkey's `refreshSession` itself; when false an expired session
-  /// surfaces as `RainSDKError.tokenExpired` and re-auth is the host's job.
+  /// surfaces as `RainError.tokenExpired` and re-auth is the host's job.
   public var autoRefresh: Bool
-  /// TTL requested for refreshed sessions; `nil` uses Turnkey's default (900 seconds).
-  public var refreshExpirationSeconds: String?
+  /// TTL in seconds requested for refreshed sessions; `nil` uses Turnkey's default (900).
+  /// Converted to the vendor's string form at the call.
+  public var refreshExpirationSeconds: Int?
   /// Retries (beyond the first attempt) for transient failures on idempotent reads.
   public var maxTransientRetries: Int
   /// First backoff delay; doubles per retry up to `maxRetryDelay`.
@@ -28,7 +29,7 @@ public struct TurnkeySessionPolicy: Sendable {
   public init(
     refreshBufferSeconds: TimeInterval = 60,
     autoRefresh: Bool = true,
-    refreshExpirationSeconds: String? = nil,
+    refreshExpirationSeconds: Int? = nil,
     maxTransientRetries: Int = 2,
     initialRetryDelay: TimeInterval = 0.5,
     maxRetryDelay: TimeInterval = 4
@@ -49,7 +50,7 @@ public enum TurnkeySessionState: Equatable, Sendable {
   /// Turnkey is still restoring persisted sessions (app launch).
   case loading
   /// A session exists and its JWT has not expired.
-  case active(expiresAt: TimeInterval)
+  case active(expiresAtEpochSeconds: TimeInterval)
   /// A session object is still present but its JWT expiry has passed. Re-authenticate.
   case expired
   /// No session (never logged in, logged out, or cleared by Turnkey's expiry timer).

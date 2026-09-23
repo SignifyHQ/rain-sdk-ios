@@ -21,7 +21,6 @@ struct RainWalletNeutralityTests {
     let provider = RainProvider(
       RainWalletConfig(
         passkeyDomain: "passkeys.example.com",
-        walletAddress: nil,
         sessionPolicy: RainWalletSessionPolicy(autoRefresh: true),
         onSessionExpired: {}
       )
@@ -29,8 +28,8 @@ struct RainWalletNeutralityTests {
     let _: RainProvider = RainProvider() // zero-config: the backend identity is embedded
 
     // Auth + session surface, fully typed with module-owned names.
-    let _: RainWalletAuthState = provider.authState
-    let _: AnyPublisher<RainWalletAuthState, Never> = provider.authStates
+    let _: RainWalletAuthState = provider.currentAuthState()
+    let _: AnyPublisher<RainWalletAuthState, Never> = provider.authState
     await provider.awaitSessionRestore(timeout: 1)
     if !provider.hasActiveSession() {
       try await provider.sendLoginCode(to: .email("user@example.com"))
@@ -73,7 +72,7 @@ struct RainWalletNeutralityTests {
     #expect(RainWalletAuthState.authenticated == .authenticated)
     let policy = RainWalletSessionPolicy()
     #expect(policy.autoRefresh)
-    let error: RainSDKError = .tokenExpired // re-exported core type
+    let error: RainError = .tokenExpired // re-exported core type
     #expect(error == .tokenExpired)
     #expect(ProviderId.rain.rawValue == "rain")
   }

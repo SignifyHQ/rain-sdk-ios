@@ -62,7 +62,7 @@ public enum TurnkeyLoginContact: Sendable, Equatable {
     case .email(let raw):
       let email = raw.trimmingCharacters(in: .whitespacesAndNewlines)
       guard email.contains("@"), email.count >= 3 else {
-        throw RainSDKError.invalidConfig(details: "Not a valid email address")
+        throw RainError.invalidConfig(details: "Not a valid email address")
       }
       return .email(email)
     case .phone(let raw):
@@ -76,7 +76,7 @@ public enum TurnkeyLoginContact: Sendable, Equatable {
             (6...15).contains(digits.count),
             digits.allSatisfy({ $0.isASCII && $0.isNumber })
       else {
-        throw RainSDKError.invalidConfig(details:
+        throw RainError.invalidConfig(details:
           "Not a valid phone number — use the international format, like +15551234567")
       }
       return .phone(phone)
@@ -130,7 +130,7 @@ internal enum TurnkeyManagedConfigurator {
     organizationId: String,
     authProxyConfigId: String,
     rpId: String?
-  ) -> RainSDKError? {
+  ) -> RainError? {
     lock.lock(); defer { lock.unlock() }
     if let configuredWith {
       guard configuredWith == (organizationId, authProxyConfigId, rpId) else {
@@ -150,11 +150,11 @@ internal enum TurnkeyManagedConfigurator {
 
 /// Owns the email-OTP flow for a managed-mode `TurnkeyProvider`: send code, confirm code
 /// (signup-or-login), wallet provisioning, logout, and session restore. All vendor errors are
-/// mapped to `RainSDKError` before they surface.
+/// mapped to `RainError` before they surface.
 internal final class TurnkeyManagedAuthController: @unchecked Sendable {
   private let context: TurnkeyContextProtocol
   /// Set when the process was already configured with different ids; every call fails with it.
-  private let configurationError: RainSDKError?
+  private let configurationError: RainError?
 
   /// In-flight OTP handed back by `sendLoginCode`, consumed by `confirmLoginCode`.
   private var pendingOtp: (challenge: OtpChallenge, contact: TurnkeyLoginContact)?
@@ -193,7 +193,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
 
   internal init(
     context: TurnkeyContextProtocol,
-    configurationError: RainSDKError?,
+    configurationError: RainError?,
     rpId: String? = nil
   ) {
     self.context = context
@@ -203,11 +203,11 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
 
   // MARK: State
 
-  internal var authState: TurnkeyAuthState {
+  internal func currentAuthState() -> TurnkeyAuthState {
     TurnkeyAuthState(context.authState)
   }
 
-  internal var authStates: AnyPublisher<TurnkeyAuthState, Never> {
+  internal var authState: AnyPublisher<TurnkeyAuthState, Never> {
     context.authStatePublisher.map(TurnkeyAuthState.init).removeDuplicates().eraseToAnyPublisher()
   }
 
@@ -253,7 +253,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
         pendingOtp = (challenge, contact)
       }
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -264,7 +264,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
   internal func confirmLoginCode(_ code: String) async throws {
     try throwIfMisconfigured()
     guard let pending = pendingOtpLock.withLock({ pendingOtp }) else {
-      throw RainSDKError.invalidConfig(details: "No login code was requested; call sendLoginCode first")
+      throw RainError.invalidConfig(details: "No login code was requested; call sendLoginCode first")
     }
     // Log in under a fresh per-attempt session key: the vendor throws keyAlreadyExists only for
     // a same-key collision, so an already-active session survives a mistyped code (verifyOtp
@@ -286,7 +286,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
     } catch {
       // Nothing was stored or cleared — a live session stays live and the user can request a
       // new code.
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
     do {
       // The vendor auto-selects the new session only when none was selected; over a live
@@ -297,7 +297,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
     } catch {
       // Don't leave the never-selected attempt session orphaned in the keychain.
       context.clearStoredSession(sessionKey: attemptKey)
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
     // The previous session is superseded; drop it so per-attempt keys don't accumulate.
     if let previousKey, previousKey != attemptKey {
@@ -307,7 +307,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
       try await ensureWallets()
       pendingOtpLock.withLock { pendingOtp = nil }
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -325,13 +325,13 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
       try await context.loginWithTurnkeyPasskey(anchor: anchor)
     } catch {
       // Nothing was stored or cleared beyond a stale unselected key — a live session stays live.
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
     try await activatePasskeySession(previousKey: previousKey)
     do {
       try await ensureWallets()
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -350,13 +350,13 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
         signupWalletAccounts: [Self.ethereumAccount, Self.solanaAccount]
       )
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
     try await activatePasskeySession(previousKey: previousKey)
     do {
       try await ensureWallets()
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -368,14 +368,14 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
     do {
       try await context.addPasskeyAuthenticator(anchor: anchor, rpId: rpId ?? "")
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
   @discardableResult
   private func requirePasskeysConfigured() throws -> String {
     guard let rpId, !rpId.isEmpty else {
-      throw RainSDKError.invalidConfig(details:
+      throw RainError.invalidConfig(details:
         "Passkeys are not configured for this app: the relying-party domain is missing. "
         + "The app also needs the Associated Domains entitlement for that domain.")
     }
@@ -394,7 +394,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
     guard context.selectedStoredSessionKey == Self.passkeyDefaultSessionKey,
           context.session != nil else { return }
     if hasActiveSession() {
-      throw RainSDKError.invalidConfig(details: "Already signed in with a passkey; log out first")
+      throw RainError.invalidConfig(details: "Already signed in with a passkey; log out first")
     }
     context.clearStoredSession(sessionKey: Self.passkeyDefaultSessionKey)
     // Clearing the SELECTED key flips the vendor's live state from a main-actor Task. Let it
@@ -423,7 +423,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
     } catch {
       // Don't leave the never-selected passkey session orphaned in the keychain.
       context.clearStoredSession(sessionKey: Self.passkeyDefaultSessionKey)
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
     if let previousKey, previousKey != Self.passkeyDefaultSessionKey {
       context.clearStoredSession(sessionKey: previousKey)
@@ -436,7 +436,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
   /// (active session required). Distinct from `sendLoginCode`, which starts a login.
   internal func sendContactVerificationCode(to contact: TurnkeyLoginContact) async throws {
     try throwIfMisconfigured()
-    guard hasActiveSession() else { throw RainSDKError.tokenExpired }
+    guard hasActiveSession() else { throw RainError.tokenExpired }
     // Normalized before it is verified and attached — the stored contact must be the exact
     // string a later login normalizes to.
     let contact = try contact.normalized()
@@ -449,7 +449,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
         pendingContactVerification = (challenge, contact)
       }
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -459,7 +459,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
   internal func confirmContactVerification(_ code: String) async throws {
     try throwIfMisconfigured()
     guard let pending = pendingOtpLock.withLock({ pendingContactVerification }) else {
-      throw RainSDKError.invalidConfig(details:
+      throw RainError.invalidConfig(details:
         "No verification code was requested; call sendContactVerificationCode first")
     }
     do {
@@ -476,7 +476,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
       }
       pendingOtpLock.withLock { pendingContactVerification = nil }
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -539,7 +539,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
       let wallet = try await requireWallet()
       return try await context.exportWalletMnemonic(walletId: wallet.walletId)
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -557,7 +557,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
       else {
         // Login provisions both families (ensureWallets); reaching this means provisioning was
         // interrupted — a re-login repairs it.
-        throw RainSDKError.internalLogicError(
+        throw RainError.internalError(
           details: "No \(family) account exists to export; log in again to provision it")
       }
       let value = try await context.exportAccountPrivateKey(
@@ -567,7 +567,7 @@ internal final class TurnkeyManagedAuthController: @unchecked Sendable {
       // The decrypted secp256k1 key is bare hex; the 0x prefix is the Rain-boundary format.
       return family == .ethereum ? "0x" + value : value
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
