@@ -180,9 +180,11 @@ public struct TurnkeyProvider: ProviderDescriptor, @unchecked Sendable {
 
   public var id: ProviderId { .turnkey }
 
-  /// Turnkey holds EVM + Solana accounts and gates signing behind passkeys/biometrics; with
-  /// `TurnkeyConfig.sponsorGas` on it also advertises `.gasSponsorship`. The same function feeds
-  /// the resolved wallet's set, so the two cannot drift.
+  /// Turnkey holds EVM + Solana accounts (`.multiChain`) and can export keys (`.export`); with
+  /// `TurnkeyConfig.sponsorGas` on it also advertises `.gasSponsorship`. Signing itself is NOT
+  /// biometric-gated — the vendor's enclave key uses a `.none` auth policy — so `.biometricGate`
+  /// is deliberately absent. The same function feeds the resolved wallet's set, so the two cannot
+  /// drift.
   public var capabilities: Set<Capability> {
     TurnkeyWalletProviderAdapter.capabilities(sponsorGas: config.sponsorGas)
   }
@@ -200,7 +202,7 @@ public struct TurnkeyProvider: ProviderDescriptor, @unchecked Sendable {
   }
 
   /// Forces a Turnkey session refresh (new JWT, extended expiry) regardless of remaining
-  /// lifetime. Throws `RainSDKError.tokenExpired` when the session cannot be refreshed — the
+  /// lifetime. Throws `RainError.tokenExpired` when the session cannot be refreshed — the
   /// host must re-authenticate.
   public func refreshSession() async throws {
     try await coordinator.refreshNow()
@@ -248,14 +250,14 @@ extension TurnkeyProvider {
   /// `.authenticated` once a session is live (restored, or established via the OTP flow).
   /// Always `.unauthenticated`-shaped in BYO mode — the host owns auth there.
   @_spi(RainWallet)
-  public var authState: TurnkeyAuthState {
-    managedAuth?.authState ?? .unauthenticated
+  public func currentAuthState() -> TurnkeyAuthState {
+    managedAuth?.currentAuthState() ?? .unauthenticated
   }
 
-  /// `authState` over time. Emits on every auth change; finishes never.
+  /// Managed auth state over time. Emits on every auth change; finishes never.
   @_spi(RainWallet)
-  public var authStates: AnyPublisher<TurnkeyAuthState, Never> {
-    managedAuth?.authStates ?? Just(.unauthenticated).eraseToAnyPublisher()
+  public var authState: AnyPublisher<TurnkeyAuthState, Never> {
+    managedAuth?.authState ?? Just(.unauthenticated).eraseToAnyPublisher()
   }
 
   /// Sends a one-time login code to an email address or (SMS) phone number. Managed mode only.
@@ -266,7 +268,7 @@ extension TurnkeyProvider {
 
   /// Confirms the code from ``sendLoginCode(to:)``, signing the user up on first login, and
   /// ensures the account has Ethereum and Solana accounts on one wallet seed. Managed mode only.
-  /// Throws `RainSDKError.invalidLoginCode` when the code is rejected (wrong, expired, or already
+  /// Throws `RainError.invalidLoginCode` when the code is rejected (wrong, expired, or already
   /// used) — re-prompt the user rather than restarting the flow.
   @_spi(RainWallet)
   public func confirmLoginCode(_ code: String) async throws {
@@ -351,7 +353,7 @@ extension TurnkeyProvider {
 
   private func requireManagedAuth() throws -> TurnkeyManagedAuthController {
     guard let managedAuth else {
-      throw RainSDKError.invalidConfig(details:
+      throw RainError.invalidConfig(details:
         "Authentication methods are only available in managed mode — construct the provider with "
         + "TurnkeyConfig(organizationId:authProxyConfigId:); in bring-your-own mode the host owns "
         + "authentication")

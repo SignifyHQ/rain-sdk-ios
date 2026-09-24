@@ -47,7 +47,7 @@ struct SolanaChainsTests {
 
   @Test("NetworkConfig rejects a malformed EIP-155 string with invalidConfig")
   func networkConfigInvalidEip155() {
-    #expect(throws: RainSDKError.invalidConfig(details: "Invalid EIP-155 chain ID format: bogus. Expected 'eip155:<chainId>'")) {
+    #expect(throws: RainError.invalidConfig(details: "Invalid EIP-155 chain ID format: bogus. Expected 'eip155:<chainId>'")) {
       _ = try NetworkConfig(eip155ChainId: "bogus", rpcUrl: "https://test-rpc.com")
     }
   }

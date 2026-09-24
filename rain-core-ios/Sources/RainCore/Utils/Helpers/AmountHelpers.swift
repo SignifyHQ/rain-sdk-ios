@@ -38,14 +38,14 @@ public enum AmountHelpers {
   )
 
   /// Converts a human-readable `Decimal` amount to `BigUInt` base units (wei) with precision safety.
-  /// Throws `RainSDKError.invalidAmount` if the amount has more decimal places than the token allows,
+  /// Throws `RainError.invalidAmount` if the amount has more decimal places than the token allows,
   /// or cannot be represented as non-negative base units.
   public static func toBaseUnits(
     amount: Decimal,
     decimals: Int
   ) throws -> BigUInt {
     guard !amount.isNaN else {
-      throw RainSDKError.invalidAmount(
+      throw RainError.invalidAmount(
         amount: "\(amount)",
         reason: "amount is not a number"
       )
@@ -56,7 +56,7 @@ public enum AmountHelpers {
     // contract the SDK does not control. 77 is the ceiling that means anything: uint256 max is
     // ~1.16e77, so one whole unit of a finer token is unrepresentable.
     guard (0...77).contains(decimals) else {
-      throw RainSDKError.invalidAmount(
+      throw RainError.invalidAmount(
         amount: "\(amount)",
         reason: "token decimals must be between 0 and 77, got \(decimals)"
       )
@@ -70,14 +70,14 @@ public enum AmountHelpers {
     let truncated = scaled.rounding(accordingToBehavior: roundDownBehavior)
 
     guard scaled == truncated else {
-      throw RainSDKError.invalidAmount(
+      throw RainError.invalidAmount(
         amount: "\(amount)",
         reason: "amount has fractional base units for a \(decimals)-decimal token"
       )
     }
 
     guard let baseUnits = BigUInt(truncated.stringValue, radix: 10) else {
-      throw RainSDKError.invalidAmount(
+      throw RainError.invalidAmount(
         amount: "\(amount)",
         reason: "could not be converted to base units (\"\(truncated.stringValue)\")"
       )
@@ -86,7 +86,7 @@ public enum AmountHelpers {
     // `BigUInt` is unbounded, but the ABI slot it lands in is not: a value past uint256 max would
     // be silently truncated by the encoder into a completely different allowance or transfer.
     guard baseUnits <= maxUInt256 else {
-      throw RainSDKError.invalidAmount(
+      throw RainError.invalidAmount(
         amount: "\(amount)",
         reason: "amount exceeds the maximum ERC-20 uint256 value"
       )

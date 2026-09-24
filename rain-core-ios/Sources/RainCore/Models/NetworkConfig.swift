@@ -39,14 +39,14 @@ public struct NetworkConfig: Sendable {
   ///   - rpcUrl: The RPC endpoint URL
   ///   - networkName: Optional network name
   ///   - customParams: Optional custom parameters
-  /// - Throws: `RainSDKError.invalidConfig` if the eip155ChainId format is invalid
+  /// - Throws: `RainError.invalidConfig` if the eip155ChainId format is invalid
   public init(
     eip155ChainId: String,
     rpcUrl: String,
     networkName: String? = nil
   ) throws {
     guard let chainIdInt = ChainIDFormat.EIP155.parse(eip155ChainId) else {
-      throw RainSDKError.invalidConfig(
+      throw RainError.invalidConfig(
         details: "Invalid EIP-155 chain ID format: \(eip155ChainId). Expected 'eip155:<chainId>'"
       )
     }

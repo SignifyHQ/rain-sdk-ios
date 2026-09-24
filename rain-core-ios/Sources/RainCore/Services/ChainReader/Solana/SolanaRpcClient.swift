@@ -34,7 +34,7 @@ import Web3
     let response = try await jsonRpcClient.call(rpcUrl: rpcUrl, method: "getBalance", params: [address])
     guard let result = response["result"] as? [String: Any],
           let value = result["value"] as? NSNumber else {
-      throw RainSDKError.internalLogicError(details: "Unexpected getBalance response for \(address)")
+      throw RainError.internalError(details: "Unexpected getBalance response for \(address)")
     }
     // Parse via the decimal string form: `BigUInt(UInt64)` is ambiguous once BigInt is in
     // module scope, and the string init is the codebase's established idiom.
@@ -53,7 +53,7 @@ import Web3
           let value = result["value"] as? [String: Any],
           let blockhash = value["blockhash"] as? String,
           !blockhash.isEmpty else {
-      throw RainSDKError.internalLogicError(details: "Unexpected getLatestBlockhash response")
+      throw RainError.internalError(details: "Unexpected getLatestBlockhash response")
     }
     return blockhash
   }
@@ -108,7 +108,7 @@ import Web3
       params: [address, ["encoding": "jsonParsed", "commitment": "confirmed"]]
     )
     guard let result = response["result"] as? [String: Any] else {
-      throw RainSDKError.internalLogicError(details: "Unexpected getAccountInfo response for \(address)")
+      throw RainError.internalError(details: "Unexpected getAccountInfo response for \(address)")
     }
     // `value` is JSON null for an address that holds no account.
     guard let value = result["value"] as? [String: Any] else { return nil }
@@ -144,14 +144,14 @@ import Web3
       params: [address, ["encoding": "base64", "commitment": "confirmed"]]
     )
     guard let result = response["result"] as? [String: Any] else {
-      throw RainSDKError.internalLogicError(details: "Unexpected getAccountInfo response for \(address)")
+      throw RainError.internalError(details: "Unexpected getAccountInfo response for \(address)")
     }
     guard let value = result["value"] as? [String: Any] else { return nil }
 
     // `data` is a [base64, encoding] pair for a base64 read.
     let base64 = (value["data"] as? [Any])?.first as? String ?? ""
     guard let decoded = Data(base64Encoded: base64) else {
-      throw RainSDKError.internalLogicError(details: "Undecodable account data for \(address)")
+      throw RainError.internalError(details: "Undecodable account data for \(address)")
     }
     return RawAccount(
       ownerProgram: value["owner"] as? String ?? "",
@@ -171,7 +171,7 @@ import Web3
     }
     guard let decimals = (account.parsedInfo?["decimals"] as? NSNumber)?.intValue,
           (0...255).contains(decimals) else {
-      throw RainSDKError.internalLogicError(details: "Mint \(mint) returned no usable decimals")
+      throw RainError.internalError(details: "Mint \(mint) returned no usable decimals")
     }
     return MintInfo(address: mint, decimals: decimals, tokenProgramId: account.ownerProgram)
   }
@@ -185,7 +185,7 @@ import Web3
       return nil
     }
     guard let parsed = Self.parseTokenAccount(address: address, info: info) else {
-      throw RainSDKError.internalLogicError(details: "Token account \(address) returned no tokenAmount")
+      throw RainError.internalError(details: "Token account \(address) returned no tokenAmount")
     }
     return parsed
   }
@@ -212,7 +212,7 @@ import Web3
     )
     guard let result = response["result"] as? [String: Any],
           let value = result["value"] as? [[String: Any]] else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Unexpected getTokenAccountsByOwner response for \(owner)"
       )
     }
@@ -275,7 +275,7 @@ import Web3
     )
     guard let result = response["result"] as? [String: Any],
           let value = result["value"] as? [String: Any] else {
-      throw RainSDKError.internalLogicError(details: "Unexpected simulateTransaction response")
+      throw RainError.internalError(details: "Unexpected simulateTransaction response")
     }
     let error = (value["err"] is NSNull ? nil : value["err"]).map { "\($0)" }
     let logs = (value["logs"] as? [String])?.filter { !$0.isEmpty } ?? []
@@ -292,7 +292,7 @@ import Web3
       params: [address, ["limit": 1]]
     )
     guard let results = response["result"] as? [[String: Any]] else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Unexpected getSignaturesForAddress response for \(address)"
       )
     }
@@ -305,10 +305,10 @@ import Web3
   /// Resolves and validates the RPC URL for `chainId`, mirroring `EVMChainReader`.
   private func resolveRpcUrl(chainId: Int) throws -> String {
     guard let config = networkConfigResolver(chainId) else {
-      throw RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
+      throw RainError.invalidConfig(details: "No RPC endpoint configured for chainId=\(chainId)")
     }
     guard URL(string: config.rpcUrl) != nil else {
-      throw RainSDKError.invalidConfig(
+      throw RainError.invalidConfig(
         details: "Invalid RPC URL for chainId=\(chainId): \(config.rpcUrl)"
       )
     }

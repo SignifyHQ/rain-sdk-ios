@@ -44,15 +44,15 @@ extension RainSdkManager {
       RainLogger.info("Rain SDK: Approval transaction submitted. Hash: \(hash)")
       return RainTokenApprovalResult(transactionHash: hash)
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
   func getTokenAllowance(
     chainId: Int,
     contractAddress: String,
-    owner: String?,
-    spender: String
+    spender: String,
+    owner: String?
   ) async throws -> RainTokenAllowance {
     do {
       try validateApprovalRequest(chainId: chainId, contractAddress: contractAddress, spender: spender)
@@ -64,7 +64,7 @@ extension RainSdkManager {
         resolvedOwner = try await walletProvider.address()
       }
       guard resolvedOwner.isValidEthereumAddress else {
-        throw RainSDKError.invalidConfig(details: "Invalid owner address: \(resolvedOwner)")
+        throw RainError.invalidConfig(details: "Invalid owner address: \(resolvedOwner)")
       }
 
       let rawAmount = try await chainReader.getERC20Allowance(
@@ -88,7 +88,7 @@ extension RainSdkManager {
         decimals: resolvedDecimals
       )
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -107,7 +107,7 @@ extension RainSdkManager {
       )
       return try await estimateTransactionFee(chainId: chainId, address: from, params: params)
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -137,7 +137,7 @@ extension RainSdkManager {
         resolvedOwner = try await walletProvider.address()
       }
       guard resolvedOwner.isValidEthereumAddress else {
-        throw RainSDKError.invalidConfig(details: "Invalid owner address: \(resolvedOwner)")
+        throw RainError.invalidConfig(details: "Invalid owner address: \(resolvedOwner)")
       }
 
       var receipt: MinedReceipt?
@@ -156,7 +156,7 @@ extension RainSdkManager {
           } catch is CancellationError {
             throw CancellationError()
           } catch {
-            if let rainError = error as? RainSDKError, case .invalidConfig = rainError {
+            if let rainError = error as? RainError, case .invalidConfig = rainError {
               throw rainError
             }
             RainLogger.warning(
@@ -166,7 +166,7 @@ extension RainSdkManager {
             mined = nil
           }
           if let mined, !mined.succeeded {
-            throw RainSDKError.transactionSimulationFailed(
+            throw RainError.transactionSimulationFailed(
               underlying: approvalFailure(
                 "Approval transaction reverted on-chain: \(transactionHash)"
               )
@@ -223,14 +223,14 @@ extension RainSdkManager {
           "Rain SDK: Approval \(transactionHash) was not confirmed within the window"
             + (lastReadFailure.map { "; last read failure: \($0)" } ?? "")
         )
-        throw RainSDKError.transactionPending(statusId: transactionHash)
+        throw RainError.transactionPending(statusId: transactionHash)
       }
       // Mined, but the allowance never read back. Surface the node's own failure where there is
       // one; a generic timeout would hide why every read at that block failed.
-      if let cause = lastReadFailure as? RainSDKError {
+      if let cause = lastReadFailure as? RainError {
         throw cause
       }
-      throw RainSDKError.networkError(
+      throw RainError.networkError(
         underlying: approvalFailure(
           """
           Approval transaction \(transactionHash) mined in block \(mined.blockNumber), but the \
@@ -244,11 +244,11 @@ extension RainSdkManager {
       // generic wrap would classify it as a provider failure.
       throw CancellationError()
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
-  /// Carries an approval-path message that has no vendor error behind it, for the `RainSDKError`
+  /// Carries an approval-path message that has no vendor error behind it, for the `RainError`
   /// cases that wrap an underlying `Error`. `underlying` keeps the failure that caused it, where
   /// there was one, so the message doesn't have to be the whole story.
   private func approvalFailure(_ message: String, underlying: Error? = nil) -> NSError {
@@ -278,7 +278,7 @@ extension RainSdkManager {
   ) throws {
     guard expectedRaw != 0 else {
       guard allowance.isZero else {
-        throw RainSDKError.internalLogicError(
+        throw RainError.internalError(
           details: """
             Revoke mined but \(allowance.spender) still holds an allowance of \(allowance.rawAmount)
             """
@@ -287,7 +287,7 @@ extension RainSdkManager {
       return
     }
     guard !allowance.isZero else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: """
           Approval mined but the allowance for \(allowance.spender) on \(allowance.tokenAddress) \
           is still zero; expected \(expectedRaw)
@@ -347,7 +347,7 @@ extension RainSdkManager {
   ) async throws -> BigUInt {
     guard let amount else { return RainTokenAllowance.unlimitedRawAmount }
     guard amount >= 0 else {
-      throw RainSDKError.invalidAmount(
+      throw RainError.invalidAmount(
         amount: "\(amount)",
         reason: "approval amount must not be negative"
       )
@@ -370,19 +370,13 @@ extension RainSdkManager {
     chainId: Int,
     contractAddress: String
   ) async throws -> Int {
-    guard let resolved = await tokenStore.decimals(chainId: chainId, address: contractAddress)
-    else {
-      throw RainSDKError.tokenNotFound(token: contractAddress, chainId: chainId)
-    }
-
     // `decimals()` is whatever the contract says, and the scaling math converts it to `Int16` —
-    // which traps, crashing the process, rather than throwing. Bound it here, the one place both
-    // the approval and the allowance read pass through. 77 is the ceiling that means anything:
-    // uint256 max is ~1.16e77, so one whole unit of a finer token is unrepresentable.
-    guard (0...77).contains(resolved) else {
-      throw RainSDKError.invalidConfig(
-        details: "Token \(contractAddress) reports \(resolved) decimals, outside the supported range 0...77"
-      )
+    // which traps rather than throws. The store refuses a value outside 0...77 with
+    // `invalidConfig` (uint256 max is ~1.16e77, so one whole unit of a finer token is
+    // unrepresentable); an unresolvable token is `tokenNotFound`.
+    guard let resolved = try await tokenStore.decimals(chainId: chainId, address: contractAddress)
+    else {
+      throw RainError.tokenNotFound(token: contractAddress, chainId: chainId)
     }
     return resolved
   }
@@ -395,14 +389,14 @@ extension RainSdkManager {
     spender: String
   ) throws {
     guard chainId > 0 else {
-      throw RainSDKError.invalidConfig(
+      throw RainError.invalidConfig(
         details: "Invalid chainId: \(chainId). Must be a positive integer."
       )
     }
     // SPL delegation is per token account and carries its own semantics, so an ERC-20 approval
     // has no Solana equivalent to fall back on.
     guard !SolanaChains.isSolana(chainId) else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Token approvals are EVM-only; chainId=\(chainId) is a Solana chain"
       )
     }
@@ -411,12 +405,12 @@ extension RainSdkManager {
     // authorization will ever draw on — on mainnet, at real cost. Nothing downstream would catch
     // it, since `approve` succeeds against any address, so refuse the pairing here.
     guard let operatorAddress = authPullOperator, !authPullTokenAddresses.isEmpty else {
-      throw RainSDKError.invalidConfig(
+      throw RainError.invalidConfig(
         details: "Auth Pull is disabled. Configure RainSdk.Builder.authPullConfig(_:) first."
       )
     }
     guard authPullChainIds.contains(chainId) else {
-      throw RainSDKError.invalidConfig(
+      throw RainError.invalidConfig(
         details: """
           chainId=\(chainId) is not an Auth Pull chain for this client \
           (expected one of \(authPullChainIds.sorted().map(String.init).joined(separator: ", "))). \
@@ -425,23 +419,23 @@ extension RainSdkManager {
       )
     }
     guard contractAddress.isValidEthereumAddress else {
-      throw RainSDKError.invalidConfig(details: "Invalid token contract address: \(contractAddress)")
+      throw RainError.invalidConfig(details: "Invalid token contract address: \(contractAddress)")
     }
     guard spender.isValidEthereumAddress else {
-      throw RainSDKError.invalidConfig(details: "Invalid spender address: \(spender)")
+      throw RainError.invalidConfig(details: "Invalid spender address: \(spender)")
     }
     guard spender.caseInsensitiveCompare(operatorAddress) == .orderedSame else {
-      throw RainSDKError.invalidConfig(
+      throw RainError.invalidConfig(
         details: "Spender does not match the configured Auth Pull operator"
       )
     }
     guard let trustedToken = authPullTokenAddresses[chainId] else {
-      throw RainSDKError.invalidConfig(
+      throw RainError.invalidConfig(
         details: "No Auth Pull token configured for chainId=\(chainId)"
       )
     }
     guard contractAddress.caseInsensitiveCompare(trustedToken) == .orderedSame else {
-      throw RainSDKError.invalidConfig(
+      throw RainError.invalidConfig(
         details: "Token contract does not match the configured Auth Pull token for chainId=\(chainId)"
       )
     }

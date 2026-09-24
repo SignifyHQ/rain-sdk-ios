@@ -134,7 +134,7 @@ struct Multicall3Tests {
   @Test("decodeAggregate3Result throws on truncated payload")
   func testDecodeAggregate3Truncated() {
     let hex = "0x" + String(repeating: "00", count: 30) // 30 bytes, less than the 64-byte header
-    #expect(throws: RainSDKError.self) {
+    #expect(throws: RainError.self) {
       _ = try Multicall3.decodeAggregate3Result(hex: hex)
     }
   }

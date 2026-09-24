@@ -22,7 +22,7 @@ struct BalanceTests {
     let mockPortal = MockPortal()
     mockPortal.mockAddresses.removeAll()
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainError.walletUnavailable()) {
       _ = try await manager.getBalance(chainId: 1, token: .native)
     }
   }
@@ -32,7 +32,7 @@ struct BalanceTests {
     let mockPortal = MockPortal()
     mockPortal.mockAddresses.removeAll()
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainError.walletUnavailable()) {
       _ = try await manager.getBalance(chainId: 1, token: .contract(address: TestFixtures.usdcAddress))
     }
   }
@@ -44,7 +44,7 @@ struct BalanceTests {
     let mockPortal = MockPortal()
     mockPortal.mockAddresses.removeAll()
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainError.walletUnavailable()) {
       _ = try await manager.getTokenBalances(chainId: 1)
     }
   }
@@ -141,7 +141,7 @@ struct BalanceTests {
     let eth = Balance(token: .native, chainId: 1, rawAmount: BigUInt(1_000_000_000_000_000_000), decimals: 18, symbol: "ETH")
     stub.balancesByChainId = [1: [eth]]
     stub.errorsByChainId = [
-      43114: RainSDKError.networkError(underlying: NSError(domain: "x", code: 0))
+      43114: RainError.networkError(underlying: NSError(domain: "x", code: 0))
     ]
 
     let all = try await manager.getAllBalances()

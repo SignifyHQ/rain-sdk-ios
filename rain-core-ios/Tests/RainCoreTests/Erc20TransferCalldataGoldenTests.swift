@@ -74,7 +74,7 @@ struct Erc20TransferCalldataGoldenTests {
   @Test("amount finer than the token is rejected before encoding")
   func overPrecisionAmountRejected() {
     // 7 decimal places on a 6-decimal token must fail, not silently truncate.
-    #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+    #expect(throws: RainError.invalidAmount(amount: "", reason: "")) {
       try AmountHelpers.toBaseUnits(amount: Decimal(string: "1.2345678")!, decimals: 6)
     }
   }
@@ -87,7 +87,7 @@ struct Erc20TransferCalldataGoldenTests {
 
   @Test("negative amount is rejected instead of encoding a huge uint256")
   func negativeAmountRejected() {
-    #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+    #expect(throws: RainError.invalidAmount(amount: "", reason: "")) {
       try AmountHelpers.toBaseUnits(amount: Decimal(string: "-1")!, decimals: 6)
     }
   }

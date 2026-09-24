@@ -13,7 +13,7 @@ Four methods cover the whole surface:
 | Method | Purpose |
 |---|---|
 | `approveTokenAllowance(chainId:contractAddress:spender:amount:)` | Approve Rain's operator to spend the user's USDC |
-| `getTokenAllowance(chainId:contractAddress:owner:spender:)` | Read the current allowance |
+| `getTokenAllowance(chainId:contractAddress:spender:owner:)` | Read the current allowance |
 | `estimateApprovalFee(chainId:contractAddress:spender:amount:)` | Price the approval before submitting it |
 | `confirmTokenAllowance(transactionHash:chainId:contractAddress:spender:amount:owner:)` | Wait for a successful receipt and read back the resulting allowance |
 
@@ -295,12 +295,12 @@ provider is asked for one thing: the wallet address to read the allowance *for*,
 | `RAIN_401` | `userRejected` | The user declined the signature in the wallet UI. |
 | `RAIN_402` | `insufficientFunds(required:available:)` | Not enough native gas to submit the approval. |
 | `RAIN_403` | `transactionSimulationFailed(underlying:)` | Preflight simulation reverted (providers that simulate), or `confirmTokenAllowance` found a mined receipt that reverted. |
-| `RAIN_404` | `walletUnavailable` | The wallet provider has no address — the user has not connected or created a wallet. Reachable on any approval or fee estimate (they resolve the `from` address), and on an allowance read or confirmation with `owner` omitted. |
+| `RAIN_404` | `walletUnavailable(details:)` | The wallet provider has no address — the user has not connected or created a wallet. Reachable on any approval or fee estimate (they resolve the `from` address), and on an allowance read or confirmation with `owner` omitted. |
 | `RAIN_406` | `invalidAmount(amount:reason:)` | Negative amount, more decimal places than the token supports, or a value past `uint256` max. |
 | `RAIN_501` | `providerError(underlying:)` | The wallet provider failed for its own reasons. |
-| `RAIN_502` | `internalLogicError(details:)` | ABI encoding failed, a Solana chain ID was passed (approvals are EVM-only), the provider cannot estimate fees, or a mined allowance contradicted the request (revoke left a spendable allowance, or an approval left zero). |
+| `RAIN_502` | `internalError(details:)` | ABI encoding failed, a Solana chain ID was passed (approvals are EVM-only), the provider cannot estimate fees, or a mined allowance contradicted the request (revoke left a spendable allowance, or an approval left zero). |
 
-Errors are always `RainSDKError`; vendor errors are wrapped, never surfaced raw.
+Errors are always `RainError`; vendor errors are wrapped, never surfaced raw.
 
 ## Not covered
 

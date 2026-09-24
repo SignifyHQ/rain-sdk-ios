@@ -21,16 +21,16 @@ import Foundation
   }
 
   /// Sends a single JSON-RPC 2.0 request and returns the parsed response dictionary.
-  /// Throws `RainSDKError.invalidRpcUrl` on bad URLs, `.internalLogicError` on malformed
+  /// Throws `RainError.invalidRpcUrl` on bad URLs, `.internalError` on malformed
   /// payloads, and wraps RPC `error` objects as `NSError(domain: "eth.rpc", ...)` mapped
-  /// through `RainSDKError.from(underlying:)`.
+  /// through `RainError.from(underlying:)`.
   internal func call(
     rpcUrl: String,
     method: String,
     params: [Any]
   ) async throws -> [String: Any] {
     guard let url = URL(string: rpcUrl) else {
-      throw RainSDKError.invalidRpcUrl(rpcUrl)
+      throw RainError.invalidRpcUrl(rpcUrl)
     }
 
     do {
@@ -48,7 +48,7 @@ import Foundation
 
       let (data, _) = try await session.data(for: request)
       guard let response = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-        throw RainSDKError.internalLogicError(
+        throw RainError.internalError(
           details: "Unexpected RPC response payload for method \(method)"
         )
       }
@@ -64,21 +64,21 @@ import Foundation
         // A revert is an execution verdict, not an internal fault: map to
         // `.transactionSimulationFailed` (RAIN_403), as the Privy and Portal clients do.
         if message.range(of: "revert", options: .caseInsensitive) != nil {
-          throw RainSDKError.transactionSimulationFailed(underlying: rpcError)
+          throw RainError.transactionSimulationFailed(underlying: rpcError)
         }
         throw rpcError
       }
 
       return response
-    } catch let error as RainSDKError {
+    } catch let error as RainError {
       throw error
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
   /// Convenience wrapper that extracts the `result` field as a String.
-  /// Throws `.internalLogicError` if the field is missing or not a string.
+  /// Throws `.internalError` if the field is missing or not a string.
   @_spi(RainAdapter) public func callForHexResult(
     rpcUrl: String,
     method: String,
@@ -86,7 +86,7 @@ import Foundation
   ) async throws -> String {
     let response = try await call(rpcUrl: rpcUrl, method: method, params: params)
     guard let result = response["result"] as? String else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Unexpected RPC result for method \(method)"
       )
     }

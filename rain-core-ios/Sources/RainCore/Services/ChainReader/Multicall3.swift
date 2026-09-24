@@ -81,19 +81,19 @@ public enum Multicall3 {
   }
 
   /// Decodes the return value of `aggregate3` — an array of `(bool, bytes)`.
-  /// Throws `RainSDKError.internalLogicError` on a malformed payload.
+  /// Throws `RainError.internalError` on a malformed payload.
   static func decodeAggregate3Result(hex: String) throws -> [Result] {
     let bytes = try decodeHex(hex)
     // Layout: [0x20 offset to array][array body...]
     // Array body: [length][offset_1]...[offset_N][tuple_1]...[tuple_N]
     guard bytes.count >= 64 else {
-      throw RainSDKError.internalLogicError(details: "Multicall3 result too short (<64 bytes)")
+      throw RainError.internalError(details: "Multicall3 result too short (<64 bytes)")
     }
     let count = parseBE(bytes[32..<64])
     let arrayBodyStart = 64
     let offsetsTableEnd = arrayBodyStart + 32 * count
     guard bytes.count >= offsetsTableEnd else {
-      throw RainSDKError.internalLogicError(details: "Multicall3 result truncated at offsets table")
+      throw RainError.internalError(details: "Multicall3 result truncated at offsets table")
     }
 
     var results: [Result] = []
@@ -103,14 +103,14 @@ public enum Multicall3 {
       let tupleOffset = arrayBodyStart + parseBE(bytes[offsetSlot..<offsetSlot+32])
       // Each tuple: [success(32)][returnData_offset(=0x40)(32)][returnData_length(32)][returnData_padded]
       guard bytes.count >= tupleOffset + 96 else {
-        throw RainSDKError.internalLogicError(details: "Multicall3 tuple #\(i) truncated")
+        throw RainError.internalError(details: "Multicall3 tuple #\(i) truncated")
       }
       let success = bytes[tupleOffset + 31] == 1
       let dataLen = parseBE(bytes[tupleOffset+64..<tupleOffset+96])
       let dataStart = tupleOffset + 96
       let dataEnd = dataStart + dataLen
       guard bytes.count >= dataEnd else {
-        throw RainSDKError.internalLogicError(details: "Multicall3 tuple #\(i) returnData truncated")
+        throw RainError.internalError(details: "Multicall3 tuple #\(i) returnData truncated")
       }
       let returnDataBytes = bytes[dataStart..<dataEnd]
       let dataHex = "0x" + returnDataBytes.map { String(format: "%02x", $0) }.joined()
@@ -160,7 +160,7 @@ public enum Multicall3 {
   private static func decodeHex(_ hex: String) throws -> [UInt8] {
     let clean = hex.strippingHexPrefix
     guard clean.count.isMultiple(of: 2) else {
-      throw RainSDKError.internalLogicError(details: "Multicall3 result has odd hex length")
+      throw RainError.internalError(details: "Multicall3 result has odd hex length")
     }
     var bytes = [UInt8]()
     bytes.reserveCapacity(clean.count / 2)
@@ -168,7 +168,7 @@ public enum Multicall3 {
     while idx < clean.endIndex {
       let next = clean.index(idx, offsetBy: 2)
       guard let byte = UInt8(clean[idx..<next], radix: 16) else {
-        throw RainSDKError.internalLogicError(details: "Multicall3 result contains invalid hex byte")
+        throw RainError.internalError(details: "Multicall3 result contains invalid hex byte")
       }
       bytes.append(byte)
       idx = next

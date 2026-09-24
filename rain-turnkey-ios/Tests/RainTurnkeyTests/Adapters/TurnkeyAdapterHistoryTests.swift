@@ -660,7 +660,7 @@ struct TurnkeyAdapterHistoryTests {
     do {
       _ = try await adapter.getTransactions(chainId: 1, limit: nil, offset: nil, order: nil)
       Issue.record("expected tokenExpired")
-    } catch let error as RainSDKError where error == .tokenExpired {
+    } catch let error as RainError where error == .tokenExpired {
       // Expected: the session error surfaces directly as the typed Rain error.
     }
     #expect(client.getActivitiesCalls.isEmpty)

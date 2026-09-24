@@ -201,7 +201,7 @@ import Foundation
 
     func readByte() throws -> Int {
       guard pos < bytes.count else {
-        throw RainSDKError.internalLogicError(details: "Unexpected end of transaction")
+        throw RainError.internalError(details: "Unexpected end of transaction")
       }
       defer { pos += 1 }
       return Int(bytes[pos])
@@ -209,7 +209,7 @@ import Foundation
 
     func readBytes(_ length: Int) throws -> [UInt8] {
       guard pos + length <= bytes.count else {
-        throw RainSDKError.internalLogicError(details: "Unexpected end of transaction")
+        throw RainError.internalError(details: "Unexpected end of transaction")
       }
       defer { pos += length }
       return Array(bytes[pos..<pos + length])
@@ -217,7 +217,7 @@ import Foundation
 
     func skip(_ length: Int) throws {
       guard pos + length <= bytes.count else {
-        throw RainSDKError.internalLogicError(details: "Unexpected end of transaction")
+        throw RainError.internalError(details: "Unexpected end of transaction")
       }
       pos += length
     }

@@ -244,20 +244,20 @@ enum TestTokenStore {
   }
 
   private struct NullWalletProvider: WalletProvider {
-    func address() async throws -> String { throw RainSDKError.walletUnavailable }
+    func address() async throws -> String { throw RainError.walletUnavailable() }
     func sendTransaction(chainId: Int, params: WalletTransactionParams) async throws -> String {
-      throw RainSDKError.walletUnavailable
+      throw RainError.walletUnavailable()
     }
     func getBalance(chainId: Int, token: Token) async throws -> Balance {
-      throw RainSDKError.walletUnavailable
+      throw RainError.walletUnavailable()
     }
     func getBalances(chainId: Int) async throws -> [Balance] {
-      throw RainSDKError.walletUnavailable
+      throw RainError.walletUnavailable()
     }
     func getTransactions(
       chainId: Int, limit: Int?, offset: Int?, order: RainTransactionOrder?
     ) async throws -> [RainTransaction] {
-      throw RainSDKError.walletUnavailable
+      throw RainError.walletUnavailable()
     }
   }
 
@@ -271,7 +271,7 @@ enum TestTokenStore {
       .build()
     _ = try await sdk.provider(ProviderId("test-capture"))
     guard let store = box.store else {
-      throw RainSDKError.internalLogicError(details: "token store was not captured")
+      throw RainError.internalError(details: "token store was not captured")
     }
     return store
   }

@@ -81,14 +81,14 @@ struct SolanaProgramAddressTests {
 
   @Test("a malformed address is rejected before derivation")
   func rejectsBadAddress() {
-    #expect(throws: RainSDKError.self) {
+    #expect(throws: RainError.self) {
       _ = try SolanaProgramAddress.associatedTokenAddress(
         owner: "not-base58!",
         mint: Self.mint,
         tokenProgramId: SolanaPrograms.splToken
       )
     }
-    #expect(throws: RainSDKError.self) {
+    #expect(throws: RainError.self) {
       _ = try SolanaProgramAddress.associatedTokenAddress(
         owner: Base58.encode([UInt8](repeating: 7, count: 31)),
         mint: Self.mint,

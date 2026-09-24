@@ -19,7 +19,7 @@ struct WithdrawCollateralTests {
     mockPortal.mockAddresses.removeAll()
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainError.walletUnavailable()) {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -48,7 +48,7 @@ struct WithdrawCollateralTests {
       capabilities: [.export, .recovery]
     )
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=999")) {
+    await #expect(throws: RainError.invalidConfig(details: "No RPC endpoint configured for chainId=999")) {
       _ = try await manager.withdrawCollateral(
         chainId: 999,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -74,7 +74,7 @@ struct WithdrawCollateralTests {
     let (manager, _, builder) = TestManagers.portalManager(portal: mockPortal)
     builder.mockNonce = BigUInt(42)
 
-    await #expect(throws: RainSDKError.withdrawalRevertedByNetwork) {
+    await #expect(throws: RainError.withdrawalRevertedByNetwork()) {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -95,7 +95,7 @@ struct WithdrawCollateralTests {
     let (manager, _, builder) = TestManagers.portalManager(portal: mockPortal)
     builder.mockNonce = BigUInt(1)
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainError.walletUnavailable()) {
       _ = try await manager.estimateWithdrawalFee(
         chainId: 1,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -116,14 +116,14 @@ struct WithdrawCollateralTests {
     mockPortal.setMockResponse(
       chainId: "eip155:1",
       method: .eth_estimateGas,
-      error: RainSDKError.transactionSimulationFailed(
+      error: RainError.transactionSimulationFailed(
         underlying: NSError(domain: "PortalError", code: 3, userInfo: [NSLocalizedDescriptionKey: "execution reverted"])
       )
     )
     let (manager, _, builder) = TestManagers.portalManager(portal: mockPortal)
     builder.mockNonce = BigUInt(42)
 
-    await #expect(throws: RainSDKError.withdrawalRevertedByNetwork) {
+    await #expect(throws: RainError.withdrawalRevertedByNetwork()) {
       _ = try await manager.estimateWithdrawalFee(
         chainId: 1,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -139,7 +139,7 @@ struct WithdrawCollateralTests {
     let (manager, _, builder) = TestManagers.portalManager()
     builder.mockNonce = BigUInt(1)
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "Failed to convert withdrawal signature hex string to Data")) {
+    await #expect(throws: RainError.internalError(details: "Failed to convert withdrawal signature hex string to Data")) {
       _ = try await manager.estimateWithdrawalFee(
         chainId: 1,
         addresses: TestFixtures.defaultWithdrawAddresses,

@@ -60,7 +60,7 @@ internal final class PortalWalletProviderAdapter: WalletProvider, RainTypedDataS
     let eip155 = PortalNamespace.eip155
     
     guard let addr = addresses[eip155] ?? nil, !addr.isEmpty else {
-      throw RainSDKError.walletUnavailable
+      throw RainError.walletUnavailable(details: "Portal returned no wallet address for this chain")
     }
     
     return addr
@@ -98,11 +98,11 @@ internal final class PortalWalletProviderAdapter: WalletProvider, RainTypedDataS
       )
     } catch {
       if error is CancellationError { throw error }
-      if let rainError = error as? RainSDKError { throw rainError }
+      if let rainError = error as? RainError { throw rainError }
       // Auth failures (401 / invalid API key) surface as .tokenExpired even here; anything
       // else that fails the pre-flight is a simulation failure.
       if let authError = PortalErrorMapping.mapAuthOrNil(error) { throw authError }
-      throw RainSDKError.transactionSimulationFailed(underlying: error)
+      throw RainError.transactionSimulationFailed(underlying: error)
     }
 
     // Read before the submit, so the UserOperation scan below has a lower bound to search from.
@@ -116,7 +116,7 @@ internal final class PortalWalletProviderAdapter: WalletProvider, RainTypedDataS
     )
 
     guard let txHash = response.result as? String else {
-      throw RainSDKError.internalLogicError(details: "eth_sendTransaction returned no transaction hash")
+      throw RainError.internalError(details: "eth_sendTransaction returned no transaction hash")
     }
 
     return try await minedTransactionHash(for: txHash, chainId: chainIdString, fromBlock: submittedFrom)
@@ -145,7 +145,7 @@ internal final class PortalWalletProviderAdapter: WalletProvider, RainTypedDataS
 
       if let event = await userOperationEvent(hash, chainId: chainId, fromBlock: fromBlock) {
         guard event.succeeded else {
-          throw RainSDKError.transactionSimulationFailed(
+          throw RainError.transactionSimulationFailed(
             underlying: UserOperationReverted(hash: hash, transactionHash: event.transactionHash)
           )
         }
@@ -239,7 +239,7 @@ internal final class PortalWalletProviderAdapter: WalletProvider, RainTypedDataS
     }
 
     guard let signature = response.result as? String else {
-      throw RainSDKError.internalLogicError(details: "eth_signTypedData_v4 returned no signature")
+      throw RainError.internalError(details: "eth_signTypedData_v4 returned no signature")
     }
 
     return signature
@@ -375,12 +375,12 @@ internal final class PortalWalletProviderAdapter: WalletProvider, RainTypedDataS
         name: info.name
       )
     } catch {
-      if error is RainSDKError { throw error }
+      if error is RainError { throw error }
       // This path wraps Portal errors itself (so a read-path revert never classifies as a failed
       // simulation), which would otherwise also swallow an expired session — map auth first.
       if let authError = PortalErrorMapping.mapAuthOrNil(error) { throw authError }
       RainLogger.error("Rain SDK: Failed to get ERC20 balance via RPC for token=\(address) chainId=\(chainId): \(error)")
-      throw RainSDKError.providerError(underlying: error)
+      throw RainError.providerError(underlying: error)
     }
   }
 
@@ -527,7 +527,7 @@ internal final class PortalWalletProviderAdapter: WalletProvider, RainTypedDataS
     }
 
     RainLogger.error("Rain SDK: Error fetching \(method) for \(address). Unexpected RPC response")
-    throw RainSDKError.internalLogicError(
+    throw RainError.internalError(
       details: "Unexpected RPC response when fetching \(method) for \(address)"
     )
   }

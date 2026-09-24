@@ -44,7 +44,7 @@ struct ProviderResolutionConcurrencyTests {
           hasFailed = true
           return true
         }
-        if shouldFail { throw RainSDKError.internalLogicError(details: "boom") }
+        if shouldFail { throw RainError.internalError(details: "boom") }
       }
       return StubWalletProvider()
     }
@@ -94,7 +94,7 @@ struct ProviderResolutionConcurrencyTests {
     let counter = CreateCounter()
     let sdk = try makeSdk(CountingProvider(counter: counter, failFirst: true))
 
-    await #expect(throws: RainSDKError.self) { _ = try await sdk.provider(.turnkey) }
+    await #expect(throws: RainError.self) { _ = try await sdk.provider(.turnkey) }
     // Second attempt must be allowed to run create() again (failure wasn't cached).
     _ = try await sdk.provider(.turnkey)
 

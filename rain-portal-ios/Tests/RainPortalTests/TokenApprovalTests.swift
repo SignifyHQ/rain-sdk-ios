@@ -63,7 +63,7 @@ struct PortalTokenApprovalTests {
     mockPortal.mockAddresses.removeAll()
     let (manager, _, _) = portalManager(portal: mockPortal)
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainError.walletUnavailable()) {
       _ = try await manager.approveTokenAllowance(
         chainId: RainChain.baseSepolia,
         contractAddress: TestFixtures.tokenAddress,
@@ -112,7 +112,7 @@ struct PortalTokenApprovalTests {
     let (manager, _, builder) = portalManager(portal: mockPortal)
     builder.stubbedApproveData = "0x095ea7b3deadbeef"
 
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await manager.approveTokenAllowance(
         chainId: RainChain.baseSepolia,
         contractAddress: TestFixtures.tokenAddress,
@@ -132,7 +132,7 @@ struct PortalTokenApprovalTests {
     )
     let (manager, _, _) = portalManager(portal: mockPortal)
 
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await manager.approveTokenAllowance(
         chainId: RainChain.baseSepolia,
         contractAddress: TestFixtures.tokenAddress,

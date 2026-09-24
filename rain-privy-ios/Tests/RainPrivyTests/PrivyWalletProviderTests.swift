@@ -15,9 +15,9 @@ struct PrivyWalletProviderTests {
 
   private static func tokens() -> [TokenInfo] {
     [
-      TokenInfo(chainId: chainId, address: "0xUSDC", symbol: "USDC", decimals: 6, name: "USD Coin"),
-      TokenInfo(chainId: chainId, address: "0xBAD", symbol: "BAD", decimals: 18, name: "Bad"),
-      TokenInfo(chainId: chainId, address: "0xZERO", symbol: "ZERO", decimals: 18, name: "Zero"),
+      TokenInfo(chainId: chainId, address: "0x00000000000000000000000000000000000000aa", symbol: "USDC", decimals: 6, name: "USD Coin"),
+      TokenInfo(chainId: chainId, address: "0x00000000000000000000000000000000000000bb", symbol: "BAD", decimals: 18, name: "Bad"),
+      TokenInfo(chainId: chainId, address: "0x00000000000000000000000000000000000000cc", symbol: "ZERO", decimals: 18, name: "Zero"),
     ]
   }
 
@@ -54,8 +54,8 @@ struct PrivyWalletProviderTests {
         return RpcStub.result("0x1")
       case "eth_call":
         switch RpcStub.callTarget(body) {
-        case "0xUSDC": return RpcStub.result("0x5")
-        case "0xZERO": return RpcStub.result("0x0")
+        case "0x00000000000000000000000000000000000000aa": return RpcStub.result("0x5")
+        case "0x00000000000000000000000000000000000000cc": return RpcStub.result("0x0")
         default: return RpcStub.error(code: -32000, message: "rpc down for this token")
         }
       default:
@@ -67,7 +67,7 @@ struct PrivyWalletProviderTests {
     let balances = try await provider.getBalances(chainId: Self.chainId)
 
     // Native + the non-zero USDC only; the failing token is dropped (not fatal), zero filtered.
-    #expect(balances.map(\.token) == [.native, .contract(address: "0xUSDC")])
+    #expect(balances.map(\.token) == [.native, .contract(address: "0x00000000000000000000000000000000000000aa")])
     #expect(balances[1].rawAmount.description == "5")
   }
 
@@ -79,7 +79,7 @@ struct PrivyWalletProviderTests {
     }
 
     let provider = try await Self.makeProvider(host: host)
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await provider.getBalances(chainId: Self.chainId)
     }
   }
@@ -111,7 +111,7 @@ struct PrivyWalletProviderTests {
 
     let provider = try await Self.makeProvider(host: host)
     let balance = try await provider.getBalance(
-      chainId: Self.chainId, token: .contract(address: "0xUSDC"))
+      chainId: Self.chainId, token: .contract(address: "0x00000000000000000000000000000000000000aa"))
 
     #expect(balance.rawAmount.description == "1000000")
     #expect(balance.decimals == 6)
@@ -209,7 +209,7 @@ struct PrivyWalletProviderTests {
     let manager = PrivyManager(source: FakeWalletSource(wallets: [signer]))
     let provider = try await Self.makeProvider(host: host, manager: manager)
 
-    await #expect(throws: RainSDKError.transactionSimulationFailed(underlying: NSError(domain: "", code: 0))) {
+    await #expect(throws: RainError.transactionSimulationFailed(underlying: NSError(domain: "", code: 0))) {
       _ = try await provider.sendTransaction(
         chainId: Self.chainId,
         params: WalletTransactionParams(from: Self.wallet, to: "0xTO", value: "0x1", data: "0x")
@@ -494,7 +494,7 @@ struct PrivyWalletProviderTests {
 
   @Test("getTransactions fails the whole call when a token query fails instead of returning partial history")
   func historyTokenQueryFailureFailsCall() async throws {
-    // The raw error bubbles up (like the native query) so `RainSDKError.from` classifies it via
+    // The raw error bubbles up (like the native query) so `RainError.from` classifies it via
     // the registered PrivyErrorMapping at the SDK boundary; no partial rows are returned.
     struct TokenFilterRejected: Error {}
     let contract = "0x2222222222222222222222222222222222222222"
@@ -531,7 +531,7 @@ struct PrivyWalletProviderTests {
       rpcClient: PrivyRpcClient(session: StubURLProtocol.makeSession())
     )
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await provider.getTransactions(
         chainId: Self.indexedChainId, limit: nil, offset: nil, order: nil)
     }
@@ -540,7 +540,7 @@ struct PrivyWalletProviderTests {
   @Test("an unconfigured chain id surfaces invalidConfig")
   func missingRpcEndpoint() async throws {
     let provider = try await Self.makeProvider(host: "missing-rpc.rpc")
-    await #expect(throws: RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=999")) {
+    await #expect(throws: RainError.invalidConfig(details: "No RPC endpoint configured for chainId=999")) {
       _ = try await provider.getBalance(chainId: 999, token: .native)
     }
   }
@@ -690,7 +690,7 @@ struct PrivySolanaTests {
     let provider = try await Self.makeProvider(
       host: host, source: FakeWalletSource(wallets: nil, solanaWallets: []))
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainError.walletUnavailable()) {
       _ = try await provider.getBalance(chainId: Self.chainId, token: .native)
     }
   }
@@ -853,7 +853,7 @@ struct PrivySolanaTests {
     let account = FakeSolanaAccount(address: Self.solanaAddress)
     let provider = try await Self.makeProvider(host: host, source: Self.source(account: account))
 
-    await #expect(throws: RainSDKError.tokenNotFound(token: "", chainId: Self.chainId)) {
+    await #expect(throws: RainError.tokenNotFound(token: "", chainId: Self.chainId)) {
       _ = try await provider.sendSolanaSPLToken(
         chainId: Self.chainId,
         mintAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
@@ -886,7 +886,7 @@ struct PrivySolanaTests {
     let account = FakeSolanaAccount(address: Self.solanaAddress)
     let provider = try await Self.makeProvider(host: host, source: Self.source(account: account))
 
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await provider.sendSolanaNative(chainId: Self.chainId, to: "0xNOTBASE58", amount: 1)
     }
     #expect(account.sends.isEmpty)
@@ -900,7 +900,7 @@ struct PrivySolanaTests {
     let provider = try await Self.makeProvider(host: host, source: Self.source(account: account))
 
     // Only devnet is registered on this provider.
-    await #expect(throws: RainSDKError.invalidConfig(
+    await #expect(throws: RainError.invalidConfig(
       details: "No RPC endpoint configured for chainId=\(RainChain.solanaMainnet)"
     )) {
       _ = try await provider.sendSolanaNative(
@@ -913,7 +913,7 @@ struct PrivySolanaTests {
   func solanaSplSendRejected() async throws {
     let provider = try await Self.makeProvider(host: "solana-spl-send.rpc", source: Self.source())
 
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await provider.sendSolanaSPLToken(
         chainId: Self.chainId,
         mintAddress: Self.solanaAddress,
@@ -999,14 +999,14 @@ struct PrivySolanaTests {
     let params = WalletTransactionParams(
       from: Self.evmWallet, to: "0xTO", value: "0x1", data: "0x")
 
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await provider.sendTransaction(chainId: Self.chainId, params: params)
     }
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await provider.estimateTransactionFee(
         chainId: Self.chainId, walletAddress: Self.evmWallet, params: params)
     }
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await provider.signTypedData(
         chainId: Self.chainId, walletAddress: Self.evmWallet, typedData: "{}")
     }

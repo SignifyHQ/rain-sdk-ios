@@ -52,7 +52,7 @@ struct EthereumAddressParsingTests {
       tokenAddress: Self.checksummed,
       recipientAddress: Self.wrongChecksum
     )
-    #expect(throws: RainSDKError.self) {
+    #expect(throws: RainError.self) {
       _ = try addresses.validated()
     }
   }

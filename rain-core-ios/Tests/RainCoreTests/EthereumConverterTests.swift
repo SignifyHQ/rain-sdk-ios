@@ -19,11 +19,11 @@ struct EthereumConverterTests {
   }
 
   @Test(
-    "parseHexToBigUIntStrict throws internalLogicError on malformed or empty payloads",
+    "parseHexToBigUIntStrict throws internalError on malformed or empty payloads",
     arguments: ["not-hex", "0xZZ", "", "0x"]
   )
   func strictThrowsOnMalformedHex(hex: String) {
-    #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    #expect(throws: RainError.internalError(details: "")) {
       _ = try EthereumConverter.parseHexToBigUIntStrict(hex)
     }
   }
@@ -32,7 +32,7 @@ struct EthereumConverterTests {
   func strictDecimalScalesAndThrows() throws {
     #expect(try EthereumConverter.parseHexToDecimalStrict("0x0de0b6b3a7640000", decimals: 18) == 1)
     #expect(try EthereumConverter.parseHexToDecimalStrict("0x0", decimals: 6) == 0)
-    #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    #expect(throws: RainError.internalError(details: "")) {
       _ = try EthereumConverter.parseHexToDecimalStrict("0xZZ", decimals: 18)
     }
   }

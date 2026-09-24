@@ -232,7 +232,7 @@ struct TransactionBuildingTests {
   func testBuildEIP712MessageInvalidChainId() async throws {
     let manager = realBuilderManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "No RPC endpoint configured for chainId=999")) {
+    await #expect(throws: RainError.invalidConfig(details: "No RPC endpoint configured for chainId=999")) {
       try await manager.buildEIP712MessageForTest(
         chainId: 999,
         walletAddress: TestFixtures.walletAddress,
@@ -265,7 +265,7 @@ struct TransactionBuildingTests {
   func testBuildEIP712MessageInvalidWalletAddress() async throws {
     let manager = realBuilderManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "Invalid walletAddress format: invalid-address")) {
+    await #expect(throws: RainError.invalidConfig(details: "Invalid walletAddress format: invalid-address")) {
       try await manager.buildEIP712MessageForTest(
         chainId: 1,
         walletAddress: "invalid-address",
@@ -326,7 +326,7 @@ struct TransactionBuildingTests {
   }
 
   /// Invalid EVM addresses surface as RAIN_102 with the offending address in the message.
-  private var addressError: RainSDKError {
+  private var addressError: RainError {
     .invalidConfig(details: "Invalid address format: invalid-address")
   }
 
@@ -383,7 +383,7 @@ struct TransactionBuildingTests {
 
   @Test("buildWithdrawTransactionData throws for invalid expiration timestamp")
   func testBuildWithdrawTransactionDataInvalidExpiration() throws {
-    #expect(throws: RainSDKError.invalidConfig(details: "Invalid expiresAt format: invalid-timestamp. Expected a unix-seconds or ISO-8601 string.")) {
+    #expect(throws: RainError.invalidConfig(details: "Invalid expiresAt format: invalid-timestamp. Expected a unix-seconds or ISO-8601 string.")) {
       try withdrawCalldata(
         builder: TransactionBuilderService(networkConfigs: []),
         expiresAt: "invalid-timestamp"

@@ -70,7 +70,7 @@ struct WithdrawalRequestTests {
   func testWithdrawCollateralRejectsNonPositiveChainId() async throws {
     let (manager, stub) = try await TestManagers.stubProviderManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "Invalid chainId: 0. Must be a positive integer.")) {
+    await #expect(throws: RainError.invalidConfig(details: "Invalid chainId: 0. Must be a positive integer.")) {
       _ = try await manager.withdrawCollateral(
         chainId: 0,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -88,7 +88,7 @@ struct WithdrawalRequestTests {
     let (manager, stub) = try await TestManagers.stubProviderManager()
 
     for amount in [Decimal(0), Decimal(-1)] {
-      await #expect(throws: RainSDKError.self) {
+      await #expect(throws: RainError.self) {
         _ = try await manager.withdrawCollateral(
           chainId: 1,
           addresses: TestFixtures.defaultWithdrawAddresses,
@@ -106,7 +106,7 @@ struct WithdrawalRequestTests {
   func testWithdrawCollateralRejectsNegativeDecimals() async throws {
     let (manager, stub) = try await TestManagers.stubProviderManager()
 
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -123,7 +123,7 @@ struct WithdrawalRequestTests {
   func testEstimateWithdrawalFeeValidatesParameters() async throws {
     let (manager, _) = try await TestManagers.stubProviderManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "Invalid chainId: -1. Must be a positive integer.")) {
+    await #expect(throws: RainError.invalidConfig(details: "Invalid chainId: -1. Must be a positive integer.")) {
       _ = try await manager.estimateWithdrawalFee(
         chainId: -1,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -133,7 +133,7 @@ struct WithdrawalRequestTests {
       )
     }
 
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await manager.estimateWithdrawalFee(
         chainId: 1,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -148,7 +148,7 @@ struct WithdrawalRequestTests {
   func testPrepareWithdrawalValidatesParameters() async throws {
     let (manager, stub) = try await TestManagers.stubProviderManager()
 
-    await #expect(throws: RainSDKError.invalidConfig(details: "Invalid chainId: 0. Must be a positive integer.")) {
+    await #expect(throws: RainError.invalidConfig(details: "Invalid chainId: 0. Must be a positive integer.")) {
       _ = try await manager.prepareWithdrawal(
         chainId: 0,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -159,7 +159,7 @@ struct WithdrawalRequestTests {
     }
 
     for amount in [Decimal(0), Decimal(-1)] {
-      await #expect(throws: RainSDKError.self) {
+      await #expect(throws: RainError.self) {
         _ = try await manager.prepareWithdrawal(
           chainId: 1,
           addresses: TestFixtures.defaultWithdrawAddresses,
@@ -170,7 +170,7 @@ struct WithdrawalRequestTests {
       }
     }
 
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await manager.prepareWithdrawal(
         chainId: 1,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -239,7 +239,7 @@ struct WithdrawalRequestTests {
   func testEstimateWithdrawalFeeRejectsSolana() async throws {
     let (manager, stub) = try await TestManagers.stubProviderManager()
 
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await manager.estimateWithdrawalFee(
         chainId: SolanaChains.devnet,
         addresses: TestFixtures.defaultWithdrawAddresses,

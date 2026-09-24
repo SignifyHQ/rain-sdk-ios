@@ -74,7 +74,7 @@ public struct PrivyProvider: ProviderDescriptor {
       onSessionExpired: config.onSessionExpired
     )
     // Register Privy's error mapping with core once, so Privy vendor errors classify into
-    // RainSDKError cases without RainCore importing PrivySDK.
+    // RainError cases without RainCore importing PrivySDK.
     PrivyErrorMapping.registerOnce()
   }
 
@@ -97,7 +97,7 @@ public struct PrivyProvider: ProviderDescriptor {
 
   /// Forces a Privy session refresh (`PrivyUser.refresh`). Rarely needed — Privy refreshes
   /// its own session before every call — but available for hosts that want an explicit health
-  /// check. Throws `RainSDKError.tokenExpired` when the session cannot be refreshed — the
+  /// check. Throws `RainError.tokenExpired` when the session cannot be refreshed — the
   /// host must re-authenticate.
   public func refreshSession() async throws {
     try await coordinator.refreshNow()
@@ -131,10 +131,10 @@ public struct PrivyProvider: ProviderDescriptor {
     // Probe — ensures Privy has an embedded Ethereum wallet available before handing it out.
     do {
       _ = try await provider.address()
-    } catch let error as RainSDKError {
+    } catch let error as RainError {
       throw error
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
 
     RainLogger.info("Rain SDK: Registered Privy instance with \(context.networkConfigs.count) network(s)")

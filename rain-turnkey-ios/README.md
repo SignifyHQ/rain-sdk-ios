@@ -40,13 +40,13 @@ Turnkey is a multi-chain signer: the same provider serves EVM chains and Solana 
 (`RainChain.solanaMainnet` / `.solanaDevnet` / `.solanaTestnet`), resolving the appropriate
 account per chain family.
 
-Advertised capabilities: `.multiChain`, `.biometricGate`.
+Advertised capabilities: `.export`, `.multiChain`, plus `.gasSponsorship` when `sponsorGas` is on.
 
 ## Session expiry and retry
 
 `TurnkeyProvider` exposes the session as Rain sees it: `sessionState` (a publisher that emits on
 every auth/session change and when an active session passes its expiry), `currentSessionState()`,
-`refreshSession()` (force-refresh; throws `RainSDKError.tokenExpired` when the session cannot be
+`refreshSession()` (force-refresh; throws `RainError.tokenExpired` when the session cannot be
 refreshed), and `close()` (stops the passive watcher when discarding the provider). Configure the
 behavior via `TurnkeyConfig.sessionPolicy` and react to unrecoverable expiry via
 `TurnkeyConfig.onSessionExpired`.

@@ -100,7 +100,7 @@ public struct PortalProvider: ProviderDescriptor {
       onSessionExpired: config.onSessionExpired,
       installToken: { token in
         guard let (handle, rpcConfig) = state.resolved() else {
-          throw RainSDKError.sdkNotInitialized
+          throw RainError.sdkNotInitialized
         }
         let rebuilt = try portalFactory(token, rpcConfig)
         handle.replace(with: rebuilt)
@@ -128,14 +128,14 @@ public struct PortalProvider: ProviderDescriptor {
 
   /// Re-mints via `onSessionTokenNeeded` and rebuilds the client; `.tokenExpired` on failure.
   public func refreshSession() async throws {
-    guard state.resolved() != nil else { throw RainSDKError.sdkNotInitialized }
+    guard state.resolved() != nil else { throw RainError.sdkNotInitialized }
     try await coordinator.refreshNow()
   }
 
   /// Installs a host-minted token (same Portal client) and rebuilds the client around it.
   /// Throws `.invalidConfig` when the token cannot be installed; the current client stays live.
   public func updateSessionToken(_ sessionToken: String) async throws {
-    guard state.resolved() != nil else { throw RainSDKError.sdkNotInitialized }
+    guard state.resolved() != nil else { throw RainError.sdkNotInitialized }
     try await coordinator.installNow(sessionToken)
   }
 
@@ -146,7 +146,7 @@ public struct PortalProvider: ProviderDescriptor {
 
   public func create(context: ProviderContext) async throws -> any WalletProvider {
     guard !config.sessionToken.isEmpty else {
-      throw RainSDKError.unauthorized
+      throw RainError.unauthorized(details: "Portal session token must not be empty")
     }
 
     // Configs are already validated by RainSdk.Builder.build(); just map to Portal's form.
@@ -163,10 +163,10 @@ public struct PortalProvider: ProviderDescriptor {
         tokenStore: context.tokenStore,
         sessions: coordinator
       )
-    } catch let error as RainSDKError {
+    } catch let error as RainError {
       throw error
     } catch {
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 

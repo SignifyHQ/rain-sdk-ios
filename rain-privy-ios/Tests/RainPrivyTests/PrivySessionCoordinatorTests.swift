@@ -79,7 +79,7 @@ struct PrivySessionCoordinatorTests {
 
   private func privyAuthError() -> Error {
     // The mapping-independent auth signal the coordinator recognizes.
-    RainSDKError.tokenExpired
+    RainError.tokenExpired
   }
 
   // MARK: - Auth-state guard
@@ -90,7 +90,7 @@ struct PrivySessionCoordinatorTests {
     let coordinator = makeCoordinator(auth: auth)
     let runs = Counter()
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { runs.increment() }
     }
     #expect(runs.value == 0)
@@ -102,7 +102,7 @@ struct PrivySessionCoordinatorTests {
     let hookCalls = Counter()
     let coordinator = makeCoordinator(auth: auth, onSessionExpired: { hookCalls.increment() })
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeRead { }
     }
     #expect(hookCalls.value == 0)
@@ -138,7 +138,7 @@ struct PrivySessionCoordinatorTests {
     let coordinator = makeCoordinator(auth: auth, onSessionExpired: { hookCalls.increment() })
 
     for _ in 0..<2 {
-      await #expect(throws: RainSDKError.tokenExpired) {
+      await #expect(throws: RainError.tokenExpired) {
         _ = try await coordinator.executeRead { throw self.privyAuthError() }
       }
     }
@@ -151,7 +151,7 @@ struct PrivySessionCoordinatorTests {
     let attempts = Counter()
     let coordinator = makeCoordinator(auth: auth)
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await coordinator.executeWrite {
         attempts.increment()
         throw self.privyAuthError()
@@ -266,7 +266,7 @@ struct PrivySessionCoordinatorTests {
     let hookCalls = Counter()
     let coordinator = makeCoordinator(auth: auth, onSessionExpired: { hookCalls.increment() })
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       try await coordinator.refreshNow()
     }
     #expect(hookCalls.value == 1)

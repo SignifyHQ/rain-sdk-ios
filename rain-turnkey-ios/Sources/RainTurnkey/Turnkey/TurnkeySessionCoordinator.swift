@@ -8,7 +8,7 @@ import RainCore
 /// retry, and transient-failure backoff, per `TurnkeySessionPolicy`. Same shape as the Portal and
 /// Privy coordinators, adapted to Turnkey's externally-owned session.
 ///
-/// Terminal auth failures always surface as `RainSDKError.tokenExpired` and fire the host's
+/// Terminal auth failures always surface as `RainError.tokenExpired` and fire the host's
 /// `onSessionExpired` hook once per session death; the hook re-arms when a live session is
 /// seen again.
 internal final class TurnkeySessionCoordinator: @unchecked Sendable {
@@ -120,7 +120,7 @@ internal final class TurnkeySessionCoordinator: @unchecked Sendable {
   }
 
   /// Forces a session refresh through Turnkey regardless of remaining lifetime. Throws
-  /// `RainSDKError.tokenExpired` (after firing the expiry hook) when the refresh fails.
+  /// `RainError.tokenExpired` (after firing the expiry hook) when the refresh fails.
   internal func refreshNow() async throws {
     if turnkey.session != nil {
       lock.withLock { sawSession = true }
@@ -212,7 +212,7 @@ internal final class TurnkeySessionCoordinator: @unchecked Sendable {
   }
 
   /// The current session, refreshed first when it is expired or within the refresh buffer.
-  /// Throws `RainSDKError.tokenExpired` when no usable session can be produced.
+  /// Throws `RainError.tokenExpired` when no usable session can be produced.
   private func ensureValidSession() async throws -> Session {
     // Turnkey restores persisted sessions asynchronously after launch; a call racing that
     // restore must wait it out rather than misreport a valid session as expired.
@@ -259,7 +259,7 @@ internal final class TurnkeySessionCoordinator: @unchecked Sendable {
     return refreshed
   }
 
-  /// Single-flighted refresh; a failure surfaces as `RainSDKError.tokenExpired`.
+  /// Single-flighted refresh; a failure surfaces as `RainError.tokenExpired`.
   private func performRefreshOrExpire() async throws {
     do {
       try await performRefresh()
@@ -276,7 +276,7 @@ internal final class TurnkeySessionCoordinator: @unchecked Sendable {
       if let existing = refreshTask { return existing }
       let task = Task { [turnkey, policy] in
         try await turnkey.refreshTurnkeySession(
-          expirationSeconds: policy.refreshExpirationSeconds
+          expirationSeconds: policy.refreshExpirationSeconds.map(String.init)
         )
       }
       refreshTask = task
@@ -295,7 +295,7 @@ internal final class TurnkeySessionCoordinator: @unchecked Sendable {
     }
   }
 
-  private func expiredError(_ cause: Error? = nil) -> RainSDKError {
+  private func expiredError(_ cause: Error? = nil) -> RainError {
     if let cause {
       RainLogger.warning("Rain SDK: Turnkey session is no longer usable: \(cause)")
     }
@@ -328,13 +328,13 @@ internal final class TurnkeySessionCoordinator: @unchecked Sendable {
   ) -> TurnkeySessionState {
     if case .loading = auth { return .loading }
     guard let session, case .authenticated = auth else { return .unauthenticated }
-    return session.exp <= now ? .expired : .active(expiresAt: session.exp)
+    return session.exp <= now ? .expired : .active(expiresAtEpochSeconds: session.exp)
   }
 
   private func isAuthFailure(_ error: Error) -> Bool {
     if let history = error as? TurnkeyHistoryError { return history.statusCode == 401 }
     // `.from` unwraps TurnkeySwiftError wrappers and TurnkeyRequestError.apiError(401) alike.
-    return RainSDKError.from(underlying: error) == .tokenExpired
+    return RainError.from(underlying: error) == .tokenExpired
   }
 
   private func isTransient(_ error: Error) -> Bool {

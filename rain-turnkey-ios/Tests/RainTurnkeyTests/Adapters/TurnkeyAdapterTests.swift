@@ -33,7 +33,7 @@ struct TurnkeyAdapterTests {
     let mockTurnkey = MockTurnkey(wallets: [])
     let (manager, turnkey, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainError.walletUnavailable()) {
       _ = try await manager.getWalletAddress()
     }
     #expect(turnkey.refreshWalletsCallCount == 1)
@@ -68,7 +68,7 @@ struct TurnkeyAdapterTests {
     let mockTurnkey = MockTurnkey(wallets: [])
     let (manager, turnkey, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainError.walletUnavailable()) {
       _ = try await manager.getWalletAddress()
     }
 
@@ -120,7 +120,7 @@ struct TurnkeyAdapterTests {
 
     // The cache is evicted and, with no session left, the re-resolve surfaces the typed
     // re-auth signal rather than a generic wallet-unavailable.
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await manager.getWalletAddress()
     }
   }
@@ -134,7 +134,7 @@ struct TurnkeyAdapterTests {
 
     // A dead wallet session affects every chain identically; an empty list here would read
     // as zero balances rather than as "re-authenticate".
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await manager.getAllBalances()
     }
   }
@@ -220,7 +220,7 @@ struct TurnkeyAdapterTests {
 
     let (manager, _, _) = TestManagers.turnkeyManager()
 
-    await #expect(throws: RainSDKError.networkError(underlying: NSError(domain: "x", code: 0))) {
+    await #expect(throws: RainError.networkError(underlying: NSError(domain: "x", code: 0))) {
       _ = try await manager.getBalance(
         chainId: 1,
         token: .contract(address: TestFixtures.usdcAddress)
@@ -460,7 +460,7 @@ struct TurnkeyAdapterTests {
     let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    await #expect(throws: RainSDKError.invalidRecipient(address: "", reason: "")) {
+    await #expect(throws: RainError.invalidRecipient(address: "", reason: "")) {
       _ = try await manager.sendNative(chainId: 1, to: "0x1234", amount: 1.0)
     }
     #expect(client.ethSendTransactionCalls.isEmpty)
@@ -472,7 +472,7 @@ struct TurnkeyAdapterTests {
     let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    await #expect(throws: RainSDKError.invalidRecipient(address: "", reason: "")) {
+    await #expect(throws: RainError.invalidRecipient(address: "", reason: "")) {
       _ = try await manager.sendToken(
         chainId: 1,
         contractAddress: TestFixtures.tokenAddress,
@@ -514,7 +514,7 @@ struct TurnkeyAdapterTests {
         )
       )
       Issue.record("Expected transactionPending after poll timeout")
-    } catch let error as RainSDKError {
+    } catch let error as RainError {
       guard case .transactionPending(let statusId) = error else {
         Issue.record("Expected transactionPending, got \(error)")
         return
@@ -605,7 +605,7 @@ struct TurnkeyAdapterTests {
 
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
+    await #expect(throws: RainError.providerError(underlying: NSError(domain: "x", code: 0))) {
       _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
@@ -628,7 +628,7 @@ struct TurnkeyAdapterTests {
 
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
+    await #expect(throws: RainError.providerError(underlying: NSError(domain: "x", code: 0))) {
       _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
@@ -675,7 +675,7 @@ struct TurnkeyAdapterTests {
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
     // An ERC-20 transfer carries calldata, so 21000 would run out of gas on-chain and burn the fee.
-    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    await #expect(throws: RainError.internalError(details: "")) {
       _ = try await manager.sendToken(
         chainId: 1,
         contractAddress: TestFixtures.tokenAddress,
@@ -781,7 +781,7 @@ struct TurnkeyAdapterTests {
     let (manager, _, builder) = TestManagers.turnkeyManager()
     builder.mockNonce = BigUInt(1)
 
-    await #expect(throws: RainSDKError.networkError(underlying: NSError(domain: "x", code: 0))) {
+    await #expect(throws: RainError.networkError(underlying: NSError(domain: "x", code: 0))) {
       _ = try await manager.estimateWithdrawalFee(
         chainId: 1,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -825,7 +825,7 @@ struct TurnkeyAdapterTests {
       UnsignedSolanaTransfer(transaction: [1, 2, 3], recentBlockhash: "hash")
     )
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    await #expect(throws: RainError.internalError(details: "")) {
       _ = try await manager.estimateWithdrawalFee(chainId: SolanaChains.mainnet, prepared: prepared)
     }
   }
@@ -852,11 +852,11 @@ struct TurnkeyAdapterTests {
     #expect(fee == Decimal(string: "0.00042"))
   }
 
-  @Test("estimateGas throws internalLogicError when the provider cannot estimate fees")
+  @Test("estimateGas throws internalError when the provider cannot estimate fees")
   func testEstimateGasUnsupportedProvider() async throws {
     let (manager, _) = try await TestManagers.stubProviderManager()
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    await #expect(throws: RainError.internalError(details: "")) {
       _ = try await manager.estimateGas(
         chainId: 1,
         from: TestFixtures.walletAddress,
@@ -880,7 +880,7 @@ struct TurnkeyAdapterTests {
 
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
+    await #expect(throws: RainError.providerError(underlying: NSError(domain: "x", code: 0))) {
       _ = try await manager.getTransactions(chainId: 1)
     }
   }
@@ -892,7 +892,7 @@ struct TurnkeyAdapterTests {
     let mockTurnkey = MockTurnkey(session: nil)
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
@@ -906,7 +906,7 @@ struct TurnkeyAdapterTests {
     let mockTurnkey = MockTurnkey(client: nil)
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,

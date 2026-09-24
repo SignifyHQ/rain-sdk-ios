@@ -38,7 +38,7 @@ struct LivePrivyAuthSource: PrivyAuthSource {
   }
 
   func refreshUser() async throws {
-    guard let user = await privy.getUser() else { throw RainSDKError.tokenExpired }
+    guard let user = await privy.getUser() else { throw RainError.tokenExpired }
     try await user.refresh()
   }
 
@@ -61,7 +61,7 @@ struct LivePrivyAuthSource: PrivyAuthSource {
 /// Unlike the Turnkey coordinator there is no refresh machinery: the Privy SDK single-flights
 /// its own session refresh internally before every wallet/indexer call, so an auth failure that
 /// reaches Rain means Privy already tried and the session is truly dead. Terminal auth failures
-/// surface as `RainSDKError.tokenExpired` and fire the hook once per session death; the hook
+/// surface as `RainError.tokenExpired` and fire the hook once per session death; the hook
 /// re-arms when a live session is seen again.
 ///
 /// Touches the vendor only from `create`-time paths — never from `init` — so a provider built
@@ -166,7 +166,7 @@ internal final class PrivySessionCoordinator: @unchecked Sendable {
   }
 
   /// Classifies a failure from a guarded call: terminal auth failures become
-  /// `RainSDKError.tokenExpired` (firing the hook); everything else passes through.
+  /// `RainError.tokenExpired` (firing the hook); everything else passes through.
   internal func classifyFailure(_ error: Error) -> Error {
     if error is CancellationError { return error }
     if isAuthFailure(error) { return expiredError(error) }
@@ -174,7 +174,7 @@ internal final class PrivySessionCoordinator: @unchecked Sendable {
   }
 
   /// Forces a session refresh through Privy (`PrivyUser.refresh`). Throws
-  /// `RainSDKError.tokenExpired` (after firing the expiry hook) when no user exists or the
+  /// `RainError.tokenExpired` (after firing the expiry hook) when no user exists or the
   /// refresh fails.
   internal func refreshNow() async throws {
     let state = auth.currentSessionState()
@@ -287,7 +287,7 @@ internal final class PrivySessionCoordinator: @unchecked Sendable {
     }
   }
 
-  private func expiredError(_ cause: Error? = nil) -> RainSDKError {
+  private func expiredError(_ cause: Error? = nil) -> RainError {
     if let cause {
       RainLogger.warning("Rain SDK: Privy session is no longer usable: \(cause)")
     }
@@ -310,7 +310,7 @@ internal final class PrivySessionCoordinator: @unchecked Sendable {
   }
 
   private func isAuthFailure(_ error: Error) -> Bool {
-    if let rain = error as? RainSDKError { return rain == .tokenExpired }
+    if let rain = error as? RainError { return rain == .tokenExpired }
     return PrivyErrorMapping.map(error) == .tokenExpired
   }
 

@@ -23,29 +23,29 @@ struct WalletInformationTests {
     #expect(address == TestFixtures.walletAddress)
   }
 
-  // MARK: - generateWalletAddressQRCode
+  // MARK: - generateAddressQRCode(address: nil) — the wallet's own address
 
-  @Test("generateWalletAddressQRCode returns valid PNG data")
+  @Test("generateAddressQRCode(address: nil) returns valid PNG data")
   func testGenerateQRCodeSuccess() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    let imageData = try await manager.generateWalletAddressQRCode(dimension: 256)
+    let imageData = try await manager.generateAddressQRCode(address: nil, dimension: 256, backgroundColor: nil, foregroundColor: nil)
     expectPNG(imageData)
   }
 
-  @Test("generateWalletAddressQRCode honors custom dimension")
+  @Test("generateAddressQRCode(address: nil) honors custom dimension")
   func testGenerateQRCodeCustomDimension() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress("0xabcdef1234567890", forNamespace: PortalNamespace.eip155)
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    let imageData = try await manager.generateWalletAddressQRCode(dimension: 128)
+    let imageData = try await manager.generateAddressQRCode(address: nil, dimension: 128, backgroundColor: nil, foregroundColor: nil)
     expectPNG(imageData)
   }
 
-  @Test("generateWalletAddressQRCode honors custom colors")
+  @Test("generateAddressQRCode(address: nil) honors custom colors")
   func testGenerateQRCodeCustomColors() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
@@ -53,7 +53,8 @@ struct WalletInformationTests {
 
     let bg = CGColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1)
     let fg = CGColor(red: 1, green: 1, blue: 1, alpha: 1)
-    let imageData = try await manager.generateWalletAddressQRCode(
+    let imageData = try await manager.generateAddressQRCode(
+      address: nil,
       dimension: 200,
       backgroundColor: bg,
       foregroundColor: fg

@@ -16,7 +16,7 @@ struct PrivyManagerTests {
   @Test("throws tokenExpired when no authenticated user")
   func noUserThrowsTokenExpired() async {
     let manager = PrivyManager(source: FakeWalletSource(wallets: nil))
-    await #expect(throws: RainSDKError.tokenExpired) {
+    await #expect(throws: RainError.tokenExpired) {
       _ = try await manager.address(override: nil)
     }
   }
@@ -24,7 +24,7 @@ struct PrivyManagerTests {
   @Test("throws walletUnavailable when user has no embedded wallet")
   func noWalletThrowsWalletUnavailable() async {
     let manager = PrivyManager(source: FakeWalletSource(wallets: []))
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainError.walletUnavailable()) {
       _ = try await manager.address(override: nil)
     }
   }
@@ -44,7 +44,7 @@ struct PrivyManagerTests {
   func overrideMismatchThrowsWalletUnavailable() async {
     let signer = FakeSigner(address: Self.wallet)
     let manager = PrivyManager(source: FakeWalletSource(wallets: [signer]))
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainError.walletUnavailable()) {
       _ = try await manager.signTypedData(walletAddress: "0xNOPE", typedDataJson: "{}")
     }
   }
@@ -154,9 +154,9 @@ struct PrivyManagerTests {
       _ = try await manager.signTypedData(walletAddress: Self.wallet, typedDataJson: "{}")
       Issue.record("expected the raw provider error to propagate")
     } catch {
-      // Must NOT be pre-wrapped in RainSDKError — core's `RainSDKError.from(underlying:)`
-      // short-circuits on RainSDKError, so pre-wrapping would hide classification.
-      #expect(!(error is RainSDKError))
+      // Must NOT be pre-wrapped in RainError — core's `RainError.from(underlying:)`
+      // short-circuits on RainError, so pre-wrapping would hide classification.
+      #expect(!(error is RainError))
       #expect((error as NSError).domain == "PrivyTest")
       #expect((error as NSError).code == 4001)
     }

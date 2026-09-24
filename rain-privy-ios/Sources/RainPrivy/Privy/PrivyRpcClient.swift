@@ -33,7 +33,7 @@ final class PrivyRpcClient: Sendable {
     purpose: CallPurpose = .read
   ) async throws -> String {
     guard let url = URL(string: rpcUrl) else {
-      throw RainSDKError.invalidRpcUrl(rpcUrl)
+      throw RainError.invalidRpcUrl(rpcUrl)
     }
 
     do {
@@ -51,7 +51,7 @@ final class PrivyRpcClient: Sendable {
 
       let (data, _) = try await session.data(for: request)
       guard let response = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-        throw RainSDKError.internalLogicError(
+        throw RainError.internalError(
           details: "Unexpected RPC response payload for method \(method)"
         )
       }
@@ -63,16 +63,16 @@ final class PrivyRpcClient: Sendable {
       }
 
       guard let result = response["result"] as? String else {
-        throw RainSDKError.internalLogicError(
+        throw RainError.internalError(
           details: "Unexpected RPC result for method \(method)"
         )
       }
       return result
-    } catch let error as RainSDKError {
+    } catch let error as RainError {
       throw error
     } catch {
       RainLogger.error("Rain SDK: Privy JSON-RPC failure for \(method): \(error)")
-      throw RainSDKError.from(underlying: error)
+      throw RainError.from(underlying: error)
     }
   }
 
@@ -80,19 +80,19 @@ final class PrivyRpcClient: Sendable {
   /// Simulation calls treat "revert" as a simulation verdict (checked before
   /// "insufficient funds"); reads never do, since a revert on a read is an internal failure. No
   /// user-rejection keyword mapping: node errors are never user actions. Anything unrecognized
-  /// falls back to `.internalLogicError` with the code and message preserved in the details.
+  /// falls back to `.internalError` with the code and message preserved in the details.
   private static func classifyNodeError(
     code: Int,
     message: String,
     purpose: CallPurpose
-  ) -> RainSDKError {
+  ) -> RainError {
     let lowered = message.lowercased()
     let details = "RPC error [\(code)]: \(message)"
     switch purpose {
     case .simulation:
       if lowered.contains("revert") {
         return .transactionSimulationFailed(
-          underlying: RainSDKError.internalLogicError(details: details)
+          underlying: RainError.internalError(details: details)
         )
       }
       if lowered.contains("insufficient funds") {
@@ -103,6 +103,6 @@ final class PrivyRpcClient: Sendable {
         return .insufficientFunds(required: "unknown", available: "unknown")
       }
     }
-    return .internalLogicError(details: details)
+    return .internalError(details: details)
   }
 }

@@ -4,7 +4,7 @@ import RainCore
 @testable import RainPrivy
 
 /// Wire-format coverage: node `error` objects classify purpose-aware inside the client,
-/// transport failures and non-JSON bodies go through `RainSDKError.from(underlying:)`.
+/// transport failures and non-JSON bodies go through `RainError.from(underlying:)`.
 @Suite("Privy RPC Client Tests")
 struct PrivyRpcClientTests {
   private func client() -> PrivyRpcClient {
@@ -21,7 +21,7 @@ struct PrivyRpcClientTests {
     #expect(result == "0x2a")
   }
 
-  @Test("surfaces an unrecognized JSON-RPC error object as internalLogicError with code and message")
+  @Test("surfaces an unrecognized JSON-RPC error object as internalError with code and message")
   func rpcErrorObject() async {
     let host = "rpc-err.rpc"
     StubURLProtocol.setHandler(host: host) { _ in RpcStub.error(code: -32000, message: "boom") }
@@ -30,13 +30,13 @@ struct PrivyRpcClientTests {
       _ = try await client().callForHexResult(
         rpcUrl: "https://\(host)/", method: "eth_call", params: [])
       Issue.record("expected an error")
-    } catch let error as RainSDKError {
+    } catch let error as RainError {
       // The node's own code and message must survive classification in the details.
-      #expect(error.errorCode == "RAIN_502")
+      #expect(error.code == "RAIN_502")
       #expect(error.localizedDescription.contains("boom"))
       #expect(error.localizedDescription.contains("-32000"))
     } catch {
-      Issue.record("expected RainSDKError, got \(error)")
+      Issue.record("expected RainError, got \(error)")
     }
   }
 
@@ -49,7 +49,7 @@ struct PrivyRpcClientTests {
       RpcStub.error(code: 3, message: "execution reverted")
     }
 
-    await #expect(throws: RainSDKError.transactionSimulationFailed(underlying: NSError(domain: "", code: 0))) {
+    await #expect(throws: RainError.transactionSimulationFailed(underlying: NSError(domain: "", code: 0))) {
       _ = try await client().callForHexResult(
         rpcUrl: "https://\(host)/", method: "eth_call", params: [], purpose: .simulation)
     }
@@ -62,7 +62,7 @@ struct PrivyRpcClientTests {
       RpcStub.error(code: 3, message: "execution reverted: insufficient funds for transfer")
     }
 
-    await #expect(throws: RainSDKError.transactionSimulationFailed(underlying: NSError(domain: "", code: 0))) {
+    await #expect(throws: RainError.transactionSimulationFailed(underlying: NSError(domain: "", code: 0))) {
       _ = try await client().callForHexResult(
         rpcUrl: "https://\(host)/", method: "eth_call", params: [], purpose: .simulation)
     }
@@ -75,13 +75,13 @@ struct PrivyRpcClientTests {
       RpcStub.error(code: -32000, message: "insufficient funds for gas * price + value")
     }
 
-    await #expect(throws: RainSDKError.insufficientFunds(required: "", available: "")) {
+    await #expect(throws: RainError.insufficientFunds(required: "", available: "")) {
       _ = try await client().callForHexResult(
         rpcUrl: "https://\(host)/", method: "eth_estimateGas", params: [])
     }
   }
 
-  @Test("read: access denied maps to internalLogicError, not userRejected")
+  @Test("read: access denied maps to internalError, not userRejected")
   func readAccessDeniedIsNotUserRejected() async {
     let host = "rpc-read-denied.rpc"
     StubURLProtocol.setHandler(host: host) { _ in
@@ -89,42 +89,42 @@ struct PrivyRpcClientTests {
     }
 
     // A node message is never a user action; the old keyword mapping misfiled this as RAIN_401.
-    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    await #expect(throws: RainError.internalError(details: "")) {
       _ = try await client().callForHexResult(
         rpcUrl: "https://\(host)/", method: "eth_getBalance", params: [])
     }
   }
 
-  @Test("read: a revert maps to internalLogicError, not a simulation verdict")
+  @Test("read: a revert maps to internalError, not a simulation verdict")
   func readRevertIsInternal() async {
     let host = "rpc-read-revert.rpc"
     StubURLProtocol.setHandler(host: host) { _ in
       RpcStub.error(code: 3, message: "execution reverted")
     }
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    await #expect(throws: RainError.internalError(details: "")) {
       _ = try await client().callForHexResult(
         rpcUrl: "https://\(host)/", method: "eth_call", params: [])
     }
   }
 
-  @Test("maps a non-string result to internalLogicError")
+  @Test("maps a non-string result to internalError")
   func nonStringResult() async {
     let host = "rpc-nonstring.rpc"
     StubURLProtocol.setHandler(host: host) { _ in RpcStub.rawResult(["unexpected": true]) }
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+    await #expect(throws: RainError.internalError(details: "")) {
       _ = try await client().callForHexResult(
         rpcUrl: "https://\(host)/", method: "eth_getBalance", params: [])
     }
   }
 
-  @Test("maps a non-JSON body to a RainSDKError")
+  @Test("maps a non-JSON body to a RainError")
   func nonJsonBody() async {
     let host = "rpc-nonjson.rpc"
     StubURLProtocol.setHandler(host: host) { _ in Data("not json at all".utf8) }
 
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await client().callForHexResult(
         rpcUrl: "https://\(host)/", method: "eth_getBalance", params: [])
     }
@@ -132,7 +132,7 @@ struct PrivyRpcClientTests {
 
   @Test("rejects an unparseable RPC url with invalidRpcUrl")
   func invalidUrl() async {
-    await #expect(throws: RainSDKError.invalidRpcUrl("")) {
+    await #expect(throws: RainError.invalidRpcUrl("")) {
       _ = try await client().callForHexResult(
         rpcUrl: "", method: "eth_getBalance", params: [])
     }
@@ -145,10 +145,10 @@ struct PrivyRpcClientTests {
       _ = try await client().callForHexResult(
         rpcUrl: "https://rpc-unreachable.rpc/", method: "eth_getBalance", params: [])
       Issue.record("expected an error")
-    } catch let error as RainSDKError {
-      #expect(error.errorCode == "RAIN_301")
+    } catch let error as RainError {
+      #expect(error.code == "RAIN_301")
     } catch {
-      Issue.record("expected RainSDKError, got \(error)")
+      Issue.record("expected RainError, got \(error)")
     }
   }
 }

@@ -83,7 +83,7 @@ struct EVMChainReaderTests {
       MockURLProtocol.stub(method: "eth_getBalance", result: "0xZZ")
 
       let reader = makeReader()
-      await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+      await #expect(throws: RainError.internalError(details: "")) {
         _ = try await reader.getNativeBalance(chainId: 1, walletAddress: walletAddress)
       }
     }
@@ -174,7 +174,7 @@ struct EVMChainReaderTests {
       MockURLProtocol.stub(method: "eth_call", result: "0x")
 
       let reader = makeReader()
-      await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+      await #expect(throws: RainError.internalError(details: "")) {
         _ = try await reader.getERC20Allowance(
           chainId: 1,
           tokenAddress: usdcAddress,
@@ -188,7 +188,7 @@ struct EVMChainReaderTests {
   @Test("getERC20Allowance rejects a malformed spender before hitting the network")
   func testGetERC20AllowanceRejectsMalformedSpender() async throws {
     let reader = makeReader()
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await reader.getERC20Allowance(
         chainId: 1,
         tokenAddress: usdcAddress,
@@ -278,7 +278,7 @@ struct EVMChainReaderTests {
       MockURLProtocol.stub(method: "eth_getTransactionReceipt", result: ["status": "0x1"])
 
       let reader = makeReader()
-      await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+      await #expect(throws: RainError.internalError(details: "")) {
         _ = try await reader.getTransactionReceipt(chainId: 1, transactionHash: txHash)
       }
     }
@@ -294,7 +294,7 @@ struct EVMChainReaderTests {
       )
 
       let reader = makeReader()
-      await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+      await #expect(throws: RainError.internalError(details: "")) {
         _ = try await reader.getTransactionReceipt(chainId: 1, transactionHash: txHash)
       }
     }
@@ -309,7 +309,7 @@ struct EVMChainReaderTests {
       )
 
       let reader = makeReader()
-      await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+      await #expect(throws: RainError.internalError(details: "")) {
         _ = try await reader.getTransactionReceipt(chainId: 1, transactionHash: txHash)
       }
     }
@@ -324,7 +324,7 @@ struct EVMChainReaderTests {
       )
 
       let reader = makeReader()
-      await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+      await #expect(throws: RainError.internalError(details: "")) {
         _ = try await reader.getTransactionReceipt(chainId: 1, transactionHash: txHash)
       }
     }
@@ -340,7 +340,7 @@ struct EVMChainReaderTests {
       )
 
       let reader = makeReader()
-      await #expect(throws: RainSDKError.internalLogicError(details: "")) {
+      await #expect(throws: RainError.internalError(details: "")) {
         _ = try await reader.getTransactionReceipt(chainId: 1, transactionHash: txHash)
       }
     }
@@ -358,7 +358,7 @@ struct EVMChainReaderTests {
       ]
 
       for hash in malformed {
-        await #expect(throws: RainSDKError.invalidConfig(details: "")) {
+        await #expect(throws: RainError.invalidConfig(details: "")) {
           _ = try await reader.getTransactionReceipt(chainId: 1, transactionHash: hash)
         }
       }
@@ -371,7 +371,7 @@ struct EVMChainReaderTests {
   @Test("getNativeBalance throws when the wallet address is syntactically invalid")
   func testGetNativeBalanceRejectsMalformedAddress() async throws {
     let reader = makeReader()
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await reader.getNativeBalance(chainId: 1, walletAddress: "not-an-address")
     }
   }
@@ -379,7 +379,7 @@ struct EVMChainReaderTests {
   @Test("getERC20Balance throws when the token address is syntactically invalid")
   func testGetERC20BalanceRejectsMalformedToken() async throws {
     let reader = makeReader()
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await reader.getERC20Balance(
         chainId: 1,
         tokenAddress: "0xtoo-short",
@@ -483,7 +483,7 @@ struct EVMChainReaderTests {
   @Test("getBalances throws invalidConfig when chain has no RPC URL configured")
   func testGetBalancesUnknownChain() async throws {
     let reader = makeReader(chainId: 1)
-    await #expect(throws: RainSDKError.self) {
+    await #expect(throws: RainError.self) {
       _ = try await reader.getBalances(chainId: 99999, walletAddress: walletAddress, tokens: [])
     }
   }
@@ -495,7 +495,7 @@ struct EVMChainReaderTests {
     do {
       _ = try await reader.getNativeBalance(chainId: 1, walletAddress: walletAddress)
       Issue.record("Expected invalidConfig to throw")
-    } catch let error as RainSDKError {
+    } catch let error as RainError {
       if case .invalidConfig(let details) = error {
         #expect(details.contains("chainId=1"))
       } else {

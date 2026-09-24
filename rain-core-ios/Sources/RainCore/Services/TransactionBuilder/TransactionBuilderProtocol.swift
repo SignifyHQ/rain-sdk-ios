@@ -12,7 +12,7 @@ protocol TransactionBuilderProtocol {
   ///   - proxyAddress: The proxy contract address
   ///   - chainId: The chain identifier
   /// - Returns: The latest nonce as BigUInt
-  /// - Throws: RainSDKError if nonce retrieval fails
+  /// - Throws: RainError if nonce retrieval fails
   func getLatestNonce(
     proxyAddress: String,
     chainId: Int
@@ -39,7 +39,7 @@ protocol TransactionBuilderProtocol {
   ///   - nonce: The nonce value
   ///   - salt: The salt as a hex string (e.g. 0x... for the EIP-712 domain)
   /// - Returns: Serialized EIP-712 message string
-  /// - Throws: RainSDKError if message building fails
+  /// - Throws: RainError if message building fails
   func buildEIP712Message(
     chainId: Int,
     collateralProxyAddress: String,
@@ -60,7 +60,7 @@ protocol TransactionBuilderProtocol {
   ///   - withdrawAssetParameter: The encoded call's arguments — see `WithdrawAssetParameter` for
   ///     which salt/signature pair belongs to Rain and which to the wallet
   /// - Returns: Hex-encoded transaction calldata (prefixed with "0x")
-  /// - Throws: RainSDKError if ABI encoding or validation fails
+  /// - Throws: RainError if ABI encoding or validation fails
   func buildErc20TransactionForWithdrawAsset(
     ethereumContractAddress: EthereumAddress,
     withdrawAssetParameter: WithdrawAssetParameter
@@ -85,7 +85,7 @@ protocol TransactionBuilderProtocol {
   ///   - toAddress: Recipient address.
   ///   - amount: Amount in the token's smallest unit (base units).
   /// - Returns: Hex-encoded calldata (prefixed with "0x") for the transfer call.
-  /// - Throws: RainSDKError if RPC URL or addresses are invalid, or if encoding fails.
+  /// - Throws: RainError if RPC URL or addresses are invalid, or if encoding fails.
   func buildERC20TransferData(
     chainId: Int,
     contractAddress: String,
@@ -104,7 +104,7 @@ protocol TransactionBuilderProtocol {
   ///   - spender: The address being approved to move the token — Rain's operator for Auth Pull.
   ///   - amount: Allowance in the token's base units. `BigUInt` max means unlimited, `0` revokes.
   /// - Returns: Hex-encoded calldata (prefixed with "0x") for the approve call.
-  /// - Throws: RainSDKError if RPC URL or addresses are invalid, or if encoding fails.
+  /// - Throws: RainError if RPC URL or addresses are invalid, or if encoding fails.
   func buildERC20ApproveData(
     chainId: Int,
     contractAddress: String,

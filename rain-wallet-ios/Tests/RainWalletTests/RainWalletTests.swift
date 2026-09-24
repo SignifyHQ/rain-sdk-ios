@@ -22,7 +22,7 @@ struct RainWalletTests {
   @Test("session states map one-to-one onto the neutral enum")
   func testSessionStateMapping() {
     #expect(RainWalletSessionState(TurnkeySessionState.loading) == .loading)
-    #expect(RainWalletSessionState(TurnkeySessionState.active(expiresAt: 42)) == .active(expiresAt: 42))
+    #expect(RainWalletSessionState(TurnkeySessionState.active(expiresAtEpochSeconds: 42)) == .active(expiresAtEpochSeconds: 42))
     #expect(RainWalletSessionState(TurnkeySessionState.expired) == .expired)
     #expect(RainWalletSessionState(TurnkeySessionState.unauthenticated) == .unauthenticated)
   }
@@ -39,7 +39,7 @@ struct RainWalletTests {
     let policy = RainWalletSessionPolicy(
       refreshBufferSeconds: 30,
       autoRefresh: false,
-      refreshExpirationSeconds: "1200",
+      refreshExpirationSeconds: 1200,
       maxTransientRetries: 5,
       initialRetryDelay: 1,
       maxRetryDelay: 8
@@ -47,7 +47,7 @@ struct RainWalletTests {
     let backing = policy.backingPolicy
     #expect(backing.refreshBufferSeconds == 30)
     #expect(backing.autoRefresh == false)
-    #expect(backing.refreshExpirationSeconds == "1200")
+    #expect(backing.refreshExpirationSeconds == 1200)
     #expect(backing.maxTransientRetries == 5)
     #expect(backing.initialRetryDelay == 1)
     #expect(backing.maxRetryDelay == 8)
@@ -62,8 +62,8 @@ struct RainWalletTests {
     )
     #expect(provider.id == .rain)
     // Sponsorship is the product: on by default, and advertised as a capability.
-    #expect(provider.capabilities == [.multiChain, .biometricGate, .gasSponsorship])
-    #expect(RainProvider(RainWalletConfig(sponsorGas: false)).capabilities == [.multiChain, .biometricGate])
+    #expect(provider.capabilities == [.export, .multiChain, .gasSponsorship])
+    #expect(RainProvider(RainWalletConfig(sponsorGas: false)).capabilities == [.export, .multiChain])
   }
 
   // MARK: - Key export
@@ -143,6 +143,35 @@ struct RainWalletTests {
   // MARK: - Passkeys + login contacts
 
   @MainActor
+  @Test("close makes the provider inert: auth and export throw invalidConfig, state reads logged out")
+  func testCloseIsTerminal() async throws {
+    let stub = StubBackendContext()
+    stub.session = Self.stubSession()
+    stub.authState = .authenticated
+    stub.wallets = [Self.dualAccountWallet()]
+    let provider = RainProvider(backing: TurnkeyProvider(
+      config: TurnkeyConfig(organizationId: "org", authProxyConfigId: "auth"),
+      context: stub,
+      managedAuth: TurnkeyManagedAuthController(context: stub, configurationError: nil)
+    ))
+    #expect(provider.hasActiveSession())
+
+    provider.close()
+    provider.close() // idempotent
+
+    #expect(!provider.hasActiveSession())
+    #expect(provider.currentAuthState() == .unauthenticated)
+    await #expect(throws: RainError.invalidConfig(details: "")) {
+      try await provider.sendLoginCode(to: .email("a@b.c"))
+    }
+    await #expect(throws: RainError.invalidConfig(details: "")) {
+      _ = try await provider.exportRecoveryPhrase()
+    }
+    await #expect(throws: RainError.invalidConfig(details: "")) { try await provider.logout() }
+    #expect(stub.exportMnemonicCalls.isEmpty)
+  }
+
+  @MainActor
   @Test("login-contact, passkey and contact-attach methods delegate to the backend")
   func testAuthDelegation() async throws {
     let stub = StubBackendContext()
@@ -201,10 +230,10 @@ struct RainWalletTests {
     struct StubDescriptor: ProviderDescriptor {
       let id: ProviderId
       func create(context: ProviderContext) async throws -> any WalletProvider {
-        throw RainSDKError.walletUnavailable
+        throw RainError.walletUnavailable()
       }
     }
-    #expect(throws: RainSDKError.self) {
+    #expect(throws: RainError.self) {
       _ = try RainSdk.builder()
         .rpcEndpoints([1: "https://mainnet.test"])
         .register(StubDescriptor(id: .rain))

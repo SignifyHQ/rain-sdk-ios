@@ -84,7 +84,7 @@ internal final class PortalSessionCoordinator: @unchecked Sendable {
   /// rejected the installed token, so this is not a session death.
   internal func installNow(_ token: String) async throws {
     guard !token.trimmingCharacters(in: .whitespaces).isEmpty else {
-      throw RainSDKError.invalidConfig(details: "Portal session token must not be empty")
+      throw RainError.invalidConfig(details: "Portal session token must not be empty")
     }
     let outcome = await runSingleFlight(joinExisting: false) {
       let previous = self.stateSubject.value
@@ -94,7 +94,7 @@ internal final class PortalSessionCoordinator: @unchecked Sendable {
     }
     if case .dead(let cause) = outcome {
       let reason = cause.map { "\($0)" } ?? "unknown error"
-      throw RainSDKError.invalidConfig(
+      throw RainError.invalidConfig(
         details: "Portal session token could not be installed: \(reason)"
       )
     }
@@ -229,7 +229,7 @@ internal final class PortalSessionCoordinator: @unchecked Sendable {
     if !lock.withLock({ stopped }) { stateSubject.send(.active) }
   }
 
-  private func expiredError(_ cause: Error? = nil) -> RainSDKError {
+  private func expiredError(_ cause: Error? = nil) -> RainError {
     if let cause {
       RainLogger.warning("Rain SDK: Portal session token is no longer usable: \(cause)")
     }
@@ -250,13 +250,13 @@ internal final class PortalSessionCoordinator: @unchecked Sendable {
   }
 
   private func isAuthFailure(_ error: Error) -> Bool {
-    if let rain = error as? RainSDKError { return rain == .tokenExpired }
+    if let rain = error as? RainError { return rain == .tokenExpired }
     return PortalErrorMapping.mapAuthOrNil(error) == .tokenExpired
   }
 
   private func isTransient(_ error: Error) -> Bool {
     if PortalErrorMapping.isTransient(error) { return true }
-    switch error as? RainSDKError {
+    switch error as? RainError {
     case .networkError: return true
     case .providerError(let underlying): return isTransient(underlying)
     default: break

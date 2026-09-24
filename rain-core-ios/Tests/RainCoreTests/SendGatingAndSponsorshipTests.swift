@@ -24,8 +24,8 @@ struct SendGatingAndSponsorshipTests {
 
   @Test("chainNotSupported carries RAIN_104 and names the chain")
   func errorCode() {
-    let error = RainSDKError.chainNotSupported(chainId: 43114, details: "read-only here")
-    #expect(error.errorCode == "RAIN_104")
+    let error = RainError.chainNotSupported(chainId: 43114, details: "read-only here")
+    #expect(error.code == "RAIN_104")
     #expect(error.errorDescription?.contains("43114") == true)
     #expect(error.errorDescription?.contains("read-only here") == true)
   }
@@ -35,7 +35,7 @@ struct SendGatingAndSponsorshipTests {
     let (manager, stub) = try await TestManagers.stubProviderManager()
     stub.unsupportedSendChainIds = [1]
 
-    await #expect(throws: RainSDKError.chainNotSupported(chainId: 1, details: "")) {
+    await #expect(throws: RainError.chainNotSupported(chainId: 1, details: "")) {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
         addresses: TestFixtures.defaultWithdrawAddresses,
@@ -74,7 +74,7 @@ struct SendGatingAndSponsorshipTests {
     let (manager, stub, _, _) = TestManagers.approvalManager()
     stub.unsupportedSendChainIds = [RainChain.baseSepolia]
 
-    await #expect(throws: RainSDKError.chainNotSupported(chainId: RainChain.baseSepolia, details: "")) {
+    await #expect(throws: RainError.chainNotSupported(chainId: RainChain.baseSepolia, details: "")) {
       _ = try await manager.approveTokenAllowance(
         chainId: RainChain.baseSepolia,
         contractAddress: TestFixtures.authPullTokens(for: [RainChain.baseSepolia])[RainChain.baseSepolia]!,

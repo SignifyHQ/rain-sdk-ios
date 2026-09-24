@@ -6,7 +6,7 @@
 - PR descriptions: human voice — first person, plain sentences, brief; cover the substance without exhaustive bullet inventories or marketing polish.
 
 ## Build & test
-- Test command: `xcodebuild -scheme RainSDK-Package -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test` (always use the iPhone 17 Pro simulator).
+- Test command: `xcodebuild -scheme RainSDK-Package -destination 'platform=iOS Simulator,name=iPhone 18 Pro' test` (always use the iPhone 18 Pro simulator).
 
 ## Architecture (post Turnkey extraction, 2026-09-03)
 
@@ -35,7 +35,8 @@ import per provider suffices. The 1.x `RainSDK` umbrella module has been REMOVED
   its URLSession overload trick stopped compiling on new Xcode). Contract call outputs from
   Boilertalk decode under the ABI output NAME as key ("" for unnamed outputs, not "0").
 - `RainTurnkey` (`rain-turnkey-ios`) — Turnkey adapter, BYO + managed modes (multi-chain
-  EVM+Solana; `.multiChain`, `.biometricGate`). `RainPortal` (`rain-portal-ios`) — Portal MPC,
+  EVM+Solana; `.export`, `.multiChain` — NOT `.biometricGate`: the vendor's enclave key has a
+  `.none` auth policy, nothing gates signing). `RainPortal` (`rain-portal-ios`) — Portal MPC,
   EVM-only. `RainPrivy` (`rain-privy-ios`) — Privy embedded wallet (EIP-1193 custody, reads via
   Rain RPC). `RainWallet` (`rain-wallet-ios`) — Rain-branded provider: a wallet-neutral renaming
   layer over managed RainTurnkey (descriptor struct `RainProvider`, id `.rain`, embedded backend
@@ -47,7 +48,7 @@ import per provider suffices. The 1.x `RainSDK` umbrella module has been REMOVED
   unconfigured in test hosts).
 - Adapters follow one shape: descriptor + config, wallet adapter over the vendor SDK, session
   coordinator/policy (`onSessionExpired`), error mapping registered via
-  `RainSDKError.registerErrorMapper` from the provider's init. Portal/Privy: auth happens OUTSIDE
+  `RainError.registerErrorMapper` from the provider's init. Portal/Privy: auth happens OUTSIDE
   Rain (host hands in an authenticated vendor object). Turnkey has two modes: BYO (same), and
   MANAGED — `TurnkeyConfig(organizationId:authProxyConfigId:)`, SDK configures the TurnkeyContext
   singleton (one-shot per process, TurnkeyManagedConfigurator) and TurnkeyProvider exposes email-OTP
@@ -156,7 +157,7 @@ Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and Rai
   fail-closed sends on chains Turnkey cannot broadcast on — a mirror of Android's WALL-31 and its
   follow-ups (TurnkeyBroadcastChains, minimal sponsored payloads with the
   gas-station nonce, sponsored Solana sends carrying the System Program key).
-  Core: `Capability.gasSponsorship`; `RainSDKError.chainNotSupported(chainId:details:)` = RAIN_104 (was 105 until PR F compacted the map);
+  Core: `Capability.gasSponsorship`; `RainError.chainNotSupported(chainId:details:)` = RAIN_104 (was 105 until PR F compacted the map);
   `WalletProvider` gains two hooks with default impls — `requireSendSupport(chainId:)` (no-op) and
   `sponsorsFees(chainId:)` (false). `RainSdkManager` gates `withdrawCollateral` and
   `approveTokenAllowance` (after config validation, before the wallet) — estimates/reads AND
@@ -192,7 +193,35 @@ Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and Rai
   platforms): NO self-broadcast fallback — Avalanche (Rain's README example chain!), Celo,
   ZKsync are read-only through Turnkey until a signRawPayload + own-RPC path exists or Turnkey
   adds the chains.
-- PR F (IN PROGRESS 2026-09-18, branch volo/refactor/move-rain-api-out-of-sdk), Rain API out of
+- PR G (IN PROGRESS 2026-09-23, branch volo/refactor/apply-platform-parity-changes), RainWallet
+  host-facing PARITY with Android (ticket list, all v5 clean breaks, no typealiases):
+  `RainSDKError` → `RainError` (file `Core/RainError.swift`); `internalLogicError` →
+  `internalError`; `errorCode` → `code`; `unauthorized` / `walletUnavailable` /
+  `withdrawalRevertedByNetwork` gained `details:` (defaulted, so bare `.walletUnavailable()`
+  still works; equality ignores payloads). `ProviderDescriptor.close()` (no-op default);
+  `RainSdk.close()` TERMINAL (reset + close descriptors; provider/first/tokenMetadata/
+  registerTokens → sdkNotInitialized after); `Builder.build()` closes descriptors replaced by a
+  re-register of the same id (a COPY of the live value is skipped — descriptors are structs, so
+  identity = same type + identical `ObjectIdentifier`s of class-typed children via `Mirror`). `RainProvider.close()` TERMINAL (auth/export
+  → invalidConfig, `currentAuthState()` → .unauthenticated, hasActiveSession false; sessionState
+  keeps reporting the process-wide backend). Capabilities: Turnkey/Rain = `[.export, .multiChain,
+  +.gasSponsorship]` — `.biometricGate` DROPPED (vendor enclave key `authPolicy: .none`, nothing
+  gates signing). RainWallet: `authState` is now the PUBLISHER + `currentAuthState()` (mirrors
+  sessionState/currentSessionState; Turnkey SPI + controller renamed the same way);
+  `RainWalletConfig.walletAddress` REMOVED; `refreshExpirationSeconds` is `Int?` on both
+  RainWallet and Turnkey policies (String only at the vendor call); `RainWalletSessionPolicy`
+  init PRECONDITIONS (non-negative, positive TTL, maxRetryDelay >= initialRetryDelay);
+  `.active(expiresAtEpochSeconds:)`. Core: `registerTokens` is `async throws` everywhere
+  (RainSdk, RainClient, manager) and every register path (incl. Builder at build()) runs
+  `TokenInfoValidation` (EVM `0x`+40 hex with EIP-55 when mixed-case, Solana base58 32 bytes,
+  decimals 0...77, whole list first); `TokenMetadataStore.resolvedTokenInfo/decimals` THROW
+  invalidConfig on chain decimals outside 0...77 (never cached); `RainSdk.tokenMetadata` `async
+  throws` — invalidConfig for no RPC endpoint / malformed address / out-of-range decimals, nil
+  reserved for "could not establish". DELETED: `generateWalletAddressQRCode`, `Deprecated.swift`
+  (all 1.x shims), Portal `DeprecatedAPITests`. `getTokenAllowance(chainId:contractAddress:
+  spender:owner:)` (owner last, like confirmTokenAllowance + Android). confirmTokenAllowance
+  doc: lapsed window = `transactionPending`, not networkError.
+- PR F (DONE 2026-09-22, merged as #40), Rain API out of
   the SDK — see the RainCore bullet above. Deleted: `Services/RainApi/*`, `RainApiEnvironment`,
   `RainCollateralContract`, `RainSdk.fetchCollateralContracts/fetchCollateralContract/
   fetchAdminSignature/configureRainApi/isRainApiConfigured`, builder `rainApiEnvironment(_:)` /

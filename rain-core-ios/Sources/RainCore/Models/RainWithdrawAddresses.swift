@@ -41,7 +41,7 @@ public struct RainWithdrawAddresses: Sendable, Hashable {
   /// Checksums one address, throwing `invalidConfig` when it is not a valid EVM address.
   internal static func checksummed(_ address: String, label: String) throws -> String {
     guard let parsed = EthereumAddress.parse(address) else {
-      throw RainSDKError.invalidConfig(details: "Invalid \(label) format: \(address)")
+      throw RainError.invalidConfig(details: "Invalid \(label) format: \(address)")
     }
     return parsed.hex(eip55: true)
   }

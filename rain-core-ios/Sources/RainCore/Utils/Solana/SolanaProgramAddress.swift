@@ -50,10 +50,10 @@ internal enum SolanaProgramAddress {
     programId: [UInt8]
   ) throws -> (address: [UInt8], bump: UInt8) {
     guard seeds.count < maxSeeds else {
-      throw RainSDKError.internalLogicError(details: "Too many PDA seeds: \(seeds.count)")
+      throw RainError.internalError(details: "Too many PDA seeds: \(seeds.count)")
     }
     for seed in seeds where seed.count > maxSeedLength {
-      throw RainSDKError.internalLogicError(details: "PDA seed longer than \(maxSeedLength) bytes")
+      throw RainError.internalError(details: "PDA seed longer than \(maxSeedLength) bytes")
     }
 
     var bump = 255
@@ -69,7 +69,7 @@ internal enum SolanaProgramAddress {
       }
       bump -= 1
     }
-    throw RainSDKError.internalLogicError(details: "No off-curve program address for the given seeds")
+    throw RainError.internalError(details: "No off-curve program address for the given seeds")
   }
 
   // MARK: - ed25519
@@ -117,10 +117,10 @@ internal enum SolanaProgramAddress {
     do {
       bytes = try Base58.decode(address)
     } catch {
-      throw RainSDKError.internalLogicError(details: "Invalid Solana \(label) address: \(address)")
+      throw RainError.internalError(details: "Invalid Solana \(label) address: \(address)")
     }
     guard bytes.count == publicKeyLength else {
-      throw RainSDKError.internalLogicError(
+      throw RainError.internalError(
         details: "Invalid Solana \(label) address (expected 32 bytes, got \(bytes.count)): \(address)"
       )
     }

@@ -9,7 +9,7 @@ public struct RainTokenApprovalResult: Sendable, Equatable {
   /// The on-chain transaction hash of the `approve` call.
   ///
   /// The approval is only in effect once that transaction is mined; read the allowance back
-  /// with ``RainClient/getTokenAllowance(chainId:contractAddress:owner:spender:decimals:)``
+  /// with ``RainClient/getTokenAllowance(chainId:contractAddress:spender:owner:)``
   /// to confirm.
   public let transactionHash: String
 

@@ -139,7 +139,7 @@ struct RainAuthPullConfigTests {
 
   @Test("a malformed operator address is rejected")
   func malformedOperatorRejected() throws {
-    #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try RainSdk.builder()
         .rpcEndpoints(configs([RainChain.baseSepolia]))
         .authPullConfig(.sandbox(operatorAddress: "0xnope"))
@@ -151,7 +151,7 @@ struct RainAuthPullConfigTests {
   /// looks like a successful setup.
   @Test("the zero address is rejected as an operator")
   func zeroOperatorRejected() throws {
-    #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try RainSdk.builder()
         .rpcEndpoints(configs([RainChain.baseSepolia]))
         .authPullConfig(
@@ -163,7 +163,7 @@ struct RainAuthPullConfigTests {
 
   @Test("an empty token map is rejected")
   func emptyTokenMapRejected() throws {
-    #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try RainSdk.builder()
         .rpcEndpoints(configs([RainChain.baseSepolia]))
         .authPullConfig(.custom(operatorAddress: operatorAddress, tokenAddresses: [:]))
@@ -174,7 +174,7 @@ struct RainAuthPullConfigTests {
   @Test("a malformed or zero token contract is rejected")
   func malformedTokenRejected() throws {
     for token in ["0xnope", "0x0000000000000000000000000000000000000000"] {
-      #expect(throws: RainSDKError.invalidConfig(details: "")) {
+      #expect(throws: RainError.invalidConfig(details: "")) {
         _ = try RainSdk.builder()
           .rpcEndpoints(configs([RainChain.baseSepolia]))
             .authPullConfig(
@@ -191,7 +191,7 @@ struct RainAuthPullConfigTests {
   /// A custom gateway may front either environment, but not a chain Auth Pull does not run on.
   @Test("a chain outside the known Auth Pull sets is rejected")
   func unknownChainRejected() throws {
-    #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try RainSdk.builder()
         .rpcEndpoints(configs([RainChain.avalancheTestnet]))
         .authPullConfig(
@@ -208,7 +208,7 @@ struct RainAuthPullConfigTests {
   /// the configuration could never do anything.
   @Test("a config whose chains all lack an RPC endpoint is rejected")
   func noRpcForAnyTrustedChainRejected() throws {
-    #expect(throws: RainSDKError.invalidConfig(details: "")) {
+    #expect(throws: RainError.invalidConfig(details: "")) {
       _ = try RainSdk.builder()
         .rpcEndpoints(configs([RainChain.avalancheTestnet]))
         .authPullConfig(.sandbox(operatorAddress: operatorAddress))

@@ -273,8 +273,9 @@ integration, ideally server-to-server so the program **Api-Key** never ships in 
   prepares the signature the response carries `status != "ready"` and a `retryAfter`; poll.
 
 Token name/symbol/decimals are not in the contracts response; resolve them from the address with
-`rain.tokenMetadata(chainId:address:)` (registry → registered tokens → on-chain reads; `nil` when
-decimals cannot be established, never a guess).
+`try await rain.tokenMetadata(chainId:address:)` (registry → registered tokens → on-chain reads;
+`nil` when decimals cannot be established, never a guess; throws `invalidConfig` for a malformed
+address, a chain without an RPC endpoint, or on-chain decimals outside 0...77).
 
 ```swift
 let addresses = RainWithdrawAddresses(

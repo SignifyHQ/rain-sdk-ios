@@ -5,7 +5,7 @@ import TurnkeySwift
 import RainCore
 
 /// Registers Turnkey vendor-error mapping with `RainCore`'s extensible error mapper, so Turnkey
-/// errors classify into `RainSDKError` cases without RainCore importing the Turnkey SDK.
+/// errors classify into `RainError` cases without RainCore importing the Turnkey SDK.
 /// Mirrors `PortalErrorMapping` / `PrivyErrorMapping`.
 enum TurnkeyErrorMapping {
   nonisolated(unsafe) private static var registered = false
@@ -17,12 +17,12 @@ enum TurnkeyErrorMapping {
     lock.lock(); defer { lock.unlock() }
     guard !registered else { return }
     registered = true
-    RainSDKError.registerErrorMapper(map)
+    RainError.registerErrorMapper(map)
   }
 
   /// Returns `nil` for non-Turnkey errors so the registry moves on to other mappers and the
   /// built-in fallbacks.
-  private static func map(_ error: Error) -> RainSDKError? {
+  private static func map(_ error: Error) -> RainError? {
     if let turnkeySwiftError = error as? TurnkeySwiftError {
       return mapTurnkeySwiftError(turnkeySwiftError)
     }
@@ -32,7 +32,7 @@ enum TurnkeyErrorMapping {
     return nil
   }
 
-  private static func mapTurnkeySwiftError(_ error: TurnkeySwiftError) -> RainSDKError {
+  private static func mapTurnkeySwiftError(_ error: TurnkeySwiftError) -> RainError {
     switch error {
     case .invalidSession:
       return .tokenExpired
@@ -55,11 +55,11 @@ enum TurnkeyErrorMapping {
           return .invalidLoginCode
         }
       }
-      return RainSDKError.from(underlying: underlying)
+      return RainError.from(underlying: underlying)
 
     case .failedToRetrieveOAuthCredential(_, let underlying):
       // May wrap ASAuthorizationError.canceled; recurse so user cancellation surfaces as .userRejected.
-      return RainSDKError.from(underlying: underlying)
+      return RainError.from(underlying: underlying)
 
     case .failedToSignPayload(let underlying),
          .failedToFetchWallets(let underlying),
@@ -84,7 +84,7 @@ enum TurnkeyErrorMapping {
          .failedToSetSelectedSession(let underlying),
          .keyGenerationFailed(let underlying),
          .failedToClearSession(let underlying):
-      return RainSDKError.from(underlying: underlying)
+      return RainError.from(underlying: underlying)
 
     case .invalidConfiguration,
          .missingAuthProxyConfiguration,
@@ -99,7 +99,7 @@ enum TurnkeyErrorMapping {
          .keychainAddFailed,
          .oauthInvalidURL,
          .oauthMissingIDToken:
-      return .internalLogicError(details: "Turnkey: \(error.localizedDescription)")
+      return .internalError(details: "Turnkey: \(error.localizedDescription)")
     }
   }
 
@@ -118,14 +118,14 @@ enum TurnkeyErrorMapping {
     return Int(body.message[range].dropFirst("status=".count))
   }
 
-  private static func mapTurnkeyRequestError(_ error: TurnkeyRequestError) -> RainSDKError {
+  private static func mapTurnkeyRequestError(_ error: TurnkeyRequestError) -> RainError {
     switch error {
     case .apiError(let statusCode, _):
       switch statusCode {
       case 401:
         return .tokenExpired
       case 403:
-        return .unauthorized
+        return .unauthorized(details: "Turnkey rejected the request (HTTP 403)")
       default:
         return .providerError(underlying: error)
       }
@@ -133,11 +133,11 @@ enum TurnkeyErrorMapping {
       return .networkError(underlying: underlying)
     case .sdkError(let underlying), .unknown(let underlying):
       // Underlying may be a typed error (e.g. ASAuthorizationError.canceled, NSURLError); recurse to classify it.
-      return RainSDKError.from(underlying: underlying)
+      return RainError.from(underlying: underlying)
     case .invalidResponse:
-      return .internalLogicError(details: "Turnkey invalid response")
+      return .internalError(details: "Turnkey invalid response")
     case .clientNotConfigured(let name):
-      return .internalLogicError(details: "Turnkey client not configured: \(name)")
+      return .internalError(details: "Turnkey client not configured: \(name)")
     }
   }
 }
