@@ -55,7 +55,9 @@ let package = Package(
     .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.3.0"),
     .package(url: "https://github.com/dagronf/QRCode", exact: "28.0.2"),
     .package(url: "https://github.com/portal-hq/PortalSwift.git", exact: "7.3.0"),
-    .package(url: "https://github.com/privy-io/privy-ios", from: "2.14.0"),
+    // Floor 2.16.2: earlier binaries bundle an unsigned SwiftyJSON and App Store Connect rejects
+    // the host app with ITMS-91065 (hit on the demo's first TestFlight upload, 2026-09-29).
+    .package(url: "https://github.com/privy-io/privy-ios", from: "2.16.2"),
   ],
   targets: [
     // Vendor-free core: no wallet vendor SDKs on this target.

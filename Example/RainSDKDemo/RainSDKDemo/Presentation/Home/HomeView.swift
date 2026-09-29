@@ -343,6 +343,16 @@ struct HomeView: View {
           .foregroundStyle(Color.rainTextMuted)
       }
 
+      // What the resolved provider advertises (`RainClient.capabilities`), sorted so the readout
+      // is stable across launches — testers compare it against the provider's documented set.
+      if let client = sdkService.client {
+        let names = client.capabilities.map(\.rawValue).sorted().joined(separator: ", ")
+        Text("Capabilities: \(names.isEmpty ? "none" : names)")
+          .font(RainFont.meta)
+          .tracking(-0.12)
+          .foregroundStyle(Color.rainTextMuted)
+      }
+
       // Portal's refresh goes through onSessionTokenNeeded, which needs a replacement token.
       let canRefresh = !viewModel.isLoading
         && (viewModel.mode != .portal || viewModel.canUpdatePortalToken)
