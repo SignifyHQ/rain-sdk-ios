@@ -47,6 +47,12 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/tkhq/swift-sdk.git", exact: "4.0.0"),
     .package(url: "https://github.com/Boilertalk/Web3.swift.git", exact: "0.8.8"),
+    // Declared directly because every module `import BigInt`s. Pinned to 5.3.0 — not by choice:
+    // tkhq/swift-sdk 4.0.0 → anquii/Base58 1.0.0 hard-pins `.exact("5.3.0")`, so it is the only
+    // version any consumer can resolve. 5.3.0 predates `Sendable` on `BigUInt` (added in 5.4.0);
+    // RainCore fills the gap with a retroactive conformance (`BigInt+Sendable.swift`). Lift the pin
+    // and delete that file together, once Turnkey's graph allows a newer BigInt.
+    .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.3.0"),
     .package(url: "https://github.com/dagronf/QRCode", exact: "28.0.2"),
     .package(url: "https://github.com/portal-hq/PortalSwift.git", exact: "7.3.0"),
     .package(url: "https://github.com/privy-io/privy-ios", from: "2.14.0"),
@@ -56,6 +62,7 @@ let package = Package(
     .target(
       name: "RainCore",
       dependencies: [
+        .product(name: "BigInt", package: "BigInt"),
         .product(name: "QRCode", package: "QRCode"),
         .product(name: "Web3", package: "Web3.swift"),
         .product(name: "Web3PromiseKit", package: "Web3.swift"),
@@ -76,6 +83,7 @@ let package = Package(
       name: "RainTurnkey",
       dependencies: [
         "RainCore",
+        .product(name: "BigInt", package: "BigInt"),
         .product(name: "TurnkeySwift", package: "swift-sdk"),
         .product(name: "TurnkeyHttp", package: "swift-sdk"),
         .product(name: "TurnkeyTypes", package: "swift-sdk"),
@@ -107,6 +115,7 @@ let package = Package(
       name: "RainPortal",
       dependencies: [
         "RainCore",
+        .product(name: "BigInt", package: "BigInt"),
         .product(name: "PortalSwift", package: "PortalSwift"),
       ],
       path: "rain-portal-ios/Sources/RainPortal"
@@ -123,6 +132,7 @@ let package = Package(
       name: "RainPrivy",
       dependencies: [
         "RainCore",
+        .product(name: "BigInt", package: "BigInt"),
         .product(name: "Privy", package: "privy-ios"),
       ],
       path: "rain-privy-ios/Sources/RainPrivy"

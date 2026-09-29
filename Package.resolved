@@ -1,5 +1,5 @@
 {
-  "originHash" : "11eeabcb3d33b49c1ec405c2cb7d341f0716b77142cbd5acb0e47e4dd8566a3c",
+  "originHash" : "d98bb68803436d12c5390e8f24405a1d346c6681a7e1d8bd39ec91a34cbeef3f",
   "pins" : [
     {
       "identity" : "anycodable",
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/attaswift/BigInt.git",
       "state" : {
-        "revision" : "793a7fac0bfc318e85994bf6900652e827aef33e",
-        "version" : "5.4.1"
+        "revision" : "0ed110f7555c34ff468e72e1686e59721f2b0da6",
+        "version" : "5.3.0"
       }
     },
     {
