@@ -471,6 +471,9 @@ final class HomeViewModel: ObservableObject {
       SampleLog.w("RainWallet.session", "Rain Wallet session expired, re-auth required")
       Task { @MainActor [weak self] in
         guard let self else { return }
+        // The SDK's watcher reports a logout as a session death too; an intentional Clear
+        // session must not read as an expiry.
+        guard !isClearingSession else { return }
         rainWalletSessionActive = false
         rainWalletOtpSent = false
         rainWalletOtpCode = ""
@@ -557,6 +560,64 @@ final class HomeViewModel: ObservableObject {
     } catch {
       SampleLog.e("RainWallet.passkeyAdd", "failed: \(error.localizedDescription)")
       statusText = "Adding the passkey failed: \(error.localizedDescription)"
+    }
+    isLoading = false
+  }
+
+  // MARK: - Rain Wallet contact attach
+
+  /// A passkey-only account has no login contact; attaching one (verified) gives it a second
+  /// login method. Uses the same email/phone inputs as sign-in — on a live session those fields
+  /// mean "contact to attach".
+  @Published var rainWalletAttachCodeSent = false
+  @Published var rainWalletAttachCode = ""
+
+  var canSendRainWalletAttachCode: Bool {
+    rainWalletSessionActive && rainWalletContact != nil && !isLoading && !rainWalletAttachCodeSent
+  }
+
+  var canConfirmRainWalletAttach: Bool {
+    rainWalletAttachCodeSent && !rainWalletAttachCode.trimmed.isEmpty && !isLoading
+  }
+
+  func sendRainWalletAttachCode() async {
+    guard rainWalletSessionActive, let provider = session.rainWalletProvider else {
+      statusText = "Log in with Rain Wallet first"
+      return
+    }
+    guard let contact = rainWalletContact else {
+      statusText = rainWalletUsePhone ? "Phone number is required" : "Email is required"
+      return
+    }
+    SampleLog.i("RainWallet.attach", "sending verification code (\(rainWalletUsePhone ? "sms" : "email"))")
+    isLoading = true
+    do {
+      try await provider.sendContactVerificationCode(to: contact)
+      rainWalletAttachCodeSent = true
+      statusText = "Verification code sent — enter it to attach the contact"
+    } catch {
+      SampleLog.e("RainWallet.attach", "send failed: \(error.localizedDescription)")
+      statusText = "Sending the verification code failed: \(error.localizedDescription)"
+    }
+    isLoading = false
+  }
+
+  func confirmRainWalletAttach() async {
+    guard rainWalletSessionActive, let provider = session.rainWalletProvider else {
+      statusText = "Log in with Rain Wallet first"
+      return
+    }
+    SampleLog.i("RainWallet.attach", "confirming verification code")
+    isLoading = true
+    do {
+      try await provider.confirmContactVerification(rainWalletAttachCode.trimmed)
+      rainWalletAttachCodeSent = false
+      rainWalletAttachCode = ""
+      statusText = "Contact attached — it can now be used to log in"
+    } catch {
+      SampleLog.e("RainWallet.attach", "confirm failed: \(error.localizedDescription)")
+      // A wrong code keeps the challenge alive; the user can retype it.
+      statusText = "Attaching the contact failed: \(error.localizedDescription)"
     }
     isLoading = false
   }
@@ -844,16 +905,29 @@ final class HomeViewModel: ObservableObject {
 
   // MARK: - Reset
 
+  /// True while `clearSession()` runs, so the expiry hook ignores the logout it triggers.
+  private var isClearingSession = false
+
   func clearSession() async {
     SampleLog.i("Home", "clearing session (provider logout + UI reset)")
-    // Close the provider first so its watcher does not report the logout as a death.
+    isClearingSession = true
+    defer { isClearingSession = false }
+    // Log out BEFORE resetting: `reset()` closes the provider, and a closed `RainProvider` refuses
+    // `logout()` (terminal lifecycle), which would leave the vendor session alive — the next
+    // passkey login is then refused up front and the next launch restores a "cleared" session.
+    // Beta finding 2026-09-29 (B11).
+    if let rainWalletProvider = session.rainWalletProvider {
+      do {
+        try await rainWalletProvider.logout()
+      } catch {
+        SampleLog.i("Home", "Rain Wallet logout failed: \(error.localizedDescription)")
+      }
+    }
+    // Close the provider so its watcher does not report the logout as a death.
     session.reset()
     SessionStore.clear()
     // Real logout so the next run requires fresh auth (and resume detects no session).
     TurnkeyAuthSample.logout()
-    if let rainWalletProvider = session.rainWalletProvider {
-      try? await rainWalletProvider.logout()
-    }
     await PrivyAuthSample.shared.logout()
 
     // Inputs reset (the provider choice is kept).
@@ -866,6 +940,8 @@ final class HomeViewModel: ObservableObject {
     rainWalletOtpSent = false
     rainWalletOtpCode = ""
     rainWalletSessionActive = false
+    rainWalletAttachCodeSent = false
+    rainWalletAttachCode = ""
     revealedSecret = nil
     rainWalletPhone = ""
 
