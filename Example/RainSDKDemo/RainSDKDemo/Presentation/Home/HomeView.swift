@@ -152,22 +152,23 @@ struct HomeView: View {
 
   private var rainWalletSection: some View {
     RainSectionCard(title: "Rain Wallet sign-in") {
-      // Backend identity is embedded in the SDK — only the login contact is needed.
-      if !viewModel.rainWalletSessionActive {
-        RainSegmentedTabs(
-          items: HomeViewModel.RainWalletContactKind.allCases,
-          selection: $viewModel.rainWalletContactKind,
-          title: { $0.rawValue },
-          isDisabled: viewModel.rainWalletOtpSent
-        )
-      }
+      // Backend identity is embedded in the SDK — only the login contact is needed. On a live
+      // session the same inputs name a contact to ATTACH to the account (see below).
+      RainSegmentedTabs(
+        items: HomeViewModel.RainWalletContactKind.allCases,
+        selection: $viewModel.rainWalletContactKind,
+        title: { $0.rawValue },
+        isDisabled: viewModel.rainWalletOtpSent || viewModel.rainWalletAttachCodeSent
+      )
 
+      let contactLocked = viewModel.rainWalletSessionActive
+        ? viewModel.rainWalletAttachCodeSent : viewModel.rainWalletOtpSent
       if viewModel.rainWalletUsePhone {
         RainLabeledField(title: "Phone", placeholder: "+1 555 123 4567", text: $viewModel.rainWalletPhone)
-          .disabled(viewModel.rainWalletOtpSent)
+          .disabled(contactLocked)
       } else {
         RainLabeledField(title: "Email", placeholder: "you@example.com", text: $viewModel.rainWalletEmail)
-          .disabled(viewModel.rainWalletOtpSent)
+          .disabled(contactLocked)
       }
 
       // Gone once the session is active — there is nothing left to initiate.
@@ -225,6 +226,25 @@ struct HomeView: View {
           enabled: !viewModel.isLoading
         ) {
           await viewModel.addRainWalletPasskey()
+        }
+
+        // Attach the email/phone above as a VERIFIED login contact — the way a passkey-only
+        // account gains a code-based login. Two steps, like sign-in.
+        RainAsyncButton(
+          title: viewModel.rainWalletAttachCodeSent
+            ? "Verification code sent" : "Attach this contact to the account",
+          kind: .secondary,
+          enabled: viewModel.canSendRainWalletAttachCode
+        ) {
+          await viewModel.sendRainWalletAttachCode()
+        }
+        if viewModel.rainWalletAttachCodeSent {
+          RainLabeledField(
+            title: "Verification code", placeholder: "123456", text: $viewModel.rainWalletAttachCode
+          )
+          RainAsyncButton(title: "Confirm & attach", enabled: viewModel.canConfirmRainWalletAttach) {
+            await viewModel.confirmRainWalletAttach()
+          }
         }
 
         exportSection
@@ -338,6 +358,16 @@ struct HomeView: View {
       }
       if let detail = status.detail {
         Text(detail)
+          .font(RainFont.meta)
+          .tracking(-0.12)
+          .foregroundStyle(Color.rainTextMuted)
+      }
+
+      // What the resolved provider advertises (`RainClient.capabilities`), sorted so the readout
+      // is stable across launches — testers compare it against the provider's documented set.
+      if let client = sdkService.client {
+        let names = client.capabilities.map(\.rawValue).sorted().joined(separator: ", ")
+        Text("Capabilities: \(names.isEmpty ? "none" : names)")
           .font(RainFont.meta)
           .tracking(-0.12)
           .foregroundStyle(Color.rainTextMuted)

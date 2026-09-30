@@ -34,6 +34,15 @@ import per provider suffices. The 1.x `RainSDK` umbrella module has been REMOVED
   Boilertalk Web3.swift ONLY — web3swift was REMOVED 2026-09-15 (abandoned upstream since 2025;
   its URLSession overload trick stopped compiling on new Xcode). Contract call outputs from
   Boilertalk decode under the ABI output NAME as key ("" for unnamed outputs, not "0").
+  BigInt is PINNED `exact: "5.3.0"` and declared directly on every module (beta.1 A1 finding,
+  2026-09-29): tkhq/swift-sdk 4.0.0 → anquii/Base58 1.0.0 hard-pins `.exact("5.3.0")`, so
+  fresh consumers can only ever resolve 5.3.0, which predates `Sendable` on `BigUInt` (5.4.0) —
+  the repo's stale 5.4.1 pin in Package.resolved was masking it (SwiftPM honours committed pins
+  without rechecking transitive exacts; CI clones the pin). RainCore carries
+  `extension BigUInt: @retroactive @unchecked Sendable {}` (`Utils/Extensions/BigInt+Sendable.swift`);
+  the exact pin is what keeps it from becoming a redundant-conformance error. Lift pin + delete
+  shim TOGETHER once Turnkey's graph allows a newer BigInt. Test A1 (fresh host package at the
+  tag, `exact:`) is the regression check — never trust the in-repo build for this.
 - `RainTurnkey` (`rain-turnkey-ios`) — Turnkey adapter, BYO + managed modes (multi-chain
   EVM+Solana; `.export`, `.multiChain` — NOT `.biometricGate`: the vendor's enclave key has a
   `.none` auth policy, nothing gates signing). `RainPortal` (`rain-portal-ios`) — Portal MPC,
