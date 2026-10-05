@@ -52,10 +52,11 @@ public enum RainWalletAuthState: Sendable, Equatable {
 
 /// Where a one-time login (or contact-verification) code is delivered.
 ///
-/// Inputs are normalized before use: emails are trimmed, and phone numbers have user-visible
-/// formatting (spaces, dashes, dots, parentheses) stripped down to E.164. What remains must be a
-/// plausible contact — `+` and 6–15 digits for a phone — or the call throws
-/// `RainError.invalidConfig` locally instead of a wrapped backend rejection.
+/// Inputs are normalized before use: emails are trimmed and lowercased (the same inbox in any
+/// casing is one account), and phone numbers have user-visible formatting (spaces, dashes, dots,
+/// parentheses) stripped down to E.164. What remains must be a plausible contact — `+` and 6–15
+/// digits for a phone — or the call throws `RainError.invalidConfig` locally instead of a wrapped
+/// backend rejection. The normalized string is the account identity, on both platforms.
 public enum RainWalletContact: Sendable, Equatable {
   /// An email address.
   case email(String)

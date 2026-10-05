@@ -309,14 +309,39 @@ struct TurnkeyManagedAuthTests {
     #expect(turnkey.completeOtpCalls.first?.contact == "+15551234567")
   }
 
-  @Test("an email is trimmed before it is sent")
-  func testEmailTrimmed() async throws {
+  @Test("an email is trimmed and lowercased before it is sent")
+  func testEmailTrimmedAndLowercased() async throws {
     let turnkey = MockTurnkey(session: nil)
     let controller = makeController(turnkey: turnkey)
 
-    try await controller.sendLoginCode(to: .email("  user@example.com\n"))
+    try await controller.sendLoginCode(to: .email("  User@Example.COM\n"))
 
+    // The backend compares contacts byte-for-byte; mixed case would mint a second account.
     #expect(turnkey.sendOtpCalls == [.init(contact: "user@example.com", otpType: .email)])
+  }
+
+  @Test("the same inbox in different casing is one identity across login and confirm")
+  func testEmailCaseInsensitiveIdentity() async throws {
+    let turnkey = MockTurnkey(wallets: [MockTurnkey.dualCurveWallet()], session: nil)
+    turnkey.onCompleteOtp = { turnkey.session = MockTurnkey.defaultSession() }
+    let controller = makeController(turnkey: turnkey)
+
+    try await controller.sendLoginCode(to: .email("Volo@Example.com"))
+    try await controller.confirmLoginCode("123456")
+
+    #expect(turnkey.completeOtpCalls.first?.contact == "volo@example.com")
+  }
+
+  @Test("contact verification attaches the lowercased email, not the raw input")
+  func testContactVerificationLowercasesEmail() async throws {
+    let turnkey = MockTurnkey(session: MockTurnkey.defaultSession())
+    let controller = makeController(turnkey: turnkey)
+
+    try await controller.sendContactVerificationCode(to: .email("Second@Example.COM"))
+    try await controller.confirmContactVerification("123456")
+
+    #expect(turnkey.sendOtpCalls.first?.contact == "second@example.com")
+    #expect(turnkey.setUserEmailCalls.map(\.contact) == ["second@example.com"])
   }
 
   @Test(
