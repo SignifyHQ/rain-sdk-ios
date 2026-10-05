@@ -52,15 +52,20 @@ public enum TurnkeyLoginContact: Sendable, Equatable {
     }
   }
 
-  /// The contact normalized for the wallet backend: emails are trimmed; phone numbers have
-  /// user-visible formatting (spaces, dashes, dots, parentheses) stripped down to E.164.
-  /// Throws `invalidConfig` when what remains cannot be a valid contact — a clear local error
-  /// beats a wrapped backend rejection. Identical rules on the Android SDK: the normalized
+  /// The contact normalized for the wallet backend: emails are trimmed and lowercased; phone
+  /// numbers have user-visible formatting (spaces, dashes, dots, parentheses) stripped down to
+  /// E.164. Throws `invalidConfig` when what remains cannot be a valid contact — a clear local
+  /// error beats a wrapped backend rejection. Identical rules on the Android SDK: the normalized
   /// string is the account identity, so both platforms must produce the same one.
+  ///
+  /// Lowercasing is deliberate: the wallet backend compares contacts byte-for-byte, so
+  /// `Volo@example.com` and `volo@example.com` would be two accounts with two empty wallets.
+  /// RFC 5321 lets a mailbox be case-sensitive in its local part, but no mail provider is, and
+  /// one identity per inbox is what users expect (beta finding 2026-10-05).
   internal func normalized() throws -> TurnkeyLoginContact {
     switch self {
     case .email(let raw):
-      let email = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+      let email = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
       guard email.contains("@"), email.count >= 3 else {
         throw RainError.invalidConfig(details: "Not a valid email address")
       }

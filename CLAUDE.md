@@ -162,6 +162,12 @@ Phase 2 (replanned 2026-09-07) — auth moves INSIDE the SDK for Turnkey and Rai
   sub-org (rejected, or ambiguous for contact-based login lookup?). Demo: email/phone toggle on
   the code flow + three passkey buttons (sign in / create / add). Everything here is a
   cross-platform contract with Android.
+  Contact normalization (`TurnkeyLoginContact.normalized()`, one funnel for login AND contact
+  attach): emails trimmed + LOWERCASED (beta finding 2026-10-05 — Turnkey compares contacts
+  byte-for-byte, so `Volo@` and `volo@` minted two accounts/wallets), phones to E.164. The
+  normalized string IS the account identity: Android must lowercase identically — flag for
+  parity. Any pre-fix account created with a mixed-case email is now unreachable by that
+  email (beta only, no external users).
 - PR E (IN PROGRESS 2026-09-17, branch volo/feature/handle-gas-sponsorship), gas sponsorship +
   fail-closed sends on chains Turnkey cannot broadcast on — a mirror of Android's WALL-31 and its
   follow-ups (TurnkeyBroadcastChains, minimal sponsored payloads with the
